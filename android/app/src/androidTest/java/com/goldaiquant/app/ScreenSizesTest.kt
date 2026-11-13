@@ -15,6 +15,7 @@ import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -128,7 +129,9 @@ class ScreenSizesTest {
 
     @Test fun detailsButtonOpensExpandedAnalysis() {
         show("wait_demo.json", 393, 851)
-        rule.onNodeWithText(str(Lang.EN, R.string.details) + " ⌄").performClick()
+        val btn = rule.onNodeWithText(str(Lang.EN, R.string.details) + " ⌄")
+        runCatching { btn.performScrollTo() } // the reason card can sit below the visible part of the screen
+        btn.performClick()
         rule.waitForIdle()
         assertTrue(rule.onAllNodesWithText(str(Lang.EN, R.string.details_dialog), substring = true)
             .fetchSemanticsNodes().isNotEmpty())
