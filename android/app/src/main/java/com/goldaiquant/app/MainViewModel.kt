@@ -43,6 +43,29 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                 receivedAt = prefs.getLong("last_received", 0L).takeIf { v -> v > 0 }?.let(Instant::ofEpochMilli),
             )
         }
+        startPrefetchLoop()
+    }
+
+    /** Silent background refresh: the server keeps a fresh decision ready, so a later tap shows it at once. */
+    private fun startPrefetchLoop() {
+        viewModelScope.launch {
+            while (true) {
+                val s = _state.value
+                if (s.liveMode && !s.loading) {
+                    try {
+                        val f = ApiClient(s.serverUrl, s.token).decision("LIVE", 0)
+                        val now = Instant.now()
+                        _state.update {
+                            if (!it.liveMode || it.loading) it
+                            else it.copy(decision = f.decision, decisionFromCache = false, receivedAt = now, error = null,
+                                selectedHorizon = HorizonModel.resolve(it.selectedHorizon, f.decision))
+                        }
+                        prefs.edit().putString("last_decision", f.raw).putLong("last_received", now.toEpochMilli()).apply()
+                    } catch (e: Exception) { /* silent: the tap path reports errors */ }
+                }
+                kotlinx.coroutines.delay(if (_state.value.decision == null) 20_000L else 240_000L)
+            }
+        }
     }
 
     /** The selected horizon is remembered across launches; the next decision keeps it when still offered. */
