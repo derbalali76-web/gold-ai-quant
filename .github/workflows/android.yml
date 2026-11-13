@@ -3,6 +3,8 @@ on:
   push:
     paths: ["android/**", "schema/**", ".github/workflows/android.yml"]
   workflow_dispatch:
+permissions:
+  contents: write
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -19,14 +21,16 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
       - name: Unit tests (parser + URL policy against backend fixtures)
         run: ./gradlew --no-daemon testDebugUnitTest
-      - name: Build debug + release APK
-        run: ./gradlew --no-daemon assembleDebug assembleRelease
+      - name: Build debug APK
+        run: ./gradlew --no-daemon assembleDebug
       - name: APK sizes
         run: ls -la app/build/outputs/apk/*/*.apk
-      - uses: actions/upload-artifact@v4
-        with:
-          name: gold-ai-quant-apk
-          path: android/app/build/outputs/apk/**/*.apk
+      - name: Publish APK to a GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release delete latest-apk --yes --cleanup-tag --repo "$GITHUB_REPOSITORY" || true
+          gh release create latest-apk app/build/outputs/apk/debug/*.apk --repo "$GITHUB_REPOSITORY" --title "Latest APK" --notes "Debug build from commit $GITHUB_SHA" --target "$GITHUB_SHA"
 
   ui-tests-on-emulator:
     # Real Compose UI tests on an Android emulator (small/medium/large layouts, RTL, all decision states)
