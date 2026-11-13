@@ -194,32 +194,61 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
                 "gaps": ["لا عمق سوق حقيقي متاح مجاناً", "لا إجماع توقعات اقتصادية مجاني مُتحقق منه",
                          "الحجم في الذهب الفوري غير مركزي — لا يُعامل كحجم حقيقي"]}
 
+    live_cache: dict = {"d": None, "t": 0.0}
+    live_lock = threading.Lock()
+    LIVE_TTL = float(os.getenv("GOLDQUANT_LIVE_TTL_S", "240"))  # a decision is reused for a few minutes
+
+    def compute_live() -> Decision:
+        """The slow part (data fetch + models). Runs in the background loop and, if needed, on a request."""
+        if cloud_on:
+            sync_done.wait(timeout=60)  # first request after a cold start waits for the snapshot
+            if time.time() - sync_state["last"] > 3600:
+                threading.Thread(target=cloud_sync, daemon=True).start()
+        now = utcnow()
+        ctx = None
+        if context is not None:
+            context.refresh(now)
+            ctx = context.snapshot(now)
+        d = engine.decide(live_provider, Mode.LIVE, now, ctx)
+        if live_provider is not None:
+            b = live_provider.bars("M15", now, 2000)
+            if b is not None:
+                paper.resolve(b.df, now)
+                shadow.resolve(b.df, now)
+            if registry is not None:
+                st_ = paper.stats()
+                registry.monitor(st_, None, bool(engine.paths._cache and any(
+                    v.drift and v.drift.alarm for v in engine.paths._cache.values())))
+        paper.record(d)
+        return d
+
+    def refresh_live(force: bool = False) -> Decision:
+        with live_lock:  # one computation at a time; concurrent callers reuse its result
+            if not force and live_cache["d"] is not None and time.time() - live_cache["t"] < LIVE_TTL:
+                return live_cache["d"]
+            d = compute_live()
+            live_cache.update(d=d, t=time.time())
+            return d
+
+    def live_loop():
+        time.sleep(20)
+        while True:
+            try:
+                refresh_live(force=time.time() - live_cache["t"] >= LIVE_TTL)
+            except Exception:  # noqa: BLE001 — the next request/loop pass reports the real state
+                pass
+            time.sleep(max(30.0, LIVE_TTL / 2))
+
+    if live_provider is not None and not mem and os.getenv("GOLDQUANT_BG_REFRESH", "1") == "1":
+        threading.Thread(target=live_loop, daemon=True).start()
+
     @app.get("/decision", response_model=Decision, dependencies=[Depends(auth)])
     def decision(mode: Mode = Query(Mode.DEMO), demo_step: int = Query(0)):
         if mode == Mode.DEMO:
             d = engine.decide(demo, Mode.DEMO, demo_as_of(demo_step))
-        else:
-            if cloud_on:
-                sync_done.wait(timeout=60)  # first request after a cold start waits for the snapshot
-                if time.time() - sync_state["last"] > 3600:
-                    threading.Thread(target=cloud_sync, daemon=True).start()
-            now = utcnow()
-            ctx = None
-            if context is not None:
-                context.refresh(now)
-                ctx = context.snapshot(now)
-            d = engine.decide(live_provider, Mode.LIVE, now, ctx)
-            if live_provider is not None:
-                b = live_provider.bars("M15", now, 2000)
-                if b is not None:
-                    paper.resolve(b.df, now)
-                    shadow.resolve(b.df, now)
-                if registry is not None:
-                    st_ = paper.stats()
-                    registry.monitor(st_, None, bool(engine.paths._cache and any(
-                        v.drift and v.drift.alarm for v in engine.paths._cache.values())))
-        paper.record(d)
-        return d
+            paper.record(d)
+            return d
+        return refresh_live()
 
     @app.get("/history", dependencies=[Depends(auth)])
     def history_ep(limit: int = Query(50, ge=1, le=500)):
