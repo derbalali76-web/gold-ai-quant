@@ -1,0 +1,20 @@
+name: cleanup-storage
+# Frees Actions storage: deletes all caches and all build artifacts (APKs live in Releases, not artifacts).
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 2 * * 0"   # weekly, Sunday night
+permissions: { actions: write }
+jobs:
+  clean:
+    runs-on: ubuntu-latest
+    env: { GH_TOKEN: "${{ github.token }}", R: "repos/${{ github.repository }}" }
+    steps:
+      - name: delete caches
+        run: |
+          gh api "$R/actions/caches?per_page=100" --paginate -q '.actions_caches[].id' |
+            while read id; do gh api -X DELETE "$R/actions/caches/$id" && echo "cache $id"; done || true
+      - name: delete artifacts
+        run: |
+          gh api "$R/actions/artifacts?per_page=100" --paginate -q '.artifacts[].id' |
+            while read id; do gh api -X DELETE "$R/actions/artifacts/$id" && echo "artifact $id"; done || true
