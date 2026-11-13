@@ -1,0 +1,959 @@
+{
+  "$defs": {
+    "Action": {
+      "enum": [
+        "BUY",
+        "SELL",
+        "WAIT",
+        "UNAVAILABLE"
+      ],
+      "title": "Action",
+      "type": "string"
+    },
+    "CourtJudgement": {
+      "additionalProperties": false,
+      "description": "V4 AI Decision Court: one independent judge's ruling.",
+      "properties": {
+        "judge": {
+          "title": "Judge",
+          "type": "string"
+        },
+        "passed": {
+          "title": "Passed",
+          "type": "boolean"
+        },
+        "reasons_ar": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Reasons Ar",
+          "type": "array"
+        }
+      },
+      "required": [
+        "judge",
+        "passed"
+      ],
+      "title": "CourtJudgement",
+      "type": "object"
+    },
+    "DataFreshness": {
+      "additionalProperties": false,
+      "properties": {
+        "bars_available": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "Bars Available",
+          "type": "object"
+        },
+        "is_fresh": {
+          "title": "Is Fresh",
+          "type": "boolean"
+        },
+        "max_allowed_seconds": {
+          "title": "Max Allowed Seconds",
+          "type": "number"
+        },
+        "quote_age_seconds": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Quote Age Seconds"
+        }
+      },
+      "required": [
+        "max_allowed_seconds",
+        "is_fresh"
+      ],
+      "title": "DataFreshness",
+      "type": "object"
+    },
+    "Evidence": {
+      "additionalProperties": false,
+      "properties": {
+        "engine": {
+          "title": "Engine",
+          "type": "string"
+        },
+        "text_ar": {
+          "title": "Text Ar",
+          "type": "string"
+        },
+        "weight": {
+          "maximum": 1.0,
+          "minimum": -1.0,
+          "title": "Weight",
+          "type": "number"
+        }
+      },
+      "required": [
+        "engine",
+        "text_ar",
+        "weight"
+      ],
+      "title": "Evidence",
+      "type": "object"
+    },
+    "HorizonProbability": {
+      "additionalProperties": false,
+      "properties": {
+        "horizon_minutes": {
+          "title": "Horizon Minutes",
+          "type": "integer"
+        },
+        "oos_samples": {
+          "title": "Oos Samples",
+          "type": "integer"
+        },
+        "p_neither": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "P Neither",
+          "type": "number"
+        },
+        "p_stop_first": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "P Stop First",
+          "type": "number"
+        },
+        "p_target_first": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "P Target First",
+          "type": "number"
+        },
+        "qualified": {
+          "title": "Qualified",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "horizon_minutes",
+        "p_target_first",
+        "p_stop_first",
+        "p_neither",
+        "qualified",
+        "oos_samples"
+      ],
+      "title": "HorizonProbability",
+      "type": "object"
+    },
+    "LevelsBlock": {
+      "additionalProperties": false,
+      "properties": {
+        "atr_h1": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Atr H1"
+        },
+        "method_note_ar": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Method Note Ar"
+        },
+        "resistances": {
+          "items": {
+            "$ref": "#/$defs/PriceLevel"
+          },
+          "title": "Resistances",
+          "type": "array"
+        },
+        "supports": {
+          "items": {
+            "$ref": "#/$defs/PriceLevel"
+          },
+          "title": "Supports",
+          "type": "array"
+        },
+        "validated": {
+          "title": "Validated",
+          "type": "boolean"
+        },
+        "validation_ar": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Validation Ar"
+        }
+      },
+      "required": [
+        "validated"
+      ],
+      "title": "LevelsBlock",
+      "type": "object"
+    },
+    "MarketTrend": {
+      "additionalProperties": false,
+      "description": "Analytical trend score (0-100) — NOT a probability.",
+      "properties": {
+        "agreement": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Agreement"
+        },
+        "direction": {
+          "title": "Direction",
+          "type": "string"
+        },
+        "label_ar": {
+          "title": "Label Ar",
+          "type": "string"
+        },
+        "note_ar": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note Ar"
+        },
+        "per_timeframe": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Per Timeframe",
+          "type": "object"
+        },
+        "strength": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Strength"
+        }
+      },
+      "required": [
+        "direction",
+        "label_ar"
+      ],
+      "title": "MarketTrend",
+      "type": "object"
+    },
+    "Mode": {
+      "enum": [
+        "DEMO",
+        "LIVE"
+      ],
+      "title": "Mode",
+      "type": "string"
+    },
+    "PriceLevel": {
+      "additionalProperties": false,
+      "properties": {
+        "broken_recently": {
+          "default": false,
+          "title": "Broken Recently",
+          "type": "boolean"
+        },
+        "distance_atr": {
+          "title": "Distance Atr",
+          "type": "number"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "price": {
+          "title": "Price",
+          "type": "number"
+        },
+        "role_flip": {
+          "default": false,
+          "title": "Role Flip",
+          "type": "boolean"
+        },
+        "strength": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Strength"
+        },
+        "strength_label_ar": {
+          "title": "Strength Label Ar",
+          "type": "string"
+        },
+        "tests": {
+          "title": "Tests",
+          "type": "integer"
+        },
+        "timeframes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Timeframes",
+          "type": "array"
+        },
+        "zone_high": {
+          "title": "Zone High",
+          "type": "number"
+        },
+        "zone_low": {
+          "title": "Zone Low",
+          "type": "number"
+        }
+      },
+      "required": [
+        "name",
+        "price",
+        "zone_low",
+        "zone_high",
+        "strength_label_ar",
+        "tests",
+        "distance_atr"
+      ],
+      "title": "PriceLevel",
+      "type": "object"
+    },
+    "SpotOrProxy": {
+      "enum": [
+        "SPOT",
+        "PROXY",
+        "SYNTHETIC",
+        "NONE"
+      ],
+      "title": "SpotOrProxy",
+      "type": "string"
+    },
+    "Uncertainty": {
+      "additionalProperties": false,
+      "description": "V2 #16: separates uncertainty sources instead of one opaque 'confidence'.",
+      "properties": {
+        "budget_components": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "title": "Budget Components",
+          "type": "object"
+        },
+        "budget_limit": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Budget Limit"
+        },
+        "budget_used": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Budget Used"
+        },
+        "data": {
+          "title": "Data",
+          "type": "string"
+        },
+        "market": {
+          "title": "Market",
+          "type": "string"
+        },
+        "model": {
+          "title": "Model",
+          "type": "string"
+        },
+        "notes_ar": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Notes Ar",
+          "type": "array"
+        },
+        "overall": {
+          "title": "Overall",
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "model",
+        "market",
+        "overall"
+      ],
+      "title": "Uncertainty",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "action": {
+      "$ref": "#/$defs/Action"
+    },
+    "alternative_entry_note_ar": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Alternative Entry Note Ar"
+    },
+    "alternative_entry_price": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Alternative Entry Price"
+    },
+    "analyzed_at_utc": {
+      "format": "date-time",
+      "title": "Analyzed At Utc",
+      "type": "string"
+    },
+    "audit_hash": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Audit Hash"
+    },
+    "calibration_period": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Calibration Period"
+    },
+    "calibration_sample_count": {
+      "default": 0,
+      "title": "Calibration Sample Count",
+      "type": "integer"
+    },
+    "contrary_evidence": {
+      "items": {
+        "$ref": "#/$defs/Evidence"
+      },
+      "title": "Contrary Evidence",
+      "type": "array"
+    },
+    "court": {
+      "items": {
+        "$ref": "#/$defs/CourtJudgement"
+      },
+      "title": "Court",
+      "type": "array"
+    },
+    "data_freshness": {
+      "$ref": "#/$defs/DataFreshness"
+    },
+    "data_quality": {
+      "title": "Data Quality",
+      "type": "string"
+    },
+    "decision_id": {
+      "title": "Decision Id",
+      "type": "string"
+    },
+    "engines_used": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Engines Used",
+      "type": "array"
+    },
+    "entry_max": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Entry Max"
+    },
+    "entry_min": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Entry Min"
+    },
+    "estimated_cost": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Estimated Cost"
+    },
+    "expected_net_return": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expected Net Return"
+    },
+    "horizon_minutes": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Horizon Minutes"
+    },
+    "instrument": {
+      "default": "XAU/USD",
+      "title": "Instrument",
+      "type": "string"
+    },
+    "invalidation_ar": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Invalidation Ar",
+      "type": "array"
+    },
+    "levels": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LevelsBlock"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "market_regime": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Market Regime"
+    },
+    "market_trend": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MarketTrend"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "missing_data": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Missing Data",
+      "type": "array"
+    },
+    "mode": {
+      "$ref": "#/$defs/Mode"
+    },
+    "model_version": {
+      "title": "Model Version",
+      "type": "string"
+    },
+    "probabilities_by_horizon": {
+      "items": {
+        "$ref": "#/$defs/HorizonProbability"
+      },
+      "title": "Probabilities By Horizon",
+      "type": "array"
+    },
+    "probability_method": {
+      "default": "none",
+      "title": "Probability Method",
+      "type": "string"
+    },
+    "probability_neither": {
+      "anyOf": [
+        {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Probability Neither"
+    },
+    "probability_reliability_ar": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Probability Reliability Ar"
+    },
+    "probability_stop_before_target": {
+      "anyOf": [
+        {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Probability Stop Before Target"
+    },
+    "probability_target_before_stop": {
+      "anyOf": [
+        {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Probability Target Before Stop"
+    },
+    "provider": {
+      "title": "Provider",
+      "type": "string"
+    },
+    "quote": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Quote"
+    },
+    "quote_change": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Quote Change"
+    },
+    "quote_change_pct": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Quote Change Pct"
+    },
+    "quote_timestamp_utc": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Quote Timestamp Utc"
+    },
+    "reason_short_ar": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Reason Short Ar"
+    },
+    "reevaluate_ar": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Reevaluate Ar",
+      "type": "array"
+    },
+    "reward_risk": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Reward Risk"
+    },
+    "schema_version": {
+      "default": "1.3.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "snapshot_hash": {
+      "title": "Snapshot Hash",
+      "type": "string"
+    },
+    "spot_or_proxy": {
+      "$ref": "#/$defs/SpotOrProxy"
+    },
+    "stop_loss": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Stop Loss"
+    },
+    "supporting_evidence": {
+      "items": {
+        "$ref": "#/$defs/Evidence"
+      },
+      "title": "Supporting Evidence",
+      "type": "array"
+    },
+    "tp1": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Tp1"
+    },
+    "tp2": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Tp2"
+    },
+    "tp3": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Tp3"
+    },
+    "uncertainty": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Uncertainty"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "valid_until_utc": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Valid Until Utc"
+    },
+    "vol_regime": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Vol Regime"
+    },
+    "wait_for_ar": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Wait For Ar"
+    },
+    "wait_for_price": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Wait For Price"
+    },
+    "warning_ar": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Warning Ar"
+    }
+  },
+  "required": [
+    "decision_id",
+    "mode",
+    "action",
+    "spot_or_proxy",
+    "provider",
+    "analyzed_at_utc",
+    "model_version",
+    "data_freshness",
+    "data_quality",
+    "snapshot_hash"
+  ],
+  "title": "Decision",
+  "type": "object"
+}

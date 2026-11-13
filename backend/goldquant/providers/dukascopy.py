@@ -1,0 +1,92 @@
+"""Dukascopy public historical datafeed importer (free download; personal research use — check their terms).
+
+Daily 1-minute BID candle files:
+    https://datafeed.dukascopy.com/datafeed/{SYMBOL}/{YYYY}/{MM-1:02d}/{DD:02d}/BID_candles_min_1.bi5
+Each file is LZMA-compressed; records are 24 bytes big-endian:
+    uint32 seconds-from-midnight-UTC, uint32 open, uint32 close, uint32 low, uint32 high, float32 volume
+Prices are integers scaled by a symbol-specific point; the scale is detected from a plausibility range and the
+detection is recorded, so a wrong assumption fails loudly instead of silently corrupting prices.
+Volume is Dukascopy's own tick volume — NOT the global market volume.
+"""
+from __future__ import annotations
+
+import lzma
+import struct
+from datetime import date, datetime, timedelta, timezone
+from typing import Iterable
+
+import numpy as np
+import pandas as pd
+
+from .http import HttpClient, HttpError, RateLimiter
+
+BASE = "https://datafeed.dukascopy.com/datafeed"
+PLAUSIBLE = {"XAUUSD": (200.0, 20000.0), "XAGUSD": (2.0, 500.0), "EURUSD": (0.5, 2.5), "USDJPY": (50.0, 400.0)}
+SCALES = (100000.0, 1000.0, 100.0, 10.0)
+REC = struct.Struct(">5If")
+
+
+def day_url(symbol: str, d: date) -> str:
+    return f"{BASE}/{symbol}/{d.year:04d}/{d.month - 1:02d}/{d.day:02d}/BID_candles_min_1.bi5"
+
+
+def detect_scale(symbol: str, raw_close: np.ndarray) -> float:
+    lo, hi = PLAUSIBLE.get(symbol, (0.0, float("inf")))
+    med = float(np.median(raw_close))
+    for s in SCALES:
+        if lo <= med / s <= hi:
+            return s
+    raise ValueError(f"cannot determine price scale for {symbol} (median raw {med})")
+
+
+def parse_day(payload: bytes, symbol: str, d: date, scale: float | None = None) -> pd.DataFrame:
+    if not payload:
+        return pd.DataFrame(columns=["open", "high", "low", "close", "tick_volume"])
+    raw = lzma.decompress(payload)
+    if len(raw) % REC.size:
+        raise ValueError("corrupt candle file (size not a multiple of 24)")
+    rows = np.array(list(REC.iter_unpack(raw)), dtype=float)
+    if not len(rows):
+        return pd.DataFrame(columns=["open", "high", "low", "close", "tick_volume"])
+    sc = scale or detect_scale(symbol, rows[:, 2])
+    base = pd.Timestamp(d, tz="UTC")
+    idx = base + pd.to_timedelta(rows[:, 0].astype(int), unit="s")
+    df = pd.DataFrame({"open": rows[:, 1] / sc, "high": rows[:, 4] / sc, "low": rows[:, 3] / sc,
+                       "close": rows[:, 2] / sc, "tick_volume": rows[:, 5]}, index=idx)
+    df = df[df["tick_volume"] > 0]  # Dukascopy fills closed-market minutes with flat zero-volume candles
+    df.attrs["scale"] = sc
+    return df
+
+
+def to_timeframe(m1: pd.DataFrame, minutes: int) -> pd.DataFrame:
+    return m1.resample(f"{minutes}min", label="left", closed="left").agg(
+        {"open": "first", "high": "max", "low": "min", "close": "last", "tick_volume": "sum"}).dropna(subset=["open"])
+
+
+class DukascopyImporter:
+    def __init__(self, http: HttpClient | None = None):
+        self.http = http or HttpClient(limiter=RateLimiter(calls=60, period=60.0), retries=2)
+        self.errors: list[str] = []
+
+    def fetch_day(self, symbol: str, d: date) -> pd.DataFrame:
+        try:
+            r = self.http.get(day_url(symbol, d))
+        except HttpError as exc:
+            if exc.status == 404:
+                return pd.DataFrame(columns=["open", "high", "low", "close", "tick_volume"])
+            self.errors.append(f"{symbol} {d}: {exc}")
+            raise
+        return parse_day(r.content, symbol, d)
+
+    def fetch_range(self, symbol: str, start: date, end: date) -> pd.DataFrame:
+        parts = []
+        d = start
+        while d <= end:
+            if d.weekday() != 5:  # Saturdays are always empty
+                try:
+                    parts.append(self.fetch_day(symbol, d))
+                except HttpError:
+                    pass
+            d += timedelta(days=1)
+        parts = [p for p in parts if len(p)]
+        return pd.concat(parts).sort_index() if parts else pd.DataFrame()

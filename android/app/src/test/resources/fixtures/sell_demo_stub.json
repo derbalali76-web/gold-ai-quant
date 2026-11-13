@@ -1,0 +1,254 @@
+{
+  "schema_version": "1.3.0",
+  "decision_id": "d70527df8006c085",
+  "mode": "DEMO",
+  "action": "SELL",
+  "instrument": "XAU/USD",
+  "spot_or_proxy": "SYNTHETIC",
+  "provider": "DEMO-SYNTHETIC",
+  "quote": 2043.67,
+  "quote_timestamp_utc": "2025-12-15T04:00:00Z",
+  "analyzed_at_utc": "2025-12-15T04:00:00Z",
+  "entry_min": 2043.36,
+  "entry_max": 2043.98,
+  "stop_loss": 2047.75,
+  "tp1": 2039.59,
+  "tp2": 2036.32,
+  "tp3": 2032.23,
+  "horizon_minutes": 240,
+  "valid_until_utc": "2025-12-15T04:15:00Z",
+  "probability_target_before_stop": null,
+  "probability_stop_before_target": null,
+  "probability_neither": null,
+  "probabilities_by_horizon": [],
+  "probability_reliability_ar": "Brier متعدد الفئات 0.6000 مقابل 0.6500 للتكرار التاريخي؛ أكبر فجوة معايرة 0.020؛ 5000 عينة خارج العينة (بيانات اصطناعية)",
+  "probability_method": "path-mlogit-0.1.0: multinomial logit, purged walk-forward vs climatology",
+  "calibration_sample_count": 0,
+  "calibration_period": null,
+  "model_version": "path-mlogit-0.1.0",
+  "expected_net_return": null,
+  "estimated_cost": 0.45,
+  "reward_risk": 1.0,
+  "market_regime": "M15: تذبذب عرضي / تقلب حاد | H4: انتقالي / تقلب منخفض",
+  "vol_regime": "EXCEPTIONAL",
+  "uncertainty": {
+    "data": "HIGH",
+    "model": "LOW",
+    "market": "HIGH",
+    "overall": "HIGH",
+    "notes_ar": [
+      "نقص مصادر بيانات أساسية",
+      "تقلب السوق أعلى من المعتاد أو تغيّر هيكلي حديث"
+    ],
+    "budget_used": 1.282,
+    "budget_limit": 1.6,
+    "budget_components": {
+      "data": 0.25,
+      "model": 0.6,
+      "market": 0.54,
+      "disagreement": 0.0
+    }
+  },
+  "reason_short_ar": "اتجاه H4 محايد والاتجاه العام هابط، والسعر تحت المقاومة 2063.19. العائد المتوقع بعد التكاليف موجب، واجتازت الإشارة محكمة القرار.",
+  "alternative_entry_price": 2044.69,
+  "alternative_entry_note_ar": "مستوى ارتداد هيكلي أفضل للدخول",
+  "engines_used": [
+    "data_quality",
+    "volatility_regime",
+    "mtf_bias",
+    "probabilistic_path",
+    "adversarial_critic",
+    "liquidity_trap",
+    "structural_break(CUSUM)",
+    "model_drift_sentinel",
+    "uncertainty_map",
+    "historical_analog",
+    "counterfactual",
+    "anti_trade",
+    "risk",
+    "market_trend",
+    "support_resistance"
+  ],
+  "court": [
+    {
+      "judge": "statistics",
+      "passed": true,
+      "reasons_ar": []
+    },
+    {
+      "judge": "evidence",
+      "passed": true,
+      "reasons_ar": []
+    },
+    {
+      "judge": "risk_governor",
+      "passed": true,
+      "reasons_ar": []
+    }
+  ],
+  "market_trend": {
+    "direction": "DOWN",
+    "strength": 12,
+    "label_ar": "هابط",
+    "agreement": 1.0,
+    "per_timeframe": {
+      "M15": "هابط",
+      "M30": "هابط",
+      "H1": "هابط",
+      "H4": "محايد"
+    },
+    "note_ar": "درجة تحليلية لحالة الاتجاه وليست احتمالاً لاستمراره"
+  },
+  "levels": {
+    "supports": [
+      {
+        "name": "S1",
+        "price": 2023.75,
+        "zone_low": 2020.16,
+        "zone_high": 2027.37,
+        "strength": null,
+        "strength_label_ar": "متوسط",
+        "tests": 19,
+        "timeframes": [
+          "H4"
+        ],
+        "role_flip": true,
+        "broken_recently": false,
+        "distance_atr": -5.33
+      },
+      {
+        "name": "S2",
+        "price": 2018.29,
+        "zone_low": 2017.88,
+        "zone_high": 2018.69,
+        "strength": null,
+        "strength_label_ar": "ضعيف",
+        "tests": 17,
+        "timeframes": [
+          "H1",
+          "H4"
+        ],
+        "role_flip": true,
+        "broken_recently": false,
+        "distance_atr": -6.8
+      },
+      {
+        "name": "S3",
+        "price": 2014.65,
+        "zone_low": 2013.1,
+        "zone_high": 2015.72,
+        "strength": null,
+        "strength_label_ar": "ضعيف",
+        "tests": 24,
+        "timeframes": [
+          "H1",
+          "H4"
+        ],
+        "role_flip": true,
+        "broken_recently": false,
+        "distance_atr": -7.77
+      }
+    ],
+    "resistances": [
+      {
+        "name": "R1",
+        "price": 2063.19,
+        "zone_low": 2062.23,
+        "zone_high": 2064.79,
+        "strength": null,
+        "strength_label_ar": "متوسط",
+        "tests": 8,
+        "timeframes": [
+          "H1",
+          "H4",
+          "M15"
+        ],
+        "role_flip": true,
+        "broken_recently": false,
+        "distance_atr": 5.23
+      },
+      {
+        "name": "R2",
+        "price": 2067.29,
+        "zone_low": 2067.29,
+        "zone_high": 2067.29,
+        "strength": null,
+        "strength_label_ar": "ضعيف",
+        "tests": 0,
+        "timeframes": [
+          "H1",
+          "H4"
+        ],
+        "role_flip": false,
+        "broken_recently": false,
+        "distance_atr": 6.33
+      },
+      {
+        "name": "R3",
+        "price": 2073.06,
+        "zone_low": 2072.0,
+        "zone_high": 2073.82,
+        "strength": null,
+        "strength_label_ar": "متوسط",
+        "tests": 3,
+        "timeframes": [
+          "H1",
+          "H4"
+        ],
+        "role_flip": false,
+        "broken_recently": false,
+        "distance_atr": 7.87
+      }
+    ],
+    "validated": false,
+    "atr_h1": 3.734,
+    "validation_ar": "الأوزان لم تثبت تفوقاً خارج العينة — تُعرض تصنيفات تقديرية فقط",
+    "method_note_ar": "القوة = ترتيب مئيني مقارنة بالمستويات التاريخية، وليست احتمال ارتداد. الحجم غير مستخدم لأن الذهب الفوري لا يملك حجماً موحداً حقيقياً."
+  },
+  "quote_change": -5.11,
+  "quote_change_pct": -0.249,
+  "reevaluate_ar": [
+    "ارتداد نحو R1 قرب 2062.23 مع فشل في تجاوزه",
+    "إغلاق ساعة تحت S1 عند 2020.16"
+  ],
+  "audit_hash": "c5738257ced3702f078988fb74806af477bb7b1670c434e7261c0dccd5a394d8",
+  "supporting_evidence": [
+    {
+      "engine": "mtf_bias",
+      "text_ar": "ميل متوسط 50 على H1 هابط (كفاءة الاتجاه 0.26)",
+      "weight": 0.5
+    }
+  ],
+  "contrary_evidence": [],
+  "invalidation_ar": [
+    "إغلاق شمعة M15 فوق 2047.75",
+    "انقلاب ميل H1 ضد بيع",
+    "صدور خبر اقتصادي عالي التأثير قبل الدخول",
+    "انتهاء صلاحية الإشارة دون دخول ضمن النطاق"
+  ],
+  "missing_data": [
+    "وضع تجريبي: الأسعار اصطناعية وليست سعر السوق",
+    "بيانات الماكرو (FRED) غير متصلة",
+    "تقويم الأحداث الاقتصادية غير متصل",
+    "تقارير COT غير متصلة",
+    "خلاصات الأخبار الرسمية غير متصلة",
+    "إجماع التوقعات الاقتصادية غير متاح مجاناً (محركات Expectation Gap/Priced-In/Missing Reaction معطّلة)",
+    "عمق السوق وتدفق الأوامر المؤسسي غير متاح مجاناً (ولن يُدّعى)"
+  ],
+  "data_freshness": {
+    "quote_age_seconds": 0.0,
+    "max_allowed_seconds": 180.0,
+    "is_fresh": true,
+    "bars_available": {
+      "M15": 9336,
+      "M30": 4668,
+      "H1": 2334,
+      "H4": 630
+    }
+  },
+  "data_quality": "DEGRADED",
+  "warning_ar": "إشارة بحثية للتداول الورقي فقط — ليست نصيحة استثمارية ولا تُنفَّذ تلقائياً",
+  "wait_for_ar": null,
+  "wait_for_price": null,
+  "snapshot_hash": "6e4cbdc8250f1ec4981817be33b7a907e819d03384beef0fbb9db8a062d44cd1"
+}

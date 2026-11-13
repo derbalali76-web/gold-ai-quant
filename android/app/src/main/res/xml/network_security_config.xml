@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Cleartext is permitted at the platform level ONLY so a home-LAN PC server works.
+     The app itself refuses http:// to any non-private address (UrlPolicy.kt, unit-tested). See ADR-003. -->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

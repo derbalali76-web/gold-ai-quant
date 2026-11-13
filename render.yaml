@@ -1,0 +1,18 @@
+# Render Blueprint — free web service (sleeps after ~15 min idle; first request wakes it in about a minute)
+services:
+  - type: web
+    name: gold-ai-quant
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: TWELVEDATA_API_KEY
+        sync: false          # paste your free key in the Render dashboard
+      - key: GOLDQUANT_TOKEN
+        sync: false          # a long random secret; enter the same value in the app settings
+      - key: GOLDQUANT_DATA_REPO
+        sync: false          # e.g. youruser/gold-ai-quant  (this private repository)
+      - key: GOLDQUANT_REPO_TOKEN
+        sync: false          # fine-grained GitHub token: read-only "Contents" on this repo only

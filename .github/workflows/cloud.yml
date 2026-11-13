@@ -1,0 +1,50 @@
+name: cloud-data-and-models
+# Free on GitHub-hosted runners within the monthly minutes of your plan. Hourly collection (~1 min),
+# training every 4 h, research daily. The hourly commit also keeps scheduled workflows active.
+on:
+  schedule:
+    - cron: "7 * * * *"        # collect
+    - cron: "27 */4 * * *"     # train
+    - cron: "47 3 * * *"       # research
+  workflow_dispatch:
+    inputs:
+      job:
+        description: "collect | train | research | backfill"
+        default: "collect"
+      years:
+        description: "backfill years (Dukascopy)"
+        default: "3"
+concurrency: { group: cloud-data, cancel-in-progress: false }
+permissions: { contents: write }
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12", cache: pip, cache-dependency-path: backend/requirements.txt }
+      - run: pip install -r backend/requirements.txt openpyxl
+      - name: choose job
+        id: job
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then echo "name=${{ inputs.job }}" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event.schedule }}" = "27 */4 * * *" ]; then echo "name=train" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event.schedule }}" = "47 3 * * *" ]; then echo "name=research" >> $GITHUB_OUTPUT
+          else echo "name=collect" >> $GITHUB_OUTPUT; fi
+      - name: run
+        env:
+          TWELVEDATA_API_KEY: ${{ secrets.TWELVEDATA_API_KEY }}
+          GOLDQUANT_REPO_ROOT: ${{ github.workspace }}
+        run: python backend/tools/cloud_job.py ${{ steps.job.outputs.name }} --years "${{ inputs.years || '3' }}"
+      - name: commit
+        run: |
+          git config user.name "gold-ai-quant-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add market_data models || true
+          git diff --cached --quiet || git commit -m "data: ${{ steps.job.outputs.name }} $(date -u +%FT%TZ)"
+          git push || (git pull --rebase && git push)
+      - name: wake the web service
+        if: ${{ env.RENDER_URL != '' }}
+        env: { RENDER_URL: "${{ secrets.RENDER_URL }}" }
+        run: curl -s -m 90 "$RENDER_URL/health" > /dev/null || true
