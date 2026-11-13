@@ -1,0 +1,21 @@
+name: unzip-project
+on: workflow_dispatch
+permissions:
+  contents: write
+jobs:
+  unzip:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          unzip -q gold-ai-quant.zip
+          rm gold-ai-quant.zip
+          if [ -d gold-ai-quant ]; then
+            cp -a gold-ai-quant/. .
+            rm -rf gold-ai-quant
+          fi
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add -A
+          git commit -m "Unpack project"
+          git push
