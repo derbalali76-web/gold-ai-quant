@@ -140,3 +140,36 @@ def ledger_state(ledger: "PaperLedger | None", mode: str, now) -> dict:
             break
     return {"signals_24h": len(day), "open_positions": sum(r[1] == "OPEN" for r in rows),
             "pnl_r_24h": round(pnl_r, 3), "consecutive_losses": streak, "last_loss_at": last_loss}
+
+
+COLUMNS = ["decision_id", "mode", "opened_at", "valid_until", "direction", "entry_min", "entry_max", "stop", "target",
+           "horizon_min", "p_tp", "p_sl", "status", "outcome", "fill_price", "exit_price", "resolved_at", "pnl"]
+
+
+def export_rows(ledger: PaperLedger) -> list[dict]:
+    with ledger._lock:
+        return [dict(zip(COLUMNS, r)) for r in ledger._c.execute(f"SELECT {', '.join(COLUMNS)} FROM paper").fetchall()]
+
+
+def import_rows(ledger: PaperLedger, rows: list[dict]) -> None:
+    with ledger._lock:
+        ledger._c.executemany(f"INSERT OR REPLACE INTO paper ({', '.join(COLUMNS)}) VALUES ({', '.join('?' * len(COLUMNS))})",
+                              [tuple(r.get(c) for c in COLUMNS) for r in rows])
+        ledger._c.commit()
+
+
+def perf(rows: list[dict], mode: str = "LIVE") -> dict:
+    """Completed trades only (CLOSED). NOT_FILLED orders and OPEN trades are reported apart, never as wins/losses."""
+    rows = [r for r in rows if r.get("mode") == mode]
+    closed = sorted([r for r in rows if r["status"] == "CLOSED"], key=lambda r: r["opened_at"])
+    pnl = np.array([float(r["pnl"] or 0.0) for r in closed])
+    n = len(closed)
+    eq = np.cumsum(pnl) if n else np.array([0.0])
+    return {"trades": n, "hits": sum(1 for r in closed if r["outcome"] == 1),
+            "pending": sum(1 for r in rows if r["status"] == "OPEN"),
+            "not_filled": sum(1 for r in rows if r["status"] == "NOT_FILLED"),
+            "avg_win": round(float(pnl[pnl > 0].mean()), 3) if (pnl > 0).any() else None,
+            "avg_loss": round(float(pnl[pnl <= 0].mean()), 3) if (pnl <= 0).any() else None,
+            "expectancy": round(float(pnl.mean()), 3) if n else None,
+            "max_drawdown": round(float(np.max(np.maximum.accumulate(eq) - eq)), 3) if n else None,
+            "period": f"{closed[0]['opened_at'][:10]} → {closed[-1]['opened_at'][:10]}" if n else None}

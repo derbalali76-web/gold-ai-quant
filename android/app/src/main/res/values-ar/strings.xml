@@ -179,6 +179,39 @@
     <string name="track_down">ميل هابط</string>
     <string name="track_hit">صحيحة</string>
     <string name="track_miss">خاطئة</string>
+    <string name="pl_buy_now">اشترِ الآن عند %1$s · الهدف %2$s · الوقف %3$s</string>
+    <string name="pl_sell_now">بِع الآن عند %1$s · الهدف %2$s · الوقف %3$s</string>
+    <string name="pl_wait_buy">مراقبة: انتظر للشراء قرب %1$s — ليست توصية</string>
+    <string name="pl_wait_sell">مراقبة: انتظر للبيع قرب %1$s — ليست توصية</string>
+    <string name="pl_wait">لا توجد فرصة مناسبة حالياً</string>
+    <string name="pl_unavailable">النموذج غير معتمد أو البيانات غير كافية</string>
+    <string name="pl_not_rec">ليست توصية (تجريبي أو غير معتمد)</string>
+    <string name="pl_rec">توصية معتمدة — للتداول الورقي فقط</string>
+    <string name="sec_plan">خطة الصفقة</string>
+    <string name="pl_setup">الحالة</string>
+    <string name="su_buy_now">اشترِ الآن</string>
+    <string name="su_sell_now">بِع الآن</string>
+    <string name="su_wait_buy">انتظر للشراء</string>
+    <string name="su_wait_sell">انتظر للبيع</string>
+    <string name="su_wait">انتظر</string>
+    <string name="su_unavailable">غير متاح</string>
+    <string name="pl_entry">الدخول</string>
+    <string name="pl_watch">مستوى المراقبة</string>
+    <string name="pl_rr">العائد : المخاطرة</string>
+    <string name="pl_valid">صالحة حتى</string>
+    <string name="pl_cancel">تُلغى الخطة إذا</string>
+    <string name="pl_watch_note">مستوى المراقبة هو حيث سيبحث النظام عن فرصة. ليس له وقف ولا هدف، وليس صفقة.</string>
+    <string name="pl_sell_note">البيع يعني فتح صفقة بيع على المكشوف (عقود أو CFD) أو بيع ذهب تملكه بالفعل. لا تبع على المكشوف إلا إذا كان حسابك يسمح بذلك.</string>
+    <string name="sec_perf">سجل الأداء</string>
+    <string name="src_oos">اختبار خارج العينة (بيانات لم يتدرّب عليها النموذج)</string>
+    <string name="src_live">تتبّع حي (سُجّل قبل معرفة النتيجة)</string>
+    <string name="src_paper">صفقات ورقية منذ إعادة تشغيل الخادم</string>
+    <string name="perf_trades">%1$d مكتملة · نسبة الإصابة %2$d%%</string>
+    <string name="perf_avg">متوسط الربح %1$s · متوسط الخسارة %2$s</string>
+    <string name="perf_exp">العائد المتوقع %1$s · أقصى تراجع %2$s (بعد التكاليف)</string>
+    <string name="perf_pending">%1$d معلّقة · %2$d لم تتفعّل (غير محسوبة)</string>
+    <string name="perf_none">لا صفقات مكتملة بعد</string>
+    <string name="perf_hit_note">الساعات: الوصول إلى الهدف قبل الوقف. الأسبوع والشهر: الاتجاه الصحيح بعد التكاليف.</string>
     <string name="r_w_up" formatted="false">صاعد</string>
     <string name="r_w_down" formatted="false">هابط</string>
     <string name="r_w_neutral" formatted="false">محايد</string>

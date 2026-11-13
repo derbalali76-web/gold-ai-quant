@@ -7,7 +7,7 @@ from typing import Any, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-SCHEMA_VERSION = "1.6.0"
+SCHEMA_VERSION = "1.7.0"
 
 
 class Action(str, Enum):
@@ -152,6 +152,66 @@ class LevelsBlock(BaseModel):
         return self
 
 
+class Setup(str, Enum):
+    BUY_NOW = "BUY_NOW"
+    SELL_NOW = "SELL_NOW"
+    WAIT_TO_BUY = "WAIT_TO_BUY"
+    WAIT_TO_SELL = "WAIT_TO_SELL"
+    WAIT = "WAIT"
+    UNAVAILABLE = "UNAVAILABLE"
+
+
+class TradePlan(BaseModel):
+    """What the user can act on for ONE horizon (v1.7).
+
+    recommendation=True only for a LIVE, validated *_NOW plan. WAIT_TO_* is a WATCH level (where a setup would be
+    looked for), never a recommendation: it carries no stop or target, so it cannot be mistaken for a trade."""
+    model_config = ConfigDict(extra="forbid")
+    setup: Setup
+    recommendation: bool = False
+    side: Optional[str] = None  # BUY | SELL
+    order: Optional[str] = None  # MARKET (enter in the zone now) | LIMIT
+    entry_low: Optional[float] = None
+    entry_high: Optional[float] = None
+    watch_price: Optional[float] = None
+    stop_loss: Optional[float] = None
+    target: Optional[float] = None
+    reward_risk: Optional[float] = None
+    expected_minutes: Optional[int] = None
+    expected_days: Optional[int] = None
+    valid_until_utc: Optional[datetime] = None
+    invalidation_refs: list[ReasonRef] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def _consistent(self) -> "TradePlan":
+        now = self.setup in (Setup.BUY_NOW, Setup.SELL_NOW)
+        if self.recommendation and not now:
+            raise ValueError("only a BUY_NOW / SELL_NOW plan can be a recommendation")
+        if now and (self.entry_low is None or self.stop_loss is None or self.target is None):
+            raise ValueError("a *_NOW plan needs entry, stop and target")
+        if not now and (self.stop_loss is not None or self.target is not None):
+            raise ValueError("a watch / wait plan must not carry a stop or a target")
+        if self.setup in (Setup.WAIT_TO_BUY, Setup.WAIT_TO_SELL) and self.watch_price is None:
+            raise ValueError("WAIT_TO_* needs its watch price")
+        return self
+
+
+class PerfStats(BaseModel):
+    """Track record of one horizon from one source. Pending / never-filled signals are NOT counted as trades."""
+    model_config = ConfigDict(extra="forbid")
+    source: str  # OOS_BACKTEST | LIVE_FORWARD | LIVE_PAPER
+    unit: str  # USD_OZ | PCT
+    trades: int = Field(default=0, ge=0)
+    hits: int = Field(default=0, ge=0)  # target before stop (HOURS) / right direction after costs (WEEK, MONTH)
+    pending: int = Field(default=0, ge=0)
+    not_filled: int = Field(default=0, ge=0)
+    avg_win: Optional[float] = None
+    avg_loss: Optional[float] = None
+    expectancy: Optional[float] = None  # mean result per trade after costs
+    max_drawdown: Optional[float] = None
+    period: Optional[str] = None
+
+
 class HorizonOutlook(BaseModel):
     """Per-horizon view: HOURS mirrors the main intraday decision; WEEK / MONTH come from daily rules.
 
@@ -191,6 +251,8 @@ class HorizonOutlook(BaseModel):
     # A frequency, never a probability; HOURS comes from the server's paper ledger (resets on redeploys).
     live_resolved: int = Field(default=0, ge=0)
     live_hits: int = Field(default=0, ge=0)
+    plan: Optional[TradePlan] = None  # v1.7
+    performance: list[PerfStats] = Field(default_factory=list)
 
     @model_validator(mode="after")
     def _honest(self) -> "HorizonOutlook":

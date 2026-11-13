@@ -179,6 +179,39 @@
     <string name="track_down">biais baissier</string>
     <string name="track_hit">juste</string>
     <string name="track_miss">faux</string>
+    <string name="pl_buy_now">Acheter maintenant à %1$s · objectif %2$s · stop %3$s</string>
+    <string name="pl_sell_now">Vendre maintenant à %1$s · objectif %2$s · stop %3$s</string>
+    <string name="pl_wait_buy">Surveillance : attendre pour acheter vers %1$s — pas une recommandation</string>
+    <string name="pl_wait_sell">Surveillance : attendre pour vendre vers %1$s — pas une recommandation</string>
+    <string name="pl_wait">Aucune opportunité adaptée pour l\'instant</string>
+    <string name="pl_unavailable">Modèle non validé ou données insuffisantes</string>
+    <string name="pl_not_rec">Pas une recommandation (démo ou non validé)</string>
+    <string name="pl_rec">Recommandation validée — trading papier uniquement</string>
+    <string name="sec_plan">Plan de trade</string>
+    <string name="pl_setup">Situation</string>
+    <string name="su_buy_now">Acheter maintenant</string>
+    <string name="su_sell_now">Vendre maintenant</string>
+    <string name="su_wait_buy">Attendre pour acheter</string>
+    <string name="su_wait_sell">Attendre pour vendre</string>
+    <string name="su_wait">Attendre</string>
+    <string name="su_unavailable">Indisponible</string>
+    <string name="pl_entry">Entrée</string>
+    <string name="pl_watch">Niveau surveillé</string>
+    <string name="pl_rr">Gain : risque</string>
+    <string name="pl_valid">Valable jusqu\'à</string>
+    <string name="pl_cancel">Annuler le plan si</string>
+    <string name="pl_watch_note">Un niveau surveillé est l\'endroit où le système chercherait une opportunité. Il n\'a ni stop ni objectif et n\'est pas un trade.</string>
+    <string name="pl_sell_note">VENDRE signifie ouvrir une position courte (CFD ou futures) OU vendre de l\'or que vous possédez. Ne vendez à découvert que si votre compte le permet.</string>
+    <string name="sec_perf">Historique de performance</string>
+    <string name="src_oos">Test hors échantillon (données non vues à l\'entraînement)</string>
+    <string name="src_live">Suivi en direct (enregistré avant le résultat)</string>
+    <string name="src_paper">Trades papier depuis le redémarrage du serveur</string>
+    <string name="perf_trades">%1$d terminés · %2$d%% de réussite</string>
+    <string name="perf_avg">Gain moyen %1$s · perte moyenne %2$s</string>
+    <string name="perf_exp">Espérance %1$s · drawdown max %2$s (après coûts)</string>
+    <string name="perf_pending">%1$d en attente · %2$d jamais exécutés (non comptés)</string>
+    <string name="perf_none">Pas encore de trades terminés</string>
+    <string name="perf_hit_note">Heures : objectif atteint avant le stop. Semaine / mois : bonne direction après coûts.</string>
     <string name="r_w_up" formatted="false">haussière</string>
     <string name="r_w_down" formatted="false">baissière</string>
     <string name="r_w_neutral" formatted="false">neutre</string>

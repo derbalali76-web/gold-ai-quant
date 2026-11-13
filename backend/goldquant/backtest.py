@@ -66,6 +66,8 @@ class Report:
     max_drawdown: float
     sharpe_per_trade_annualized: float | None
     brier_multiclass: float | None
+    avg_win: float | None = None
+    avg_loss: float | None = None
     by_regime: dict = field(default_factory=dict)
     baseline: dict = field(default_factory=dict)
     warnings: list = field(default_factory=list)
@@ -161,7 +163,9 @@ def _metrics(trades: list[Trade], opportunities: int, signals: int, period: str,
                   round(wins / n, 4) if n else None, [round(ci[0], 4), round(ci[1], 4)] if n else None,
                   round(float(gp / gl), 3) if gl > 0 else None, round(float(pnl.mean()), 3) if n else None, ev_ci,
                   round(float(pnl.sum()), 2), round(dd, 2), sharpe,
-                  round(float(np.mean(briers)), 4) if briers else None, by, {}, warnings)
+                  round(float(np.mean(briers)), 4) if briers else None,
+                  round(float(pnl[pnl > 0].mean()), 3) if n and (pnl > 0).any() else None,
+                  round(float(pnl[pnl < 0].mean()), 3) if n and (pnl < 0).any() else None, by, {}, warnings)
 
 
 def run(m15: pd.DataFrame, h1: pd.DataFrame, h4: pd.DataFrame, final: bool = False, refit_days: int = 5,

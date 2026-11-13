@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.6.0",
+  "schema_version": "1.7.0",
   "decision_id": "cb73d7e963c9639d",
   "mode": "DEMO",
   "action": "WAIT",
@@ -340,7 +340,24 @@
       "trend": null,
       "probabilities_available": false,
       "live_resolved": 0,
-      "live_hits": 0
+      "live_hits": 0,
+      "plan": {
+        "setup": "WAIT_TO_BUY",
+        "recommendation": false,
+        "side": "BUY",
+        "order": "LIMIT",
+        "entry_low": null,
+        "entry_high": null,
+        "watch_price": 2108.35,
+        "stop_loss": null,
+        "target": null,
+        "reward_risk": null,
+        "expected_minutes": null,
+        "expected_days": null,
+        "valid_until_utc": null,
+        "invalidation_refs": []
+      },
+      "performance": []
     },
     {
       "horizon": "WEEK",
@@ -536,7 +553,24 @@
       },
       "probabilities_available": false,
       "live_resolved": 0,
-      "live_hits": 0
+      "live_hits": 0,
+      "plan": {
+        "setup": "WAIT",
+        "recommendation": false,
+        "side": null,
+        "order": null,
+        "entry_low": null,
+        "entry_high": null,
+        "watch_price": null,
+        "stop_loss": null,
+        "target": null,
+        "reward_risk": null,
+        "expected_minutes": null,
+        "expected_days": null,
+        "valid_until_utc": null,
+        "invalidation_refs": []
+      },
+      "performance": []
     },
     {
       "horizon": "MONTH",
@@ -751,10 +785,27 @@
       },
       "probabilities_available": false,
       "live_resolved": 0,
-      "live_hits": 0
+      "live_hits": 0,
+      "plan": {
+        "setup": "WAIT",
+        "recommendation": false,
+        "side": null,
+        "order": null,
+        "entry_low": null,
+        "entry_high": null,
+        "watch_price": null,
+        "stop_loss": null,
+        "target": null,
+        "reward_risk": null,
+        "expected_minutes": null,
+        "expected_days": null,
+        "valid_until_utc": null,
+        "invalidation_refs": []
+      },
+      "performance": []
     }
   ],
-  "audit_hash": "7034c82887abaa58b2b19d0f20894857639582a64cb19444eab609cba5ec2a5a",
+  "audit_hash": "51dc6f97f79b54f16d43011e8041e3179c05c67a046209ecf4eff558f9915dee",
   "supporting_evidence": [
     {
       "engine": "mtf_bias",

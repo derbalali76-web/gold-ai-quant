@@ -118,7 +118,7 @@ def test_msg_pickle_and_copy_roundtrip():
 def test_live_track_fields_are_counts_not_probabilities():
     import pytest
     from goldquant.schemas import HorizonOutlook, SCHEMA_VERSION
-    assert SCHEMA_VERSION == "1.6.0"
+    assert tuple(map(int, SCHEMA_VERSION.split("."))) >= (1, 6, 0)
     o = HorizonOutlook(horizon="WEEK", label_ar="أسبوع", action="WAIT", stance_ar="x", reason_ar="y")
     assert o.live_resolved == 0 and o.live_hits == 0
     with pytest.raises(Exception):

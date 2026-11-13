@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.6.0",
+  "schema_version": "1.7.0",
   "decision_id": "098d32e5d77c2ef8",
   "mode": "LIVE",
   "action": "UNAVAILABLE",
@@ -46,7 +46,7 @@
   "reevaluate_ar": [],
   "reevaluate_refs": [],
   "outlooks": [],
-  "audit_hash": "7eabf0963c0ff182c952dd9d53ee12b69cf62cf9831522d5e2e6505ad8a36b6c",
+  "audit_hash": "a19feb2452dc8789c63b0a396f98a5ae1dab101cbc2f710001a0b5c2439825b3",
   "supporting_evidence": [],
   "contrary_evidence": [],
   "invalidation_ar": [],

@@ -239,6 +239,24 @@
           ],
           "default": null
         },
+        "performance": {
+          "items": {
+            "$ref": "#/$defs/PerfStats"
+          },
+          "title": "Performance",
+          "type": "array"
+        },
+        "plan": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TradePlan"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
         "probabilities_available": {
           "default": false,
           "title": "Probabilities Available",
@@ -568,6 +586,110 @@
       "title": "Mode",
       "type": "string"
     },
+    "PerfStats": {
+      "additionalProperties": false,
+      "description": "Track record of one horizon from one source. Pending / never-filled signals are NOT counted as trades.",
+      "properties": {
+        "avg_loss": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Avg Loss"
+        },
+        "avg_win": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Avg Win"
+        },
+        "expectancy": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expectancy"
+        },
+        "hits": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Hits",
+          "type": "integer"
+        },
+        "max_drawdown": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Drawdown"
+        },
+        "not_filled": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Not Filled",
+          "type": "integer"
+        },
+        "pending": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Pending",
+          "type": "integer"
+        },
+        "period": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Period"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "trades": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Trades",
+          "type": "integer"
+        },
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source",
+        "unit"
+      ],
+      "title": "PerfStats",
+      "type": "object"
+    },
     "PriceLevel": {
       "additionalProperties": false,
       "properties": {
@@ -680,6 +802,18 @@
       "title": "ReasonRef",
       "type": "object"
     },
+    "Setup": {
+      "enum": [
+        "BUY_NOW",
+        "SELL_NOW",
+        "WAIT_TO_BUY",
+        "WAIT_TO_SELL",
+        "WAIT",
+        "UNAVAILABLE"
+      ],
+      "title": "Setup",
+      "type": "string"
+    },
     "SpotOrProxy": {
       "enum": [
         "SPOT",
@@ -689,6 +823,165 @@
       ],
       "title": "SpotOrProxy",
       "type": "string"
+    },
+    "TradePlan": {
+      "additionalProperties": false,
+      "description": "What the user can act on for ONE horizon (v1.7).\n\nrecommendation=True only for a LIVE, validated *_NOW plan. WAIT_TO_* is a WATCH level (where a setup would be\nlooked for), never a recommendation: it carries no stop or target, so it cannot be mistaken for a trade.",
+      "properties": {
+        "entry_high": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Entry High"
+        },
+        "entry_low": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Entry Low"
+        },
+        "expected_days": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Days"
+        },
+        "expected_minutes": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Minutes"
+        },
+        "invalidation_refs": {
+          "items": {
+            "$ref": "#/$defs/ReasonRef"
+          },
+          "title": "Invalidation Refs",
+          "type": "array"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order"
+        },
+        "recommendation": {
+          "default": false,
+          "title": "Recommendation",
+          "type": "boolean"
+        },
+        "reward_risk": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reward Risk"
+        },
+        "setup": {
+          "$ref": "#/$defs/Setup"
+        },
+        "side": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Side"
+        },
+        "stop_loss": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stop Loss"
+        },
+        "target": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target"
+        },
+        "valid_until_utc": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Valid Until Utc"
+        },
+        "watch_price": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Watch Price"
+        }
+      },
+      "required": [
+        "setup"
+      ],
+      "title": "TradePlan",
+      "type": "object"
     },
     "Uncertainty": {
       "additionalProperties": false,
@@ -1175,7 +1468,7 @@
       "title": "Reward Risk"
     },
     "schema_version": {
-      "default": "1.6.0",
+      "default": "1.7.0",
       "title": "Schema Version",
       "type": "string"
     },

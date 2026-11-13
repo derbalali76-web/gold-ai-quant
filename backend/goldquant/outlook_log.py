@@ -63,9 +63,15 @@ def resolve(records: list[dict], daily: pd.DataFrame) -> dict:
                              "hit": bool(r["tilt"] * ret - OL.ROUND_TRIP_COST > 0)})
         n = len(resolved)
         hits = sum(x["hit"] for x in resolved)
+        net = np.array([r["tilt"] * r["return"] - OL.ROUND_TRIP_COST for r in resolved]) * 100  # % after costs
+        eq = np.cumsum(net) if n else np.array([0.0])
         validated_only = [x for x in resolved if x["validated"]]
         out["horizons"][hz] = {
             "resolved": n, "hits": hits, "hit_rate": round(hits / n, 4) if n else None, "pending": pending,
+            "avg_win_pct": round(float(net[net > 0].mean()), 3) if (net > 0).any() else None,
+            "avg_loss_pct": round(float(net[net <= 0].mean()), 3) if (net <= 0).any() else None,
+            "expectancy_pct": round(float(net.mean()), 3) if n else None,
+            "max_drawdown_pct": round(float(np.max(np.maximum.accumulate(eq) - eq)), 3) if n else None,
             "resolved_validated": len(validated_only),
             "hit_rate_validated": (round(sum(x["hit"] for x in validated_only) / len(validated_only), 4)
                                    if validated_only else None),

@@ -179,6 +179,39 @@
     <string name="track_down">viés de baixa</string>
     <string name="track_hit">acerto</string>
     <string name="track_miss">erro</string>
+    <string name="pl_buy_now">Comprar agora em %1$s · alvo %2$s · stop %3$s</string>
+    <string name="pl_sell_now">Vender agora em %1$s · alvo %2$s · stop %3$s</string>
+    <string name="pl_wait_buy">Observação: aguardar para comprar perto de %1$s — não é recomendação</string>
+    <string name="pl_wait_sell">Observação: aguardar para vender perto de %1$s — não é recomendação</string>
+    <string name="pl_wait">Nenhuma oportunidade adequada agora</string>
+    <string name="pl_unavailable">Modelo não aprovado ou dados insuficientes</string>
+    <string name="pl_not_rec">Não é recomendação (demonstração ou não validado)</string>
+    <string name="pl_rec">Recomendação validada — apenas negociação simulada</string>
+    <string name="sec_plan">Plano de operação</string>
+    <string name="pl_setup">Situação</string>
+    <string name="su_buy_now">Comprar agora</string>
+    <string name="su_sell_now">Vender agora</string>
+    <string name="su_wait_buy">Aguardar para comprar</string>
+    <string name="su_wait_sell">Aguardar para vender</string>
+    <string name="su_wait">Aguardar</string>
+    <string name="su_unavailable">Indisponível</string>
+    <string name="pl_entry">Entrada</string>
+    <string name="pl_watch">Nível observado</string>
+    <string name="pl_rr">Retorno : risco</string>
+    <string name="pl_valid">Válida até</string>
+    <string name="pl_cancel">Cancelar o plano se</string>
+    <string name="pl_watch_note">Um nível observado é onde o sistema procuraria uma oportunidade. Não tem stop nem alvo e não é uma operação.</string>
+    <string name="pl_sell_note">VENDER significa abrir posição vendida (CFD ou futuros) OU vender ouro que você já possui. Não venda a descoberto se sua conta não permitir.</string>
+    <string name="sec_perf">Histórico de desempenho</string>
+    <string name="src_oos">Teste fora da amostra (dados não usados no treino)</string>
+    <string name="src_live">Acompanhamento ao vivo (registrado antes do resultado)</string>
+    <string name="src_paper">Operações simuladas desde a reinicialização do servidor</string>
+    <string name="perf_trades">%1$d concluídas · %2$d%% de acerto</string>
+    <string name="perf_avg">Ganho médio %1$s · perda média %2$s</string>
+    <string name="perf_exp">Expectativa %1$s · rebaixamento máx. %2$s (após custos)</string>
+    <string name="perf_pending">%1$d pendentes · %2$d nunca executadas (não contadas)</string>
+    <string name="perf_none">Ainda sem operações concluídas</string>
+    <string name="perf_hit_note">Horas: alvo antes do stop. Semana / mês: direção correta após custos.</string>
     <string name="r_w_up" formatted="false">de alta</string>
     <string name="r_w_down" formatted="false">de baixa</string>
     <string name="r_w_neutral" formatted="false">neutra</string>

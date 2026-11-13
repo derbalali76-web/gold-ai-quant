@@ -180,6 +180,39 @@
     <string name="track_down">lean down</string>
     <string name="track_hit">right</string>
     <string name="track_miss">wrong</string>
+    <string name="pl_buy_now">Buy now at %1$s · target %2$s · stop %3$s</string>
+    <string name="pl_sell_now">Sell now at %1$s · target %2$s · stop %3$s</string>
+    <string name="pl_wait_buy">Watch: wait to buy near %1$s — not a recommendation</string>
+    <string name="pl_wait_sell">Watch: wait to sell near %1$s — not a recommendation</string>
+    <string name="pl_wait">No suitable opportunity right now</string>
+    <string name="pl_unavailable">Model not approved or data insufficient</string>
+    <string name="pl_not_rec">Not a recommendation (demo or not validated)</string>
+    <string name="pl_rec">Validated recommendation — paper trading only</string>
+    <string name="sec_plan">Trade plan</string>
+    <string name="pl_setup">Setup</string>
+    <string name="su_buy_now">Buy now</string>
+    <string name="su_sell_now">Sell now</string>
+    <string name="su_wait_buy">Wait to buy</string>
+    <string name="su_wait_sell">Wait to sell</string>
+    <string name="su_wait">Wait</string>
+    <string name="su_unavailable">Unavailable</string>
+    <string name="pl_entry">Entry</string>
+    <string name="pl_watch">Watch level</string>
+    <string name="pl_rr">Reward : risk</string>
+    <string name="pl_valid">Valid until</string>
+    <string name="pl_cancel">Cancel the plan if</string>
+    <string name="pl_watch_note">A watch level is where the system would look for a setup. It has no stop or target and is not a trade.</string>
+    <string name="pl_sell_note">SELL means opening a short position (CFD or futures) OR selling gold you already own. Do not short unless your account allows it.</string>
+    <string name="sec_perf">Track record</string>
+    <string name="src_oos">Out-of-sample test (data the model did not train on)</string>
+    <string name="src_live">Live tracking (recorded before the outcome)</string>
+    <string name="src_paper">Paper trades since the server restarted</string>
+    <string name="perf_trades">%1$d completed · %2$d%% hit</string>
+    <string name="perf_avg">Avg win %1$s · avg loss %2$s</string>
+    <string name="perf_exp">Expectancy %1$s · max drawdown %2$s (after costs)</string>
+    <string name="perf_pending">%1$d pending · %2$d never filled (not counted)</string>
+    <string name="perf_none">No completed trades yet</string>
+    <string name="perf_hit_note">Hours: target reached before stop. Week / month: right direction after costs.</string>
     <string name="r_w_up" formatted="false">up</string>
     <string name="r_w_down" formatted="false">down</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

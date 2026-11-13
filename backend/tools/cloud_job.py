@@ -105,6 +105,11 @@ def collect(hs: HistoryStore) -> None:
     ctx = ContextService(hs, ROOT / "config" / "calendar.json", auto_calendar_path=auto_cal)
     ctx.refresh(now)
     outlook_forward_log(hs, now)
+    if key:
+        try:
+            hours_forward_log(hs, td, ctx, now)
+        except Exception as exc:  # noqa: BLE001 — never fatal for data collection
+            print("hours forward log failed:", exc)
     for r in hs.recent_fetches(40):
         print(r)
 
@@ -122,6 +127,43 @@ def outlook_forward_log(hs: HistoryStore, now: datetime) -> None:
     MODELS.mkdir(parents=True, exist_ok=True)
     (MODELS / "outlook_track.json").write_text(json.dumps(track, ensure_ascii=False, indent=1), encoding="utf-8")
     print("outlook log: +", len(new), {k: v["resolved"] for k, v in track["horizons"].items()})
+
+
+def hours_forward_log(hs: HistoryStore, td, ctx, now: datetime) -> None:
+    """Persistent paper ledger for the HOURS horizon, run by the hourly CI job with the same model and gates as the
+    server: every BUY/SELL is recorded before its outcome is known, then resolved on later M15 bars (pending orders that
+    never fill are NOT counted). Survives server restarts because it lives in the private repository."""
+    import shutil
+    import tempfile
+    from goldquant import paper as PAPER
+    from goldquant.engine import DecisionEngine
+    from goldquant.precision.production import PrecisionService
+    from goldquant.risk import EST_SLIPPAGE, EST_SPREAD
+    from goldquant.schemas import Mode
+    from goldquant.store import Store
+    state, _ = cloud.load_path_state(MODELS)
+    tmp = Path(tempfile.mkdtemp())
+    for f in ("precision_report.json", "promotions.json"):
+        if (MODELS / f).exists():
+            shutil.copy(MODELS / f, tmp / f)
+    log = MODELS / "hours_paper.jsonl"
+    ledger = PAPER.PaperLedger(":memory:")
+    if log.exists():
+        PAPER.import_rows(ledger, [json.loads(x) for x in log.read_text(encoding="utf-8").splitlines() if x.strip()])
+    eng = DecisionEngine(Store(":memory:"), precision=PrecisionService(tmp), ledger=ledger)
+    if state is not None:
+        eng.paths.set_prebuilt(state)
+    d = eng.decide(td, Mode.LIVE, now, ctx.snapshot(now))
+    ledger.record(d)
+    m15 = td.bars("M15", now, 2000)
+    if m15 is not None:
+        ledger.resolve(m15.df, now, cost=EST_SPREAD + EST_SLIPPAGE)  # results after estimated costs
+    rows = PAPER.export_rows(ledger)
+    log.write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows), encoding="utf-8")
+    st = PAPER.perf(rows)
+    (MODELS / "hours_track.json").write_text(json.dumps({"generated_at": now.isoformat(), "HOURS": st}, indent=1),
+                                            encoding="utf-8")
+    print("hours forward log:", d.action.value, st)
 
 
 BACKFILL_BUDGET = timedelta(minutes=70)  # the workflow is killed at 120 min: stop early and SAVE what we have
@@ -225,6 +267,17 @@ def research(hs: HistoryStore) -> None:
     (MODELS / "feature_upgrade.json").write_text(json.dumps(fu, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
     su = setups.evaluate(bars["M15"], bars["H1"], bars["H4"])
     (MODELS / "setups.json").write_text(json.dumps(su, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    try:  # out-of-sample walk-forward backtest of the HOURS rule (costs, realistic execution) for the app
+        from goldquant import backtest as BT
+        from goldquant.reliability.execution import ExecutionModel
+        bt = BT.run(bars["M15"], bars["H1"], bars["H4"], final=False, execution=ExecutionModel())
+        bt.pop("trade_pnls", None)
+        bt["dataset"] = label
+        (MODELS / "backtest_report.json").write_text(json.dumps(bt, ensure_ascii=False, indent=1, default=str),
+                                                     encoding="utf-8")
+        print("backtest:", {k: bt.get(k) for k in ("trades", "win_rate", "ev_per_trade", "max_drawdown")})
+    except Exception as exc:  # noqa: BLE001
+        print("backtest failed:", exc)
     daily = hs.load_bars("TwelveData", "XAU/USD", "D1", limit=10_000)
     (MODELS / "outlook_report.json").write_text(json.dumps(outlook_report(daily, "TwelveData D1"), ensure_ascii=False,
                                                            indent=1, default=str), encoding="utf-8")

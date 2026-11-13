@@ -34,6 +34,22 @@ data class Outlook(
     val warnings: List<Reason> = emptyList(), val facts: List<Reason> = emptyList(),
     val levels: Levels? = null, val trend: Trend? = null,
     val liveResolved: Int = 0, val liveHits: Int = 0,
+    val plan: Plan? = null, val performance: List<Perf> = emptyList(),
+)
+
+/** v1.7 trade plan of one horizon. A watch plan (WAIT_TO_*) never carries a stop or a target. */
+data class Plan(
+    val setup: String, val recommendation: Boolean, val side: String?, val entryLow: Double?, val entryHigh: Double?,
+    val watchPrice: Double?, val stop: Double?, val target: Double?, val rewardRisk: Double?,
+    val expectedMinutes: Int?, val expectedDays: Int?, val validUntil: Instant?, val invalidation: List<Reason>,
+) {
+    val isNow: Boolean get() = setup == "BUY_NOW" || setup == "SELL_NOW"
+}
+
+/** Track record from one source; trades = completed only. */
+data class Perf(
+    val source: String, val unit: String, val trades: Int, val hits: Int, val pending: Int, val notFilled: Int,
+    val avgWin: Double?, val avgLoss: Double?, val expectancy: Double?, val maxDrawdown: Double?, val period: String?,
 )
 
 data class HorizonProb(val minutes: Int, val pTarget: Double, val pStop: Double, val pNeither: Double, val qualified: Boolean)
@@ -306,9 +322,33 @@ object DecisionParser {
                 e.reason("stance_ref"), e.reason("reason_ref"), e.reason("validation_ref"), e.reason("method_ref"),
                 e.reasons("warnings_ref"), e.reasons("facts_ref"),
                 e.optJSONObject("levels")?.let { parseLevels(it) }, e.optJSONObject("trend")?.let { parseTrend(it) },
-                e.optInt("live_resolved", 0).coerceAtLeast(0), e.optInt("live_hits", 0).coerceAtLeast(0))
+                e.optInt("live_resolved", 0).coerceAtLeast(0), e.optInt("live_hits", 0).coerceAtLeast(0),
+                e.optJSONObject("plan")?.let { parsePlan(it) }, e.perfList("performance"))
         }
     }
+    private fun parsePlan(p: JSONObject): Plan? {
+        val setup = p.str("setup") ?: return null
+        if (setup !in setOf("BUY_NOW", "SELL_NOW", "WAIT_TO_BUY", "WAIT_TO_SELL", "WAIT", "UNAVAILABLE")) return null
+        val now = setup == "BUY_NOW" || setup == "SELL_NOW"
+        val plan = Plan(setup, p.optBoolean("recommendation", false) && now, p.str("side"), p.dbl("entry_low"),
+            p.dbl("entry_high"), p.dbl("watch_price"), if (now) p.dbl("stop_loss") else null, if (now) p.dbl("target") else null,
+            p.dbl("reward_risk"), if (p.isNull("expected_minutes")) null else p.optInt("expected_minutes"),
+            if (p.isNull("expected_days")) null else p.optInt("expected_days"), p.time("valid_until_utc"),
+            p.reasons("invalidation_refs"))
+        if (now && (plan.entryLow == null || plan.stop == null || plan.target == null)) return null
+        return plan
+    }
+
+    private fun JSONObject.perfList(k: String): List<Perf> {
+        val a: JSONArray = optJSONArray(k) ?: return emptyList()
+        return (0 until a.length()).mapNotNull { i ->
+            val e = a.optJSONObject(i) ?: return@mapNotNull null
+            Perf(e.optString("source"), e.optString("unit"), e.optInt("trades", 0).coerceAtLeast(0),
+                e.optInt("hits", 0).coerceAtLeast(0), e.optInt("pending", 0), e.optInt("not_filled", 0),
+                e.dbl("avg_win"), e.dbl("avg_loss"), e.dbl("expectancy"), e.dbl("max_drawdown"), e.str("period"))
+        }
+    }
+
     private fun JSONObject.horizons(k: String): List<HorizonProb> {
         val a: JSONArray = optJSONArray(k) ?: return emptyList()
         return (0 until a.length()).map {

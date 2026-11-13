@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.6.0",
+  "schema_version": "1.7.0",
   "decision_id": "3a5b56f1a06b91ab",
   "mode": "DEMO",
   "action": "BUY",
@@ -292,7 +292,58 @@
       "trend": null,
       "probabilities_available": true,
       "live_resolved": 0,
-      "live_hits": 0
+      "live_hits": 0,
+      "plan": {
+        "setup": "BUY_NOW",
+        "recommendation": false,
+        "side": "BUY",
+        "order": "MARKET",
+        "entry_low": 2115.39,
+        "entry_high": 2115.89,
+        "watch_price": null,
+        "stop_loss": 2112.27,
+        "target": 2119.01,
+        "reward_risk": 1.0,
+        "expected_minutes": 240,
+        "expected_days": null,
+        "valid_until_utc": "2025-12-31T16:15:00Z",
+        "invalidation_refs": [
+          {
+            "code": "iv.candle",
+            "args": [
+              {
+                "code": "w.below",
+                "args": [],
+                "text_ar": "تحت"
+              },
+              "2112.27"
+            ],
+            "text_ar": "إغلاق شمعة M15 تحت 2112.27"
+          },
+          {
+            "code": "iv.slope",
+            "args": [
+              {
+                "code": "w.buying",
+                "args": [],
+                "text_ar": "الشراء"
+              }
+            ],
+            "text_ar": "انقلاب ميل H1 ضد الشراء"
+          },
+          {
+            "code": "iv.news",
+            "args": [],
+            "text_ar": "صدور خبر اقتصادي عالي التأثير قبل الدخول"
+          },
+          {
+            "code": "iv.expired",
+            "args": [],
+            "text_ar": "انتهاء صلاحية الإشارة دون دخول ضمن النطاق"
+          }
+        ]
+      },
+      "performance": []
     },
     {
       "horizon": "WEEK",
@@ -488,7 +539,24 @@
       },
       "probabilities_available": false,
       "live_resolved": 0,
-      "live_hits": 0
+      "live_hits": 0,
+      "plan": {
+        "setup": "WAIT",
+        "recommendation": false,
+        "side": null,
+        "order": null,
+        "entry_low": null,
+        "entry_high": null,
+        "watch_price": null,
+        "stop_loss": null,
+        "target": null,
+        "reward_risk": null,
+        "expected_minutes": null,
+        "expected_days": null,
+        "valid_until_utc": null,
+        "invalidation_refs": []
+      },
+      "performance": []
     },
     {
       "horizon": "MONTH",
@@ -703,10 +771,27 @@
       },
       "probabilities_available": false,
       "live_resolved": 0,
-      "live_hits": 0
+      "live_hits": 0,
+      "plan": {
+        "setup": "WAIT",
+        "recommendation": false,
+        "side": null,
+        "order": null,
+        "entry_low": null,
+        "entry_high": null,
+        "watch_price": null,
+        "stop_loss": null,
+        "target": null,
+        "reward_risk": null,
+        "expected_minutes": null,
+        "expected_days": null,
+        "valid_until_utc": null,
+        "invalidation_refs": []
+      },
+      "performance": []
     }
   ],
-  "audit_hash": "b677a787115cb970ddac9cba56960ab327a00120f7090146dff36cd896b47ea8",
+  "audit_hash": "a1f82acee92331dd43aaf4fd43de3a5240d9f892edd5308bfa8e2a4dc3345f01",
   "supporting_evidence": [
     {
       "engine": "mtf_bias",

@@ -45,6 +45,7 @@ from .providers.live import LiveProvider
 from .providers.twelvedata import SYMBOL, TwelveDataProvider
 from .providers.xaus import XausSpot
 from .schemas import SCHEMA_VERSION, Decision, Mode
+from .risk import EST_SLIPPAGE, EST_SPREAD
 from .store import Store
 
 APP_VERSION = "0.3.0"
@@ -213,7 +214,7 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
         if live_provider is not None:
             b = live_provider.bars("M15", now, 2000)
             if b is not None:
-                paper.resolve(b.df, now)
+                paper.resolve(b.df, now, cost=EST_SPREAD + EST_SLIPPAGE)
                 shadow.resolve(b.df, now)
             if registry is not None:
                 st_ = paper.stats()
@@ -223,25 +224,48 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
         return d
 
     def attach_live_track(d: Decision) -> Decision:
-        """Fill each horizon's live forward record (never changes the decision itself)."""
+        """Fill each horizon's track record: live forward counts + performance blocks (never changes the decision)."""
         import json as _json
-        track = {}
-        for p in (repo_dir / "models" / "outlook_track.json", st.data_dir / "outlook_track.json"):
-            if p.exists():
-                try:
-                    track = _json.loads(p.read_text(encoding="utf-8")).get("horizons", {})
-                except Exception:  # noqa: BLE001
-                    track = {}
-                break
-        ps = paper.stats() if paper is not None else {}
+        from . import paper as PAPER
+        from .schemas import PerfStats
+
+        def jload(name):
+            for base in (repo_dir / "models", st.data_dir):
+                p = base / name
+                if p.exists():
+                    try:
+                        return _json.loads(p.read_text(encoding="utf-8"))
+                    except Exception:  # noqa: BLE001
+                        return None
+            return None
+        track = (jload("outlook_track.json") or {}).get("horizons", {})
+        hours_ci = (jload("hours_track.json") or {}).get("HOURS")
+        bt = jload("backtest_report.json") or {}
+        local = PAPER.perf(PAPER.export_rows(paper)) if paper is not None else None
         for o in d.outlooks:
+            perf = []
             if o.horizon == "HOURS":
-                n = int(ps.get("closed") or 0)
-                wr = ps.get("win_rate")
-                o.live_resolved, o.live_hits = n, int(round((wr or 0) * n))
+                if bt.get("trades"):
+                    perf.append(PerfStats(source="OOS_BACKTEST", unit="USD_OZ", trades=int(bt["trades"]),
+                                          hits=int(round((bt.get("win_rate") or 0) * bt["trades"])),
+                                          avg_win=bt.get("avg_win"), avg_loss=bt.get("avg_loss"),
+                                          expectancy=bt.get("ev_per_trade"), max_drawdown=bt.get("max_drawdown"),
+                                          period=f"{str(bt.get('start', ''))[:10]} → {str(bt.get('end', ''))[:10]}"))
+                live = hours_ci if hours_ci and (hours_ci.get("trades") or hours_ci.get("pending")) else local
+                if live:
+                    perf.append(PerfStats(source="LIVE_FORWARD" if live is hours_ci else "LIVE_PAPER", unit="USD_OZ",
+                                          **{k: live.get(k) for k in ("trades", "hits", "pending", "not_filled", "avg_win",
+                                                                      "avg_loss", "expectancy", "max_drawdown", "period")}))
+                    o.live_resolved, o.live_hits = int(live.get("trades") or 0), int(live.get("hits") or 0)
             elif o.horizon in track:
-                o.live_resolved = int(track[o.horizon].get("resolved") or 0)
-                o.live_hits = int(track[o.horizon].get("hits") or 0)
+                t = track[o.horizon]
+                o.live_resolved = int(t.get("resolved") or 0)
+                o.live_hits = int(t.get("hits") or 0)
+                perf.append(PerfStats(source="LIVE_FORWARD", unit="PCT", trades=o.live_resolved, hits=o.live_hits,
+                                      pending=int(t.get("pending") or 0), avg_win=t.get("avg_win_pct"),
+                                      avg_loss=t.get("avg_loss_pct"), expectancy=t.get("expectancy_pct"),
+                                      max_drawdown=t.get("max_drawdown_pct")))
+            o.performance = perf
         return d
 
     def refresh_live(force: bool = False) -> Decision:

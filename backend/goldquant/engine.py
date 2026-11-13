@@ -243,7 +243,12 @@ class DecisionEngine:
                         reason_short_ref=_ref(reason_ar), warning_ref=_ref(reason_ar), missing_refs=_refs(missing),
                         missing_data=[str(x) for x in (missing or [])], snapshot_hash=snap_hash, engines_used=["data_quality"])
 
-    def decide(self, provider: Optional[MarketDataProvider], mode: Mode, as_of: datetime,
+    def decide(self, provider: Optional[MarketDataProvider], mode: Mode, as_of: datetime, *args, **kwargs) -> Decision:
+        """The decision plus one trade plan per horizon (plans only re-express the decision; see plans.py)."""
+        from . import plans as PL
+        return PL.attach(self._decide(provider, mode, as_of, *args, **kwargs))
+
+    def _decide(self, provider: Optional[MarketDataProvider], mode: Mode, as_of: datetime,
                context: Optional[MarketContext] = None) -> Decision:
         max_age = MAX_QUOTE_AGE_S[mode]
         if provider is None:

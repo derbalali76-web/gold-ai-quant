@@ -179,6 +179,39 @@
     <string name="track_down">sesgo bajista</string>
     <string name="track_hit">acierto</string>
     <string name="track_miss">fallo</string>
+    <string name="pl_buy_now">Comprar ahora en %1$s · objetivo %2$s · stop %3$s</string>
+    <string name="pl_sell_now">Vender ahora en %1$s · objetivo %2$s · stop %3$s</string>
+    <string name="pl_wait_buy">Vigilancia: esperar para comprar cerca de %1$s — no es una recomendación</string>
+    <string name="pl_wait_sell">Vigilancia: esperar para vender cerca de %1$s — no es una recomendación</string>
+    <string name="pl_wait">No hay una oportunidad adecuada ahora</string>
+    <string name="pl_unavailable">Modelo no aprobado o datos insuficientes</string>
+    <string name="pl_not_rec">No es una recomendación (demo o no validado)</string>
+    <string name="pl_rec">Recomendación validada — solo trading en papel</string>
+    <string name="sec_plan">Plan de operación</string>
+    <string name="pl_setup">Situación</string>
+    <string name="su_buy_now">Comprar ahora</string>
+    <string name="su_sell_now">Vender ahora</string>
+    <string name="su_wait_buy">Esperar para comprar</string>
+    <string name="su_wait_sell">Esperar para vender</string>
+    <string name="su_wait">Esperar</string>
+    <string name="su_unavailable">No disponible</string>
+    <string name="pl_entry">Entrada</string>
+    <string name="pl_watch">Nivel vigilado</string>
+    <string name="pl_rr">Beneficio : riesgo</string>
+    <string name="pl_valid">Válida hasta</string>
+    <string name="pl_cancel">Cancelar el plan si</string>
+    <string name="pl_watch_note">Un nivel vigilado es donde el sistema buscaría una oportunidad. No tiene stop ni objetivo y no es una operación.</string>
+    <string name="pl_sell_note">VENDER significa abrir una posición corta (CFD o futuros) O vender oro que ya posees. No vendas en corto si tu cuenta no lo permite.</string>
+    <string name="sec_perf">Historial de rendimiento</string>
+    <string name="src_oos">Prueba fuera de muestra (datos no usados en el entrenamiento)</string>
+    <string name="src_live">Seguimiento en vivo (registrado antes del resultado)</string>
+    <string name="src_paper">Operaciones en papel desde el reinicio del servidor</string>
+    <string name="perf_trades">%1$d completadas · %2$d%% de acierto</string>
+    <string name="perf_avg">Ganancia media %1$s · pérdida media %2$s</string>
+    <string name="perf_exp">Esperanza %1$s · caída máxima %2$s (tras costes)</string>
+    <string name="perf_pending">%1$d pendientes · %2$d nunca ejecutadas (no contadas)</string>
+    <string name="perf_none">Aún no hay operaciones completadas</string>
+    <string name="perf_hit_note">Horas: objetivo antes del stop. Semana / mes: dirección correcta tras costes.</string>
     <string name="r_w_up" formatted="false">alcista</string>
     <string name="r_w_down" formatted="false">bajista</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

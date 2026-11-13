@@ -65,6 +65,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.goldaiquant.app.TrackItem
+import com.goldaiquant.app.Plan
+import com.goldaiquant.app.Perf
 import com.goldaiquant.app.Action
 import com.goldaiquant.app.ApiException
 import com.goldaiquant.app.Decision
@@ -469,18 +471,21 @@ private fun DecisionCard(c: HorizonCard, s: UiState, d: Decision, compact: Boole
                 Text(sub, color = TextDim, fontSize = 11.sp, maxLines = 2)
             }
             Text(horizonName(c.horizon), color = Gold, fontSize = 11.sp)
+            c.plan?.let { PlanLine(it, d) }
             if (s.decisionFromCache || expired) Text(stringResource(R.string.saved_decision), color = WaitGold, fontSize = 11.sp)
             when (c.action) {
                 Action.BUY, Action.SELL -> {
-                    val approx = if (c.horizon == "HOURS") "" else " ${stringResource(R.string.approx)}"
-                    if (c.horizon == "HOURS") KV(stringResource(R.string.l_entry), ltr("${c.entryLow!!.p2()} – ${c.entryHigh!!.p2()}"))
-                    else KV(stringResource(R.string.l_ref_price), c.entryLow!!.p2())
-                    KV(stringResource(R.string.l_stop) + approx, c.stop!!.p2())
-                    KV(stringResource(R.string.l_target) + approx, c.target!!.p2())
+                    if (c.plan?.isNow != true) { // the plan line above already states entry, target and stop
+                        val approx = if (c.horizon == "HOURS") "" else " ${stringResource(R.string.approx)}"
+                        if (c.horizon == "HOURS") KV(stringResource(R.string.l_entry), ltr("${c.entryLow!!.p2()} – ${c.entryHigh!!.p2()}"))
+                        else KV(stringResource(R.string.l_ref_price), c.entryLow!!.p2())
+                        KV(stringResource(R.string.l_stop) + approx, c.stop!!.p2())
+                        KV(stringResource(R.string.l_target) + approx, c.target!!.p2())
+                    }
                     KV(stringResource(R.string.l_duration), durationText(c))
                 }
                 Action.WAIT -> {
-                    c.waitForPrice?.let { KV(stringResource(R.string.l_reeval), it.p2()) }
+                    if (c.plan?.watchPrice == null) c.waitForPrice?.let { KV(stringResource(R.string.l_reeval), it.p2()) }
                     if (c.horizon == "HOURS") d.reevaluateRefs.take(if (compact) 1 else 2).forEach {
                         Text("• ${rt(it)}", color = TextMain, fontSize = 11.sp, maxLines = 2, overflow = TextOverflow.Ellipsis)
                     }
@@ -489,6 +494,89 @@ private fun DecisionCard(c: HorizonCard, s: UiState, d: Decision, compact: Boole
             }
         }
     }
+}
+
+// ---------------------------------------------------------------- trade plan (one clear line + details)
+@Composable
+private fun planHeadline(p: Plan): String {
+    val entry = p.entryLow?.let { lo -> p.entryHigh?.takeIf { it != lo }?.let { "${lo.p2()}–${it.p2()}" } ?: lo.p2() }
+    return when (p.setup) {
+        "BUY_NOW" -> stringResource(R.string.pl_buy_now, ltr(entry ?: "—"), ltr(p.target!!.p2()), ltr(p.stop!!.p2()))
+        "SELL_NOW" -> stringResource(R.string.pl_sell_now, ltr(entry ?: "—"), ltr(p.target!!.p2()), ltr(p.stop!!.p2()))
+        "WAIT_TO_BUY" -> stringResource(R.string.pl_wait_buy, ltr(p.watchPrice?.p2() ?: "—"))
+        "WAIT_TO_SELL" -> stringResource(R.string.pl_wait_sell, ltr(p.watchPrice?.p2() ?: "—"))
+        "UNAVAILABLE" -> stringResource(R.string.pl_unavailable)
+        else -> stringResource(R.string.pl_wait)
+    }
+}
+
+@Composable
+private fun PlanLine(p: Plan, d: Decision) {
+    val rec = p.recommendation && !d.isDemo
+    val color = when {
+        p.isNow && rec -> if (p.side == "SELL") SellRed else BuyGreen
+        p.isNow -> WaitGold
+        else -> TextMain
+    }
+    Text(planHeadline(p), color = color, fontSize = 13.sp, fontWeight = FontWeight.Bold, lineHeight = 17.sp)
+    if (p.isNow) Text(stringResource(if (rec) R.string.pl_rec else R.string.pl_not_rec),
+        color = if (rec) TextDim else WaitGold, fontSize = 10.sp)
+}
+
+@Composable
+private fun setupName(s: String): String = stringResource(when (s) {
+    "BUY_NOW" -> R.string.su_buy_now; "SELL_NOW" -> R.string.su_sell_now; "WAIT_TO_BUY" -> R.string.su_wait_buy
+    "WAIT_TO_SELL" -> R.string.su_wait_sell; "UNAVAILABLE" -> R.string.su_unavailable; else -> R.string.su_wait
+})
+
+@Composable
+private fun PlanSection(p: Plan, d: Decision) {
+    Section(stringResource(R.string.sec_plan))
+    KV(stringResource(R.string.pl_setup), setupName(p.setup))
+    Body(stringResource(if (p.isNow && p.recommendation && !d.isDemo) R.string.pl_rec else if (p.isNow) R.string.pl_not_rec else R.string.pl_watch_note),
+        if (p.isNow && p.recommendation && !d.isDemo) TextDim else WaitGold, 11.sp)
+    if (p.isNow) {
+        val lo = p.entryLow!!
+        KV(stringResource(R.string.pl_entry), ltr(p.entryHigh?.takeIf { it != lo }?.let { "${lo.p2()} – ${it.p2()}" } ?: lo.p2()))
+        KV(stringResource(R.string.l_target), p.target!!.p2())
+        KV(stringResource(R.string.l_stop), p.stop!!.p2())
+        p.rewardRisk?.let { KV(stringResource(R.string.pl_rr), ltr("${it.p2()} : 1")) }
+        val dur = p.expectedMinutes?.let { if (it % 60 == 0) stringResource(R.string.dur_hours, it / 60) else stringResource(R.string.dur_minutes, it) }
+            ?: p.expectedDays?.let { stringResource(R.string.dur_days, it) }
+        dur?.let { KV(stringResource(R.string.l_duration), it) }
+        p.validUntil?.let { KV(stringResource(R.string.pl_valid), ltr(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+            .withZone(java.time.ZoneId.systemDefault()).format(it))) }
+        if (p.invalidation.isNotEmpty()) {
+            Body(stringResource(R.string.pl_cancel), TextDim, 11.sp)
+            p.invalidation.take(4).forEach { Body("• ${rt(it)}", TextMain, 11.sp) }
+        }
+        if (p.side == "SELL") Body(stringResource(R.string.pl_sell_note), WaitGold, 11.sp)
+    } else if (p.watchPrice != null) {
+        KV(stringResource(R.string.pl_watch), p.watchPrice.p2())
+    }
+}
+
+@Composable
+private fun PerfSection(list: List<Perf>) {
+    Section(stringResource(R.string.sec_perf))
+    if (list.isEmpty() || list.all { it.trades == 0 && it.pending == 0 && it.notFilled == 0 }) {
+        Body(stringResource(R.string.perf_none), TextDim, 11.sp)
+    }
+    list.forEach { p ->
+        Body(stringResource(when (p.source) {
+            "OOS_BACKTEST" -> R.string.src_oos; "LIVE_PAPER" -> R.string.src_paper; else -> R.string.src_live
+        }), Gold, 12.sp)
+        val u = { v: Double? -> v?.let { if (p.unit == "PCT") String.format(Locale.US, "%+.2f%%", it) else String.format(Locale.US, "%+.2f $", it) } ?: "—" }
+        if (p.trades > 0) {
+            Body(stringResource(R.string.perf_trades, p.trades, Math.round(100.0 * p.hits / p.trades).toInt()), TextMain, 11.sp)
+            Body(stringResource(R.string.perf_avg, ltr(u(p.avgWin)), ltr(u(p.avgLoss))), TextMain, 11.sp)
+            Body(stringResource(R.string.perf_exp, ltr(u(p.expectancy)), ltr(u(p.maxDrawdown?.let { -kotlin.math.abs(it) }))), TextMain, 11.sp)
+            if (p.trades < 30) Body(stringResource(R.string.live_few), WaitGold, 11.sp)
+        } else Body(stringResource(R.string.perf_none), TextDim, 11.sp)
+        if (p.pending > 0 || p.notFilled > 0) Body(stringResource(R.string.perf_pending, p.pending, p.notFilled), TextDim, 11.sp)
+        p.period?.let { Body(ltr(it), TextDim, 10.sp) }
+    }
+    Body(stringResource(R.string.perf_hit_note), TextDim, 10.sp)
 }
 
 // ---------------------------------------------------------------- probabilities (tap = explanation)
@@ -739,6 +827,8 @@ private fun DetailsDialog(c: HorizonCard, d: Decision, onClose: () -> Unit) {
     DialogFrame(stringResource(R.string.details_dialog) + " · " + horizonName(c.horizon), onClose) {
         Section(stringResource(R.string.reason_title))
         Body(rt(c.reason))
+        c.plan?.let { PlanSection(it, d) }
+        PerfSection(c.performance)
         // trend
         c.trend?.let { t ->
             Section(stringResource(R.string.sec_trend))
