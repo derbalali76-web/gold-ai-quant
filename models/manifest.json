@@ -1,0 +1,8 @@
+{
+ "trained_at": "2026-11-13T16:39:40.494744+00:00",
+ "dataset": "LIVE HISTORY (TwelveData)",
+ "trained_until": "2026-11-13T16:30:00+00:00",
+ "qualified": false,
+ "reason": "المعايرة غير كافية (فجوة منحنى الموثوقية كبيرة)",
+ "n_oos": 4294
+}
