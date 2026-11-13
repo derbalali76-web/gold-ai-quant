@@ -230,6 +230,8 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
                 modifier = Modifier.fillMaxWidth().background(WaitGold, RoundedCornerShape(8.dp)).padding(vertical = 4.dp))
             AskButton(s.loading, compact, onAsk)
             s.error?.let { ErrorStrip(it, onAsk) }
+            if (d?.marketClosed == true) Text(stringResource(R.string.closed_last_session), color = WaitGold, fontSize = 12.sp,
+                textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
             if (d != null && card != null) {
                 HorizonsRow(d, selected, s.loading, gap, onHorizon)
                 Crossfade(targetState = card, animationSpec = tween(240), label = "horizon") { c ->

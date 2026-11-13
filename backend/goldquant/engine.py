@@ -243,6 +243,23 @@ class DecisionEngine:
                         reason_short_ref=_ref(reason_ar), warning_ref=_ref(reason_ar), missing_refs=_refs(missing),
                         missing_data=[str(x) for x in (missing or [])], snapshot_hash=snap_hash, engines_used=["data_quality"])
 
+    def _last_session_context(self, d: Decision, provider, bars: dict, counts: dict, as_of: datetime, quote) -> None:
+        """Market closed: keep the LAST session's trend and levels visible for planning. Context only — the
+        decision stays UNAVAILABLE and nothing here can create a trade."""
+        d.market_closed = True
+        if quote is None or not all(counts.get(tf, 0) >= n for tf, n in MIN_BARS.items()):
+            return
+        try:
+            fe = {tf: frame_features(df).iloc[-1] for tf, df in bars.items() if tf in ("M15", "M30", "H1", "H4")}
+            d.market_trend = MarketTrend(**market_trend(fe, "RANGE"))
+            lm = self.level_service.model((provider.meta.name, getattr(provider, "seed", None)), bars, as_of)
+            sr = compute_sr(bars, as_of, quote.price, lm)
+            d.levels = LevelsBlock(supports=sr["supports"], resistances=sr["resistances"], validated=sr["validated"],
+                                   atr_h1=sr["atr_h1"], method_note_ar=sr["method_note_ar"],
+                                   validation_ar=sr["validation"].get("reason_ar"))
+        except Exception:  # noqa: BLE001 — optional context
+            pass
+
     def decide(self, provider: Optional[MarketDataProvider], mode: Mode, as_of: datetime, *args, **kwargs) -> Decision:
         """The decision plus one trade plan per horizon (plans only re-express the decision; see plans.py)."""
         from . import plans as PL
@@ -296,17 +313,19 @@ class DecisionEngine:
                     provider.meta.name)
         audit = {"pit": None, "firewall": None}
 
-        def u(msg, missing=None):
+        def u(msg, missing=None, closed=False):
             audit["pit"] = pit.summary()
             d_u = self._unavailable(mode, provider, as_of, msg, fr, quote, missing=missing, snap_hash=snap_hash, spot=spot)
             d_u.outlooks = [hours_card(Action.UNAVAILABLE, msg, False, 0, None)] + outlooks
+            if closed:
+                self._last_session_context(d_u, provider, bars, counts, as_of, quote)
             return self._finish(d_u, audit)
         if corrupt:
             return u(Mg("un.corrupt"), corrupt)
         if quote is None:
             return u(Mg("un.no_quote"))
         if session == "CLOSED":
-            return u(Mg("un.closed"))
+            return u(Mg("un.closed"), closed=True)
         if not fresh:
             return u(Mg("un.stale", f"{age:.0f}"))
         short = [tf for tf, n in MIN_BARS.items() if counts.get(tf, 0) < n]

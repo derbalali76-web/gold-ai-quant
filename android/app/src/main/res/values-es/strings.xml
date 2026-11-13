@@ -212,6 +212,7 @@
     <string name="perf_pending">%1$d pendientes · %2$d nunca ejecutadas (no contadas)</string>
     <string name="perf_none">Aún no hay operaciones completadas</string>
     <string name="perf_hit_note">Horas: objetivo antes del stop. Semana / mes: dirección correcta tras costes.</string>
+    <string name="closed_last_session">Mercado cerrado — tendencia y niveles de la última sesión</string>
     <string name="r_w_up" formatted="false">alcista</string>
     <string name="r_w_down" formatted="false">bajista</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

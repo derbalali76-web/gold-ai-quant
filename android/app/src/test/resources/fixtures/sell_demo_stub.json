@@ -876,7 +876,8 @@
       "performance": []
     }
   ],
-  "audit_hash": "2da85ff861240336fd606948fd802588ebf5df7433efc1ea3adb1fd9c286f422",
+  "market_closed": false,
+  "audit_hash": "3109917737be249caaea3cc776d62cd8c7ba0720db754fbd3203f3046407c24c",
   "supporting_evidence": [
     {
       "engine": "mtf_bias",

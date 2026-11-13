@@ -116,6 +116,7 @@ data class Decision(
     val missingRefs: List<Reason> = emptyList(),
     val alternativeEntryNote: Reason? = null,
     val reevaluateRefs: List<Reason> = emptyList(),
+    val marketClosed: Boolean = false,
 ) {
     val isDemo: Boolean get() = mode == "DEMO"
 
@@ -198,6 +199,7 @@ object DecisionParser {
             quoteChangePct = o.dbl("quote_change_pct"),
             reevaluateAr = o.strings("reevaluate_ar"),
             outlooks = o.outlooks("outlooks"),
+            marketClosed = o.optBoolean("market_closed", false),
             reasonShort = o.reason("reason_short_ref"), waitFor = o.reason("wait_for_ref"), warning = o.reason("warning_ref"),
             invalidationRefs = o.reasons("invalidation_refs"), missingRefs = o.reasons("missing_refs"),
             alternativeEntryNote = o.reason("alternative_entry_note_ref"),

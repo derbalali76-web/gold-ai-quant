@@ -320,6 +320,8 @@ class Decision(BaseModel):
     reevaluate_ar: list[str] = Field(default_factory=list)
     reevaluate_refs: list[ReasonRef] = Field(default_factory=list)
     outlooks: list[HorizonOutlook] = Field(default_factory=list)
+    # v1.7: the market is closed (weekend / daily break); trend and levels are those of the LAST session, for planning
+    market_closed: bool = False
     audit_hash: Optional[str] = None
 
     supporting_evidence: list[Evidence] = Field(default_factory=list)

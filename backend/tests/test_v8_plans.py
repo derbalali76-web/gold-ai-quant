@@ -74,3 +74,15 @@ def test_outlook_track_reports_expectancy_and_drawdown():
     recs = [{"bar": idx[i].isoformat(), "horizon": "WEEK", "tilt": 1, "validated": False} for i in (0, 10, 20)]
     t = OLOG.resolve(recs, daily)["horizons"]["WEEK"]
     assert t["resolved"] == 3 and t["hits"] == 3 and t["expectancy_pct"] > 0 and t["max_drawdown_pct"] == 0
+
+
+def test_closed_market_keeps_last_session_context_but_never_trades():
+    from datetime import datetime, timezone
+    from goldquant.engine import DecisionEngine
+    from goldquant.providers.demo import DemoProvider
+    from goldquant.schemas import Mode
+    from goldquant.store import Store
+    d = DecisionEngine(Store()).decide(DemoProvider(), Mode.DEMO, datetime(2026, 11, 7, 12, tzinfo=timezone.utc))  # Saturday
+    assert d.action.value == "UNAVAILABLE" and d.market_closed
+    assert d.market_trend is not None
+    assert all(o.plan.setup.value != "BUY_NOW" and o.plan.setup.value != "SELL_NOW" for o in d.outlooks if o.horizon == "HOURS")

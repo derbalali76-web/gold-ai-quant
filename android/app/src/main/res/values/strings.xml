@@ -213,6 +213,7 @@
     <string name="perf_pending">%1$d pending · %2$d never filled (not counted)</string>
     <string name="perf_none">No completed trades yet</string>
     <string name="perf_hit_note">Hours: target reached before stop. Week / month: right direction after costs.</string>
+    <string name="closed_last_session">Market closed — trend and levels are from the last session</string>
     <string name="r_w_up" formatted="false">up</string>
     <string name="r_w_down" formatted="false">down</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

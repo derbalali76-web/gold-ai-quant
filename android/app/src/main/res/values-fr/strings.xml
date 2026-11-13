@@ -212,6 +212,7 @@
     <string name="perf_pending">%1$d en attente · %2$d jamais exécutés (non comptés)</string>
     <string name="perf_none">Pas encore de trades terminés</string>
     <string name="perf_hit_note">Heures : objectif atteint avant le stop. Semaine / mois : bonne direction après coûts.</string>
+    <string name="closed_last_session">Marché fermé — tendance et niveaux de la dernière séance</string>
     <string name="r_w_up" formatted="false">haussière</string>
     <string name="r_w_down" formatted="false">baissière</string>
     <string name="r_w_neutral" formatted="false">neutre</string>

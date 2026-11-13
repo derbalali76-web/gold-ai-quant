@@ -1248,6 +1248,11 @@
       ],
       "default": null
     },
+    "market_closed": {
+      "default": false,
+      "title": "Market Closed",
+      "type": "boolean"
+    },
     "market_regime": {
       "anyOf": [
         {

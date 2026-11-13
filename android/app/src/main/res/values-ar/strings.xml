@@ -212,6 +212,7 @@
     <string name="perf_pending">%1$d معلّقة · %2$d لم تتفعّل (غير محسوبة)</string>
     <string name="perf_none">لا صفقات مكتملة بعد</string>
     <string name="perf_hit_note">الساعات: الوصول إلى الهدف قبل الوقف. الأسبوع والشهر: الاتجاه الصحيح بعد التكاليف.</string>
+    <string name="closed_last_session">السوق مغلق — الاتجاه والمستويات من آخر جلسة</string>
     <string name="r_w_up" formatted="false">صاعد</string>
     <string name="r_w_down" formatted="false">هابط</string>
     <string name="r_w_neutral" formatted="false">محايد</string>
