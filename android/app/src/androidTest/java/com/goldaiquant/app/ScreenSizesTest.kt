@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -131,3 +133,4 @@ class ScreenSizesTest {
         assertTrue(shown(str(Lang.EN, R.string.details_dialog) + " · " + str(Lang.EN, R.string.h_hours)))
     }
 }
+
