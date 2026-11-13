@@ -30,9 +30,11 @@ jobs:
         env: { GH_TOKEN: "${{ github.token }}" }
         working-directory: ${{ github.workspace }}
         run: |
-          gh release delete latest-apk --cleanup-tag -y || true
-          gh release create latest-apk --title "Latest APK" --notes "Built from ${GITHUB_SHA::7}" \
-            android/app/build/outputs/apk/debug/*.apk android/app/build/outputs/apk/release/*.apk
+          FILES="android/app/build/outputs/apk/debug/app-debug.apk android/app/build/outputs/apk/release/app-release-unsigned.apk"
+          ls -la $FILES || FILES="$(ls android/app/build/outputs/apk/*/*.apk)"
+          gh release view latest-apk >/dev/null 2>&1 || gh release create latest-apk --title "Latest APK" --notes "Latest build" --target "$GITHUB_SHA"
+          gh release edit latest-apk --draft=false --latest --notes "Built from ${GITHUB_SHA::7}"
+          gh release upload latest-apk $FILES --clobber
       - uses: actions/upload-artifact@v4
         continue-on-error: true
         with:
