@@ -46,7 +46,8 @@ jobs:
         run: |
           git config user.name "gold-ai-quant-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add market_data models reports || true
+          # add each path separately: one missing path (e.g. reports/ before the first report) must not drop the rest
+          for p in market_data models reports; do [ -e "$p" ] && git add "$p"; done
           git diff --cached --quiet || git commit -m "data: ${{ steps.job.outputs.name }} $(date -u +%FT%TZ)"
           git push || (git pull --rebase && git push)
       - name: open the weekly report as an issue
