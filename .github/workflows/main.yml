@@ -1,5 +1,9 @@
 name: unzip-project
-on: workflow_dispatch
+on:
+  push:
+    paths:
+      - 'gold-ai-quant.zip'
+  workflow_dispatch:
 permissions:
   contents: write
 jobs:
@@ -7,8 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PUSH_TOKEN }}
       - run: |
-          unzip -q gold-ai-quant.zip
+          unzip -oq gold-ai-quant.zip
           rm gold-ai-quant.zip
           if [ -d gold-ai-quant ]; then
             cp -a gold-ai-quant/. .
@@ -17,5 +23,5 @@ jobs:
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add -A
-          git commit -m "Unpack project"
+          git commit -m "Unpack project" || exit 0
           git push
