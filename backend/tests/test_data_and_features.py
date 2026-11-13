@@ -29,7 +29,7 @@ def test_validate_rejects_corrupt_bars(demo_bars):
 
 def test_no_weekend_bars(demo_bars):
     idx = demo_bars["M15"].index
-    assert not ((idx.dayofweek == 5)).any()
+    assert not ((idx.day_of_week == 5)).any()
 
 
 def test_provider_returns_only_closed_bars(demo):

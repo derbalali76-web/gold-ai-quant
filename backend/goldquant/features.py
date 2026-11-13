@@ -67,7 +67,7 @@ def cusum_bars_since_break(close: pd.Series, h_mult: float = 5.0, vol_window: in
 
 def session_of(ts: pd.Timestamp) -> str:
     h = ts.hour
-    if ts.dayofweek == 5 or (ts.dayofweek == 6 and h < 22) or (ts.dayofweek == 4 and h >= 21):
+    if ts.day_of_week == 5 or (ts.day_of_week == 6 and h < 22) or (ts.day_of_week == 4 and h >= 21):
         return "CLOSED"
     if h == 21:
         return "DAILY_BREAK"

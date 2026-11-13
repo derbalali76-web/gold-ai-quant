@@ -13,7 +13,7 @@ dev = ["pytest>=8"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-q"
+addopts = "-q -p no:warnings"  # millions of library deprecation warnings made the summary hang CI
 
 [tool.setuptools]
 packages = ["goldquant", "goldquant.providers"]

@@ -25,7 +25,7 @@ def time_features(close_times: pd.DatetimeIndex) -> pd.DataFrame:
     out["min_since_london_open"] = np.clip((lmin - 8 * 60) / 60.0, -8, 12)
     out["min_since_ny_open"] = np.clip((nmin - (8 * 60 + 20)) / 60.0, -8, 12)
     out["near_london_pm_fix"] = (np.abs(lmin - 15 * 60) <= 30).astype(float)
-    dow = close_times.dayofweek.to_numpy()
+    dow = close_times.day_of_week.to_numpy()
     out["dow_sin"], out["dow_cos"] = np.sin(2 * np.pi * dow / 5), np.cos(2 * np.pi * dow / 5)
     out["month_end"] = (close_times.is_month_end | (close_times + pd.Timedelta(days=1)).is_month_end).astype(float)
     return out

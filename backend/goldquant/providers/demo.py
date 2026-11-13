@@ -36,7 +36,7 @@ TRANSITION = {  # per-M15-bar switch probabilities
 
 def _market_open(ts: pd.DatetimeIndex) -> np.ndarray:
     """Approximate spot-gold weekly session: closed Fri 21:00 UTC -> Sun 22:00 UTC, daily break 21:00-22:00."""
-    dow, hour = ts.dayofweek, ts.hour
+    dow, hour = ts.day_of_week, ts.hour
     weekend = (dow == 5) | ((dow == 4) & (hour >= 21)) | ((dow == 6) & (hour < 22))
     daily_break = hour == 21
     return ~(weekend | daily_break)

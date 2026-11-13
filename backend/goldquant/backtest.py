@@ -180,7 +180,7 @@ def run(m15: pd.DataFrame, h1: pd.DataFrame, h4: pd.DataFrame, final: bool = Fal
     lo_t, hi_t = (cut, times[-1]) if final else (times[int(len(times) * 0.35)], cut)
     period = "HOLDOUT (final)" if final else "DEVELOPMENT"
     sess = table["session"].to_numpy()
-    weekday, hour = times.weekday, times.hour
+    weekday, hour = times.day_of_week, times.hour
     near_weekly_close = (weekday == 4) & (hour >= 17)
     # volatility regime per bar (as-of, from M15 features)
     f15 = frame_features(m15)
