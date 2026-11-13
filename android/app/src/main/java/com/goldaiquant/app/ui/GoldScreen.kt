@@ -719,7 +719,8 @@ private fun DetailsDialog(c: HorizonCard, d: Decision, onClose: () -> Unit) {
         c.trend?.let { t ->
             Section(stringResource(R.string.sec_trend))
             Body("${trendLabel(t.direction)} · ${t.strength?.let { "$it/100" } ?: "—"}")
-            Body(t.perTimeframe.entries.joinToString("  ") { "${frameName(it.key)}: ${trendLabel(it.value)}" }, TextDim, 11.sp)
+            val perTf = t.perTimeframe.entries.map { frameName(it.key) + ": " + trendLabel(it.value) }
+            Body(perTf.joinToString("  "), TextDim, 11.sp)
         }
         // levels
         c.levels?.let { lv ->
