@@ -33,25 +33,29 @@ from .intel import analog as ANALOG
 from .intel import counterfactual as CF
 from .intel import liquidity_trap as TRAP
 from . import level_rules as LR
+from . import outlook as OL
+from .msg import M as Mg, cut_short, ref_dict as _ref_dict
 from .levels import LevelService, compute_levels as compute_sr
 from .trend import market_trend
 from .features import frame_features, session_of
 from .providers.base import MarketDataProvider
 from .regime import VOL_REGIME_AR, classify, volatility_regime
 from .risk import compute_levels, estimated_cost, stop_inside_structure
-from .schemas import (Action, CourtJudgement, DataFreshness, Decision, Evidence, HorizonProbability, Mode,
-                      SCHEMA_VERSION, SpotOrProxy, Uncertainty)
+from .schemas import (Action, CourtJudgement, DataFreshness, Decision, Evidence, HorizonOutlook, HorizonProbability, Mode,
+                      LevelsBlock, MarketTrend, PriceLevel, ReasonRef, SCHEMA_VERSION, SpotOrProxy, Uncertainty)
 from .store import Store
 
 MIN_BARS = {"M15": 600, "M30": 300, "H1": 200, "H4": 100}
 FETCH_BARS = {"M15": 20000, "M30": 10000, "H1": 5000, "H4": 1500}
+DAILY_BARS = 6000  # ~23 years of daily bars (Twelve Data: one call of outputsize 5000)
 MAX_QUOTE_AGE_S = {Mode.DEMO: 180.0, Mode.LIVE: 180.0}
 SIGNAL_VALIDITY = timedelta(minutes=15)
 PRIMARY_HORIZON = 240
 DRIFT_FEATURES = ["er20", "vr4", "vol_ratio", "range_z", "h1_er20", "h4_er20", "log_since_break"]
 ENGINES_ACTIVE = ["data_quality", "volatility_regime", "mtf_bias", "probabilistic_path", "adversarial_critic",
                   "liquidity_trap", "structural_break(CUSUM)", "model_drift_sentinel", "uncertainty_map",
-                  "historical_analog", "counterfactual", "anti_trade", "risk"]
+                  "historical_analog", "counterfactual", "anti_trade", "risk", "daily_trend_filter",
+                  "multi_horizon_outlook"]
 CONTEXT_ENGINES = ["news_propagation", "economic_calendar", "institutional_footprint(COT)", "macro(FRED)",
                    "etf_flows(GLD)", "gold_volatility(GVZ)"]
 
@@ -129,24 +133,84 @@ def _snapshot(provider, mode, as_of, quote, bars) -> tuple[str, dict]:
     return h, data
 
 
-def _reason(trend: dict, sr: dict | None, direction: int, blocker: str | None) -> str:
+def _reason(trend: dict, sr: dict | None, direction: int, blocker: str | None):
     """Exactly two short sentences: market context, then the deciding factor."""
     h4 = trend.get("per_timeframe", {}).get("H4", "محايد")
-    first = f"اتجاه H4 {h4} والاتجاه العام {trend['label_ar']}"
+    h4w = {"صاعد": "w.up", "هابط": "w.down", "محايد": "w.neutral"}.get(h4)
+    tail = Mg("w.none")
     if sr:
         s1 = sr["supports"][0] if sr["supports"] else None
         r1 = sr["resistances"][0] if sr["resistances"] else None
         if direction > 0 and s1:
-            first += f"، والسعر فوق الدعم {s1['price']:.2f}"
+            tail = Mg("rs.tail_above", f"{s1['price']:.2f}")
         elif direction < 0 and r1:
-            first += f"، والسعر تحت المقاومة {r1['price']:.2f}"
+            tail = Mg("rs.tail_below", f"{r1['price']:.2f}")
         elif s1 and r1:
-            first += f"، والسعر بين الدعم {s1['price']:.2f} والمقاومة {r1['price']:.2f}"
+            tail = Mg("rs.tail_between", f"{s1['price']:.2f}", f"{r1['price']:.2f}")
+    lbl = {"صاعد": "w.up", "هابط": "w.down", "عرضي": "w.sideways"}.get(trend["label_ar"])
+    first = Mg("rs.ctx", Mg(h4w) if h4w else h4, Mg(lbl) if lbl else trend["label_ar"], tail)
     if blocker is None:
-        second = "العائد المتوقع بعد التكاليف موجب، واجتازت الإشارة محكمة القرار"
+        second = Mg("rs.ok")
     else:
-        second = "ننتظر لأن " + blocker.split("؛")[0].split(" — ")[0].rstrip(".")
-    return f"{first}. {second}."
+        from .msg import Msg
+        if isinstance(blocker, Msg):
+            second = Mg("rs.wait", blocker)
+        else:
+            second = Mg("rs.wait", cut_short(blocker))
+    return Mg("rs.short", first, second)
+
+
+def _ref(x):
+    return None if x is None else ReasonRef(**_ref_dict(x))
+
+
+def _refs(xs):
+    return [r for r in (_ref(x) for x in (xs or [])) if r is not None]
+
+
+def daily_outlooks(daily, as_of: datetime, mode: Mode, context: Optional[MarketContext]) -> list:
+    """WEEK / MONTH cards from the fixed daily rules (see outlook.py). Hit rates only for validated LIVE rules."""
+    views = OL.compute(daily, as_of, synthetic=(mode == Mode.DEMO),
+                       upcoming_events=list(context.upcoming_events) if context is not None else None,
+                       macro=context.macro if context is not None else None)
+    out = []
+    for v in views:
+        show = v.validated and mode == Mode.LIVE and v.stats.hit_rate is not None
+        method = Mg("mt.daily", OL.OUTLOOK_VERSION, Mg(f"ru.{v.horizon.lower()}"), f"{OL.ROUND_TRIP_COST:.2%}")
+        lv = None
+        if v.levels:
+            lv = LevelsBlock(supports=[PriceLevel(**z) for z in v.levels["supports"]],
+                             resistances=[PriceLevel(**z) for z in v.levels["resistances"]],
+                             validated=False, method_note_ar=str(v.levels["method_ref"]))
+        out.append(HorizonOutlook(
+            horizon=v.horizon, label_ar=OL.LABEL_AR[v.horizon], action=Action(v.action), tilt=v.tilt,
+            stance_ar=v.stance_ar, reason_ar=v.reason_ar, validated=v.validated, validation_ar=v.validation_ar,
+            hit_rate=v.stats.hit_rate if show else None, base_rate=v.stats.base_rate if show else None,
+            samples=v.stats.n, horizon_days=OL.HORIZON_DAYS[v.horizon], entry_price=v.entry_price,
+            stop_loss=v.stop_loss, target=v.target, wait_for_price=v.wait_for_price,
+            method_ar=str(method), warnings_ar=[str(w) for w in v.warnings_ar],
+            stance_ref=_ref(v.stance_msg), reason_ref=_ref(v.reason_msg), validation_ref=_ref(v.validation_msg),
+            method_ref=_ref(method), warnings_ref=_refs(v.warnings_ar), facts_ref=_refs(v.facts),
+            levels=lv, trend=MarketTrend(**v.trend) if v.trend else None))
+    return out
+
+
+def hours_card(action: Action, reason: Optional[str], qualified: bool, direction: int,
+               wait_for_price: Optional[float]) -> HorizonOutlook:
+    """HOURS mirrors the main intraday decision (its levels and probabilities live on the Decision itself)."""
+    stance = Mg({Action.BUY: "st.buy", Action.SELL: "st.sell", Action.WAIT: "st.wait", Action.UNAVAILABLE: "st.na"}[action])
+    if action == Action.WAIT and direction:
+        stance = Mg("st.wait_lean_buy" if direction > 0 else "st.wait_lean_sell")
+    val = None if qualified else Mg("va.hours_unq")
+    method = Mg("mt.hours")
+    return HorizonOutlook(horizon="HOURS", label_ar=OL.LABEL_AR["HOURS"], action=action,
+                          tilt=direction if action != Action.UNAVAILABLE else 0, stance_ar=str(stance),
+                          reason_ar=reason or "", validated=qualified,
+                          validation_ar=None if val is None else str(val),
+                          wait_for_price=wait_for_price if action == Action.WAIT else None,
+                          method_ar=str(method), stance_ref=_ref(stance),
+                          reason_ref=_ref(reason) if reason else None, validation_ref=_ref(val), method_ref=_ref(method),
+                          probabilities_available=qualified and action in (Action.BUY, Action.SELL))
 
 
 def _level(flags: int) -> str:
@@ -175,8 +239,9 @@ class DecisionEngine:
                         quote=None if quote is None else quote.price,
                         quote_timestamp_utc=None if quote is None else quote.observed_at,
                         analyzed_at_utc=as_of, model_version=P.PATH_VERSION, data_freshness=freshness,
-                        data_quality="INSUFFICIENT", warning_ar=reason_ar, reason_short_ar=reason_ar,
-                        missing_data=missing or [], snapshot_hash=snap_hash, engines_used=["data_quality"])
+                        data_quality="INSUFFICIENT", warning_ar=str(reason_ar), reason_short_ar=str(reason_ar),
+                        reason_short_ref=_ref(reason_ar), warning_ref=_ref(reason_ar), missing_refs=_refs(missing),
+                        missing_data=[str(x) for x in (missing or [])], snapshot_hash=snap_hash, engines_used=["data_quality"])
 
     def decide(self, provider: Optional[MarketDataProvider], mode: Mode, as_of: datetime,
                context: Optional[MarketContext] = None) -> Decision:
@@ -184,8 +249,8 @@ class DecisionEngine:
         if provider is None:
             fr = DataFreshness(max_allowed_seconds=max_age, is_fresh=False)
             return self._finish(self._unavailable(
-                mode, None, as_of, "لم يُضبط مزوّد بيانات حي بعد. استخدم الوضع التجريبي أو أضف مفتاحاً مجانياً.",
-                fr, missing=["مزوّد سعر XAU/USD حي"]))
+                mode, None, as_of, Mg("un.no_provider"),
+                fr, missing=[Mg("md.no_provider")]))
         quote = provider.quote(as_of)
         age = None if quote is None else quote.age_seconds(as_of)
         bars, counts, corrupt = {}, {}, []
@@ -199,6 +264,18 @@ class DecisionEngine:
                     corrupt.append(f"{tf}: {exc}")
                     b = None
             counts[tf] = 0 if b is None else len(b.df)
+        daily = None
+        try:
+            db = provider.bars("D1", as_of, DAILY_BARS)
+            if db is not None:
+                db.validate()
+                daily = db.df
+        except Exception:  # noqa: BLE001 — daily history is optional context; never blocks or creates a trade
+            daily = None
+        try:
+            outlooks = daily_outlooks(daily, as_of, mode, context)
+        except Exception:  # noqa: BLE001 — optional layer
+            outlooks = []
         fresh = quote is not None and age is not None and 0 <= age <= max_age
         fr = DataFreshness(quote_age_seconds=age, max_allowed_seconds=max_age, is_fresh=fresh, bars_available=counts)
         snap_hash, snap = _snapshot(provider, mode, as_of, quote, bars)
@@ -216,19 +293,20 @@ class DecisionEngine:
 
         def u(msg, missing=None):
             audit["pit"] = pit.summary()
-            return self._finish(self._unavailable(mode, provider, as_of, msg, fr, quote, missing=missing,
-                                                  snap_hash=snap_hash, spot=spot), audit)
+            d_u = self._unavailable(mode, provider, as_of, msg, fr, quote, missing=missing, snap_hash=snap_hash, spot=spot)
+            d_u.outlooks = [hours_card(Action.UNAVAILABLE, msg, False, 0, None)] + outlooks
+            return self._finish(d_u, audit)
         if corrupt:
-            return u("بيانات المزوّد تالفة أو غير متسقة — رُفضت", corrupt)
+            return u(Mg("un.corrupt"), corrupt)
         if quote is None:
-            return u("لا يوجد سعر متاح من المزوّد")
+            return u(Mg("un.no_quote"))
         if session == "CLOSED":
-            return u("سوق الذهب الفوري مغلق حالياً (عطلة نهاية الأسبوع)")
+            return u(Mg("un.closed"))
         if not fresh:
-            return u(f"السعر قديم ({age:.0f} ثانية) — لا يُعتمد عليه")
+            return u(Mg("un.stale", f"{age:.0f}"))
         short = [tf for tf, n in MIN_BARS.items() if counts.get(tf, 0) < n]
         if short:
-            return u("بيانات تاريخية غير كافية للتحليل", [f"شموع {tf}" for tf in short])
+            return u(Mg("un.insufficient"), [f"شموع {tf}" for tf in short])
 
         # ---------------- features & regimes
         feats = {tf: frame_features(df) for tf, df in bars.items()}
@@ -242,14 +320,14 @@ class DecisionEngine:
                              session not in ("CLOSED", "DAILY_BREAK"))
         audit["firewall"] = {"blocking": fw.blocking, "warnings": fw.warnings, "checks": fw.checks}
         if not fw.passed:
-            return u("جدار جودة البيانات: " + fw.blocking[0], fw.blocking)
+            return u(Mg("un.firewall", fw.blocking[0]), fw.blocking)
 
         # ---------------- multi-timeframe bias (direction only — never used as a probability)
         tf_votes = []
         for tf, row in (("H4", r4), ("H1", r1)):
             if abs(row["slope_ema50_atr"]) > 0.1:
                 s = float(np.sign(row["slope_ema50_atr"]))
-                tf_votes.append((s, f"ميل متوسط 50 على {tf} {'صاعد' if s > 0 else 'هابط'} (كفاءة الاتجاه {row['er20']:.2f})"))
+                tf_votes.append((s, Mg("ev.mtf_slope", tf, Mg("w.up") if s > 0 else Mg("w.down"), f"{row['er20']:.2f}")))
         score = float(bias_score(r4["slope_ema50_atr"], r1["slope_ema50_atr"], r30["dist_ema20_atr"],
                                  r15["ret_16"], regime.vr))
         direction = int(bias_direction(score))
@@ -257,12 +335,10 @@ class DecisionEngine:
         contrary = [Evidence(engine="mtf_bias", weight=-0.5, text_ar=t) for s, t in tf_votes if not (direction and s == direction)]
 
         missing = (list(context.missing) if context is not None else
-                   ["بيانات الماكرو (FRED) غير متصلة", "تقويم الأحداث الاقتصادية غير متصل",
-                    "تقارير COT غير متصلة", "خلاصات الأخبار الرسمية غير متصلة"])
-        missing += ["إجماع التوقعات الاقتصادية غير متاح مجاناً (محركات Expectation Gap/Priced-In/Missing Reaction معطّلة)",
-                    "عمق السوق وتدفق الأوامر المؤسسي غير متاح مجاناً (ولن يُدّعى)"]
+                   [Mg("md.macro"), Mg("md.calendar"), Mg("md.cot"), Mg("md.news_feeds")])
+        missing += [Mg("md.no_consensus"), Mg("md.no_depth")]
         if mode == Mode.DEMO:
-            missing.insert(0, "وضع تجريبي: الأسعار اصطناعية وليست سعر السوق")
+            missing.insert(0, Mg("md.demo"))
 
         # ---------------- probabilistic path
         ps = self.paths.get(provider, as_of, bars)
@@ -293,6 +369,12 @@ class DecisionEngine:
                                                          float(r15["swing_low_12"]), float(r15["swing_high_12"])))
         crit = review(direction, r15, r4, regime, session, inside, minutes_to_weekly_close(as_of))
         contrary.extend(crit.contrary)
+        d_trend = OL.daily_trend(daily, as_of)
+        if direction and d_trend and d_trend != direction:
+            crit.vetoes.append(Mg("ve.daily_trend"))
+        elif direction and d_trend == direction:
+            support.append(Evidence(engine="daily_trend_filter", weight=0.3,
+                                    text_ar=Mg("ev.daily_ok")))
 
         # ---------------- market trend (score, not probability) + support/resistance strength engine
         trend = market_trend({"M15": r15, "M30": r30, "H1": r1, "H4": r4}, vreg)
@@ -301,7 +383,7 @@ class DecisionEngine:
             lm = self.level_service.model((provider.meta.name, getattr(provider, "seed", None)), bars, as_of)
             sr = compute_sr(bars, as_of, price, lm)
         except Exception as exc:  # noqa: BLE001 — levels are optional context; failure never creates a trade
-            missing.append(f"تعذّر حساب الدعوم والمقاومات: {str(exc)[:80]}")
+            missing.append(Mg("md.levels_failed", str(exc)[:80]))
         lvl_eff = LR.apply(direction, price, levels.stop_loss if levels else None, levels.tp1 if levels else None, sr) if sr else None
         if lvl_eff:
             crit.vetoes.extend(lvl_eff.vetoes)
@@ -313,29 +395,25 @@ class DecisionEngine:
         # ---------------- liquidity trap (price-shape inference)
         for ev_t in TRAP.scan(bars["M15"]):
             e = Evidence(engine="liquidity_trap", weight=0.3 if ev_t.implied_sign == direction else -0.3,
-                         text_ar=f"{ev_t.text_ar} عند {ev_t.level:.2f} (قبل {ev_t.bars_ago} شمعة)")
+                         text_ar=Mg("ev.trap", ev_t.text_ar, f"{ev_t.level:.2f}", ev_t.bars_ago))
             (support if direction and ev_t.implied_sign == direction else contrary).append(e)
 
         # ---------------- context: calendar / news embargo, COT, macro
         if context is not None:
             for name in context.embargo_events:
-                crit.vetoes.append(f"حدث اقتصادي عالي التأثير خلال ±30 دقيقة: {name}")
+                crit.vetoes.append(Mg("ve.calendar", name))
             for src, title, _ in context.recent_news[:2]:
-                crit.vetoes.append(f"خبر عالي التأثير قبل أقل من 30 دقيقة ({src}): {title[:80]}")
+                crit.vetoes.append(Mg("ve.news", src, title[:80]))
             fp = context.footprint
             if fp and direction:
                 if fp["crowded"] == ("LONG" if direction > 0 else "SHORT"):
-                    contrary.append(Evidence(engine="institutional_footprint", weight=-0.3, text_ar=(
-                        f"مراكز المضاربين (Managed Money) مزدحمة في نفس الاتجاه — مئين {fp['percentile_3y']:.0%} "
-                        f"(تقرير {fp['report_date']}، أسبوعي ومتأخر)")))
+                    contrary.append(Evidence(engine="institutional_footprint", weight=-0.3, text_ar=Mg("ev.cot_same", f"{fp['percentile_3y']:.0%}", fp['report_date'])))
                 elif fp["crowded"]:
-                    support.append(Evidence(engine="institutional_footprint", weight=0.2, text_ar=(
-                        f"مراكز المضاربين مزدحمة عكس الاتجاه — مجال لتغطية المراكز (COT {fp['report_date']})")))
+                    support.append(Evidence(engine="institutional_footprint", weight=0.2, text_ar=Mg("ev.cot_opp", fp['report_date'])))
             ry = context.macro.get("DFII10")
             if ry and direction and abs(ry["change_5obs"]) >= 0.10:
                 rising = ry["change_5obs"] > 0
-                txt = (f"العائد الحقيقي 10 سنوات {'ارتفع' if rising else 'انخفض'} {abs(ry['change_5obs']):.2f} نقطة "
-                       f"في آخر 5 قراءات (FRED، يومي) — علاقة تاريخية عكسية مع الذهب، ليست قاعدة ثابتة")
+                txt = Mg("ev.real_yield", Mg("w.rose") if rising else Mg("w.fell"), f"{abs(ry['change_5obs']):.2f}")
                 favourable = (not rising) if direction > 0 else rising
                 (support if favourable else contrary).append(
                     Evidence(engine="macro", weight=0.2 if favourable else -0.2, text_ar=txt))
@@ -343,15 +421,13 @@ class DecisionEngine:
             if fl and direction and abs(fl["change_5d_z"]) >= 1.5:
                 inflow = fl["change_5d"] > 0
                 fav = inflow if direction > 0 else not inflow
-                (support if fav else contrary).append(Evidence(engine="etf_flows", weight=0.2 if fav else -0.2, text_ar=(
-                    f"صندوق GLD {'أضاف' if inflow else 'خفّض'} {abs(fl['change_5d']):.1f} طن في 5 أيام "
-                    f"(z={fl['change_5d_z']:.1f}، يومي معلن، {fl['as_of_date']})")))
+                (support if fav else contrary).append(Evidence(engine="etf_flows", weight=0.2 if fav else -0.2, text_ar=Mg("ev.etf", Mg("w.added") if inflow else Mg("w.cut"), f"{abs(fl['change_5d']):.1f}",
+                                                                                 f"{fl['change_5d_z']:.1f}", fl['as_of_date'])))
             gvz = context.macro.get("GVZCLS")
             if gvz and gvz["value"] and gvz["change_5obs"] / max(gvz["value"] - gvz["change_5obs"], 1e-6) >= 0.15:
-                contrary.append(Evidence(engine="gvz", weight=-0.2, text_ar=(
-                    f"مؤشر تقلب الذهب المتوقع GVZ ارتفع بقوة إلى {gvz['value']:.1f} — حركات أعنف وأقل قابلية للتنبؤ")))
+                contrary.append(Evidence(engine="gvz", weight=-0.2, text_ar=Mg("ev.gvz", f"{gvz['value']:.1f}")))
             if any("تعارض" in w for w in getattr(quote, "warnings", [])):
-                crit.vetoes.append("تعارض بين مصدري السعر — البيانات مشكوك فيها")
+                crit.vetoes.append(Mg("ve.price_conflict"))
 
         # ---------------- historical analogs (descriptive)
         analog = None
@@ -363,8 +439,8 @@ class DecisionEngine:
                 analog = ANALOG.analogs(ps.ds, qrow, direction, as_of)
         if analog:
             nb = analog["neighbours"]
-            txt = (f"أقرب {analog['k']} حالة تاريخية مشابهة: الهدف أولاً {nb['target_first']:.0%}، الوقف أولاً "
-                   f"{nb['stop_first']:.0%} (وصفي، غير معاير" + ("، بيانات اصطناعية)" if mode == Mode.DEMO else ")"))
+            txt = Mg("ev.analog", analog['k'], f"{nb['target_first']:.0%}", f"{nb['stop_first']:.0%}",
+                     Mg("w.syn_tail") if mode == Mode.DEMO else Mg("w.none"))
             good = nb["target_first"] > nb["stop_first"]
             (support if good else contrary).append(Evidence(engine="historical_analog", weight=0.2 if good else -0.2, text_ar=txt))
 
@@ -379,10 +455,10 @@ class DecisionEngine:
                 except Exception:  # noqa: BLE001 — a failing optional layer must never produce a trade
                     pe = None
                     if promoted:
-                        crit.vetoes.append("تعذّر تشغيل طبقة الدقة المعتمدة — انتظار احترازي")
+                        crit.vetoes.append(Mg("ve.precision_failed"))
             for rule in sorted(promoted):
                 if pe is None or not pe["accept"].get(rule, False):
-                    crit.vetoes.append(f"رفضتها طبقة الدقة المعتمدة ({rule})")
+                    crit.vetoes.append(Mg("ve.precision_reject", rule))
         if cal_ok and pe is not None:
             p_main = np.array([pe["p_tp_cal"], pe["p_sl_cal"], pe["p_none_cal"]])
         if self.registry is not None and self.registry.safe_mode:
@@ -466,15 +542,15 @@ class DecisionEngine:
             alt = min(price - 0.5 * atr15, ema20) if direction > 0 else max(price + 0.5 * atr15, ema20)
             if lvl_eff and lvl_eff.better_entry is not None:
                 alt = lvl_eff.better_entry
-                alt_note = "حافة أقرب منطقة " + ("دعم" if direction > 0 else "مقاومة") + " — دخول أفضل من السعر الحالي"
+                alt_note = Mg("alt.edge", Mg("w.support") if direction > 0 else Mg("w.resistance"))
             else:
-                alt_note = "مستوى ارتداد هيكلي أفضل للدخول"
+                alt_note = Mg("alt.structural")
             alt_price = round(crit.wait_for_price or alt, 2)
             cf = CF.compare(ps.fwd, direction, abs(price - alt_price) / atr15, 2.0, as_of) if ps.fwd is not None else None
             if cf:
-                alt_note += (f"؛ تاريخياً وصله السعر خلال ساعة في {cf['fill_probability']:.0%} من الحالات، "
-                             f"وابتعد السعر نحو الهدف دون العودة إليه في {cf['missed_move_probability']:.0%} "
-                             f"(n={cf['n']}، تكرار غير معاير" + ("، بيانات اصطناعية)" if mode == Mode.DEMO else ")"))
+                alt_note = Mg("alt.note", alt_note, Mg("alt.fill", f"{cf['fill_probability']:.0%}",
+                                                      f"{cf['missed_move_probability']:.0%}", cf['n'],
+                                                      Mg("w.syn_tail") if mode == Mode.DEMO else Mg("w.none")))
 
         # ---------------- probabilities for display: LIVE + qualified only (schema also enforces it)
         rep = ps.models.reports.get(PRIMARY_HORIZON) if ps.models else None
@@ -508,7 +584,8 @@ class DecisionEngine:
                                 + ("; calibrated (isotonic/Platt OvR) on the latest window" if show else "")),
             probability_reliability_ar=reliability,
             calibration_sample_count=rep.n_oos if (show and rep) else 0,
-            alternative_entry_price=alt_price, alternative_entry_note_ar=alt_note, court=court,
+            alternative_entry_price=alt_price, alternative_entry_note_ar=None if alt_note is None else str(alt_note),
+            alternative_entry_note_ref=_ref(alt_note), court=court,
             engines_used=ENGINES_ACTIVE + ["market_trend", "support_resistance"] + (CONTEXT_ENGINES if context is not None else []),
             market_trend=trend, quote_change=q_change,
             quote_change_pct=round(100 * q_change / (price - q_change), 3) if q_change is not None and price != q_change else None,
@@ -517,6 +594,7 @@ class DecisionEngine:
                 "atr_h1": sr["atr_h1"], "method_note_ar": sr["method_note_ar"],
                 "validation_ar": sr["validation"].get("reason_ar")},
             reevaluate_ar=(lvl_eff.reevaluate_ar if lvl_eff else []),
+            reevaluate_refs=_refs(lvl_eff.reevaluate_ar if lvl_eff else []),
             expected_net_return=round(ev, 2) if (show and ev is not None) else None)
         if show:
             common.update(probability_target_before_stop=round(float(p_main[0]), 4),
@@ -528,21 +606,26 @@ class DecisionEngine:
         if rejections:
             short = _reason(trend, sr, direction, rejections[0])
             d = Decision(decision_id=did, action=Action.WAIT, reason_short_ar=short,
-                         wait_for_ar=crit.wait_for_ar or "انتظر حتى تزول أسباب الرفض أو يصل السعر إلى المستوى البديل",
-                         wait_for_price=alt_price, warning_ar="قرار مكرر" if dup else None, **common)
+                         wait_for_ar=crit.wait_for_ar or Mg("wf.default"), wait_for_ref=_ref(crit.wait_for_ar or Mg("wf.default")),
+                         reason_short_ref=_ref(short), warning_ref=_ref(Mg("wn.duplicate")) if dup else None,
+                         missing_refs=_refs(missing),
+                         wait_for_price=alt_price, warning_ar=str(Mg("wn.duplicate")) if dup else None,
+                         outlooks=[hours_card(Action.WAIT, short, ps.qualified, direction, alt_price)] + outlooks,
+                         **common)
             return self._finish(d, audit)
 
         act = Action.BUY if direction > 0 else Action.SELL
         side_ar = "شراء" if direction > 0 else "بيع"
         short = _reason(trend, sr, direction, None)
-        inval = [f"إغلاق شمعة M15 {'تحت' if direction > 0 else 'فوق'} {levels.stop_loss:.2f}",
-                 f"انقلاب ميل H1 ضد {side_ar}", "صدور خبر اقتصادي عالي التأثير قبل الدخول",
-                 "انتهاء صلاحية الإشارة دون دخول ضمن النطاق"]
+        inval = [Mg("iv.candle", Mg("w.below") if direction > 0 else Mg("w.above"), f"{levels.stop_loss:.2f}"),
+                 Mg("iv.slope", Mg("w.buying") if direction > 0 else Mg("w.selling")), Mg("iv.news"), Mg("iv.expired")]
         d = Decision(decision_id=did, action=act, entry_min=levels.entry_min, entry_max=levels.entry_max,
                      stop_loss=levels.stop_loss, tp1=levels.tp1, tp2=levels.tp2, tp3=levels.tp3,
                      horizon_minutes=PRIMARY_HORIZON, valid_until_utc=as_of + SIGNAL_VALIDITY,
                      reward_risk=levels.reward_risk_tp1, invalidation_ar=inval, reason_short_ar=short,
-                     warning_ar="إشارة بحثية للتداول الورقي فقط — ليست نصيحة استثمارية ولا تُنفَّذ تلقائياً",
+                     warning_ar=str(Mg("wn.paper")), warning_ref=_ref(Mg("wn.paper")), reason_short_ref=_ref(short),
+                     invalidation_refs=_refs(inval), missing_refs=_refs(missing),
+                     outlooks=[hours_card(act, short, ps.qualified, direction, None)] + outlooks,
                      **common)
         return self._finish(d, audit)
 

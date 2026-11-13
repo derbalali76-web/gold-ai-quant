@@ -9,6 +9,7 @@ expected value after costs. Anything missing => WAIT.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from ..msg import M
 
 MIN_INDEPENDENT_ENGINES = 2
 
@@ -23,13 +24,13 @@ class Judgement:
 def evidence_judge(firewall, pit_summary: dict, supporting: list, contrary: list) -> Judgement:
     r = list(firewall.blocking)
     if not pit_summary.get("passed", False):
-        r.append(f"مدخلات غير متاحة وقت القرار: {[v['input'] for v in pit_summary.get('violations', [])]}")
+        r.append(M("ct.pit", str([v['input'] for v in pit_summary.get('violations', [])])))
     engines = {e.engine for e in supporting}
     if len(engines) < MIN_INDEPENDENT_ENGINES:
-        r.append(f"أدلة مستقلة غير كافية ({len(engines)} محرك؛ المطلوب {MIN_INDEPENDENT_ENGINES})")
+        r.append(M("ct.few_evidence", len(engines), MIN_INDEPENDENT_ENGINES))
     s_w, c_w = sum(abs(e.weight) for e in supporting), sum(abs(e.weight) for e in contrary)
     if c_w >= s_w:
-        r.append("الأدلة المعاكسة لا تقل عن الأدلة الداعمة")
+        r.append(M("ct.contrary"))
     return Judgement("evidence", not r, r)
 
 

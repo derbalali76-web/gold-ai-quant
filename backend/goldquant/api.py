@@ -85,7 +85,9 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
     cloud_on = bool(cs["repo"] and cs["token"]) and not mem
     repo_dir = st.data_dir / "repo"
     if context is None and st.context_enabled and not mem:
-        context = ContextService(history, (repo_dir / "config" / "calendar.json") if cloud_on else st.data_dir / "calendar.json")
+        context = ContextService(history, (repo_dir / "config" / "calendar.json") if cloud_on else st.data_dir / "calendar.json",
+                                 auto_calendar_path=(repo_dir / "models" / "calendar_auto.json") if cloud_on
+                                 else st.data_dir / "calendar_auto.json")
     sync_state = {"last": 0.0, "ok": None, "error": None, "counts": {}, "model": None, "running": False}
     sync_done = threading.Event()
 
@@ -174,7 +176,18 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
                           "stored_bars": {tf: history.count_bars("TwelveData", SYMBOL, tf) for tf in ("M15", "H1", "H4")},
                           "last_cross_check": live_provider.last_cross_check})
         ver = st.data_dir / "verification.json"
+        import json as _json
+        auto = (repo_dir / "models" / "calendar_auto.json") if cloud_on else st.data_dir / "calendar_auto.json"
+        cal_info = {"status": "لم يُولَّد بعد — يُنشأ عند أول تشغيل collect"}
+        if auto.exists():
+            try:
+                o = _json.loads(auto.read_text(encoding="utf-8"))
+                cal_info = {"updated_at": o.get("updated_at"), "sources": o.get("sources"),
+                            "next_events": [e for e in o.get("events", []) if e["time_utc"] >= utcnow().isoformat()[:19]][:6]}
+            except ValueError:
+                cal_info = {"status": "ملف التقويم التلقائي تالف"}
         return {"providers": provs, "live_provider_configured": live_provider is not None,
+                "economic_calendar": cal_info,
                 "context_enabled": context is not None,
                 "verification": ver.read_text(encoding="utf-8") if ver.exists() else "لم يُشغَّل فحص العقود الحي بعد",
                 "recent_fetches": history.recent_fetches(30),
@@ -332,6 +345,34 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
             aux = {k: v for k, v in aux.items() if len(v) > 1000}
             return compare(bars["M15"], bars["H1"], bars["H4"], aux or None, dataset_label=label)
         return cached("feature_upgrade", build)
+
+    @app.get("/research/outlook", dependencies=[Depends(auth)])
+    def research_outlook():
+        """Historical validation of the WEEK / MONTH daily rules (fixed rules, non-overlapping, after costs)."""
+        import dataclasses as _dc
+        from . import outlook as OL
+        def build():
+            daily = history.load_bars("TwelveData", SYMBOL, "D1", limit=10_000)
+            label = "LIVE HISTORY (TwelveData D1)"
+            if len(daily) < OL.MIN_DAILY_BARS:
+                daily = demo.bars("D1", demo.default_as_of(), 10_000).df
+                label = "SYNTHETIC DEMO — اختبار للآلية فقط وليس دليلاً على أداء السوق"
+            as_of = (daily.index[-1] + pd.Timedelta(days=1)).to_pydatetime()
+            return {"dataset": label, "daily_bars": len(daily),
+                    "rules": {v.horizon: {"rule_ar": OL.RULE_AR[v.horizon], "validated": v.validated,
+                                          "current_action": v.action, "current_tilt": v.tilt,
+                                          "stats": _dc.asdict(v.stats)} for v in OL.compute(daily, as_of)},
+                    "note_ar": "النسبة تكرار تاريخي غير متداخل بعد التكاليف، وليست احتمالاً معايراً لصفقة بعينها"}
+        return cached("outlook", build)
+
+    @app.get("/outlooks/track", dependencies=[Depends(auth)])
+    def outlooks_track():
+        """Forward log written by the hourly CI job (models/outlook_track.json in the private repo)."""
+        import json as _json
+        p = repo_dir / "models" / "outlook_track.json"
+        if not p.exists():
+            return {"status": "EMPTY", "note_ar": "لم يُسجَّل شيء بعد — يبدأ السجل بعد أول تشغيل collect مع بيانات يومية"}
+        return _json.loads(p.read_text(encoding="utf-8"))
 
     @app.get("/research/levels", dependencies=[Depends(auth)])
     def research_levels():

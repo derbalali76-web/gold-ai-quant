@@ -26,7 +26,7 @@ ENGINES = [
     ("Institutional Footprint — CFTC COT (V2 #4)", BASELINE, "D", "مراكز Managed Money بعد تاريخ النشر فقط؛ دليل سياقي (الوضع الحي)", "CFTC"),
     ("ETF flows (World Gold Council)", DISABLED, "D", "شروط إعادة الاستخدام غير مناسبة لجلب آلي", "—"),
     ("News Propagation (V2 #10)", BASELINE, "D", "RSS رسمية، إزالة التكرار، أول ناشر وزمن الانتشار، حظر 30 دقيقة", "RSS"),
-    ("Economic Calendar embargo", BASELINE, "D", "ملف محلي يحدّثه المستخدم؛ حظر ±30 دقيقة للأحداث المهمة", "data/calendar.json"),
+    ("Economic Calendar embargo", BASELINE, "D", "تلقائي من bls.gov (iCal) و federalreserve.gov كل 6 ساعات + ملف يدوي اختياري؛ حظر من 60 دقيقة قبل الحدث إلى 45 بعده", "bls.gov + federalreserve.gov"),
     ("Macro context — FRED (MASTER #2)", BASELINE, "D", "العائد الحقيقي والاسمي والدولار مع تأخير نشر محافظ", "FRED"),
     ("Historical Analog (V2 #7)", BASELINE, "D", "أقرب 50 حالة سابقة؛ وصفي غير معاير", "OHLC"),
     ("Counterfactual (V2 #12)", BASELINE, "D", "احتمال الوصول للسعر الأفضل وتفويت الحركة؛ تكرار تاريخي", "OHLC"),
@@ -59,6 +59,9 @@ ENGINES = [
     ("Cloud mode (Render + GitHub Actions)", ACTIVE, "V5", "تدريب في CI، تنبؤ فقط على الخادم المجاني", "مستودع خاص"),
     ("Support & Resistance Strength Engine", BASELINE, "UI", "قمم وقيعان مؤكدة × 3 أطر، مناطق، 7 خصائص، أوزان بتحقق متدرج؛ أرقام القوة فقط بعد التحقق — /research/levels", "OHLC"),
     ("Market Trend score (0-100)", ACTIVE, "UI", "M15/M30/H1/H4 مع التوافق والتقلب؛ درجة تحليلية لا احتمال", "OHLC"),
+    ("Daily trend filter", ACTIVE, "V6", "يمنع إشارات الساعات المعاكسة لاتجاه 200 يوم وزخم 6 أشهر (فلتر رفض فقط)", "شموع يومية"),
+    ("Multi-horizon outlook (WEEK / MONTH)", BASELINE, "V6", "قاعدة ثابتة لكل أفق؛ تقييم غير متداخل بعد التكاليف؛ شراء/بيع فقط بعد التحقق — /research/outlook", "شموع يومية"),
+    ("Outlook forward log", ACTIVE, "V6", "سجل أمامي يومي لتوقعات الأسبوع والشهر ونتائجها الفعلية — /outlooks/track", "مستودع البيانات"),
     ("Backtester + Paper trading (F)", ACTIVE, "F", "walk-forward بتكاليف؛ holdout مسجّل؛ سجل ورقي — /research/backtest، /paper", "OHLC"),
 ]
 

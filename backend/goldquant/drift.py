@@ -5,6 +5,7 @@ from dataclasses import dataclass, field
 
 import numpy as np
 import pandas as pd
+from .msg import M
 
 PSI_ALARM = 0.25
 PSI_FEATURES_FOR_ALARM = 3
@@ -47,8 +48,8 @@ def check(reference: pd.DataFrame, recent: pd.DataFrame, features: list[str],
             rep.drifted_features.append(f)
     if len(rep.drifted_features) >= PSI_FEATURES_FOR_ALARM:
         rep.alarm = True
-        rep.reasons_ar.append(f"تغيّر توزيع {len(rep.drifted_features)} ميزات عن فترة التدريب (PSI > {PSI_ALARM})")
+        rep.reasons_ar.append(M("dr.psi", len(rep.drifted_features), PSI_ALARM))
     if ref_brier is not None and recent_brier is not None and recent_brier > ref_brier + BRIER_DEGRADATION_ALARM:
         rep.alarm = True
-        rep.reasons_ar.append("تدهور أداء النموذج على النتائج الحديثة مقارنة بفترة التحقق")
+        rep.reasons_ar.append(M("dr.perf"))
     return rep

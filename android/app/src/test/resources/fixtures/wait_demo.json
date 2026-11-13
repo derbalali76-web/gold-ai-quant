@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.3.0",
+  "schema_version": "1.5.0",
   "decision_id": "cb73d7e963c9639d",
   "mode": "DEMO",
   "action": "WAIT",
@@ -67,6 +67,8 @@
     "counterfactual",
     "anti_trade",
     "risk",
+    "daily_trend_filter",
+    "multi_horizon_outlook",
     "market_trend",
     "support_resistance"
   ],
@@ -76,20 +78,36 @@
       "passed": false,
       "reasons_ar": [
         "نموذج الاحتمالات غير مؤهل: لا يتفوق على التكرار التاريخي البسيط (climatology)"
+      ],
+      "reasons_ref": [
+        {
+          "code": "at.model_unqualified",
+          "args": [
+            "لا يتفوق على التكرار التاريخي البسيط (climatology)"
+          ],
+          "text_ar": "نموذج الاحتمالات غير مؤهل: لا يتفوق على التكرار التاريخي البسيط (climatology)"
+        }
       ]
     },
     {
       "judge": "evidence",
       "passed": false,
       "reasons_ar": [
-        "أدلة مستقلة غير كافية (1 محرك؛ المطلوب 2)",
         "الأدلة المعاكسة لا تقل عن الأدلة الداعمة"
+      ],
+      "reasons_ref": [
+        {
+          "code": "ct.contrary",
+          "args": [],
+          "text_ar": "الأدلة المعاكسة لا تقل عن الأدلة الداعمة"
+        }
       ]
     },
     {
       "judge": "risk_governor",
       "passed": true,
-      "reasons_ar": []
+      "reasons_ar": [],
+      "reasons_ref": []
     }
   ],
   "market_trend": {
@@ -120,7 +138,8 @@
         ],
         "role_flip": true,
         "broken_recently": true,
-        "distance_atr": -0.61
+        "distance_atr": -0.61,
+        "last_test_utc": "2025-12-30T19:00:00Z"
       },
       {
         "name": "S2",
@@ -137,7 +156,8 @@
         ],
         "role_flip": true,
         "broken_recently": true,
-        "distance_atr": -1.81
+        "distance_atr": -1.81,
+        "last_test_utc": "2025-12-30T20:00:00Z"
       },
       {
         "name": "S3",
@@ -154,7 +174,8 @@
         ],
         "role_flip": false,
         "broken_recently": false,
-        "distance_atr": -5.32
+        "distance_atr": -5.32,
+        "last_test_utc": "2025-12-22T05:00:00Z"
       }
     ],
     "resistances": [
@@ -171,7 +192,8 @@
         ],
         "role_flip": false,
         "broken_recently": true,
-        "distance_atr": 0.62
+        "distance_atr": 0.62,
+        "last_test_utc": "2025-12-30T19:00:00Z"
       },
       {
         "name": "R2",
@@ -186,7 +208,8 @@
         ],
         "role_flip": false,
         "broken_recently": true,
-        "distance_atr": 1.17
+        "distance_atr": 1.17,
+        "last_test_utc": "2025-12-30T17:00:00Z"
       },
       {
         "name": "R3",
@@ -201,7 +224,8 @@
         ],
         "role_flip": false,
         "broken_recently": true,
-        "distance_atr": 2.83
+        "distance_atr": 2.83,
+        "last_test_utc": "2025-12-30T14:00:00Z"
       }
     ],
     "validated": false,
@@ -215,44 +239,624 @@
     "ارتداد نحو S1 قرب 2109.66 مع ثبات فوقه",
     "إغلاق ساعة فوق R1 عند 2112.98"
   ],
-  "audit_hash": "76bb02685c2c29f307bb0a4e1b326b51d4e77b448396995e634993463ec3ac82",
+  "reevaluate_refs": [
+    {
+      "code": "rv.bounce_sup",
+      "args": [
+        "S1",
+        "2109.66"
+      ],
+      "text_ar": "ارتداد نحو S1 قرب 2109.66 مع ثبات فوقه"
+    },
+    {
+      "code": "rv.close_above",
+      "args": [
+        "R1",
+        "2112.98"
+      ],
+      "text_ar": "إغلاق ساعة فوق R1 عند 2112.98"
+    }
+  ],
+  "outlooks": [
+    {
+      "horizon": "HOURS",
+      "label_ar": "ساعات",
+      "action": "WAIT",
+      "tilt": 1,
+      "stance_ar": "انتظار (ميل للشراء)",
+      "reason_ar": "اتجاه H4 صاعد والاتجاه العام صاعد، والسعر فوق الدعم 2108.20. ننتظر لأن نموذج الاحتمالات غير مؤهل: لا يتفوق على التكرار التاريخي البسيط (climatology).",
+      "validated": false,
+      "validation_ar": "نموذج الساعات لم يجتز التحقق بعد",
+      "hit_rate": null,
+      "base_rate": null,
+      "samples": 0,
+      "horizon_days": null,
+      "entry_price": null,
+      "stop_loss": null,
+      "target": null,
+      "wait_for_price": 2108.35,
+      "method_ar": "القرار الرئيسي: محرك الشموع 15 دقيقة–4 ساعات (أفق 4 ساعات)",
+      "warnings_ar": [],
+      "stance_ref": {
+        "code": "st.wait_lean_buy",
+        "args": [],
+        "text_ar": "انتظار (ميل للشراء)"
+      },
+      "reason_ref": {
+        "code": "rs.short",
+        "args": [
+          {
+            "code": "rs.ctx",
+            "args": [
+              {
+                "code": "w.up",
+                "args": [],
+                "text_ar": "صاعد"
+              },
+              {
+                "code": "w.up",
+                "args": [],
+                "text_ar": "صاعد"
+              },
+              {
+                "code": "rs.tail_above",
+                "args": [
+                  "2108.20"
+                ],
+                "text_ar": "، والسعر فوق الدعم 2108.20"
+              }
+            ],
+            "text_ar": "اتجاه H4 صاعد والاتجاه العام صاعد، والسعر فوق الدعم 2108.20"
+          },
+          {
+            "code": "rs.wait",
+            "args": [
+              {
+                "code": "at.model_unqualified",
+                "args": [
+                  "لا يتفوق على التكرار التاريخي البسيط (climatology)"
+                ],
+                "text_ar": "نموذج الاحتمالات غير مؤهل: لا يتفوق على التكرار التاريخي البسيط (climatology)"
+              }
+            ],
+            "text_ar": "ننتظر لأن نموذج الاحتمالات غير مؤهل: لا يتفوق على التكرار التاريخي البسيط (climatology)"
+          }
+        ],
+        "text_ar": "اتجاه H4 صاعد والاتجاه العام صاعد، والسعر فوق الدعم 2108.20. ننتظر لأن نموذج الاحتمالات غير مؤهل: لا يتفوق على التكرار التاريخي البسيط (climatology)."
+      },
+      "validation_ref": {
+        "code": "va.hours_unq",
+        "args": [],
+        "text_ar": "نموذج الساعات لم يجتز التحقق بعد"
+      },
+      "method_ref": {
+        "code": "mt.hours",
+        "args": [],
+        "text_ar": "القرار الرئيسي: محرك الشموع 15 دقيقة–4 ساعات (أفق 4 ساعات)"
+      },
+      "warnings_ref": [],
+      "facts_ref": [],
+      "levels": null,
+      "trend": null,
+      "probabilities_available": false
+    },
+    {
+      "horizon": "WEEK",
+      "label_ar": "أسبوع",
+      "action": "WAIT",
+      "tilt": 0,
+      "stance_ar": "انتظار",
+      "reason_ar": "الاتجاه الكبير صاعد لكن لا يوجد تراجع كافٍ بعد؛ الشراء الآن مطاردة للسعر.",
+      "validated": false,
+      "validation_ar": "التفوق على المعدل الأساسي غير دال إحصائياً (p=0.850) (بيانات اصطناعية)؛ 142 إشارة غير متداخلة 2014-01-23 → 2025-11-30",
+      "hit_rate": null,
+      "base_rate": null,
+      "samples": 142,
+      "horizon_days": 5,
+      "entry_price": null,
+      "stop_loss": null,
+      "target": null,
+      "wait_for_price": 2074.69,
+      "method_ar": "outlook-1.0: شراء التراجع داخل اتجاه صاعد (السعر فوق متوسط 200 يوم وزخم 6 أشهر موجب، مع إغلاق تحت متوسط 20 يوماً و RSI14 أقل من 45)، والعكس للبيع؛ تقييم غير متداخل بعد تكلفة 0.03%",
+      "warnings_ar": [],
+      "stance_ref": {
+        "code": "st.wait",
+        "args": [],
+        "text_ar": "انتظار"
+      },
+      "reason_ref": {
+        "code": "ow.up_no_dip",
+        "args": [
+          {
+            "code": "bt.up",
+            "args": [],
+            "text_ar": "الاتجاه الكبير صاعد"
+          }
+        ],
+        "text_ar": "الاتجاه الكبير صاعد لكن لا يوجد تراجع كافٍ بعد؛ الشراء الآن مطاردة للسعر."
+      },
+      "validation_ref": {
+        "code": "va.full",
+        "args": [
+          {
+            "code": "va.pvalue",
+            "args": [
+              "0.850"
+            ],
+            "text_ar": "التفوق على المعدل الأساسي غير دال إحصائياً (p=0.850)"
+          },
+          {
+            "code": "w.synthetic",
+            "args": [],
+            "text_ar": " (بيانات اصطناعية)"
+          },
+          {
+            "code": "va.samples",
+            "args": [
+              "142",
+              "2014-01-23 → 2025-11-30"
+            ],
+            "text_ar": "؛ 142 إشارة غير متداخلة 2014-01-23 → 2025-11-30"
+          }
+        ],
+        "text_ar": "التفوق على المعدل الأساسي غير دال إحصائياً (p=0.850) (بيانات اصطناعية)؛ 142 إشارة غير متداخلة 2014-01-23 → 2025-11-30"
+      },
+      "method_ref": {
+        "code": "mt.daily",
+        "args": [
+          "outlook-1.0",
+          {
+            "code": "ru.week",
+            "args": [],
+            "text_ar": "شراء التراجع داخل اتجاه صاعد (السعر فوق متوسط 200 يوم وزخم 6 أشهر موجب، مع إغلاق تحت متوسط 20 يوماً و RSI14 أقل من 45)، والعكس للبيع"
+          },
+          "0.03%"
+        ],
+        "text_ar": "outlook-1.0: شراء التراجع داخل اتجاه صاعد (السعر فوق متوسط 200 يوم وزخم 6 أشهر موجب، مع إغلاق تحت متوسط 20 يوماً و RSI14 أقل من 45)، والعكس للبيع؛ تقييم غير متداخل بعد تكلفة 0.03%"
+      },
+      "warnings_ref": [],
+      "facts_ref": [
+        {
+          "code": "fa.price_sma",
+          "args": [
+            {
+              "code": "w.above",
+              "args": [],
+              "text_ar": "فوق"
+            },
+            "2002.98",
+            "5.2"
+          ],
+          "text_ar": "السعر فوق متوسط 200 يوم (2002.98) بفارق 5.2%"
+        },
+        {
+          "code": "fa.sma20",
+          "args": [
+            "2074.69"
+          ],
+          "text_ar": "متوسط 20 يوماً = 2074.69"
+        },
+        {
+          "code": "fa.rsi",
+          "args": [
+            "71"
+          ],
+          "text_ar": "RSI 14 اليومي = 71"
+        },
+        {
+          "code": "fa.mom",
+          "args": [
+            {
+              "code": "om.p6",
+              "args": [],
+              "text_ar": "6 أشهر"
+            },
+            "+5.7"
+          ],
+          "text_ar": "زخم 6 أشهر: +5.7%"
+        },
+        {
+          "code": "fa.atr",
+          "args": [
+            "15.44"
+          ],
+          "text_ar": "متوسط المدى اليومي (ATR20) = 15.44"
+        }
+      ],
+      "levels": {
+        "supports": [
+          {
+            "name": "S1",
+            "price": 2078.39,
+            "zone_low": 2073.7,
+            "zone_high": 2083.08,
+            "strength": null,
+            "strength_label_ar": "متوسط",
+            "tests": 3,
+            "timeframes": [
+              "D1"
+            ],
+            "role_flip": false,
+            "broken_recently": false,
+            "distance_atr": -1.83,
+            "last_test_utc": "2025-12-24T00:00:00Z"
+          },
+          {
+            "name": "S2",
+            "price": 2059.08,
+            "zone_low": 2053.62,
+            "zone_high": 2064.55,
+            "strength": null,
+            "strength_label_ar": "قوي",
+            "tests": 5,
+            "timeframes": [
+              "D1"
+            ],
+            "role_flip": false,
+            "broken_recently": false,
+            "distance_atr": -3.08,
+            "last_test_utc": "2025-12-19T00:00:00Z"
+          },
+          {
+            "name": "S3",
+            "price": 2036.16,
+            "zone_low": 2031.39,
+            "zone_high": 2042.92,
+            "strength": null,
+            "strength_label_ar": "قوي",
+            "tests": 8,
+            "timeframes": [
+              "D1"
+            ],
+            "role_flip": false,
+            "broken_recently": false,
+            "distance_atr": -4.57,
+            "last_test_utc": "2025-12-15T00:00:00Z"
+          }
+        ],
+        "resistances": [],
+        "validated": false,
+        "atr_h1": null,
+        "validation_ar": null,
+        "method_note_ar": "مستويات يومية من قمم وقيعان مؤكدة؛ لا تُعرض قوة رقمية لأنها لم تُختبر إحصائياً، والتصنيف تقديري حسب عدد الاختبارات."
+      },
+      "trend": {
+        "direction": "UP",
+        "strength": 100,
+        "label_ar": "صاعد",
+        "agreement": 1.0,
+        "per_timeframe": {
+          "SMA20": "UP",
+          "SMA50": "UP",
+          "SMA200": "UP"
+        },
+        "note_ar": null
+      },
+      "probabilities_available": false
+    },
+    {
+      "horizon": "MONTH",
+      "label_ar": "شهر",
+      "action": "WAIT",
+      "tilt": 1,
+      "stance_ar": "ميل للشراء (غير محقَّق)",
+      "reason_ar": "الزخم متفق (3 أشهر +7.7%، 6 أشهر +5.7%، 12 شهراً +14.5%) والسعر فوق متوسط 200 يوم (2002.98).",
+      "validated": false,
+      "validation_ar": "التفوق على المعدل الأساسي غير دال إحصائياً (p=0.800) (بيانات اصطناعية)؛ 99 إشارة غير متداخلة 2014-01-23 → 2025-12-22",
+      "hit_rate": null,
+      "base_rate": null,
+      "samples": 99,
+      "horizon_days": 21,
+      "entry_price": 2106.66,
+      "stop_loss": 2068.06,
+      "target": 2176.14,
+      "wait_for_price": null,
+      "method_ar": "outlook-1.0: اتفاق زخم 3 و6 و12 شهراً في الاتجاه نفسه مع موقع السعر من متوسط 200 يوم؛ تقييم غير متداخل بعد تكلفة 0.03%",
+      "warnings_ar": [
+        "القاعدة لم تجتز التحقق الإحصائي بعد — للاستئناس فقط وليست إشارة",
+        "الوقف والهدف تقريبيان بمقياس ATR اليومي (15.44) ولم يُختبرا تاريخياً"
+      ],
+      "stance_ref": {
+        "code": "st.lean_buy",
+        "args": [],
+        "text_ar": "ميل للشراء (غير محقَّق)"
+      },
+      "reason_ref": {
+        "code": "om.agree",
+        "args": [
+          "3 أشهر +7.7%، 6 أشهر +5.7%، 12 شهراً +14.5%",
+          {
+            "code": "w.above",
+            "args": [],
+            "text_ar": "فوق"
+          },
+          "2002.98"
+        ],
+        "text_ar": "الزخم متفق (3 أشهر +7.7%، 6 أشهر +5.7%، 12 شهراً +14.5%) والسعر فوق متوسط 200 يوم (2002.98)."
+      },
+      "validation_ref": {
+        "code": "va.full",
+        "args": [
+          {
+            "code": "va.pvalue",
+            "args": [
+              "0.800"
+            ],
+            "text_ar": "التفوق على المعدل الأساسي غير دال إحصائياً (p=0.800)"
+          },
+          {
+            "code": "w.synthetic",
+            "args": [],
+            "text_ar": " (بيانات اصطناعية)"
+          },
+          {
+            "code": "va.samples",
+            "args": [
+              "99",
+              "2014-01-23 → 2025-12-22"
+            ],
+            "text_ar": "؛ 99 إشارة غير متداخلة 2014-01-23 → 2025-12-22"
+          }
+        ],
+        "text_ar": "التفوق على المعدل الأساسي غير دال إحصائياً (p=0.800) (بيانات اصطناعية)؛ 99 إشارة غير متداخلة 2014-01-23 → 2025-12-22"
+      },
+      "method_ref": {
+        "code": "mt.daily",
+        "args": [
+          "outlook-1.0",
+          {
+            "code": "ru.month",
+            "args": [],
+            "text_ar": "اتفاق زخم 3 و6 و12 شهراً في الاتجاه نفسه مع موقع السعر من متوسط 200 يوم"
+          },
+          "0.03%"
+        ],
+        "text_ar": "outlook-1.0: اتفاق زخم 3 و6 و12 شهراً في الاتجاه نفسه مع موقع السعر من متوسط 200 يوم؛ تقييم غير متداخل بعد تكلفة 0.03%"
+      },
+      "warnings_ref": [
+        {
+          "code": "wa.unvalidated",
+          "args": [],
+          "text_ar": "القاعدة لم تجتز التحقق الإحصائي بعد — للاستئناس فقط وليست إشارة"
+        },
+        {
+          "code": "wa.atr_levels",
+          "args": [
+            "15.44"
+          ],
+          "text_ar": "الوقف والهدف تقريبيان بمقياس ATR اليومي (15.44) ولم يُختبرا تاريخياً"
+        }
+      ],
+      "facts_ref": [
+        {
+          "code": "fa.price_sma",
+          "args": [
+            {
+              "code": "w.above",
+              "args": [],
+              "text_ar": "فوق"
+            },
+            "2002.98",
+            "5.2"
+          ],
+          "text_ar": "السعر فوق متوسط 200 يوم (2002.98) بفارق 5.2%"
+        },
+        {
+          "code": "fa.sma20",
+          "args": [
+            "2074.69"
+          ],
+          "text_ar": "متوسط 20 يوماً = 2074.69"
+        },
+        {
+          "code": "fa.rsi",
+          "args": [
+            "71"
+          ],
+          "text_ar": "RSI 14 اليومي = 71"
+        },
+        {
+          "code": "fa.mom",
+          "args": [
+            {
+              "code": "om.p6",
+              "args": [],
+              "text_ar": "6 أشهر"
+            },
+            "+5.7"
+          ],
+          "text_ar": "زخم 6 أشهر: +5.7%"
+        },
+        {
+          "code": "fa.atr",
+          "args": [
+            "15.44"
+          ],
+          "text_ar": "متوسط المدى اليومي (ATR20) = 15.44"
+        }
+      ],
+      "levels": {
+        "supports": [
+          {
+            "name": "S1",
+            "price": 2078.39,
+            "zone_low": 2073.7,
+            "zone_high": 2083.08,
+            "strength": null,
+            "strength_label_ar": "متوسط",
+            "tests": 3,
+            "timeframes": [
+              "D1"
+            ],
+            "role_flip": false,
+            "broken_recently": false,
+            "distance_atr": -1.83,
+            "last_test_utc": "2025-12-24T00:00:00Z"
+          },
+          {
+            "name": "S2",
+            "price": 2059.08,
+            "zone_low": 2053.62,
+            "zone_high": 2064.55,
+            "strength": null,
+            "strength_label_ar": "قوي",
+            "tests": 5,
+            "timeframes": [
+              "D1"
+            ],
+            "role_flip": false,
+            "broken_recently": false,
+            "distance_atr": -3.08,
+            "last_test_utc": "2025-12-19T00:00:00Z"
+          },
+          {
+            "name": "S3",
+            "price": 2036.16,
+            "zone_low": 2031.39,
+            "zone_high": 2042.92,
+            "strength": null,
+            "strength_label_ar": "قوي",
+            "tests": 8,
+            "timeframes": [
+              "D1"
+            ],
+            "role_flip": false,
+            "broken_recently": false,
+            "distance_atr": -4.57,
+            "last_test_utc": "2025-12-15T00:00:00Z"
+          }
+        ],
+        "resistances": [],
+        "validated": false,
+        "atr_h1": null,
+        "validation_ar": null,
+        "method_note_ar": "مستويات يومية من قمم وقيعان مؤكدة؛ لا تُعرض قوة رقمية لأنها لم تُختبر إحصائياً، والتصنيف تقديري حسب عدد الاختبارات."
+      },
+      "trend": {
+        "direction": "UP",
+        "strength": 100,
+        "label_ar": "صاعد",
+        "agreement": 1.0,
+        "per_timeframe": {
+          "SMA200": "UP",
+          "MOM3M": "UP",
+          "MOM6M": "UP",
+          "MOM12M": "UP"
+        },
+        "note_ar": null
+      },
+      "probabilities_available": false
+    }
+  ],
+  "audit_hash": "e640e429cde87adcbe43ca9aa1794c2ce1946fb662a6354e65fd58b968bdf36f",
   "supporting_evidence": [
     {
       "engine": "mtf_bias",
       "text_ar": "ميل متوسط 50 على H4 صاعد (كفاءة الاتجاه 0.26)",
-      "weight": 0.5
+      "weight": 0.5,
+      "text_ref": {
+        "code": "ev.mtf_slope",
+        "args": [
+          "H4",
+          {
+            "code": "w.up",
+            "args": [],
+            "text_ar": "صاعد"
+          },
+          "0.26"
+        ],
+        "text_ar": "ميل متوسط 50 على H4 صاعد (كفاءة الاتجاه 0.26)"
+      }
+    },
+    {
+      "engine": "daily_trend_filter",
+      "text_ar": "الاتجاه اليومي الكبير يوافق الإشارة (متوسط 200 يوم وزخم 6 أشهر)",
+      "weight": 0.3,
+      "text_ref": {
+        "code": "ev.daily_ok",
+        "args": [],
+        "text_ar": "الاتجاه اليومي الكبير يوافق الإشارة (متوسط 200 يوم وزخم 6 أشهر)"
+      }
     }
   ],
   "contrary_evidence": [
     {
       "engine": "regime",
       "text_ar": "السوق في تذبذب عرضي؛ إشارات الاتجاه ضعيفة الموثوقية",
-      "weight": -0.5
+      "weight": -0.5,
+      "text_ref": {
+        "code": "ev.range",
+        "args": [],
+        "text_ar": "السوق في تذبذب عرضي؛ إشارات الاتجاه ضعيفة الموثوقية"
+      }
     },
     {
       "engine": "liquidity_proxy",
       "text_ar": "وقف الخسارة يقع داخل نطاق آخر قمة/قاع (استدلال من شكل السعر)",
-      "weight": -0.3
+      "weight": -0.3,
+      "text_ref": {
+        "code": "ev.stop_in_structure",
+        "args": [],
+        "text_ar": "وقف الخسارة يقع داخل نطاق آخر قمة/قاع (استدلال من شكل السعر)"
+      }
     },
     {
       "engine": "levels",
       "text_ar": "مقاومة R1 (2112.98) قبل الهدف قد تحد من الصعود",
-      "weight": -0.3
+      "weight": -0.3,
+      "text_ref": {
+        "code": "ev.lv_res_before",
+        "args": [
+          "R1",
+          "2112.98"
+        ],
+        "text_ar": "مقاومة R1 (2112.98) قبل الهدف قد تحد من الصعود"
+      }
     },
     {
       "engine": "levels",
       "text_ar": "الوقف داخل منطقة الدعم S1 — عرضة للضرب بسحب سيولة؛ الأفضل خلف المنطقة",
-      "weight": -0.3
+      "weight": -0.3,
+      "text_ref": {
+        "code": "ev.lv_stop_in_sup",
+        "args": [
+          "S1"
+        ],
+        "text_ar": "الوقف داخل منطقة الدعم S1 — عرضة للضرب بسحب سيولة؛ الأفضل خلف المنطقة"
+      }
     },
     {
       "engine": "liquidity_trap",
       "text_ar": "اختراق صاعد فشل في الشمعة التالية عند 2109.66 (قبل 1 شمعة)",
-      "weight": -0.3
+      "weight": -0.3,
+      "text_ref": {
+        "code": "ev.trap",
+        "args": [
+          "اختراق صاعد فشل في الشمعة التالية",
+          "2109.66",
+          "1"
+        ],
+        "text_ar": "اختراق صاعد فشل في الشمعة التالية عند 2109.66 (قبل 1 شمعة)"
+      }
     },
     {
       "engine": "historical_analog",
       "text_ar": "أقرب 50 حالة تاريخية مشابهة: الهدف أولاً 30%، الوقف أولاً 58% (وصفي، غير معاير، بيانات اصطناعية)",
-      "weight": -0.2
+      "weight": -0.2,
+      "text_ref": {
+        "code": "ev.analog",
+        "args": [
+          "50",
+          "30%",
+          "58%",
+          {
+            "code": "w.syn_tail",
+            "args": [],
+            "text_ar": "، بيانات اصطناعية"
+          }
+        ],
+        "text_ar": "أقرب 50 حالة تاريخية مشابهة: الهدف أولاً 30%، الوقف أولاً 58% (وصفي، غير معاير، بيانات اصطناعية)"
+      }
     }
   ],
   "invalidation_ar": [],
@@ -280,5 +884,116 @@
   "warning_ar": null,
   "wait_for_ar": "انتظر حتى تزول أسباب الرفض أو يصل السعر إلى المستوى البديل",
   "wait_for_price": 2108.35,
-  "snapshot_hash": "e329c8717a52502c2fa9bb119b90c48f09d531007ec7a40706ddaf29d3bd42fb"
+  "snapshot_hash": "e329c8717a52502c2fa9bb119b90c48f09d531007ec7a40706ddaf29d3bd42fb",
+  "reason_short_ref": {
+    "code": "rs.short",
+    "args": [
+      {
+        "code": "rs.ctx",
+        "args": [
+          {
+            "code": "w.up",
+            "args": [],
+            "text_ar": "صاعد"
+          },
+          {
+            "code": "w.up",
+            "args": [],
+            "text_ar": "صاعد"
+          },
+          {
+            "code": "rs.tail_above",
+            "args": [
+              "2108.20"
+            ],
+            "text_ar": "، والسعر فوق الدعم 2108.20"
+          }
+        ],
+        "text_ar": "اتجاه H4 صاعد والاتجاه العام صاعد، والسعر فوق الدعم 2108.20"
+      },
+      {
+        "code": "rs.wait",
+        "args": [
+          {
+            "code": "at.model_unqualified",
+            "args": [
+              "لا يتفوق على التكرار التاريخي البسيط (climatology)"
+            ],
+            "text_ar": "نموذج الاحتمالات غير مؤهل: لا يتفوق على التكرار التاريخي البسيط (climatology)"
+          }
+        ],
+        "text_ar": "ننتظر لأن نموذج الاحتمالات غير مؤهل: لا يتفوق على التكرار التاريخي البسيط (climatology)"
+      }
+    ],
+    "text_ar": "اتجاه H4 صاعد والاتجاه العام صاعد، والسعر فوق الدعم 2108.20. ننتظر لأن نموذج الاحتمالات غير مؤهل: لا يتفوق على التكرار التاريخي البسيط (climatology)."
+  },
+  "alternative_entry_note_ref": {
+    "code": "alt.note",
+    "args": [
+      {
+        "code": "alt.structural",
+        "args": [],
+        "text_ar": "مستوى ارتداد هيكلي أفضل للدخول"
+      },
+      {
+        "code": "alt.fill",
+        "args": [
+          "25%",
+          "13%",
+          "10330",
+          {
+            "code": "w.syn_tail",
+            "args": [],
+            "text_ar": "، بيانات اصطناعية"
+          }
+        ],
+        "text_ar": "؛ تاريخياً وصله السعر خلال ساعة في 25% من الحالات، وابتعد السعر نحو الهدف دون العودة إليه في 13% (n=10330، تكرار غير معاير، بيانات اصطناعية)"
+      }
+    ],
+    "text_ar": "مستوى ارتداد هيكلي أفضل للدخول؛ تاريخياً وصله السعر خلال ساعة في 25% من الحالات، وابتعد السعر نحو الهدف دون العودة إليه في 13% (n=10330، تكرار غير معاير، بيانات اصطناعية)"
+  },
+  "wait_for_ref": {
+    "code": "wf.default",
+    "args": [],
+    "text_ar": "انتظر حتى تزول أسباب الرفض أو يصل السعر إلى المستوى البديل"
+  },
+  "warning_ref": null,
+  "invalidation_refs": [],
+  "missing_refs": [
+    {
+      "code": "md.demo",
+      "args": [],
+      "text_ar": "وضع تجريبي: الأسعار اصطناعية وليست سعر السوق"
+    },
+    {
+      "code": "md.macro",
+      "args": [],
+      "text_ar": "بيانات الماكرو (FRED) غير متصلة"
+    },
+    {
+      "code": "md.calendar",
+      "args": [],
+      "text_ar": "تقويم الأحداث الاقتصادية غير متصل"
+    },
+    {
+      "code": "md.cot",
+      "args": [],
+      "text_ar": "تقارير COT غير متصلة"
+    },
+    {
+      "code": "md.news_feeds",
+      "args": [],
+      "text_ar": "خلاصات الأخبار الرسمية غير متصلة"
+    },
+    {
+      "code": "md.no_consensus",
+      "args": [],
+      "text_ar": "إجماع التوقعات الاقتصادية غير متاح مجاناً (محركات Expectation Gap/Priced-In/Missing Reaction معطّلة)"
+    },
+    {
+      "code": "md.no_depth",
+      "args": [],
+      "text_ar": "عمق السوق وتدفق الأوامر المؤسسي غير متاح مجاناً (ولن يُدّعى)"
+    }
+  ]
 }

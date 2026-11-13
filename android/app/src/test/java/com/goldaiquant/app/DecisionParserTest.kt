@@ -130,4 +130,23 @@ class DecisionParserTest {
         s.put("zone_high", o.getDouble("quote") + 5.0)
         expectFailure(o.toString())
     }
+
+    @Test fun parsesThreeHorizonsFromBackend() {
+        val d = DecisionParser.parse(fixture("wait_demo.json"))
+        assertEquals(listOf("HOURS", "WEEK", "MONTH"), d.outlooks.map { it.horizon })
+        assertTrue("DEMO never carries historical hit rates", d.outlooks.all { it.hitRate == null })
+    }
+
+    @Test fun rejectsHitRateWithoutValidationOrInDemo() {
+        val o = JSONObject(fixture("wait_demo.json"))
+        o.getJSONArray("outlooks").getJSONObject(1).put("hit_rate", 0.7).put("samples", 200)
+        expectFailure(o.toString())
+    }
+
+    @Test fun rejectsUnvalidatedLongHorizonTrade() {
+        val o = JSONObject(fixture("wait_demo.json"))
+        o.getJSONArray("outlooks").getJSONObject(2).put("action", "BUY").put("validated", false)
+            .put("entry_price", 2000.0).put("stop_loss", 1950.0).put("target", 2080.0)
+        expectFailure(o.toString())
+    }
 }

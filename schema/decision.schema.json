@@ -28,6 +28,13 @@
           },
           "title": "Reasons Ar",
           "type": "array"
+        },
+        "reasons_ref": {
+          "items": {
+            "$ref": "#/$defs/ReasonRef"
+          },
+          "title": "Reasons Ref",
+          "type": "array"
         }
       },
       "required": [
@@ -86,6 +93,17 @@
           "title": "Text Ar",
           "type": "string"
         },
+        "text_ref": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ReasonRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
         "weight": {
           "maximum": 1.0,
           "minimum": -1.0,
@@ -99,6 +117,261 @@
         "weight"
       ],
       "title": "Evidence",
+      "type": "object"
+    },
+    "HorizonOutlook": {
+      "additionalProperties": false,
+      "description": "Per-horizon view: HOURS mirrors the main intraday decision; WEEK / MONTH come from daily rules.\n\nhit_rate is the historical FREQUENCY of the validated rule (non-overlapping, after costs) — never a\ncalibrated probability of this particular trade, and never reported for unvalidated rules or in DEMO.",
+      "properties": {
+        "action": {
+          "$ref": "#/$defs/Action"
+        },
+        "base_rate": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Base Rate"
+        },
+        "entry_price": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Entry Price"
+        },
+        "facts_ref": {
+          "items": {
+            "$ref": "#/$defs/ReasonRef"
+          },
+          "title": "Facts Ref",
+          "type": "array"
+        },
+        "hit_rate": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hit Rate"
+        },
+        "horizon": {
+          "title": "Horizon",
+          "type": "string"
+        },
+        "horizon_days": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Horizon Days"
+        },
+        "label_ar": {
+          "title": "Label Ar",
+          "type": "string"
+        },
+        "levels": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LevelsBlock"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "method_ar": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Method Ar"
+        },
+        "method_ref": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ReasonRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "probabilities_available": {
+          "default": false,
+          "title": "Probabilities Available",
+          "type": "boolean"
+        },
+        "reason_ar": {
+          "title": "Reason Ar",
+          "type": "string"
+        },
+        "reason_ref": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ReasonRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "samples": {
+          "default": 0,
+          "title": "Samples",
+          "type": "integer"
+        },
+        "stance_ar": {
+          "title": "Stance Ar",
+          "type": "string"
+        },
+        "stance_ref": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ReasonRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "stop_loss": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stop Loss"
+        },
+        "target": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target"
+        },
+        "tilt": {
+          "default": 0,
+          "maximum": 1,
+          "minimum": -1,
+          "title": "Tilt",
+          "type": "integer"
+        },
+        "trend": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MarketTrend"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "validated": {
+          "default": false,
+          "title": "Validated",
+          "type": "boolean"
+        },
+        "validation_ar": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Validation Ar"
+        },
+        "validation_ref": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ReasonRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "wait_for_price": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Wait For Price"
+        },
+        "warnings_ar": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Warnings Ar",
+          "type": "array"
+        },
+        "warnings_ref": {
+          "items": {
+            "$ref": "#/$defs/ReasonRef"
+          },
+          "title": "Warnings Ref",
+          "type": "array"
+        }
+      },
+      "required": [
+        "horizon",
+        "label_ar",
+        "action",
+        "stance_ar",
+        "reason_ar"
+      ],
+      "title": "HorizonOutlook",
       "type": "object"
     },
     "HorizonProbability": {
@@ -295,6 +568,18 @@
           "title": "Distance Atr",
           "type": "number"
         },
+        "last_test_utc": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Test Utc"
+        },
         "name": {
           "title": "Name",
           "type": "string"
@@ -356,6 +641,31 @@
         "distance_atr"
       ],
       "title": "PriceLevel",
+      "type": "object"
+    },
+    "ReasonRef": {
+      "additionalProperties": false,
+      "description": "A translatable sentence: `code` + ordered `args` (strings or nested refs). `text_ar` is the Arabic rendering\nand the fallback for any code the client has no string for (code 'raw' = show text_ar as is).",
+      "properties": {
+        "args": {
+          "items": {},
+          "title": "Args",
+          "type": "array"
+        },
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "text_ar": {
+          "title": "Text Ar",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "text_ar"
+      ],
+      "title": "ReasonRef",
       "type": "object"
     },
     "SpotOrProxy": {
@@ -453,6 +763,17 @@
       ],
       "default": null,
       "title": "Alternative Entry Note Ar"
+    },
+    "alternative_entry_note_ref": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ReasonRef"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     },
     "alternative_entry_price": {
       "anyOf": [
@@ -604,6 +925,13 @@
       "title": "Invalidation Ar",
       "type": "array"
     },
+    "invalidation_refs": {
+      "items": {
+        "$ref": "#/$defs/ReasonRef"
+      },
+      "title": "Invalidation Refs",
+      "type": "array"
+    },
     "levels": {
       "anyOf": [
         {
@@ -645,12 +973,26 @@
       "title": "Missing Data",
       "type": "array"
     },
+    "missing_refs": {
+      "items": {
+        "$ref": "#/$defs/ReasonRef"
+      },
+      "title": "Missing Refs",
+      "type": "array"
+    },
     "mode": {
       "$ref": "#/$defs/Mode"
     },
     "model_version": {
       "title": "Model Version",
       "type": "string"
+    },
+    "outlooks": {
+      "items": {
+        "$ref": "#/$defs/HorizonOutlook"
+      },
+      "title": "Outlooks",
+      "type": "array"
     },
     "probabilities_by_horizon": {
       "items": {
@@ -783,11 +1125,29 @@
       "default": null,
       "title": "Reason Short Ar"
     },
+    "reason_short_ref": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ReasonRef"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
     "reevaluate_ar": {
       "items": {
         "type": "string"
       },
       "title": "Reevaluate Ar",
+      "type": "array"
+    },
+    "reevaluate_refs": {
+      "items": {
+        "$ref": "#/$defs/ReasonRef"
+      },
+      "title": "Reevaluate Refs",
       "type": "array"
     },
     "reward_risk": {
@@ -803,7 +1163,7 @@
       "title": "Reward Risk"
     },
     "schema_version": {
-      "default": "1.3.0",
+      "default": "1.5.0",
       "title": "Schema Version",
       "type": "string"
     },
@@ -929,6 +1289,17 @@
       "default": null,
       "title": "Wait For Price"
     },
+    "wait_for_ref": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ReasonRef"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
     "warning_ar": {
       "anyOf": [
         {
@@ -940,6 +1311,17 @@
       ],
       "default": null,
       "title": "Warning Ar"
+    },
+    "warning_ref": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ReasonRef"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     }
   },
   "required": [

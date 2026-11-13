@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tagline">L\'IA pour l\'or</string>
+    <string name="health_live">Données en direct</string>
+    <string name="health_stale">Données retardées</string>
+    <string name="health_demo">Données de démo</string>
+    <string name="health_none">Indisponible</string>
+    <string name="health_saved">Enregistré — pas à jour</string>
+    <string name="demo_banner">Démo : prix synthétiques — pas de vraies recommandations</string>
+    <string name="ask">Que faire ?</string>
+    <string name="asking">Analyse en cours…</string>
+    <string name="prompt_ask">Touchez « Que faire ? » pour l\'analyse actuelle du marché</string>
+    <string name="footer_disclaimer">Uniquement pour le trading papier et la recherche. Aucune exécution d\'ordres, aucune garantie de résultat.</string>
+    <string name="h_hours">Heures</string>
+    <string name="h_week">Semaine</string>
+    <string name="h_month">Mois</string>
+    <string name="hz_validated">Validé</string>
+    <string name="hz_not_validated">Non validé</string>
+    <string name="hz_no_data">Pas de données</string>
+    <string name="hz_updating">Mise à jour…</string>
+    <string name="cd_horizon">Horizon : %1$s</string>
+    <string name="cd_horizon_selected">Horizon : %1$s, sélectionné</string>
+    <string name="cd_settings">Paramètres</string>
+    <string name="a_buy">Acheter</string>
+    <string name="a_sell">Vendre</string>
+    <string name="a_wait">Attendre</string>
+    <string name="a_unavailable">Indisponible</string>
+    <string name="sub_court">A passé le tribunal de décision</string>
+    <string name="sub_validated_rule">Règle quotidienne validée</string>
+    <string name="sub_wait">Aucune opération qualifiée pour l\'instant</string>
+    <string name="sub_unavailable">Données insuffisantes ou en retard</string>
+    <string name="saved_decision">Décision précédente — touchez « Que faire ? » pour actualiser</string>
+    <string name="l_entry">Entrée</string>
+    <string name="l_ref_price">Prix de référence</string>
+    <string name="l_stop">Stop loss</string>
+    <string name="l_target">Objectif</string>
+    <string name="l_duration">Durée prévue</string>
+    <string name="l_reeval">Prix de réévaluation</string>
+    <string name="approx">(approx.)</string>
+    <string name="dur_hours">jusqu\'à %1$d heures</string>
+    <string name="dur_minutes">jusqu\'à %1$d min</string>
+    <string name="dur_days">%1$d jours de bourse</string>
+    <string name="prob_title">Probabilités</string>
+    <string name="prob_na">Non disponibles</string>
+    <string name="prob_demo">Non affichées en mode démo</string>
+    <string name="prob_not_cal">Tests de calibration pas encore réussis</string>
+    <string name="prob_horizon">Non calibrées pour cet horizon</string>
+    <string name="prob_target">Atteindre l\'objectif</string>
+    <string name="prob_stop">Stop loss</string>
+    <string name="prob_neither">Ni l\'un ni l\'autre</string>
+    <string name="prob_samples">Calibration hors échantillon : %1$d cas</string>
+    <string name="prob_dialog_title">À propos de ces probabilités</string>
+    <string name="prob_expl_what">Ce sont des chances estimées que, dès maintenant et pendant la durée du signal, le prix atteigne d\'abord l\'objectif, touche d\'abord le stop, ou n\'atteigne ni l\'un ni l\'autre.</string>
+    <string name="prob_expl_horizon">Elles ne s\'appliquent qu\'à l\'horizon Heures.</string>
+    <string name="prob_expl_cal">Affichées uniquement après calibration sur des données réelles hors échantillon (au moins 300 cas), jamais en mode démo.</string>
+    <string name="prob_expl_why_na">Pourquoi non disponibles : %1$s</string>
+    <string name="prob_hist">Validation historique à la place : la règle a réussi dans %1$d%% de %2$d cas passés sans chevauchement, contre %3$d%% sans elle (après coûts). C\'est une fréquence historique, pas une garantie ni une probabilité calibrée pour cette opération.</string>
+    <string name="prob_by_horizon">%1$d min : objectif %2$d%% • stop %3$d%% • aucun %4$d%%</string>
+    <string name="lv_supports">Supports</string>
+    <string name="lv_resistances">Résistances</string>
+    <string name="lv_support">Support</string>
+    <string name="lv_resistance">Résistance</string>
+    <string name="lv_estimated">force estimée</string>
+    <string name="lv_none">Aucun niveau proche</string>
+    <string name="lv_word_strong">Fort</string>
+    <string name="lv_word_medium">Moyen</string>
+    <string name="lv_word_weak">Faible</string>
+    <string name="lv_zone">Zone</string>
+    <string name="lv_strength">Force</string>
+    <string name="lv_strength_val">%1$d / 100</string>
+    <string name="lv_not_validated">Non validée statistiquement</string>
+    <string name="lv_tests">Nombre de tests</string>
+    <string name="lv_last_test">Dernier test</string>
+    <string name="lv_timeframes">Unités de temps</string>
+    <string name="lv_why">Pourquoi c\'est important</string>
+    <string name="lv_why_tests">Le prix s\'est approché de cette zone %1$d fois.</string>
+    <string name="lv_why_flip">Elle a servi à la fois de support et de résistance.</string>
+    <string name="lv_why_broken">Elle a été cassée récemment.</string>
+    <string name="lv_why_daily">Zone de sommet/creux journalier.</string>
+    <string name="rel_title">Effet sur la recommandation actuelle</string>
+    <string name="rel_obstacle">Obstacle : située entre l\'entrée et l\'objectif, elle peut limiter le mouvement.</string>
+    <string name="rel_protects">Protectrice : située entre l\'entrée et le stop, elle peut aider à protéger le stop.</string>
+    <string name="rel_stop_inside">Attention : le stop est dans cette zone — un balayage de liquidité peut le déclencher ; derrière la zone c\'est plus sûr.</string>
+    <string name="rel_not_in_path">Pas sur le chemin de l\'opération actuelle.</string>
+    <string name="rel_no_trade">Aucune opération n\'est recommandée ; ce niveau est donc informatif.</string>
+    <string name="lv_method">La force, lorsqu\'elle est affichée, est un rang centile par rapport aux niveaux historiques — pas une probabilité de rebond.</string>
+    <string name="tr_title">Tendance du marché</string>
+    <string name="tr_strength">Force de la tendance</string>
+    <string name="tr_up">Haussière</string>
+    <string name="tr_down">Baissière</string>
+    <string name="tr_sideways">Latérale</string>
+    <string name="tr_unknown">Inconnue</string>
+    <string name="tr_dialog">Détails de la tendance</string>
+    <string name="tr_agreement">Accord entre les unités de temps</string>
+    <string name="tr_frames">Unités de temps</string>
+    <string name="tr_factors">Facteurs</string>
+    <string name="tr_reason">Pourquoi cette tendance</string>
+    <string name="tr_none">Pas de données de tendance</string>
+    <string name="tr_score_note">La force de la tendance est un score analytique, pas une probabilité qu\'elle continue.</string>
+    <string name="tf_m15">15 minutes</string>
+    <string name="tf_m30">30 minutes</string>
+    <string name="tf_h1">1 heure</string>
+    <string name="tf_h4">4 heures</string>
+    <string name="tf_d1">Journalier</string>
+    <string name="tf_sma20">Prix vs moyenne 20 jours</string>
+    <string name="tf_sma50">Prix vs moyenne 50 jours</string>
+    <string name="tf_sma200">Prix vs moyenne 200 jours</string>
+    <string name="tf_mom3">Élan 3 mois</string>
+    <string name="tf_mom6">Élan 6 mois</string>
+    <string name="tf_mom12">Élan 12 mois</string>
+    <string name="reason_title">Raison de la décision :</string>
+    <string name="details">Détails</string>
+    <string name="details_dialog">Analyse complète</string>
+    <string name="sec_trend">Tendance</string>
+    <string name="sec_levels">Supports et résistances</string>
+    <string name="sec_vol">Volatilité</string>
+    <string name="sec_risk">Risque</string>
+    <string name="sec_engines">Accord des moteurs</string>
+    <string name="sec_accept">Raisons d\'agir</string>
+    <string name="sec_reject">Raisons contre / rejet</string>
+    <string name="sec_reeval">Quand réévaluer</string>
+    <string name="sec_missing">Données manquantes</string>
+    <string name="sec_warnings">Avertissements</string>
+    <string name="sec_validation">Validation historique</string>
+    <string name="sec_facts">Chiffres clés</string>
+    <string name="vol_strong_trend">Tendance forte</string>
+    <string name="vol_range">Marché en range</string>
+    <string name="vol_high">Forte volatilité</string>
+    <string name="vol_exceptional">Conditions exceptionnelles</string>
+    <string name="vol_unknown">Inconnue</string>
+    <string name="risk_rr">Gain/risque</string>
+    <string name="risk_cost">Coût estimé</string>
+    <string name="risk_exp">Rendement net attendu</string>
+    <string name="risk_unc">Incertitude globale</string>
+    <string name="unc_low">Faible</string>
+    <string name="unc_medium">Moyenne</string>
+    <string name="unc_high">Élevée</string>
+    <string name="court_evidence">Preuves</string>
+    <string name="court_statistics">Statistiques</string>
+    <string name="court_risk">Gardien du risque</string>
+    <string name="eng_support">%1$d preuves favorables et %2$d contraires</string>
+    <string name="set_title">Paramètres</string>
+    <string name="set_language">Langue</string>
+    <string name="set_server">Adresse du serveur d\'analyse</string>
+    <string name="set_token">Jeton secret (facultatif)</string>
+    <string name="set_live">Mode en direct</string>
+    <string name="set_demo_next">Autre moment de démo (%1$d/40)</string>
+    <string name="save">Enregistrer</string>
+    <string name="cancel">Annuler</string>
+    <string name="close">Fermer</string>
+    <string name="updated_at">Mis à jour %1$s</string>
+    <string name="err_invalid_url">Adresse de serveur invalide</string>
+    <string name="err_http_not_local">Le HTTP non chiffré n\'est autorisé que pour les adresses du réseau local</string>
+    <string name="err_bad_scheme">L\'adresse doit commencer par http:// ou https://</string>
+    <string name="err_timeout_waking">Le serveur cloud se réveille — réessayez dans une minute.</string>
+    <string name="err_no_connection">Impossible de joindre le serveur d\'analyse. Vérifiez votre connexion Internet et l\'adresse du serveur dans les paramètres.</string>
+    <string name="err_bad_token">Le jeton secret est incorrect ou manquant (Paramètres)</string>
+    <string name="err_server_starting">Le serveur cloud démarre — réessayez dans une minute.</string>
+    <string name="err_server_error">Le serveur a renvoyé une erreur</string>
+    <string name="err_too_large">Réponse anormalement volumineuse — rejetée</string>
+    <string name="err_invalid_response">Réponse invalide du serveur</string>
+    <string name="err_unexpected">Erreur inattendue</string>
+    <string name="err_retry">Réessayer</string>
+    <string name="err_detail">Détails : %1$s</string>
+    <string name="r_w_up" formatted="false">haussière</string>
+    <string name="r_w_down" formatted="false">baissière</string>
+    <string name="r_w_neutral" formatted="false">neutre</string>
+    <string name="r_w_sideways" formatted="false">latérale</string>
+    <string name="r_w_buying" formatted="false">l\'achat</string>
+    <string name="r_w_selling" formatted="false">la vente</string>
+    <string name="r_w_below" formatted="false">sous</string>
+    <string name="r_w_above" formatted="false">au-dessus de</string>
+    <string name="r_w_rose" formatted="false">a augmenté de</string>
+    <string name="r_w_fell" formatted="false">a baissé de</string>
+    <string name="r_w_added" formatted="false">a ajouté</string>
+    <string name="r_w_cut" formatted="false">a réduit de</string>
+    <string name="r_w_syn_tail" formatted="false">, données synthétiques</string>
+    <string name="r_w_support" formatted="false">support</string>
+    <string name="r_w_resistance" formatted="false">résistance</string>
+    <string name="r_w_synthetic" formatted="false"> (données synthétiques)</string>
+    <string name="r_rs_ctx" formatted="false">Tendance H4 {0} et tendance générale {1}{2}</string>
+    <string name="r_rs_tail_above" formatted="false">, prix au-dessus du support {0}</string>
+    <string name="r_rs_tail_below" formatted="false">, prix sous la résistance {0}</string>
+    <string name="r_rs_tail_between" formatted="false">, prix entre le support {0} et la résistance {1}</string>
+    <string name="r_rs_ok" formatted="false">Le rendement attendu après coûts est positif et le signal a passé le tribunal de décision</string>
+    <string name="r_rs_wait" formatted="false">On attend car {0}</string>
+    <string name="r_wf_default" formatted="false">Attendez que les raisons du rejet disparaissent ou que le prix atteigne le niveau alternatif</string>
+    <string name="r_wf_pullback" formatted="false">Attendez un repli vers {0} avant d\'envisager {1}</string>
+    <string name="r_wn_paper" formatted="false">Signal de recherche pour le trading papier uniquement — pas un conseil en investissement, jamais exécuté automatiquement</string>
+    <string name="r_wn_duplicate" formatted="false">Décision en double</string>
+    <string name="r_iv_candle" formatted="false">Une bougie M15 clôture {0} {1}</string>
+    <string name="r_iv_slope" formatted="false">La pente H1 se retourne contre {0}</string>
+    <string name="r_iv_news" formatted="false">Une publication économique à fort impact avant l\'entrée</string>
+    <string name="r_iv_expired" formatted="false">Le signal expire sans entrée dans la zone</string>
+    <string name="r_un_no_provider" formatted="false">Aucun fournisseur de données en direct n\'est configuré. Utilisez le mode démo ou ajoutez une clé gratuite.</string>
+    <string name="r_un_corrupt" formatted="false">Données du fournisseur corrompues ou incohérentes — rejetées</string>
+    <string name="r_un_no_quote" formatted="false">Aucun prix disponible chez le fournisseur</string>
+    <string name="r_un_closed" formatted="false">Le marché de l\'or au comptant est fermé (week-end)</string>
+    <string name="r_un_stale" formatted="false">Prix périmé ({0} s) — non utilisé</string>
+    <string name="r_un_firewall" formatted="false">Pare-feu qualité des données : {0}</string>
+    <string name="r_un_insufficient" formatted="false">Données historiques insuffisantes pour l\'analyse</string>
+    <string name="r_at_no_bias" formatted="false">Aucun biais clair partagé entre les unités de temps</string>
+    <string name="r_at_data_stale" formatted="false">Les données ne sont pas récentes</string>
+    <string name="r_at_exceptional" formatted="false">Conditions de marché exceptionnelles — les modèles ne sont pas fiables</string>
+    <string name="r_at_model_unqualified" formatted="false">Modèle de probabilités non qualifié : {0}</string>
+    <string name="r_at_edge_low" formatted="false">Le rendement attendu après spread et glissement est insuffisant</string>
+    <string name="r_at_stop_first" formatted="false">La probabilité de toucher le stop d\'abord n\'est pas inférieure à celle d\'atteindre l\'objectif</string>
+    <string name="r_at_margin_small" formatted="false">L\'écart entre les probabilités d\'objectif et de stop est trop faible — confiance insuffisante</string>
+    <string name="r_at_no_calendar" formatted="false">Aucun signal en direct avant la connexion du calendrier d\'actualités (protection contre les nouvelles surprises)</string>
+    <string name="r_at_duplicate" formatted="false">Un signal similaire précédent est encore actif — doublon évité</string>
+    <string name="r_at_uncertainty_high" formatted="false">L\'incertitude globale est élevée</string>
+    <string name="r_cr_extreme_vol" formatted="false">Volatilité extrême anormale — les modèles ne sont pas fiables</string>
+    <string name="r_cr_anomalous" formatted="false">Bougie statistiquement anormale (z robuste &gt; 4,5) — nouvelle ou gap possible</string>
+    <string name="r_cr_stretched" formatted="false">Le prix est très éloigné de sa moyenne (&gt; 2 ATR) — poursuivre le prix ici est faible</string>
+    <string name="r_cr_closed" formatted="false">Le marché est fermé ou en pause quotidienne</string>
+    <string name="r_cr_weekly_close" formatted="false">Moins de 4 heures avant la clôture hebdomadaire — risque de gap de week-end</string>
+    <string name="r_ve_calendar" formatted="false">Un événement économique à fort impact est proche (de 1 h avant à 45 min après) : {0}</string>
+    <string name="r_ve_news" formatted="false">Nouvelle à fort impact il y a moins de 30 minutes ({0}) : {1}</string>
+    <string name="r_ve_daily_trend" formatted="false">Le signal court terme va contre la grande tendance journalière (moyenne 200 jours et élan 6 mois)</string>
+    <string name="r_ve_price_conflict" formatted="false">Les deux sources de prix divergent — données douteuses</string>
+    <string name="r_ve_precision_failed" formatted="false">La couche de précision approuvée n\'a pas pu s\'exécuter — attente de précaution</string>
+    <string name="r_ve_precision_reject" formatted="false">Rejeté par la couche de précision approuvée ({0})</string>
+    <string name="r_ve_safe_mode" formatted="false">Mode sécurité actif après dégradation du modèle — aucun signal avant revalidation</string>
+    <string name="r_lv_strong_res" formatted="false">Forte résistance {0} à {1} avant l\'objectif — rendement attendu inadapté</string>
+    <string name="r_lv_strong_sup" formatted="false">Fort support {0} à {1} avant l\'objectif — rendement attendu inadapté</string>
+    <string name="r_ev_lv_res_before" formatted="false">La résistance {0} ({1}) avant l\'objectif peut limiter la hausse</string>
+    <string name="r_ev_lv_sup_before" formatted="false">Le support {0} ({1}) avant l\'objectif peut limiter la baisse</string>
+    <string name="r_ev_lv_stop_in_sup" formatted="false">Le stop est dans la zone de support {0} — exposé aux balayages de liquidité ; mieux vaut derrière la zone</string>
+    <string name="r_ev_lv_stop_in_res" formatted="false">Le stop est dans la zone de résistance {0} — exposé aux balayages de liquidité ; mieux vaut derrière la zone</string>
+    <string name="r_ev_lv_sup_guard" formatted="false">Un fort support {0} ({1}) protège le stop</string>
+    <string name="r_ev_lv_res_guard" formatted="false">Une forte résistance {0} ({1}) protège le stop</string>
+    <string name="r_rv_bounce_sup" formatted="false">Un rebond vers {0} près de {1} en tenant au-dessus</string>
+    <string name="r_rv_close_above" formatted="false">Une clôture horaire au-dessus de {0} à {1}</string>
+    <string name="r_rv_bounce_res" formatted="false">Un rebond vers {0} près de {1} sans parvenir à le franchir</string>
+    <string name="r_rv_close_below" formatted="false">Une clôture horaire sous {0} à {1}</string>
+    <string name="r_rv_break_either" formatted="false">Une clôture horaire au-dessus de {0} ou sous {1} pour fixer la direction</string>
+    <string name="r_ct_few_evidence" formatted="false">Preuves indépendantes insuffisantes ({0} moteurs ; {1} requis)</string>
+    <string name="r_ct_contrary" formatted="false">Les preuves contraires sont au moins aussi fortes que les preuves favorables</string>
+    <string name="r_gv_no_trade" formatted="false">Aucune opération proposée</string>
+    <string name="r_gv_quote_stale" formatted="false">Le prix n\'est pas récent</string>
+    <string name="r_gv_rr_low" formatted="false">Le ratio gain/risque est inférieur à {0}</string>
+    <string name="r_gv_open_pos" formatted="false">Une opération papier est déjà ouverte</string>
+    <string name="r_ev_mtf_slope" formatted="false">Pente de la moyenne 50 sur {0} : {1} (efficacité de tendance {2})</string>
+    <string name="r_ev_range" formatted="false">Le marché est en range ; les signaux de tendance sont moins fiables</string>
+    <string name="r_ev_h4_against" formatted="false">La tendance H4 va contre {0}</string>
+    <string name="r_ev_asia" formatted="false">Session asiatique : liquidité généralement plus faible et mouvement plus lent</string>
+    <string name="r_ev_daily_ok" formatted="false">La grande tendance journalière concorde avec le signal (moyenne 200 jours et élan 6 mois)</string>
+    <string name="r_md_no_provider" formatted="false">Un fournisseur de prix XAU/USD en direct</string>
+    <string name="r_md_demo" formatted="false">Mode démo : les prix sont synthétiques, pas le prix du marché</string>
+    <string name="r_md_macro" formatted="false">Données macro (FRED) non connectées</string>
+    <string name="r_md_calendar" formatted="false">Calendrier économique non connecté</string>
+    <string name="r_md_cot" formatted="false">Rapports COT non connectés</string>
+    <string name="r_md_news_feeds" formatted="false">Flux d\'actualités officiels non connectés</string>
+    <string name="r_st_buy" formatted="false">Acheter</string>
+    <string name="r_st_sell" formatted="false">Vendre</string>
+    <string name="r_st_wait" formatted="false">Attendre</string>
+    <string name="r_st_na" formatted="false">Indisponible</string>
+    <string name="r_st_wait_lean_buy" formatted="false">Attendre (penchant achat)</string>
+    <string name="r_st_wait_lean_sell" formatted="false">Attendre (penchant vente)</string>
+    <string name="r_st_buy_dip" formatted="false">Acheter le repli</string>
+    <string name="r_st_sell_pop" formatted="false">Vendre le rebond</string>
+    <string name="r_st_buy_trend" formatted="false">Acheter avec la tendance</string>
+    <string name="r_st_sell_trend" formatted="false">Vendre avec la tendance</string>
+    <string name="r_st_lean_buy" formatted="false">Penchant achat (non validé)</string>
+    <string name="r_st_lean_sell" formatted="false">Penchant vente (non validé)</string>
+    <string name="r_bt_up" formatted="false">La grande tendance est haussière</string>
+    <string name="r_bt_down" formatted="false">La grande tendance est baissière</string>
+    <string name="r_bt_mixed" formatted="false">La grande tendance n\'est pas tranchée</string>
+    <string name="r_ow_dip_buy" formatted="false">{0}, et le prix est en repli temporaire sous la moyenne 20 jours ({1}) avec un RSI de {2}.</string>
+    <string name="r_ow_pop_sell" formatted="false">{0}, et le prix est en rebond temporaire au-dessus de la moyenne 20 jours ({1}) avec un RSI de {2}.</string>
+    <string name="r_ow_up_no_dip" formatted="false">{0}, mais il n\'y a pas encore assez de repli ; acheter maintenant serait poursuivre le prix.</string>
+    <string name="r_ow_down_no_pop" formatted="false">{0}, mais il n\'y a pas encore assez de rebond pour vendre.</string>
+    <string name="r_ow_no_edge" formatted="false">{0} ; aucun avantage clair sur une semaine.</string>
+    <string name="r_om_agree" formatted="false">L\'élan concorde ({0}) et le prix est {1} la moyenne 200 jours ({2}).</string>
+    <string name="r_om_disagree" formatted="false">L\'élan ne concorde pas ({0}) — aucune tendance mensuelle claire.</string>
+    <string name="r_om_p3" formatted="false">3 mois</string>
+    <string name="r_om_p6" formatted="false">6 mois</string>
+    <string name="r_om_p12" formatted="false">12 mois</string>
+    <string name="r_va_insufficient" formatted="false">Historique journalier insuffisant ({0} jours, au moins {1} requis)</string>
+    <string name="r_va_no_signals" formatted="false">Les conditions de la règle ne se sont jamais produites dans l\'historique disponible</string>
+    <string name="r_va_validated" formatted="false">La règle a battu le taux de base lors d\'un test statistique et tenu sur les deux moitiés de l\'historique</string>
+    <string name="r_va_few" formatted="false">Trop peu de signaux historiques ({0} sur {1} requis)</string>
+    <string name="r_va_pvalue" formatted="false">L\'avantage sur le taux de base n\'est pas statistiquement significatif (p={0})</string>
+    <string name="r_va_unstable" formatted="false">La performance n\'a pas tenu sur les deux moitiés de l\'historique (instable)</string>
+    <string name="r_va_neg_return" formatted="false">Le rendement moyen après coûts n\'est pas positif</string>
+    <string name="r_va_samples" formatted="false">; {0} signaux sans chevauchement {1}</string>
+    <string name="r_va_hours_unq" formatted="false">Le modèle horaire n\'a pas encore passé la validation</string>
+    <string name="r_wa_unvalidated" formatted="false">La règle n\'a pas encore passé la validation statistique — à titre indicatif, pas un signal</string>
+    <string name="r_wa_atr_levels" formatted="false">Stop et objectif approximatifs en ATR journalier ({0}), non testés historiquement</string>
+    <string name="r_wa_event" formatted="false">Événement à fort impact dans les prochains jours : {0}</string>
+    <string name="r_wa_real_yield" formatted="false">Le rendement réel américain va à l\'encontre de ce penchant (FRED DFII10)</string>
+    <string name="r_wa_usd" formatted="false">Le dollar américain va à l\'encontre de ce penchant (indice dollar large)</string>
+    <string name="r_ru_week" formatted="false">Acheter le repli dans une tendance haussière (prix au-dessus de la moyenne 200 jours, élan 6 mois positif, clôture sous la moyenne 20 jours et RSI14 &lt; 45), et l\'inverse pour vendre</string>
+    <string name="r_ru_month" formatted="false">Élan 3, 6 et 12 mois concordants dans le même sens, avec la position du prix par rapport à la moyenne 200 jours</string>
+    <string name="r_mt_hours" formatted="false">Décision principale : moteur de bougies 15 min–4 h (horizon 4 heures)</string>
+    <string name="r_mt_daily" formatted="false">{0} : {1} ; évaluation sans chevauchement après un coût de {2}</string>
+    <string name="r_fa_price_sma" formatted="false">Le prix est {0} la moyenne 200 jours ({1}) de {2} %</string>
+    <string name="r_fa_sma20" formatted="false">Moyenne 20 jours = {0}</string>
+    <string name="r_fa_rsi" formatted="false">RSI 14 journalier = {0}</string>
+    <string name="r_fa_mom" formatted="false">Élan {0} : {1} %</string>
+    <string name="r_fa_atr" formatted="false">Amplitude journalière moyenne (ATR20) = {0}</string>
+</resources>

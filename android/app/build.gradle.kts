@@ -13,8 +13,8 @@ android {
         minSdk = 26
         targetSdk = 35
         versionCode = 1
-        versionName = "0.1.0-p1"
-        resourceConfigurations += listOf("ar", "en")
+        versionName = "0.2.0"
+        resourceConfigurations += listOf("en", "ar", "fr", "es", "pt-rBR")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -33,6 +33,8 @@ android {
     }
     kotlinOptions { jvmTarget = "17" }
     buildFeatures { compose = true }
+    // Reason codes without a translation intentionally fall back to the English default (see tools/gen_strings.py).
+    lint { disable += "MissingTranslation" }
     packaging { resources.excludes += "/META-INF/{AL2.0,LGPL2.1}" }
     sourceSets["androidTest"].assets.srcDir("src/test/resources")
 }
@@ -42,6 +44,8 @@ dependencies {
     implementation(bom)
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.animation:animation")
+    implementation("androidx.compose.foundation:foundation")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.activity:activity-compose:1.9.3")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")

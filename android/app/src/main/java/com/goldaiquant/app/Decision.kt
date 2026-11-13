@@ -7,16 +7,33 @@ import java.time.Instant
 /** Mirror of schema/decision.schema.json (v1). Parsed and validated strictly; anything off -> ParseException. */
 enum class Action { BUY, SELL, WAIT, UNAVAILABLE }
 
-data class EvidenceItem(val engine: String, val textAr: String, val weight: Double)
+data class EvidenceItem(val engine: String, val textAr: String, val weight: Double, val ref: Reason? = null) {
+    val reason: Reason get() = ref ?: Reason("raw", emptyList(), textAr)
+}
 
-data class Trend(val direction: String, val strength: Int?, val labelAr: String, val perTimeframe: Map<String, String>)
+data class Trend(val direction: String, val strength: Int?, val labelAr: String, val perTimeframe: Map<String, String>,
+                 val agreement: Double? = null)
 
 data class Level(val name: String, val price: Double, val zoneLow: Double, val zoneHigh: Double, val strength: Int?,
-                 val labelAr: String, val tests: Int, val timeframes: List<String>, val brokenRecently: Boolean)
+                 val labelAr: String, val tests: Int, val timeframes: List<String>, val brokenRecently: Boolean,
+                 val lastTest: Instant? = null, val roleFlip: Boolean = false, val distanceAtr: Double? = null)
 
 data class Levels(val supports: List<Level>, val resistances: List<Level>, val validated: Boolean, val validationAr: String?)
 
-data class Judgement(val judge: String, val passed: Boolean, val reasonsAr: List<String>)
+data class Judgement(val judge: String, val passed: Boolean, val reasonsAr: List<String>, val refs: List<Reason> = emptyList()) {
+    val reasons: List<Reason> get() = if (refs.isNotEmpty()) refs else reasonsAr.map { Reason("raw", emptyList(), it) }
+}
+
+/** Per-horizon card: HOURS mirrors the main decision; WEEK / MONTH come from validated daily rules. */
+data class Outlook(
+    val horizon: String, val labelAr: String, val action: Action, val tilt: Int, val stanceAr: String,
+    val reasonAr: String, val validated: Boolean, val validationAr: String?, val hitRate: Double?,
+    val baseRate: Double?, val samples: Int, val horizonDays: Int?, val entryPrice: Double?, val stopLoss: Double?,
+    val target: Double?, val waitForPrice: Double?, val warningsAr: List<String>,
+    val stance: Reason? = null, val reason: Reason? = null, val validation: Reason? = null, val method: Reason? = null,
+    val warnings: List<Reason> = emptyList(), val facts: List<Reason> = emptyList(),
+    val levels: Levels? = null, val trend: Trend? = null,
+)
 
 data class HorizonProb(val minutes: Int, val pTarget: Double, val pStop: Double, val pNeither: Double, val qualified: Boolean)
 
@@ -74,6 +91,14 @@ data class Decision(
     val quoteChange: Double?,
     val quoteChangePct: Double?,
     val reevaluateAr: List<String>,
+    val outlooks: List<Outlook> = emptyList(),
+    val reasonShort: Reason? = null,
+    val waitFor: Reason? = null,
+    val warning: Reason? = null,
+    val invalidationRefs: List<Reason> = emptyList(),
+    val missingRefs: List<Reason> = emptyList(),
+    val alternativeEntryNote: Reason? = null,
+    val reevaluateRefs: List<Reason> = emptyList(),
 ) {
     val isDemo: Boolean get() = mode == "DEMO"
 
@@ -95,23 +120,23 @@ object DecisionParser {
     private const val SUPPORTED_MAJOR = "1"
 
     fun parse(raw: String): Decision {
-        val o = try { JSONObject(raw) } catch (e: Exception) { throw ParseException("JSON غير صالح") }
+        val o = try { JSONObject(raw) } catch (e: Exception) { throw ParseException("invalid JSON") }
         val version = o.req("schema_version")
-        if (version.substringBefore('.') != SUPPORTED_MAJOR) throw ParseException("إصدار عقد غير مدعوم: $version")
+        if (version.substringBefore('.') != SUPPORTED_MAJOR) throw ParseException("unsupported contract version: $version")
         val action = try { Action.valueOf(o.req("action")) } catch (e: IllegalArgumentException) {
-            throw ParseException("قيمة action غير معروفة")
+            throw ParseException("unknown action value")
         }
-        val fresh = o.optJSONObject("data_freshness") ?: throw ParseException("data_freshness مفقود")
+        val fresh = o.optJSONObject("data_freshness") ?: throw ParseException("data_freshness missing")
         val d = Decision(
             schemaVersion = version,
             decisionId = o.req("decision_id"),
-            mode = o.req("mode").also { if (it != "DEMO" && it != "LIVE") throw ParseException("mode غير معروف") },
+            mode = o.req("mode").also { if (it != "DEMO" && it != "LIVE") throw ParseException("unknown mode") },
             action = action,
             spotOrProxy = o.req("spot_or_proxy"),
             provider = o.req("provider"),
             quote = o.dbl("quote"),
             quoteTime = o.time("quote_timestamp_utc"),
-            analyzedAt = o.time("analyzed_at_utc") ?: throw ParseException("analyzed_at_utc مفقود"),
+            analyzedAt = o.time("analyzed_at_utc") ?: throw ParseException("analyzed_at_utc missing"),
             entryMin = o.dbl("entry_min"), entryMax = o.dbl("entry_max"), stopLoss = o.dbl("stop_loss"),
             tp1 = o.dbl("tp1"), tp2 = o.dbl("tp2"), tp3 = o.dbl("tp3"),
             horizonMinutes = if (o.isNull("horizon_minutes")) null else o.optInt("horizon_minutes"),
@@ -149,62 +174,100 @@ object DecisionParser {
             auditHash = o.str("audit_hash"),
             trend = o.optJSONObject("market_trend")?.let { t ->
                 val per = t.optJSONObject("per_timeframe")
-                Trend(t.getString("direction"), if (t.isNull("strength")) null else t.getInt("strength"),
-                    t.getString("label_ar"), per?.keys()?.asSequence()?.associateWith { per.getString(it) } ?: emptyMap())
+                parseTrend(t)
             },
-            levels = o.optJSONObject("levels")?.let { lv ->
-                Levels(lv.levelList("supports"), lv.levelList("resistances"), lv.getBoolean("validated"), lv.str("validation_ar"))
-            },
+            levels = o.optJSONObject("levels")?.let { parseLevels(it) },
             quoteChange = o.dbl("quote_change"),
             quoteChangePct = o.dbl("quote_change_pct"),
             reevaluateAr = o.strings("reevaluate_ar"),
+            outlooks = o.outlooks("outlooks"),
+            reasonShort = o.reason("reason_short_ref"), waitFor = o.reason("wait_for_ref"), warning = o.reason("warning_ref"),
+            invalidationRefs = o.reasons("invalidation_refs"), missingRefs = o.reasons("missing_refs"),
+            alternativeEntryNote = o.reason("alternative_entry_note_ref"),
+            reevaluateRefs = o.reasons("reevaluate_refs"),
         )
         validate(d)
         return d
     }
 
+    private fun parseTrend(t: JSONObject): Trend {
+        val per = t.optJSONObject("per_timeframe")
+        return Trend(t.getString("direction"), if (t.isNull("strength")) null else t.getInt("strength"),
+            t.getString("label_ar"), per?.keys()?.asSequence()?.associateWith { per.getString(it) } ?: emptyMap(),
+            if (t.isNull("agreement") || !t.has("agreement")) null else t.getDouble("agreement"))
+    }
+
+    private fun parseLevels(lv: JSONObject): Levels =
+        Levels(lv.levelList("supports"), lv.levelList("resistances"), lv.getBoolean("validated"), lv.str("validation_ar"))
+
     private fun validate(d: Decision) {
-        if (d.isDemo && d.spotOrProxy != "SYNTHETIC") throw ParseException("وضع تجريبي بدون وسم SYNTHETIC")
+        if (d.isDemo && d.spotOrProxy != "SYNTHETIC") throw ParseException("demo mode without SYNTHETIC label")
         if (d.action == Action.BUY || d.action == Action.SELL) {
-            val em = d.entryMin ?: throw ParseException("نطاق الدخول مفقود")
-            val ex = d.entryMax ?: throw ParseException("نطاق الدخول مفقود")
-            val sl = d.stopLoss ?: throw ParseException("وقف الخسارة مفقود")
-            val t1 = d.tp1 ?: throw ParseException("الهدف الأول مفقود")
-            if (d.quote == null || d.quoteTime == null || d.validUntil == null) throw ParseException("بيانات السعر/الصلاحية مفقودة")
-            if (!d.isFresh) throw ParseException("إشارة على بيانات قديمة")
-            if (d.court.isEmpty() || d.court.any { !it.passed }) throw ParseException("إشارة لم تجتز محكمة القرار")
-            if (em > ex) throw ParseException("نطاق دخول مقلوب")
+            val em = d.entryMin ?: throw ParseException("entry range missing")
+            val ex = d.entryMax ?: throw ParseException("entry range missing")
+            val sl = d.stopLoss ?: throw ParseException("stop loss missing")
+            val t1 = d.tp1 ?: throw ParseException("first target missing")
+            if (d.quote == null || d.quoteTime == null || d.validUntil == null) throw ParseException("quote/validity data missing")
+            if (!d.isFresh) throw ParseException("signal on stale data")
+            if (d.court.isEmpty() || d.court.any { !it.passed }) throw ParseException("signal did not pass the decision court")
+            if (em > ex) throw ParseException("inverted entry range")
             val ok = if (d.action == Action.BUY) sl < em && t1 > ex else sl > ex && t1 < em
-            if (!ok) throw ParseException("مستويات غير متسقة مع الاتجاه")
+            if (!ok) throw ParseException("levels inconsistent with direction")
         }
         listOfNotNull(d.probability, d.probabilityStop, d.probabilityNeither).forEach {
-            if (it < 0.0 || it > 1.0) throw ParseException("احتمال خارج النطاق")
+            if (it < 0.0 || it > 1.0) throw ParseException("probability out of range")
         }
         if (d.probability != null && d.probabilityStop != null && d.probabilityNeither != null &&
             Math.abs(d.probability + d.probabilityStop + d.probabilityNeither - 1.0) > 1e-3)
-            throw ParseException("مجموع الاحتمالات لا يساوي 1")
-        d.trend?.strength?.let { if (it !in 0..100) throw ParseException("قوة اتجاه خارج النطاق") }
+            throw ParseException("probabilities do not sum to 1")
+        d.trend?.strength?.let { if (it !in 0..100) throw ParseException("trend strength out of range") }
         d.levels?.let { lv ->
             val all = lv.supports + lv.resistances
-            if (!lv.validated && all.any { it.strength != null }) throw ParseException("قوة مستويات رقمية دون تحقق")
-            if (all.any { it.strength != null && it.strength !in 0..100 }) throw ParseException("قوة مستوى خارج النطاق")
+            if (!lv.validated && all.any { it.strength != null }) throw ParseException("numeric level strength without validation")
+            if (all.any { it.strength != null && it.strength !in 0..100 }) throw ParseException("level strength out of range")
             if (d.quote != null && (lv.supports.any { it.zoneHigh >= d.quote } || lv.resistances.any { it.zoneLow <= d.quote }))
-                throw ParseException("مستويات في الجهة الخاطئة من السعر")
+                throw ParseException("levels on the wrong side of price")
+        }
+        d.outlooks.forEach { ol ->
+            if (ol.horizon !in setOf("HOURS", "WEEK", "MONTH")) throw ParseException("unknown horizon: ${ol.horizon}")
+            if (ol.hitRate != null && (!ol.validated || ol.samples < 30 || ol.hitRate !in 0.0..1.0 || d.isDemo))
+                throw ParseException("historical rate without validation")
+            if (ol.horizon != "HOURS" && (ol.action == Action.BUY || ol.action == Action.SELL)) {
+                if (!ol.validated) throw ParseException("long-horizon signal without validation")
+                val e = ol.entryPrice ?: throw ParseException("horizon entry price missing")
+                val sl = ol.stopLoss ?: throw ParseException("horizon stop missing")
+                val tg = ol.target ?: throw ParseException("horizon target missing")
+                val ok = if (ol.action == Action.BUY) sl < e && tg > e else sl > e && tg < e
+                if (!ok) throw ParseException("horizon levels inconsistent")
+            }
         }
         if (d.isDemo && (d.probability != null || d.horizonProbs.isNotEmpty()))
-            throw ParseException("احتمالات في الوضع التجريبي غير مسموحة")
+            throw ParseException("probabilities in demo mode not allowed")
     }
 
     private fun JSONObject.req(k: String): String {
-        if (!has(k) || isNull(k)) throw ParseException("الحقل $k مفقود")
+        if (!has(k) || isNull(k)) throw ParseException("field $k missing")
         return getString(k)
     }
     private fun JSONObject.str(k: String): String? = if (!has(k) || isNull(k)) null else getString(k)
     private fun JSONObject.dbl(k: String): Double? = if (!has(k) || isNull(k)) null else getDouble(k).also {
-        if (it.isNaN() || it.isInfinite()) throw ParseException("قيمة عددية غير صالحة في $k")
+        if (it.isNaN() || it.isInfinite()) throw ParseException("invalid number in $k")
     }
     private fun JSONObject.time(k: String): Instant? = str(k)?.let {
-        try { Instant.parse(it) } catch (e: Exception) { throw ParseException("وقت غير صالح في $k") }
+        try { Instant.parse(it) } catch (e: Exception) { throw ParseException("invalid time in $k") }
+    }
+    private fun JSONObject.reason(k: String): Reason? = optJSONObject(k)?.let { toReason(it) }
+    private fun JSONObject.reasons(k: String): List<Reason> {
+        val a: JSONArray = optJSONArray(k) ?: return emptyList()
+        return (0 until a.length()).map { toReason(a.getJSONObject(it)) }
+    }
+    private fun toReason(e: JSONObject): Reason {
+        val a = e.optJSONArray("args")
+        val args: List<Any> = if (a == null) emptyList() else (0 until a.length()).map { i ->
+            val v = a.get(i)
+            if (v is JSONObject) toReason(v) else v.toString()
+        }
+        return Reason(e.getString("code"), args, e.optString("text_ar", ""))
     }
     private fun JSONObject.strings(k: String): List<String> {
         val a: JSONArray = optJSONArray(k) ?: return emptyList()
@@ -216,14 +279,32 @@ object DecisionParser {
             val e = a.getJSONObject(it)
             Level(e.getString("name"), e.getDouble("price"), e.getDouble("zone_low"), e.getDouble("zone_high"),
                 if (e.isNull("strength")) null else e.getInt("strength"), e.getString("strength_label_ar"),
-                e.optInt("tests", 0), e.strings("timeframes"), e.optBoolean("broken_recently", false))
+                e.optInt("tests", 0), e.strings("timeframes"), e.optBoolean("broken_recently", false),
+                e.time("last_test_utc"), e.optBoolean("role_flip", false), e.dbl("distance_atr"))
         }
     }
     private fun JSONObject.court(k: String): List<Judgement> {
         val a: JSONArray = optJSONArray(k) ?: return emptyList()
         return (0 until a.length()).map {
             val e = a.getJSONObject(it)
-            Judgement(e.getString("judge"), e.getBoolean("passed"), e.strings("reasons_ar"))
+            Judgement(e.getString("judge"), e.getBoolean("passed"), e.strings("reasons_ar"), e.reasons("reasons_ref"))
+        }
+    }
+    private fun JSONObject.outlooks(k: String): List<Outlook> {
+        val a: JSONArray = optJSONArray(k) ?: return emptyList()
+        return (0 until a.length()).map {
+            val e = a.getJSONObject(it)
+            val act = try { Action.valueOf(e.req("action")) } catch (x: IllegalArgumentException) {
+                throw ParseException("unknown action value in horizon")
+            }
+            Outlook(e.req("horizon"), e.req("label_ar"), act, e.optInt("tilt", 0), e.req("stance_ar"),
+                e.optString("reason_ar", ""), e.optBoolean("validated", false), e.str("validation_ar"),
+                e.dbl("hit_rate"), e.dbl("base_rate"), e.optInt("samples", 0),
+                if (e.isNull("horizon_days")) null else e.optInt("horizon_days"), e.dbl("entry_price"),
+                e.dbl("stop_loss"), e.dbl("target"), e.dbl("wait_for_price"), e.strings("warnings_ar"),
+                e.reason("stance_ref"), e.reason("reason_ref"), e.reason("validation_ref"), e.reason("method_ref"),
+                e.reasons("warnings_ref"), e.reasons("facts_ref"),
+                e.optJSONObject("levels")?.let { parseLevels(it) }, e.optJSONObject("trend")?.let { parseTrend(it) })
         }
     }
     private fun JSONObject.horizons(k: String): List<HorizonProb> {
@@ -238,7 +319,7 @@ object DecisionParser {
         val a: JSONArray = optJSONArray(k) ?: return emptyList()
         return (0 until a.length()).map {
             val e = a.getJSONObject(it)
-            EvidenceItem(e.getString("engine"), e.getString("text_ar"), e.getDouble("weight"))
+            EvidenceItem(e.getString("engine"), e.getString("text_ar"), e.getDouble("weight"), e.reason("text_ref"))
         }
     }
 }

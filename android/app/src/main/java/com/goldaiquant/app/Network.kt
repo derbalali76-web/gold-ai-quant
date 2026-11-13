@@ -6,29 +6,8 @@ import java.net.HttpURLConnection
 import java.net.URI
 import java.net.URLEncoder
 
-/** Enforces ADR-003: https anywhere; plain http only to private/LAN/loopback addresses. */
-object UrlPolicy {
-    fun check(base: String): String? {
-        val uri = try { URI(base.trim()) } catch (e: Exception) { return "عنوان غير صالح" }
-        val host = uri.host ?: return "عنوان غير صالح"
-        return when (uri.scheme?.lowercase()) {
-            "https" -> null
-            "http" -> if (isPrivateHost(host)) null else "HTTP غير المشفر مسموح فقط لعناوين الشبكة المحلية"
-            else -> "يجب أن يبدأ العنوان بـ http:// أو https://"
-        }
-    }
-
-    fun isPrivateHost(host: String): Boolean {
-        if (host == "localhost") return true
-        val p = host.split('.').map { it.toIntOrNull() ?: return false }
-        if (p.size != 4 || p.any { it !in 0..255 }) return false
-        return p[0] == 10 || p[0] == 127 ||
-            (p[0] == 172 && p[1] in 16..31) ||
-            (p[0] == 192 && p[1] == 168)
-    }
-}
-
-class ApiException(val userMessageAr: String) : Exception(userMessageAr)
+/** [detail] is a technical diagnostic (HTTP code, parser message) shown in small type; never the main message. */
+class ApiException(val kind: ErrorKind, val detail: String? = null) : Exception(kind.name + (detail?.let { ": $it" } ?: ""))
 
 data class Fetched(val raw: String, val decision: Decision)
 
@@ -46,17 +25,17 @@ class ApiClient(private val baseUrl: String, private val token: String = "") {
         }
         try {
             val code = try { conn.responseCode } catch (e: java.net.SocketTimeoutException) {
-                throw ApiException("الخادم السحابي يستيقظ من السكون — أعد المحاولة بعد دقيقة.")
+                throw ApiException(ErrorKind.TIMEOUT_WAKING)
             } catch (e: Exception) {
-                throw ApiException("تعذر الاتصال بخادم التحليل. تحقق من الإنترنت ومن عنوان الخادم في الإعدادات.")
+                throw ApiException(ErrorKind.NO_CONNECTION)
             }
-            if (code == 401) throw ApiException("الرمز السري غير صحيح أو مفقود (الإعدادات)")
-            if (code == 502 || code == 503) throw ApiException("الخادم السحابي يبدأ التشغيل — أعد المحاولة بعد دقيقة.")
-            if (code != 200) throw ApiException("الخادم أعاد خطأ ($code)")
+            if (code == 401) throw ApiException(ErrorKind.BAD_TOKEN)
+            if (code == 502 || code == 503) throw ApiException(ErrorKind.SERVER_STARTING)
+            if (code != 200) throw ApiException(ErrorKind.SERVER_ERROR, code.toString())
             val body = conn.inputStream.bufferedReader(Charsets.UTF_8).use { it.readText() }
-            if (body.length > 512_000) throw ApiException("استجابة كبيرة بشكل غير طبيعي — رُفضت")
+            if (body.length > 512_000) throw ApiException(ErrorKind.TOO_LARGE)
             try { Fetched(body, DecisionParser.parse(body)) } catch (e: ParseException) {
-                throw ApiException("استجابة غير صالحة من الخادم: ${e.message}")
+                throw ApiException(ErrorKind.INVALID_RESPONSE, e.message)
             }
         } finally {
             conn.disconnect()

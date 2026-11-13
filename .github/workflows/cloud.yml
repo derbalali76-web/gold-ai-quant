@@ -36,8 +36,9 @@ jobs:
         env:
           TWELVEDATA_API_KEY: ${{ secrets.TWELVEDATA_API_KEY }}
           GOLDQUANT_REPO_ROOT: ${{ github.workspace }}
-        run: python backend/tools/cloud_job.py ${{ steps.job.outputs.name }} --years "${{ inputs.years || '3' }}"
+        run: timeout 100m python backend/tools/cloud_job.py ${{ steps.job.outputs.name }} --years "${{ inputs.years || '3' }}"
       - name: commit
+        if: ${{ always() }}
         run: |
           git config user.name "gold-ai-quant-bot"
           git config user.email "actions@users.noreply.github.com"

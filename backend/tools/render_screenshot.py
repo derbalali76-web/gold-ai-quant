@@ -110,6 +110,24 @@ def screen(d, compact):
                   f'<div class="dim s11">{"لا تُعرض في الوضع التجريبي" if d["mode"] == "DEMO" else "لم تجتز اختبارات المعايرة بعد"}</div>')
     o.append(f'<div class="row"><div class="panel" style="flex:1">{"".join(pc)}</div>'
              f'<div class="panel" style="flex:1.45;border-color:{col}">{"".join(dc)}</div></div>')
+    ols = {x["horizon"]: x for x in d.get("outlooks", [])}  # HorizonsRow() in GoldScreen.kt: hours / week / month
+    if ols:
+        cells = []
+        for hz in ("HOURS", "WEEK", "MONTH"):
+            x = ols.get(hz)
+            if not x:
+                continue
+            oc = {"BUY": C["green"], "SELL": C["red"], "UNAVAILABLE": C["grey"]}.get(x["action"], C["wait"])
+            if x.get("hit_rate") is not None:
+                st = f'{LRI}{round(x["hit_rate"] * 100)}% / {x["samples"]}{PDI}'
+            elif x["validated"]:
+                st = "محقَّق"
+            else:
+                st = "لا بيانات" if x["action"] == "UNAVAILABLE" else "غير محقَّق"
+            cells.append(f'<div class="panel hz" style="flex:1;border-color:{oc}b3"><span class="dim s11">{x["label_ar"]}</span>'
+                         f'<b class="clamp2" style="color:{oc};font-size:14px;font-weight:900">{escape(x["stance_ar"])}</b>'
+                         f'<span class="tiny" style="color:{C["green"] if x["validated"] else C["dim"]}">{st}</span></div>')
+        o.append('<div class="row">' + "".join(cells) + "</div>")
     lv = d.get("levels")
     if lv:
         rows = 2 if compact else 3
@@ -150,6 +168,7 @@ body{{background:#1d1d22;font-family:'DejaVu Sans',sans-serif;padding:16px}}
 .lvr{{display:flex;align-items:center;gap:4px}} .nm{{width:24px;font-size:12px}} .lp{{flex:1;font-size:13px;font-weight:600}}
 .ls{{width:54px;display:flex;flex-direction:column;align-items:flex-end;gap:1px}}
 .segs{{display:flex;gap:2px;direction:ltr}} .segs i{{width:6px;height:7px;border-radius:2px;display:block}}
+.hz{{align-items:center;text-align:center;gap:2px}}
 .rsn{{flex-direction:row;align-items:center;gap:8px}}
 .det{{border:1px solid {C['gold']};border-radius:20px;padding:8px 12px;font-size:13px;white-space:nowrap}}
 .clamp2,.clamp3{{display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden;line-height:1.4}} .clamp2{{-webkit-line-clamp:2}} .clamp3{{-webkit-line-clamp:3}}

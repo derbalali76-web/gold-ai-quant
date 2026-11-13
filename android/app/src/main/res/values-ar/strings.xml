@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tagline">الذكاء الاصطناعي للذهب</string>
+    <string name="health_live">بيانات حية</string>
+    <string name="health_stale">بيانات متأخرة</string>
+    <string name="health_demo">بيانات تجريبية</string>
+    <string name="health_none">غير متاحة</string>
+    <string name="health_saved">محفوظ — ليس حديثاً</string>
+    <string name="demo_banner">تجريبي: أسعار اصطناعية — ليست توصيات حقيقية</string>
+    <string name="ask">ماذا أفعل؟</string>
+    <string name="asking">جارٍ التحليل…</string>
+    <string name="prompt_ask">اضغط «ماذا أفعل؟» للحصول على تحليل السوق الحالي</string>
+    <string name="footer_disclaimer">للتداول الورقي والبحث فقط. لا تنفيذ للصفقات ولا ضمان لأي نتيجة.</string>
+    <string name="h_hours">ساعات</string>
+    <string name="h_week">أسبوع</string>
+    <string name="h_month">شهر</string>
+    <string name="hz_validated">محقَّق</string>
+    <string name="hz_not_validated">غير محقَّق</string>
+    <string name="hz_no_data">لا بيانات</string>
+    <string name="hz_updating">يتحدّث…</string>
+    <string name="cd_horizon">أفق %1$s</string>
+    <string name="cd_horizon_selected">أفق %1$s، محدد</string>
+    <string name="cd_settings">الإعدادات</string>
+    <string name="a_buy">شراء</string>
+    <string name="a_sell">بيع</string>
+    <string name="a_wait">انتظار</string>
+    <string name="a_unavailable">غير متاح</string>
+    <string name="sub_court">اجتازت محكمة القرار</string>
+    <string name="sub_validated_rule">قاعدة يومية محقَّقة</string>
+    <string name="sub_wait">لا توجد صفقة مؤهلة الآن</string>
+    <string name="sub_unavailable">البيانات غير كافية أو متأخرة</string>
+    <string name="saved_decision">قرار سابق — اضغط «ماذا أفعل؟» للتحديث</string>
+    <string name="l_entry">الدخول</string>
+    <string name="l_ref_price">السعر المرجعي</string>
+    <string name="l_stop">وقف الخسارة</string>
+    <string name="l_target">الهدف</string>
+    <string name="l_duration">المدة المتوقعة</string>
+    <string name="l_reeval">سعر إعادة التقييم</string>
+    <string name="approx">(تقريبي)</string>
+    <string name="dur_hours">حتى %1$d ساعات</string>
+    <string name="dur_minutes">حتى %1$d دقيقة</string>
+    <string name="dur_days">%1$d أيام تداول</string>
+    <string name="prob_title">الاحتمالات</string>
+    <string name="prob_na">غير متاحة</string>
+    <string name="prob_demo">لا تُعرض في الوضع التجريبي</string>
+    <string name="prob_not_cal">لم تجتز اختبارات المعايرة بعد</string>
+    <string name="prob_horizon">غير معايرة لهذا الأفق</string>
+    <string name="prob_target">الوصول للهدف</string>
+    <string name="prob_stop">وقف الخسارة</string>
+    <string name="prob_neither">عدم الوصول</string>
+    <string name="prob_samples">معايرة خارج العينة: %1$d حالة</string>
+    <string name="prob_dialog_title">عن هذه الاحتمالات</string>
+    <string name="prob_expl_what">هي فرص تقديرية بأن يصل السعر من الآن وخلال مدة الإشارة إلى الهدف أولاً، أو يضرب وقف الخسارة أولاً، أو لا يصل إلى أيٍّ منهما.</string>
+    <string name="prob_expl_horizon">تنطبق على أفق الساعات فقط.</string>
+    <string name="prob_expl_cal">تُعرض فقط بعد المعايرة على بيانات حقيقية خارج العينة (300 حالة على الأقل) ولا تُعرض أبداً في الوضع التجريبي.</string>
+    <string name="prob_expl_why_na">سبب عدم التوفر: %1$s</string>
+    <string name="prob_hist">التحقق التاريخي بدلاً منها: نجحت القاعدة في %1$d%% من %2$d حالة سابقة غير متداخلة، مقابل %3$d%% دونها (بعد التكاليف). هذه نسبة تكرار تاريخية، وليست ضماناً ولا احتمالاً معايراً لهذه الصفقة.</string>
+    <string name="prob_by_horizon">%1$d د: هدف %2$d%% • وقف %3$d%% • لا شيء %4$d%%</string>
+    <string name="lv_supports">الدعوم</string>
+    <string name="lv_resistances">المقاومات</string>
+    <string name="lv_support">دعم</string>
+    <string name="lv_resistance">مقاومة</string>
+    <string name="lv_estimated">قوة تقديرية</string>
+    <string name="lv_none">لا مستويات قريبة</string>
+    <string name="lv_word_strong">قوي</string>
+    <string name="lv_word_medium">متوسط</string>
+    <string name="lv_word_weak">ضعيف</string>
+    <string name="lv_zone">المنطقة</string>
+    <string name="lv_strength">القوة</string>
+    <string name="lv_strength_val">%1$d / 100</string>
+    <string name="lv_not_validated">غير محقَّقة إحصائياً</string>
+    <string name="lv_tests">عدد الاختبارات</string>
+    <string name="lv_last_test">آخر اختبار</string>
+    <string name="lv_timeframes">الأطر الزمنية</string>
+    <string name="lv_why">لماذا هو مهم</string>
+    <string name="lv_why_tests">اقترب السعر من هذه المنطقة %1$d مرات.</string>
+    <string name="lv_why_flip">عملت كدعم وكمقاومة معاً.</string>
+    <string name="lv_why_broken">كُسرت مؤخراً.</string>
+    <string name="lv_why_daily">منطقة قمة/قاع يومي.</string>
+    <string name="rel_title">التأثير على التوصية الحالية</string>
+    <string name="rel_obstacle">عقبة: تقع بين الدخول والهدف وقد تحدّ من الحركة.</string>
+    <string name="rel_protects">حماية: تقع بين الدخول والوقف وقد تساعد في حماية الوقف.</string>
+    <string name="rel_stop_inside">تحذير: الوقف داخل هذه المنطقة — قد يُضرب بسحب سيولة؛ خلف المنطقة أكثر أماناً.</string>
+    <string name="rel_not_in_path">ليس في مسار الصفقة الحالية.</string>
+    <string name="rel_no_trade">لا توجد صفقة موصى بها، فالمستوى للاطلاع فقط.</string>
+    <string name="lv_method">القوة، حين تُعرض، ترتيب مئيني مقارنة بالمستويات التاريخية — وليست احتمال ارتداد.</string>
+    <string name="tr_title">اتجاه السوق</string>
+    <string name="tr_strength">قوة الاتجاه</string>
+    <string name="tr_up">صاعد</string>
+    <string name="tr_down">هابط</string>
+    <string name="tr_sideways">عرضي</string>
+    <string name="tr_unknown">غير معروف</string>
+    <string name="tr_dialog">تفاصيل الاتجاه</string>
+    <string name="tr_agreement">اتفاق الأطر</string>
+    <string name="tr_frames">الأطر</string>
+    <string name="tr_factors">العوامل</string>
+    <string name="tr_reason">سبب هذا الاتجاه</string>
+    <string name="tr_none">لا بيانات اتجاه</string>
+    <string name="tr_score_note">قوة الاتجاه درجة تحليلية وليست احتمالاً لاستمراره.</string>
+    <string name="tf_m15">15 دقيقة</string>
+    <string name="tf_m30">30 دقيقة</string>
+    <string name="tf_h1">ساعة</string>
+    <string name="tf_h4">4 ساعات</string>
+    <string name="tf_d1">يومي</string>
+    <string name="tf_sma20">السعر مقابل متوسط 20 يوماً</string>
+    <string name="tf_sma50">السعر مقابل متوسط 50 يوماً</string>
+    <string name="tf_sma200">السعر مقابل متوسط 200 يوم</string>
+    <string name="tf_mom3">زخم 3 أشهر</string>
+    <string name="tf_mom6">زخم 6 أشهر</string>
+    <string name="tf_mom12">زخم 12 شهراً</string>
+    <string name="reason_title">سبب القرار:</string>
+    <string name="details">التفاصيل</string>
+    <string name="details_dialog">التحليل الكامل</string>
+    <string name="sec_trend">الاتجاه</string>
+    <string name="sec_levels">الدعوم والمقاومات</string>
+    <string name="sec_vol">التقلب</string>
+    <string name="sec_risk">المخاطرة</string>
+    <string name="sec_engines">اتفاق المحركات</string>
+    <string name="sec_accept">أسباب القبول</string>
+    <string name="sec_reject">أسباب الرفض</string>
+    <string name="sec_reeval">متى نعيد التقييم</string>
+    <string name="sec_missing">بيانات ناقصة</string>
+    <string name="sec_warnings">تنبيهات</string>
+    <string name="sec_validation">التحقق التاريخي</string>
+    <string name="sec_facts">أرقام أساسية</string>
+    <string name="vol_strong_trend">اتجاه قوي</string>
+    <string name="vol_range">تذبذب عرضي</string>
+    <string name="vol_high">تقلب مرتفع</string>
+    <string name="vol_exceptional">ظروف استثنائية</string>
+    <string name="vol_unknown">غير معروف</string>
+    <string name="risk_rr">العائد/المخاطرة</string>
+    <string name="risk_cost">التكلفة التقديرية</string>
+    <string name="risk_exp">العائد الصافي المتوقع</string>
+    <string name="risk_unc">عدم اليقين الكلي</string>
+    <string name="unc_low">منخفض</string>
+    <string name="unc_medium">متوسط</string>
+    <string name="unc_high">مرتفع</string>
+    <string name="court_evidence">الأدلة</string>
+    <string name="court_statistics">الإحصاء</string>
+    <string name="court_risk">حارس المخاطر</string>
+    <string name="eng_support">%1$d دليل مؤيد و%2$d دليل معاكس</string>
+    <string name="set_title">الإعدادات</string>
+    <string name="set_language">اللغة</string>
+    <string name="set_server">عنوان خادم التحليل</string>
+    <string name="set_token">الرمز السري (اختياري)</string>
+    <string name="set_live">الوضع الحي</string>
+    <string name="set_demo_next">لحظة تجريبية أخرى (%1$d/40)</string>
+    <string name="save">حفظ</string>
+    <string name="cancel">إلغاء</string>
+    <string name="close">إغلاق</string>
+    <string name="updated_at">آخر تحديث %1$s</string>
+    <string name="err_invalid_url">عنوان غير صالح</string>
+    <string name="err_http_not_local">HTTP غير المشفر مسموح فقط لعناوين الشبكة المحلية</string>
+    <string name="err_bad_scheme">يجب أن يبدأ العنوان بـ http:// أو https://</string>
+    <string name="err_timeout_waking">الخادم السحابي يستيقظ من السكون — أعد المحاولة بعد دقيقة.</string>
+    <string name="err_no_connection">تعذر الاتصال بخادم التحليل. تحقق من الإنترنت ومن عنوان الخادم في الإعدادات.</string>
+    <string name="err_bad_token">الرمز السري غير صحيح أو مفقود (الإعدادات)</string>
+    <string name="err_server_starting">الخادم السحابي يبدأ التشغيل — أعد المحاولة بعد دقيقة.</string>
+    <string name="err_server_error">الخادم أعاد خطأ</string>
+    <string name="err_too_large">استجابة كبيرة بشكل غير طبيعي — رُفضت</string>
+    <string name="err_invalid_response">استجابة غير صالحة من الخادم</string>
+    <string name="err_unexpected">خطأ غير متوقع</string>
+    <string name="err_retry">إعادة المحاولة</string>
+    <string name="err_detail">التفاصيل: %1$s</string>
+    <string name="r_w_up" formatted="false">صاعد</string>
+    <string name="r_w_down" formatted="false">هابط</string>
+    <string name="r_w_neutral" formatted="false">محايد</string>
+    <string name="r_w_sideways" formatted="false">عرضي</string>
+    <string name="r_w_buy" formatted="false">شراء</string>
+    <string name="r_w_sell" formatted="false">بيع</string>
+    <string name="r_w_buying" formatted="false">الشراء</string>
+    <string name="r_w_selling" formatted="false">البيع</string>
+    <string name="r_w_below" formatted="false">تحت</string>
+    <string name="r_w_above" formatted="false">فوق</string>
+    <string name="r_w_rose" formatted="false">ارتفع</string>
+    <string name="r_w_fell" formatted="false">انخفض</string>
+    <string name="r_w_added" formatted="false">أضاف</string>
+    <string name="r_w_cut" formatted="false">خفّض</string>
+    <string name="r_w_syn_tail" formatted="false">، بيانات اصطناعية</string>
+    <string name="r_w_support" formatted="false">دعم</string>
+    <string name="r_w_resistance" formatted="false">مقاومة</string>
+    <string name="r_w_synthetic" formatted="false"> (بيانات اصطناعية)</string>
+    <string name="r_w_none" formatted="false"></string>
+    <string name="r_rs_short" formatted="false">{0}. {1}.</string>
+    <string name="r_rs_ctx" formatted="false">اتجاه H4 {0} والاتجاه العام {1}{2}</string>
+    <string name="r_rs_tail_above" formatted="false">، والسعر فوق الدعم {0}</string>
+    <string name="r_rs_tail_below" formatted="false">، والسعر تحت المقاومة {0}</string>
+    <string name="r_rs_tail_between" formatted="false">، والسعر بين الدعم {0} والمقاومة {1}</string>
+    <string name="r_rs_ok" formatted="false">العائد المتوقع بعد التكاليف موجب، واجتازت الإشارة محكمة القرار</string>
+    <string name="r_rs_wait" formatted="false">ننتظر لأن {0}</string>
+    <string name="r_wf_default" formatted="false">انتظر حتى تزول أسباب الرفض أو يصل السعر إلى المستوى البديل</string>
+    <string name="r_wf_pullback" formatted="false">انتظر ارتداداً نحو {0} قبل التفكير في {1}</string>
+    <string name="r_wn_paper" formatted="false">إشارة بحثية للتداول الورقي فقط — ليست نصيحة استثمارية ولا تُنفَّذ تلقائياً</string>
+    <string name="r_wn_duplicate" formatted="false">قرار مكرر</string>
+    <string name="r_iv_candle" formatted="false">إغلاق شمعة M15 {0} {1}</string>
+    <string name="r_iv_slope" formatted="false">انقلاب ميل H1 ضد {0}</string>
+    <string name="r_iv_news" formatted="false">صدور خبر اقتصادي عالي التأثير قبل الدخول</string>
+    <string name="r_iv_expired" formatted="false">انتهاء صلاحية الإشارة دون دخول ضمن النطاق</string>
+    <string name="r_un_no_provider" formatted="false">لم يُضبط مزوّد بيانات حي بعد. استخدم الوضع التجريبي أو أضف مفتاحاً مجانياً.</string>
+    <string name="r_un_corrupt" formatted="false">بيانات المزوّد تالفة أو غير متسقة — رُفضت</string>
+    <string name="r_un_no_quote" formatted="false">لا يوجد سعر متاح من المزوّد</string>
+    <string name="r_un_closed" formatted="false">سوق الذهب الفوري مغلق حالياً (عطلة نهاية الأسبوع)</string>
+    <string name="r_un_stale" formatted="false">السعر قديم ({0} ثانية) — لا يُعتمد عليه</string>
+    <string name="r_un_firewall" formatted="false">جدار جودة البيانات: {0}</string>
+    <string name="r_un_insufficient" formatted="false">بيانات تاريخية غير كافية للتحليل</string>
+    <string name="r_fw_future_ts" formatted="false">طابع زمني للسعر من المستقبل — ساعة المزوّد أو الخادم غير متزامنة</string>
+    <string name="r_fw_bad_price" formatted="false">سعر غير صالح</string>
+    <string name="r_fw_jump" formatted="false">قفزة سعرية شاذة ({0}×ATR) بين السعر الحالي وآخر شمعة — يُشتبه بخطأ بيانات</string>
+    <string name="r_fw_frozen" formatted="false">تغذية الأسعار متجمدة (شموع متطابقة متتالية)</string>
+    <string name="r_fw_spike" formatted="false">شمعة شاذة جداً في آخر 20 شمعة (z={0}) — يُشتبه بخطأ تغذية</string>
+    <string name="r_fw_bar_lag" formatted="false">شموع {0} متأخرة {1} — المصدر متوقف أو ناقص</string>
+    <string name="r_fw_no_context" formatted="false">مصادر السياق (التقويم/الأخبار) غير مفعّلة</string>
+    <string name="r_fw_calendar_stale" formatted="false">تقويم الأحداث الاقتصادية غير محدّث</string>
+    <string name="r_fw_price_conflict" formatted="false">تعارض بين مصدري السعر ({0}) — البيانات مشكوك فيها</string>
+    <string name="r_fw_no_cross_check" formatted="false">تعذّر التحقق المتقاطع من السعر (xaus.com)</string>
+    <string name="r_at_no_bias" formatted="false">لا يوجد انحياز واضح متوافق بين الأطر الزمنية</string>
+    <string name="r_at_data_stale" formatted="false">البيانات ليست حديثة</string>
+    <string name="r_at_exceptional" formatted="false">ظروف سوق استثنائية — لا ثقة في النماذج</string>
+    <string name="r_at_model_unqualified" formatted="false">نموذج الاحتمالات غير مؤهل: {0}</string>
+    <string name="r_at_edge_low" formatted="false">العائد المتوقع بعد السبريد والانزلاق غير كافٍ</string>
+    <string name="r_at_stop_first" formatted="false">احتمال ضرب الوقف أولاً لا يقل عن احتمال بلوغ الهدف</string>
+    <string name="r_at_margin_small" formatted="false">الفارق بين احتمال الهدف واحتمال الوقف ضئيل — ثقة غير كافية</string>
+    <string name="r_at_no_calendar" formatted="false">لا تُصدر إشارات حية قبل ربط تقويم الأخبار (حماية من الأخبار المفاجئة)</string>
+    <string name="r_at_duplicate" formatted="false">توجد إشارة مماثلة سابقة ما زالت سارية — منع التكرار</string>
+    <string name="r_at_uncertainty_high" formatted="false">عدم اليقين الكلي مرتفع</string>
+    <string name="r_dr_psi" formatted="false">تغيّر توزيع {0} ميزات عن فترة التدريب (PSI &gt; {1})</string>
+    <string name="r_dr_perf" formatted="false">تدهور أداء النموذج على النتائج الحديثة مقارنة بفترة التحقق</string>
+    <string name="r_cr_extreme_vol" formatted="false">تقلب حاد غير طبيعي — النماذج غير موثوقة في هذه الظروف</string>
+    <string name="r_cr_anomalous" formatted="false">شمعة شاذة إحصائياً (robust z &gt; 4.5) — احتمال خبر أو فجوة سعرية</string>
+    <string name="r_cr_stretched" formatted="false">السعر ممتد بعيداً عن متوسطه (&gt; 2 ATR) — مطاردة السعر هنا ضعيفة</string>
+    <string name="r_cr_closed" formatted="false">السوق مغلق أو في استراحة يومية</string>
+    <string name="r_cr_weekly_close" formatted="false">أقل من 4 ساعات على إغلاق الأسبوع — خطر فجوة نهاية الأسبوع</string>
+    <string name="r_ve_calendar" formatted="false">حدث اقتصادي عالي التأثير قريب (من ساعة قبله إلى 45 دقيقة بعده): {0}</string>
+    <string name="r_ve_news" formatted="false">خبر عالي التأثير قبل أقل من 30 دقيقة ({0}): {1}</string>
+    <string name="r_ve_daily_trend" formatted="false">الإشارة قصيرة المدى تعاكس الاتجاه اليومي الكبير (متوسط 200 يوم وزخم 6 أشهر)</string>
+    <string name="r_ve_price_conflict" formatted="false">تعارض بين مصدري السعر — البيانات مشكوك فيها</string>
+    <string name="r_ve_precision_failed" formatted="false">تعذّر تشغيل طبقة الدقة المعتمدة — انتظار احترازي</string>
+    <string name="r_ve_precision_reject" formatted="false">رفضتها طبقة الدقة المعتمدة ({0})</string>
+    <string name="r_ve_safe_mode" formatted="false">وضع الأمان مفعّل بعد تدهور النموذج — لا إشارات حتى إعادة التحقق</string>
+    <string name="r_lv_strong_res" formatted="false">مقاومة قوية {0} عند {1} قبل الهدف — العائد المتوقع غير مناسب</string>
+    <string name="r_lv_strong_sup" formatted="false">دعم قوي {0} عند {1} قبل الهدف — العائد المتوقع غير مناسب</string>
+    <string name="r_ev_lv_res_before" formatted="false">مقاومة {0} ({1}) قبل الهدف قد تحد من الصعود</string>
+    <string name="r_ev_lv_sup_before" formatted="false">دعم {0} ({1}) قبل الهدف قد يحد من الهبوط</string>
+    <string name="r_ev_lv_stop_in_sup" formatted="false">الوقف داخل منطقة الدعم {0} — عرضة للضرب بسحب سيولة؛ الأفضل خلف المنطقة</string>
+    <string name="r_ev_lv_stop_in_res" formatted="false">الوقف داخل منطقة المقاومة {0} — عرضة للضرب بسحب سيولة؛ الأفضل خلف المنطقة</string>
+    <string name="r_ev_lv_sup_guard" formatted="false">دعم قوي {0} ({1}) يحمي الوقف</string>
+    <string name="r_ev_lv_res_guard" formatted="false">مقاومة قوية {0} ({1}) تحمي الوقف</string>
+    <string name="r_rv_bounce_sup" formatted="false">ارتداد نحو {0} قرب {1} مع ثبات فوقه</string>
+    <string name="r_rv_close_above" formatted="false">إغلاق ساعة فوق {0} عند {1}</string>
+    <string name="r_rv_bounce_res" formatted="false">ارتداد نحو {0} قرب {1} مع فشل في تجاوزه</string>
+    <string name="r_rv_close_below" formatted="false">إغلاق ساعة تحت {0} عند {1}</string>
+    <string name="r_rv_break_either" formatted="false">إغلاق ساعة فوق {0} أو تحت {1} لتحديد الاتجاه</string>
+    <string name="r_lv_method" formatted="false">القوة = ترتيب مئيني مقارنة بالمستويات التاريخية، وليست احتمال ارتداد. الحجم غير مستخدم لأن الذهب الفوري لا يملك حجماً موحداً حقيقياً.</string>
+    <string name="r_lv_method_daily" formatted="false">مستويات يومية من قمم وقيعان مؤكدة؛ لا تُعرض قوة رقمية لأنها لم تُختبر إحصائياً، والتصنيف تقديري حسب عدد الاختبارات.</string>
+    <string name="r_ct_pit" formatted="false">مدخلات غير متاحة وقت القرار: {0}</string>
+    <string name="r_ct_few_evidence" formatted="false">أدلة مستقلة غير كافية ({0} محرك؛ المطلوب {1})</string>
+    <string name="r_ct_contrary" formatted="false">الأدلة المعاكسة لا تقل عن الأدلة الداعمة</string>
+    <string name="r_gv_no_trade" formatted="false">لا توجد صفقة مقترحة</string>
+    <string name="r_gv_quote_stale" formatted="false">السعر غير حديث</string>
+    <string name="r_gv_exceptional" formatted="false">ظروف سوق استثنائية</string>
+    <string name="r_gv_rr_low" formatted="false">نسبة العائد/المخاطرة أقل من {0}</string>
+    <string name="r_gv_stop_dist" formatted="false">مسافة الوقف {0}×ATR خارج الحدود المسموحة</string>
+    <string name="r_gv_cost" formatted="false">التكاليف تلتهم جزءاً كبيراً من المخاطرة (السبريد واسع نسبياً)</string>
+    <string name="r_gv_max_signals" formatted="false">بلغ الحد الأقصى للإشارات اليومية ({0})</string>
+    <string name="r_gv_open_pos" formatted="false">توجد صفقة ورقية مفتوحة بالفعل</string>
+    <string name="r_gv_daily_loss" formatted="false">تجاوز حد الخسارة اليومي في التداول الورقي</string>
+    <string name="r_gv_cooldown" formatted="false">فترة تهدئة بعد {0} خسائر متتالية</string>
+    <string name="r_ev_mtf_slope" formatted="false">ميل متوسط 50 على {0} {1} (كفاءة الاتجاه {2})</string>
+    <string name="r_ev_range" formatted="false">السوق في تذبذب عرضي؛ إشارات الاتجاه ضعيفة الموثوقية</string>
+    <string name="r_ev_h4_against" formatted="false">اتجاه H4 يعاكس {0}</string>
+    <string name="r_ev_stop_in_structure" formatted="false">وقف الخسارة يقع داخل نطاق آخر قمة/قاع (استدلال من شكل السعر)</string>
+    <string name="r_ev_asia" formatted="false">جلسة آسيا: سيولة أقل وحركة أبطأ عادةً</string>
+    <string name="r_ev_break_recent" formatted="false">كُشف تغيّر هيكلي حديث في سلوك السعر (CUSUM)</string>
+    <string name="r_ev_daily_ok" formatted="false">الاتجاه اليومي الكبير يوافق الإشارة (متوسط 200 يوم وزخم 6 أشهر)</string>
+    <string name="r_ev_cot_same" formatted="false">مراكز المضاربين (Managed Money) مزدحمة في نفس الاتجاه — مئين {0} (تقرير {1}، أسبوعي ومتأخر)</string>
+    <string name="r_ev_cot_opp" formatted="false">مراكز المضاربين مزدحمة عكس الاتجاه — مجال لتغطية المراكز (COT {0})</string>
+    <string name="r_ev_real_yield" formatted="false">العائد الحقيقي 10 سنوات {0} {1} نقطة في آخر 5 قراءات (FRED، يومي) — علاقة تاريخية عكسية مع الذهب، ليست قاعدة ثابتة</string>
+    <string name="r_ev_etf" formatted="false">صندوق GLD {0} {1} طن في 5 أيام (z={2}، يومي معلن، {3})</string>
+    <string name="r_ev_gvz" formatted="false">مؤشر تقلب الذهب المتوقع GVZ ارتفع بقوة إلى {0} — حركات أعنف وأقل قابلية للتنبؤ</string>
+    <string name="r_ev_analog" formatted="false">أقرب {0} حالة تاريخية مشابهة: الهدف أولاً {1}، الوقف أولاً {2} (وصفي، غير معاير{3})</string>
+    <string name="r_ev_trap" formatted="false">{0} عند {1} (قبل {2} شمعة)</string>
+    <string name="r_md_no_provider" formatted="false">مزوّد سعر XAU/USD حي</string>
+    <string name="r_md_demo" formatted="false">وضع تجريبي: الأسعار اصطناعية وليست سعر السوق</string>
+    <string name="r_md_no_consensus" formatted="false">إجماع التوقعات الاقتصادية غير متاح مجاناً (محركات Expectation Gap/Priced-In/Missing Reaction معطّلة)</string>
+    <string name="r_md_no_depth" formatted="false">عمق السوق وتدفق الأوامر المؤسسي غير متاح مجاناً (ولن يُدّعى)</string>
+    <string name="r_md_macro" formatted="false">بيانات الماكرو (FRED) غير متصلة</string>
+    <string name="r_md_calendar" formatted="false">تقويم الأحداث الاقتصادية غير متصل</string>
+    <string name="r_md_cot" formatted="false">تقارير COT غير متصلة</string>
+    <string name="r_md_news_feeds" formatted="false">خلاصات الأخبار الرسمية غير متصلة</string>
+    <string name="r_md_calendar_stale" formatted="false">تقويم الأحداث الاقتصادية غير محدّث (التحديث التلقائي من bls.gov و federalreserve.gov متوقف منذ أكثر من 8 أيام)</string>
+    <string name="r_md_fred" formatted="false">FRED {0} غير متاح</string>
+    <string name="r_md_gld" formatted="false">حيازات صندوق GLD غير متاحة</string>
+    <string name="r_md_cftc" formatted="false">بيانات CFTC COT غير متاحة</string>
+    <string name="r_md_rss" formatted="false">خلاصات الأخبار الرسمية (RSS) غير متاحة</string>
+    <string name="r_md_levels_failed" formatted="false">تعذّر حساب الدعوم والمقاومات: {0}</string>
+    <string name="r_md_news_future" formatted="false">خبر بتاريخ نشر مستقبلي حُجِر: {0}</string>
+    <string name="r_uc_missing_sources" formatted="false">نقص مصادر بيانات أساسية</string>
+    <string name="r_uc_model_unqualified" formatted="false">نموذج الاحتمالات غير مؤهل بعد</string>
+    <string name="r_uc_drift" formatted="false">إنذار انحراف (drift)</string>
+    <string name="r_uc_market" formatted="false">تقلب السوق أعلى من المعتاد أو تغيّر هيكلي حديث</string>
+    <string name="r_pr_reliability" formatted="false">Brier متعدد الفئات {0} مقابل {1} للتكرار التاريخي؛ أكبر فجوة معايرة {2}؛ {3} عينة خارج العينة{4}</string>
+    <string name="r_alt_edge" formatted="false">حافة أقرب منطقة {0} — دخول أفضل من السعر الحالي</string>
+    <string name="r_alt_structural" formatted="false">مستوى ارتداد هيكلي أفضل للدخول</string>
+    <string name="r_alt_note" formatted="false">{0}{1}</string>
+    <string name="r_alt_fill" formatted="false">؛ تاريخياً وصله السعر خلال ساعة في {0} من الحالات، وابتعد السعر نحو الهدف دون العودة إليه في {1} (n={2}، تكرار غير معاير{3})</string>
+    <string name="r_st_buy" formatted="false">شراء</string>
+    <string name="r_st_sell" formatted="false">بيع</string>
+    <string name="r_st_wait" formatted="false">انتظار</string>
+    <string name="r_st_na" formatted="false">غير متاح</string>
+    <string name="r_st_wait_lean_buy" formatted="false">انتظار (ميل للشراء)</string>
+    <string name="r_st_wait_lean_sell" formatted="false">انتظار (ميل للبيع)</string>
+    <string name="r_st_buy_dip" formatted="false">شراء على تراجع</string>
+    <string name="r_st_sell_pop" formatted="false">بيع على ارتداد</string>
+    <string name="r_st_buy_trend" formatted="false">شراء مع الاتجاه</string>
+    <string name="r_st_sell_trend" formatted="false">بيع مع الاتجاه</string>
+    <string name="r_st_lean_buy" formatted="false">ميل للشراء (غير محقَّق)</string>
+    <string name="r_st_lean_sell" formatted="false">ميل للبيع (غير محقَّق)</string>
+    <string name="r_bt_up" formatted="false">الاتجاه الكبير صاعد</string>
+    <string name="r_bt_down" formatted="false">الاتجاه الكبير هابط</string>
+    <string name="r_bt_mixed" formatted="false">الاتجاه الكبير غير محسوم</string>
+    <string name="r_ow_dip_buy" formatted="false">{0}، والسعر في تراجع مؤقت تحت متوسط 20 يوماً ({1}) و RSI {2}.</string>
+    <string name="r_ow_pop_sell" formatted="false">{0}، والسعر في ارتداد مؤقت فوق متوسط 20 يوماً ({1}) و RSI {2}.</string>
+    <string name="r_ow_up_no_dip" formatted="false">{0} لكن لا يوجد تراجع كافٍ بعد؛ الشراء الآن مطاردة للسعر.</string>
+    <string name="r_ow_down_no_pop" formatted="false">{0} لكن لا يوجد ارتداد كافٍ للبيع بعد.</string>
+    <string name="r_ow_no_edge" formatted="false">{0}؛ لا ميزة واضحة على مدى أسبوع.</string>
+    <string name="r_om_agree" formatted="false">الزخم متفق ({0}) والسعر {1} متوسط 200 يوم ({2}).</string>
+    <string name="r_om_disagree" formatted="false">الزخم غير متفق ({0}) — لا اتجاه شهري واضح.</string>
+    <string name="r_om_mom_item" formatted="false">{0} {1}{2}%</string>
+    <string name="r_om_p3" formatted="false">3 أشهر</string>
+    <string name="r_om_p6" formatted="false">6 أشهر</string>
+    <string name="r_om_p12" formatted="false">12 شهراً</string>
+    <string name="r_va_insufficient" formatted="false">تاريخ يومي غير كافٍ ({0} يوماً، المطلوب {1} على الأقل)</string>
+    <string name="r_va_no_signals" formatted="false">لم تتحقق شروط القاعدة في التاريخ المتاح</string>
+    <string name="r_va_validated" formatted="false">اجتازت القاعدة اختبار التفوق على المعدل الأساسي وثبتت في نصفي التاريخ</string>
+    <string name="r_va_few" formatted="false">عدد الإشارات التاريخية غير كافٍ ({0} من {1} مطلوبة)</string>
+    <string name="r_va_pvalue" formatted="false">التفوق على المعدل الأساسي غير دال إحصائياً (p={0})</string>
+    <string name="r_va_unstable" formatted="false">الأداء لم يثبت في نصفي التاريخ (غير مستقر)</string>
+    <string name="r_va_neg_return" formatted="false">متوسط العائد بعد التكاليف غير موجب</string>
+    <string name="r_va_samples" formatted="false">؛ {0} إشارة غير متداخلة {1}</string>
+    <string name="r_va_full" formatted="false">{0}{1}{2}</string>
+    <string name="r_va_hours_unq" formatted="false">نموذج الساعات لم يجتز التحقق بعد</string>
+    <string name="r_wa_unvalidated" formatted="false">القاعدة لم تجتز التحقق الإحصائي بعد — للاستئناس فقط وليست إشارة</string>
+    <string name="r_wa_atr_levels" formatted="false">الوقف والهدف تقريبيان بمقياس ATR اليومي ({0}) ولم يُختبرا تاريخياً</string>
+    <string name="r_wa_event" formatted="false">حدث عالي التأثير خلال الأيام القادمة: {0}</string>
+    <string name="r_wa_real_yield" formatted="false">العائد الحقيقي الأمريكي يتحرك عكس هذا الميل (FRED DFII10)</string>
+    <string name="r_wa_usd" formatted="false">الدولار الأمريكي يتحرك عكس هذا الميل (مؤشر الدولار الواسع)</string>
+    <string name="r_ru_week" formatted="false">شراء التراجع داخل اتجاه صاعد (السعر فوق متوسط 200 يوم وزخم 6 أشهر موجب، مع إغلاق تحت متوسط 20 يوماً و RSI14 أقل من 45)، والعكس للبيع</string>
+    <string name="r_ru_month" formatted="false">اتفاق زخم 3 و6 و12 شهراً في الاتجاه نفسه مع موقع السعر من متوسط 200 يوم</string>
+    <string name="r_mt_hours" formatted="false">القرار الرئيسي: محرك الشموع 15 دقيقة–4 ساعات (أفق 4 ساعات)</string>
+    <string name="r_mt_daily" formatted="false">{0}: {1}؛ تقييم غير متداخل بعد تكلفة {2}</string>
+    <string name="r_fa_price_sma" formatted="false">السعر {0} متوسط 200 يوم ({1}) بفارق {2}%</string>
+    <string name="r_fa_sma20" formatted="false">متوسط 20 يوماً = {0}</string>
+    <string name="r_fa_rsi" formatted="false">RSI 14 اليومي = {0}</string>
+    <string name="r_fa_mom" formatted="false">زخم {0}: {1}%</string>
+    <string name="r_fa_atr" formatted="false">متوسط المدى اليومي (ATR20) = {0}</string>
+    <string name="r_fa_sma50" formatted="false">متوسط 50 يوماً = {0}</string>
+</resources>

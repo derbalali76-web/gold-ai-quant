@@ -22,8 +22,8 @@ from .http import HttpClient, HttpError, RateLimiter
 
 BASE = "https://api.twelvedata.com"
 SYMBOL = "XAU/USD"
-INTERVALS = {"M1": "1min", "M15": "15min", "H1": "1h", "H4": "4h"}
-TTL = {"M15": timedelta(minutes=15), "H1": timedelta(hours=1), "H4": timedelta(hours=4)}
+INTERVALS = {"M1": "1min", "M15": "15min", "H1": "1h", "H4": "4h", "D1": "1day"}
+TTL = {"M15": timedelta(minutes=15), "H1": timedelta(hours=1), "H4": timedelta(hours=4), "D1": timedelta(hours=6)}
 
 
 class ProviderError(Exception):
@@ -105,7 +105,7 @@ class TwelveDataProvider(MarketDataProvider):
         if last is not None and as_of - last < TTL[tf]:
             return
         have = self.history.count_bars(self.meta.name, SYMBOL, tf)
-        size = 5000 if have < 1000 else 300
+        size = 5000 if have < 1000 else (40 if tf == "D1" else 300)
         df = closed_bars(self._series(tf, size), tf, as_of)
         self.history.upsert_bars(self.meta.name, SYMBOL, tf, df, self.clock())
         self._last_fetch[tf] = as_of

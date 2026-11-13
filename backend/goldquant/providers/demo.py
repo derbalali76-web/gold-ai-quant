@@ -91,8 +91,38 @@ def resample(m1: pd.DataFrame, timeframe: str) -> pd.DataFrame:
     return agg.dropna(subset=["open"])
 
 
+DEMO_DAILY_PREHISTORY_DAYS = 3000  # ~12 years of synthetic weekdays before the minute data starts
+
+
+@lru_cache(maxsize=4)
+def generate_daily(seed: int = DEMO_SEED) -> pd.DataFrame:
+    """SYNTHETIC daily history: a seeded regime-switching pre-history joined to the daily resample of the
+    synthetic minute data, so WEEK/MONTH outlooks can be exercised end-to-end. NOT market data."""
+    tail = resample(generate_m1(seed), "D1")
+    rng = np.random.default_rng(seed + 1)
+    idx = pd.bdate_range(end=tail.index[0] - pd.Timedelta(days=1), periods=DEMO_DAILY_PREHISTORY_DAYS, tz="UTC")
+    n = len(idx)
+    drift = np.zeros(n)
+    state, k = 0, 0
+    for i in range(n):  # persistent drift regimes (~6 months on average)
+        if k <= 0:
+            state, k = rng.choice([-1, 0, 1], p=[0.3, 0.3, 0.4]), int(rng.integers(60, 200))
+        drift[i] = state * 0.0006
+        k -= 1
+    r = drift + rng.standard_t(5, n) / np.sqrt(5 / 3) * 0.009
+    logp = np.cumsum(r[::-1])[::-1]  # price path that ENDS at the first synthetic minute-data open
+    close = float(tail["open"].iloc[0]) * np.exp(-np.concatenate([logp[1:], [0.0]]))
+    open_ = np.concatenate([[close[0] / np.exp(r[0])], close[:-1]])
+    spread = np.abs(rng.normal(0, 0.006, n)) * close
+    pre = pd.DataFrame({"open": open_, "high": np.maximum(open_, close) + spread,
+                        "low": np.minimum(open_, close) - spread, "close": close, "tick_volume": 0.0}, index=idx)
+    return pd.concat([pre, tail]).sort_index()
+
+
 @lru_cache(maxsize=16)
 def _bars_cached(timeframe: str, seed: int) -> pd.DataFrame:
+    if timeframe == "D1":
+        return generate_daily(seed)
     return resample(generate_m1(seed), timeframe)
 
 

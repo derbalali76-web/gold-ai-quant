@@ -7,6 +7,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
+from ..msg import M
 
 
 @dataclass
@@ -35,26 +36,26 @@ def review(direction: int, risk_per_oz: float | None, reward_risk: float | None,
     L = limits or GovernorLimits()
     r: list[str] = []
     if direction == 0 or risk_per_oz is None:
-        return GovernorVerdict(False, ["لا توجد صفقة مقترحة"], ledger_state)
+        return GovernorVerdict(False, [M("gv.no_trade")], ledger_state)
     if quote_age_s is None or quote_age_s > max_quote_age_s:
-        r.append("السعر غير حديث")
+        r.append(M("gv.quote_stale"))
     if vol_regime == "EXCEPTIONAL":
-        r.append("ظروف سوق استثنائية")
+        r.append(M("gv.exceptional"))
     if reward_risk is None or reward_risk < L.min_reward_risk:
-        r.append(f"نسبة العائد/المخاطرة أقل من {L.min_reward_risk}")
+        r.append(M("gv.rr_low", L.min_reward_risk))
     k = risk_per_oz / atr15 if atr15 > 0 else float("inf")
     if not (L.min_stop_atr15 <= k <= L.max_stop_atr15):
-        r.append(f"مسافة الوقف {k:.1f}×ATR خارج الحدود المسموحة")
+        r.append(M("gv.stop_dist", f"{k:.1f}"))
     if risk_per_oz > 0 and cost / risk_per_oz > L.max_cost_to_risk:
-        r.append("التكاليف تلتهم جزءاً كبيراً من المخاطرة (السبريد واسع نسبياً)")
+        r.append(M("gv.cost"))
     st = ledger_state or {}
     if st.get("signals_24h", 0) >= L.max_signals_per_day:
-        r.append(f"بلغ الحد الأقصى للإشارات اليومية ({L.max_signals_per_day})")
+        r.append(M("gv.max_signals", L.max_signals_per_day))
     if st.get("open_positions", 0) >= L.max_open_positions:
-        r.append("توجد صفقة ورقية مفتوحة بالفعل")
+        r.append(M("gv.open_pos"))
     if st.get("pnl_r_24h", 0.0) <= L.daily_loss_limit_r:
-        r.append("تجاوز حد الخسارة اليومي في التداول الورقي")
+        r.append(M("gv.daily_loss"))
     if st.get("consecutive_losses", 0) >= L.max_consecutive_losses and now is not None and st.get("last_loss_at"):
         if now - st["last_loss_at"] < L.cooldown:
-            r.append(f"فترة تهدئة بعد {st['consecutive_losses']} خسائر متتالية")
+            r.append(M("gv.cooldown", st['consecutive_losses']))
     return GovernorVerdict(not r, r, {k2: (v.isoformat() if hasattr(v, "isoformat") else v) for k2, v in st.items()})

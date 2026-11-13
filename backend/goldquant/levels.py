@@ -109,7 +109,7 @@ def band_features(h: np.ndarray, l: np.ndarray, c: np.ndarray, a: np.ndarray, ti
                   lo: float, hi: float, start: int, end: int, pivots_n: int, tf_count: int) -> dict:
     """Features of band [lo, hi] using bars [start, end) only."""
     f = {"tests": 0, "rejection": 0.0, "recency": 0.0, "confluence": float(pivots_n), "tf_count": float(tf_count),
-         "failed_breaks": 0.0, "clean_breaks": 0.0, "role_flip": 0.0, "last_break_idx": -1}
+         "failed_breaks": 0.0, "clean_breaks": 0.0, "role_flip": 0.0, "last_break_idx": -1, "last_test_idx": -1}
     if end - start < 3:
         f["log_tests"] = 0.0
         return f
@@ -148,6 +148,7 @@ def band_features(h: np.ndarray, l: np.ndarray, c: np.ndarray, a: np.ndarray, ti
                 f["clean_breaks"] += 1
                 f["last_break_idx"] = int(b)
     f["tests"] = len(tests)
+    f["last_test_idx"] = int(tests[-1][0]) if tests else -1
     f["log_tests"] = float(np.log1p(len(tests)))
     f["rejection"] = float(np.mean(rej)) if rej else 0.0
     if tests:
@@ -328,13 +329,17 @@ def compute_levels(bars: dict, as_of, price: float, model: LevelModel | None = N
             z.role = "RESISTANCE"
             out_r.append(z)
         lb = f["last_break_idx"]
+        lt = f["last_test_idx"]
+        z.last_test_utc = (times[lt].to_pydatetime().isoformat().replace("+00:00", "Z")
+                           if lt >= 0 else None)
         z.broken_recently = bool(lb >= 0 and end - lb <= 48)
     out_s.sort(key=lambda z: price - z.center)
     out_r.sort(key=lambda z: z.center - price)
     to_d = lambda z, k: {"name": f"{k}", "price": round(z.center, 2), "zone_low": round(z.low, 2), "zone_high": round(z.high, 2),  # noqa
                          "strength": z.strength, "strength_label_ar": z.label, "tests": int(z.features.get("tests", 0)),
                          "timeframes": list(z.tfs), "role_flip": bool(z.features.get("role_flip")),
-                         "broken_recently": z.broken_recently, "distance_atr": z.distance_atr}
+                         "broken_recently": z.broken_recently, "distance_atr": z.distance_atr,
+                         "last_test_utc": getattr(z, "last_test_utc", None)}
     return {"supports": [to_d(z, f"S{i + 1}") for i, z in enumerate(out_s[:n])],
             "resistances": [to_d(z, f"R{i + 1}") for i, z in enumerate(out_r[:n])],
             "atr_h1": round(atr_now, 3), "validated": bool(model.validation.get("validated")),

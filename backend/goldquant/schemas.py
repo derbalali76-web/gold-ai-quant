@@ -3,11 +3,11 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
-from typing import Optional
+from typing import Any, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-SCHEMA_VERSION = "1.3.0"
+SCHEMA_VERSION = "1.5.0"
 
 
 class Action(str, Enum):
@@ -29,11 +29,35 @@ class SpotOrProxy(str, Enum):
     NONE = "NONE"
 
 
+class ReasonRef(BaseModel):
+    """A translatable sentence: `code` + ordered `args` (strings or nested refs). `text_ar` is the Arabic rendering
+    and the fallback for any code the client has no string for (code 'raw' = show text_ar as is)."""
+    model_config = ConfigDict(extra="forbid")
+    code: str
+    args: list[Any] = Field(default_factory=list)
+    text_ar: str
+
+
+def _ref_of(x: Any) -> Optional[dict]:
+    from .msg import Msg, ref_dict
+    return ref_dict(x) if isinstance(x, Msg) else None
+
+
 class Evidence(BaseModel):
     model_config = ConfigDict(extra="forbid")
     engine: str
     text_ar: str
     weight: float = Field(ge=-1.0, le=1.0)
+    text_ref: Optional[ReasonRef] = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def _capture_ref(cls, data: Any) -> Any:
+        if isinstance(data, dict) and data.get("text_ref") is None:
+            r = _ref_of(data.get("text_ar"))
+            if r is not None:
+                data = {**data, "text_ar": str(data["text_ar"]), "text_ref": r}
+        return data
 
 
 class DataFreshness(BaseModel):
@@ -73,6 +97,16 @@ class CourtJudgement(BaseModel):
     judge: str  # evidence | statistics | risk_governor
     passed: bool
     reasons_ar: list[str] = Field(default_factory=list)
+    reasons_ref: list[ReasonRef] = Field(default_factory=list)
+
+    @model_validator(mode="before")
+    @classmethod
+    def _capture_refs(cls, data: Any) -> Any:
+        from .msg import ref_dict
+        if isinstance(data, dict) and not data.get("reasons_ref") and data.get("reasons_ar"):
+            data = {**data, "reasons_ref": [ref_dict(x) for x in data["reasons_ar"]],
+                    "reasons_ar": [str(x) for x in data["reasons_ar"]]}
+        return data
 
 
 class MarketTrend(BaseModel):
@@ -99,6 +133,7 @@ class PriceLevel(BaseModel):
     role_flip: bool = False
     broken_recently: bool = False
     distance_atr: float
+    last_test_utc: Optional[str] = None
 
 
 class LevelsBlock(BaseModel):
@@ -114,6 +149,57 @@ class LevelsBlock(BaseModel):
     def _no_unvalidated_numbers(self) -> "LevelsBlock":
         if not self.validated and any(z.strength is not None for z in self.supports + self.resistances):
             raise ValueError("numeric level strength requires out-of-sample validation")
+        return self
+
+
+class HorizonOutlook(BaseModel):
+    """Per-horizon view: HOURS mirrors the main intraday decision; WEEK / MONTH come from daily rules.
+
+    hit_rate is the historical FREQUENCY of the validated rule (non-overlapping, after costs) — never a
+    calibrated probability of this particular trade, and never reported for unvalidated rules or in DEMO.
+    """
+    model_config = ConfigDict(extra="forbid")
+    horizon: str  # HOURS | WEEK | MONTH
+    label_ar: str
+    action: Action
+    tilt: int = Field(default=0, ge=-1, le=1)
+    stance_ar: str
+    reason_ar: str
+    validated: bool = False
+    validation_ar: Optional[str] = None
+    hit_rate: Optional[float] = Field(default=None, ge=0.0, le=1.0)
+    base_rate: Optional[float] = Field(default=None, ge=0.0, le=1.0)
+    samples: int = 0
+    horizon_days: Optional[int] = None
+    entry_price: Optional[float] = None
+    stop_loss: Optional[float] = None
+    target: Optional[float] = None
+    wait_for_price: Optional[float] = None
+    method_ar: Optional[str] = None
+    warnings_ar: list[str] = Field(default_factory=list)
+    # translatable twins of the Arabic fields + the horizon's own full payload (v1.5)
+    stance_ref: Optional[ReasonRef] = None
+    reason_ref: Optional[ReasonRef] = None
+    validation_ref: Optional[ReasonRef] = None
+    method_ref: Optional[ReasonRef] = None
+    warnings_ref: list[ReasonRef] = Field(default_factory=list)
+    facts_ref: list[ReasonRef] = Field(default_factory=list)
+    levels: Optional["LevelsBlock"] = None
+    trend: Optional["MarketTrend"] = None
+    probabilities_available: bool = False  # only HOURS can carry calibrated probabilities
+
+    @model_validator(mode="after")
+    def _honest(self) -> "HorizonOutlook":
+        if self.hit_rate is not None and (not self.validated or self.samples < 30):
+            raise ValueError("a hit rate requires a validated rule with >= 30 samples")
+        if self.action in (Action.BUY, Action.SELL) and self.horizon != "HOURS":
+            if not self.validated:
+                raise ValueError("WEEK/MONTH BUY/SELL requires a validated rule")
+            if None in (self.entry_price, self.stop_loss, self.target):
+                raise ValueError("WEEK/MONTH BUY/SELL requires entry, stop and target")
+            sgn = 1 if self.action == Action.BUY else -1
+            if not (sgn * (self.target - self.entry_price) > 0 > sgn * (self.stop_loss - self.entry_price)):
+                raise ValueError("outlook levels inconsistent with direction")
         return self
 
 
@@ -166,6 +252,8 @@ class Decision(BaseModel):
     quote_change: Optional[float] = None
     quote_change_pct: Optional[float] = None
     reevaluate_ar: list[str] = Field(default_factory=list)
+    reevaluate_refs: list[ReasonRef] = Field(default_factory=list)
+    outlooks: list[HorizonOutlook] = Field(default_factory=list)
     audit_hash: Optional[str] = None
 
     supporting_evidence: list[Evidence] = Field(default_factory=list)
@@ -178,6 +266,12 @@ class Decision(BaseModel):
     wait_for_ar: Optional[str] = None
     wait_for_price: Optional[float] = None
     snapshot_hash: str
+    reason_short_ref: Optional[ReasonRef] = None
+    alternative_entry_note_ref: Optional[ReasonRef] = None
+    wait_for_ref: Optional[ReasonRef] = None
+    warning_ref: Optional[ReasonRef] = None
+    invalidation_refs: list[ReasonRef] = Field(default_factory=list)
+    missing_refs: list[ReasonRef] = Field(default_factory=list)
 
     @model_validator(mode="after")
     def _consistency(self) -> "Decision":
@@ -210,6 +304,8 @@ class Decision(BaseModel):
                 raise ValueError("probabilities are never reported in DEMO mode")
             if self.calibration_sample_count < 300:
                 raise ValueError("probability requires >=300 out-of-sample calibration samples")
+        if self.mode == Mode.DEMO and any(o.hit_rate is not None for o in self.outlooks):
+            raise ValueError("historical hit rates are never reported in DEMO mode")
         if self.mode == Mode.DEMO and self.spot_or_proxy != SpotOrProxy.SYNTHETIC:
             raise ValueError("DEMO mode must be labelled SYNTHETIC")
         return self

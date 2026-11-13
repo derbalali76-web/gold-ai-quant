@@ -8,7 +8,7 @@ from typing import Optional
 
 import pandas as pd
 
-TIMEFRAMES = {"M15": 15, "M30": 30, "H1": 60, "H4": 240}
+TIMEFRAMES = {"M15": 15, "M30": 30, "H1": 60, "H4": 240, "D1": 1440}
 OHLC_COLUMNS = ["open", "high", "low", "close", "tick_volume"]
 
 

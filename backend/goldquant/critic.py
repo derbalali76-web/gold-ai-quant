@@ -5,6 +5,7 @@ from dataclasses import dataclass, field
 
 import pandas as pd
 
+from .msg import M
 from .regime import Regime
 from .schemas import Evidence
 
@@ -25,31 +26,31 @@ def review(direction: int, m15_row: pd.Series, h4_row: pd.Series, regime: Regime
     side_ar = "الشراء" if direction > 0 else "البيع"
 
     if regime.vol == "EXTREME":
-        out.vetoes.append("تقلب حاد غير طبيعي — النماذج غير موثوقة في هذه الظروف")
+        out.vetoes.append(M("cr.extreme_vol"))
     if abs(m15_row.get("ret_z", 0.0)) > 4.5:
-        out.vetoes.append("شمعة شاذة إحصائياً (robust z > 4.5) — احتمال خبر أو فجوة سعرية")
+        out.vetoes.append(M("cr.anomalous"))
     if regime.trend == "RANGE":
         out.contrary.append(Evidence(engine="regime", weight=-0.5,
-                                     text_ar=f"السوق في تذبذب عرضي؛ إشارات الاتجاه ضعيفة الموثوقية"))
+                                     text_ar=M("ev.range")))
     h4_slope = float(h4_row.get("slope_ema50_atr", 0.0))
     if h4_slope * direction < -0.1:
-        out.contrary.append(Evidence(engine="mtf", weight=-0.6, text_ar=f"اتجاه H4 يعاكس {side_ar}"))
+        out.contrary.append(Evidence(engine="mtf", weight=-0.6, text_ar=M("ev.h4_against", M("w.buying") if direction > 0 else M("w.selling"))))
     dist = float(m15_row.get("dist_ema20_atr", 0.0)) * direction
     if dist > 2.0:
         target = float(m15_row["ema20"]) + direction * 0.5 * float(m15_row["atr"])
-        out.vetoes.append("السعر ممتد بعيداً عن متوسطه (> 2 ATR) — مطاردة السعر هنا ضعيفة")
+        out.vetoes.append(M("cr.stretched"))
         out.wait_for_price = round(target, 2)
-        out.wait_for_ar = f"انتظر ارتداداً نحو {target:.2f} قبل التفكير في {side_ar}"
+        out.wait_for_ar = M("wf.pullback", f"{target:.2f}", M("w.buying") if direction > 0 else M("w.selling"))
     if stop_inside_structure:
         out.contrary.append(Evidence(engine="liquidity_proxy", weight=-0.3,
-                                     text_ar="وقف الخسارة يقع داخل نطاق آخر قمة/قاع (استدلال من شكل السعر)"))
+                                     text_ar=M("ev.stop_in_structure")))
     if session in ("ASIA",):
-        out.contrary.append(Evidence(engine="session", weight=-0.2, text_ar="جلسة آسيا: سيولة أقل وحركة أبطأ عادةً"))
+        out.contrary.append(Evidence(engine="session", weight=-0.2, text_ar=M("ev.asia")))
     if session in ("CLOSED", "DAILY_BREAK"):
-        out.vetoes.append("السوق مغلق أو في استراحة يومية")
+        out.vetoes.append(M("cr.closed"))
     if minutes_to_weekly_close is not None and minutes_to_weekly_close < 240:
-        out.vetoes.append("أقل من 4 ساعات على إغلاق الأسبوع — خطر فجوة نهاية الأسبوع")
+        out.vetoes.append(M("cr.weekly_close"))
     if regime.bars_since_break == regime.bars_since_break and regime.bars_since_break < 4:
         out.contrary.append(Evidence(engine="change_point", weight=-0.4,
-                                     text_ar="كُشف تغيّر هيكلي حديث في سلوك السعر (CUSUM)"))
+                                     text_ar=M("ev.break_recent")))
     return out

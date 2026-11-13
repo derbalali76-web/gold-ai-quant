@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 
 import numpy as np
 import pandas as pd
+from ..msg import M
 
 MAX_CLOCK_SKEW = timedelta(seconds=5)
 MAX_JUMP_ATR = 8.0  # quote vs last closed M15 close
@@ -37,9 +38,9 @@ def check_market(quote, bars: dict, as_of: datetime, atr15: float | None, market
     r = FirewallResult()
     if quote is not None:
         if quote.observed_at > as_of + MAX_CLOCK_SKEW:
-            r.blocking.append("طابع زمني للسعر من المستقبل — ساعة المزوّد أو الخادم غير متزامنة")
+            r.blocking.append(M("fw.future_ts"))
         if not np.isfinite(quote.price) or quote.price <= 0:
-            r.blocking.append("سعر غير صالح")
+            r.blocking.append(M("fw.bad_price"))
         for w in getattr(quote, "warnings", []):
             (r.blocking if "تعارض" in w else r.warnings).append(w)
     m15 = bars.get("M15")
@@ -49,9 +50,9 @@ def check_market(quote, bars: dict, as_of: datetime, atr15: float | None, market
             jump = abs(quote.price - last_close) / atr15
             r.checks["quote_jump_atr"] = round(jump, 2)
             if jump > MAX_JUMP_ATR:
-                r.blocking.append(f"قفزة سعرية شاذة ({jump:.1f}×ATR) بين السعر الحالي وآخر شمعة — يُشتبه بخطأ بيانات")
+                r.blocking.append(M("fw.jump", f"{jump:.1f}"))
         if _frozen(m15):
-            r.blocking.append("تغذية الأسعار متجمدة (شموع متطابقة متتالية)")
+            r.blocking.append(M("fw.frozen"))
         rets = np.log(m15["close"]).diff().tail(220).dropna()
         if len(rets) > 50:
             med = rets.median()
@@ -60,7 +61,7 @@ def check_market(quote, bars: dict, as_of: datetime, atr15: float | None, market
                 z = float(((rets.tail(20) - med).abs() / mad).max())
                 r.checks["max_recent_return_z"] = round(z, 1)
                 if z > SPIKE_Z:
-                    r.blocking.append(f"شمعة شاذة جداً في آخر 20 شمعة (z={z:.0f}) — يُشتبه بخطأ تغذية")
+                    r.blocking.append(M("fw.spike", f"{z:.0f}"))
     if market_open:
         for tf, lag in MAX_BAR_LAG.items():
             df = bars.get(tf)
@@ -70,7 +71,7 @@ def check_market(quote, bars: dict, as_of: datetime, atr15: float | None, market
             behind = pd.Timestamp(as_of) - close_t
             r.checks[f"{tf}_lag_min"] = round(behind.total_seconds() / 60, 1)
             if behind > lag:
-                r.blocking.append(f"شموع {tf} متأخرة {behind} — المصدر متوقف أو ناقص")
+                r.blocking.append(M("fw.bar_lag", tf, behind))
     return r
 
 
@@ -79,7 +80,7 @@ def check_news(items: list, as_of: datetime) -> tuple[list, list]:
     kept, warns = [], []
     for it in items:
         if it.published_at > as_of + timedelta(minutes=1):
-            warns.append(f"خبر بتاريخ نشر مستقبلي حُجِر: {it.source}")
+            warns.append(M("md.news_future", it.source))
         else:
             kept.append(it)
     return kept, warns
@@ -91,10 +92,10 @@ def check_sources(mode_live: bool, context) -> FirewallResult:
     if not mode_live:
         return r
     if context is None:
-        r.blocking.append("مصادر السياق (التقويم/الأخبار) غير مفعّلة")
+        r.blocking.append(M("fw.no_context"))
         return r
     if not context.calendar_connected:
-        r.blocking.append("تقويم الأحداث الاقتصادية غير محدّث")
+        r.blocking.append(M("fw.calendar_stale"))
     if any("RSS" in m for m in context.missing):
-        r.warnings.append("خلاصات الأخبار الرسمية غير متاحة")
+        r.warnings.append(M("md.news_feeds"))
     return r

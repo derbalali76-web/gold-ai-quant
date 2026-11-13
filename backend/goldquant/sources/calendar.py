@@ -41,12 +41,31 @@ class Calendar:
         return [e for e in self.events if e.importance >= 3
                 and -before_min * 60 <= (now - e.time_utc).total_seconds() <= after_min * 60]
 
+    def upcoming(self, now: datetime, hours: int = 72) -> list[CalendarEvent]:
+        return [e for e in self.events if e.importance >= 3 and now < e.time_utc <= now + timedelta(hours=hours)]
+
 
 def _dt(s: str | None) -> Optional[datetime]:
     if not s:
         return None
     d = datetime.fromisoformat(s.replace("Z", "+00:00"))
     return d if d.tzinfo else d.replace(tzinfo=timezone.utc)
+
+
+def load_calendars(paths) -> Calendar:
+    """Merge several calendar files (manual + automatic). Missing files are skipped; the freshest
+    `updated_at` wins; identical (time, name) events are de-duplicated."""
+    events, stamps, seen = [], [], set()
+    for p in paths:
+        c = load_calendar(p)
+        if c.updated_at is not None:
+            stamps.append(c.updated_at)
+        for e in c.events:
+            k = (e.time_utc, e.name)
+            if k not in seen:
+                seen.add(k)
+                events.append(e)
+    return Calendar(sorted(events, key=lambda x: x.time_utc), max(stamps) if stamps else None)
 
 
 def load_calendar(path: str | Path) -> Calendar:

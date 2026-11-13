@@ -5,6 +5,7 @@ evidence, better entry). Levels can SUPPORT a trade only when the strength model
 Levels never create a trade on their own.
 """
 from __future__ import annotations
+from .msg import M
 
 from dataclasses import dataclass, field
 
@@ -36,55 +37,53 @@ def apply(direction: int, price: float, stop: float | None, target: float | None
         blockers = [z for z in ress if target is not None and z["zone_low"] < target]
         for z in blockers:
             if is_strong(z):
-                e.vetoes.append(f"مقاومة قوية {z['name']} عند {z['price']:.2f} قبل الهدف — العائد المتوقع غير مناسب")
+                e.vetoes.append(M("lv.strong_res", z["name"], f"{z['price']:.2f}"))
                 break
         else:
             if blockers:
                 z = blockers[0]
                 e.contrary.append(Evidence(engine="levels", weight=-0.3,
-                                           text_ar=f"مقاومة {z['name']} ({z['price']:.2f}) قبل الهدف قد تحد من الصعود"))
+                                           text_ar=M("ev.lv_res_before", z["name"], f"{z['price']:.2f}")))
         if stop is not None:
             inside = [z for z in sups if z["zone_low"] <= stop <= z["zone_high"]]
             if inside:
-                e.contrary.append(Evidence(engine="levels", weight=-0.3, text_ar=(
-                    f"الوقف داخل منطقة الدعم {inside[0]['name']} — عرضة للضرب بسحب سيولة؛ الأفضل خلف المنطقة")))
+                e.contrary.append(Evidence(engine="levels", weight=-0.3, text_ar=M("ev.lv_stop_in_sup", inside[0]["name"])))
             guard = [z for z in sups if z["zone_low"] > stop]
             if guard and validated and is_strong(guard[0]):
                 e.support.append(Evidence(engine="levels", weight=0.3,
-                                          text_ar=f"دعم قوي {guard[0]['name']} ({guard[0]['price']:.2f}) يحمي الوقف"))
+                                          text_ar=M("ev.lv_sup_guard", guard[0]["name"], f"{guard[0]['price']:.2f}")))
         if s1 and atr and (price - s1["zone_high"]) <= 1.5 * atr and s1.get("strength_label_ar") != "ضعيف":
             e.better_entry = round(s1["zone_high"], 2)
         if s1:
-            e.reevaluate_ar.append(f"ارتداد نحو {s1['name']} قرب {s1['zone_high']:.2f} مع ثبات فوقه")
+            e.reevaluate_ar.append(M("rv.bounce_sup", s1["name"], f"{s1['zone_high']:.2f}"))
         if r1:
-            e.reevaluate_ar.append(f"إغلاق ساعة فوق {r1['name']} عند {r1['zone_high']:.2f}")
+            e.reevaluate_ar.append(M("rv.close_above", r1["name"], f"{r1['zone_high']:.2f}"))
     elif direction < 0:
         blockers = [z for z in sups if target is not None and z["zone_high"] > target]
         for z in blockers:
             if is_strong(z):
-                e.vetoes.append(f"دعم قوي {z['name']} عند {z['price']:.2f} قبل الهدف — العائد المتوقع غير مناسب")
+                e.vetoes.append(M("lv.strong_sup", z["name"], f"{z['price']:.2f}"))
                 break
         else:
             if blockers:
                 z = blockers[0]
                 e.contrary.append(Evidence(engine="levels", weight=-0.3,
-                                           text_ar=f"دعم {z['name']} ({z['price']:.2f}) قبل الهدف قد يحد من الهبوط"))
+                                           text_ar=M("ev.lv_sup_before", z["name"], f"{z['price']:.2f}")))
         if stop is not None:
             inside = [z for z in ress if z["zone_low"] <= stop <= z["zone_high"]]
             if inside:
-                e.contrary.append(Evidence(engine="levels", weight=-0.3, text_ar=(
-                    f"الوقف داخل منطقة المقاومة {inside[0]['name']} — عرضة للضرب بسحب سيولة؛ الأفضل خلف المنطقة")))
+                e.contrary.append(Evidence(engine="levels", weight=-0.3, text_ar=M("ev.lv_stop_in_res", inside[0]["name"])))
             guard = [z for z in ress if z["zone_high"] < stop]
             if guard and validated and is_strong(guard[0]):
                 e.support.append(Evidence(engine="levels", weight=0.3,
-                                          text_ar=f"مقاومة قوية {guard[0]['name']} ({guard[0]['price']:.2f}) تحمي الوقف"))
+                                          text_ar=M("ev.lv_res_guard", guard[0]["name"], f"{guard[0]['price']:.2f}")))
         if r1 and atr and (r1["zone_low"] - price) <= 1.5 * atr and r1.get("strength_label_ar") != "ضعيف":
             e.better_entry = round(r1["zone_low"], 2)
         if r1:
-            e.reevaluate_ar.append(f"ارتداد نحو {r1['name']} قرب {r1['zone_low']:.2f} مع فشل في تجاوزه")
+            e.reevaluate_ar.append(M("rv.bounce_res", r1["name"], f"{r1['zone_low']:.2f}"))
         if s1:
-            e.reevaluate_ar.append(f"إغلاق ساعة تحت {s1['name']} عند {s1['zone_low']:.2f}")
+            e.reevaluate_ar.append(M("rv.close_below", s1["name"], f"{s1['zone_low']:.2f}"))
     else:
         if s1 and r1:
-            e.reevaluate_ar.append(f"إغلاق ساعة فوق {r1['price']:.2f} أو تحت {s1['price']:.2f} لتحديد الاتجاه")
+            e.reevaluate_ar.append(M("rv.break_either", f"{r1['price']:.2f}", f"{s1['price']:.2f}"))
     return e

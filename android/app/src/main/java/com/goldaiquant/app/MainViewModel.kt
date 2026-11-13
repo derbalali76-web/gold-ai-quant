@@ -19,7 +19,8 @@ data class UiState(
     val decision: Decision? = null,
     val decisionFromCache: Boolean = false,
     val receivedAt: Instant? = null,
-    val error: String? = null,
+    val error: ApiException? = null,
+    val selectedHorizon: String = "HOURS",
 )
 
 class MainViewModel(app: Application) : AndroidViewModel(app) {
@@ -37,10 +38,17 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                 token = prefs.getString("token", "") ?: "",
                 liveMode = prefs.getBoolean("live_mode", false),
                 decision = cached,
+                selectedHorizon = HorizonModel.resolve(prefs.getString("horizon", null), cached),
                 decisionFromCache = cached != null,
                 receivedAt = prefs.getLong("last_received", 0L).takeIf { v -> v > 0 }?.let(Instant::ofEpochMilli),
             )
         }
+    }
+
+    /** The selected horizon is remembered across launches; the next decision keeps it when still offered. */
+    fun selectHorizon(h: String) {
+        _state.update { it.copy(selectedHorizon = h) }
+        prefs.edit().putString("horizon", h).apply()
     }
 
     fun setServerUrl(v: String) {
@@ -71,12 +79,15 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             try {
                 val f = ApiClient(s.serverUrl, s.token).decision(if (s.liveMode) "LIVE" else "DEMO", s.demoStep)
                 val now = Instant.now()
-                _state.update { it.copy(loading = false, decision = f.decision, decisionFromCache = false, receivedAt = now) }
+                _state.update {
+                    it.copy(loading = false, decision = f.decision, decisionFromCache = false, receivedAt = now,
+                        selectedHorizon = HorizonModel.resolve(it.selectedHorizon, f.decision))
+                }
                 prefs.edit().putString("last_decision", f.raw).putLong("last_received", now.toEpochMilli()).apply()
             } catch (e: ApiException) {
-                _state.update { it.copy(loading = false, error = e.userMessageAr) }
+                _state.update { it.copy(loading = false, error = e) }
             } catch (e: Exception) {
-                _state.update { it.copy(loading = false, error = "خطأ غير متوقع: ${e.javaClass.simpleName}") }
+                _state.update { it.copy(loading = false, error = ApiException(ErrorKind.UNEXPECTED, e.javaClass.simpleName)) }
             }
         }
     }

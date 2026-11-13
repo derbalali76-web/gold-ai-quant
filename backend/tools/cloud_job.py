@@ -38,6 +38,7 @@ def load() -> HistoryStore:
 
 
 def save(hs: HistoryStore) -> None:
+    cloud.export_bars(hs, MD, "TwelveData", "XAU/USD", "D1")
     for provider, symbols in (("TwelveData", ["XAU/USD"] + list(AUX_TD.values())), ("Dukascopy", list(DUKA))):
         for sym in symbols:
             for tf in TFS:
@@ -60,7 +61,7 @@ def collect(hs: HistoryStore) -> None:
     key = os.environ.get("TWELVEDATA_API_KEY", "")
     if key:
         td = TwelveDataProvider(key, hs)
-        for tf in TFS:
+        for tf in list(TFS) + ["D1"]:  # D1: ~20 years in the first call (1 credit), then small top-ups
             try:
                 td.refresh(tf, now)
             except Exception as exc:  # noqa: BLE001
@@ -81,24 +82,67 @@ def collect(hs: HistoryStore) -> None:
             store_duka(hs, sym, m1)
         except Exception as exc:  # noqa: BLE001
             print("Duka", sym, exc)
-    ctx = ContextService(hs, ROOT / "config" / "calendar.json")
+    auto_cal = MODELS / "calendar_auto.json"
+    try:  # refresh the official calendar at most every 6 hours (BLS updates weekly, Fed yearly)
+        age = now - datetime.fromtimestamp(auto_cal.stat().st_mtime, timezone.utc) if auto_cal.exists() else None
+        old = json.loads(auto_cal.read_text(encoding="utf-8")).get("updated_at") if auto_cal.exists() else None
+        stale = old is None or now - datetime.fromisoformat(old.replace("Z", "+00:00")) > timedelta(hours=6)
+        if stale or age is None:
+            from goldquant.sources import calendar_auto
+            print("calendar:", calendar_auto.refresh(auto_cal, now))
+    except Exception as exc:  # noqa: BLE001 — never fatal; the calendar simply ages
+        print("calendar refresh failed:", exc)
+    ctx = ContextService(hs, ROOT / "config" / "calendar.json", auto_calendar_path=auto_cal)
     ctx.refresh(now)
+    outlook_forward_log(hs, now)
     for r in hs.recent_fetches(40):
         print(r)
 
 
+def outlook_forward_log(hs: HistoryStore, now: datetime) -> None:
+    """Append today's WEEK/MONTH outlook and resolve matured ones (persistent: committed under models/)."""
+    from goldquant import outlook_log as OLOG
+    daily = hs.load_bars("TwelveData", "XAU/USD", "D1", limit=10_000)
+    if len(daily) < 300:
+        print("outlook log: daily history too short", len(daily))
+        return
+    log = MODELS / "outlook_log.jsonl"
+    new = OLOG.append_today(daily, now, log)
+    track = OLOG.resolve(OLOG.read_log(log), daily)
+    MODELS.mkdir(parents=True, exist_ok=True)
+    (MODELS / "outlook_track.json").write_text(json.dumps(track, ensure_ascii=False, indent=1), encoding="utf-8")
+    print("outlook log: +", len(new), {k: v["resolved"] for k, v in track["horizons"].items()})
+
+
+BACKFILL_BUDGET = timedelta(minutes=70)  # the workflow is killed at 120 min: stop early and SAVE what we have
+
+
 def backfill(hs: HistoryStore, years: float) -> None:
+    """Newest data first, gold first; stops before the CI time limit so the commit step always runs.
+    Re-running backfill continues where the previous run stopped (already-stored months are skipped)."""
+    import time
+    t0 = time.monotonic()
     imp = DukascopyImporter()
     end = date.today() - timedelta(days=1)
     start = end - timedelta(days=int(365 * years))
     for sym in DUKA:
-        d = start
-        while d <= end:
-            chunk_end = min(end, d + timedelta(days=30))
-            m1 = imp.fetch_range(sym, d, chunk_end)
+        d = end
+        while d >= start:
+            if time.monotonic() - t0 > BACKFILL_BUDGET.total_seconds():
+                print("time budget reached — saving; run backfill again to continue", flush=True)
+                return
+            chunk_start = max(start, d - timedelta(days=30))
+            have = hs.load_bars("Dukascopy", sym, "H1", limit=10_000_000)
+            n_have = len(have[(have.index >= pd.Timestamp(chunk_start, tz="UTC")) &
+                              (have.index < pd.Timestamp(d + timedelta(days=1), tz="UTC"))]) if len(have) else 0
+            if n_have >= 400:  # ~ a full month of H1 bars already stored
+                d = chunk_start - timedelta(days=1)
+                continue
+            m1 = imp.fetch_range(sym, chunk_start, d)
             store_duka(hs, sym, m1)
-            print(sym, d, chunk_end, len(m1), "errors:", len(imp.errors))
-            d = chunk_end + timedelta(days=1)
+            save(hs)  # persist every chunk so a kill never loses finished months
+            print(sym, chunk_start, d, len(m1), "errors:", len(imp.errors), flush=True)
+            d = chunk_start - timedelta(days=1)
 
 
 def training_bars(hs: HistoryStore):
@@ -135,6 +179,22 @@ def train(hs: HistoryStore) -> None:
     print("trained:", label, as_of, "qualified:", st.qualified, st.reason_ar, "levels:", lm.validation.get("reason_ar"))
 
 
+def outlook_report(daily: pd.DataFrame, label: str) -> dict:
+    """Historical validation of the fixed WEEK / MONTH rules (same function the live engine uses)."""
+    import dataclasses
+    from goldquant import outlook as OL
+    if len(daily) < OL.MIN_DAILY_BARS:
+        return {"dataset": label, "status": "INSUFFICIENT", "daily_bars": len(daily)}
+    as_of = (daily.index[-1] + pd.Timedelta(days=1)).to_pydatetime()
+    views = OL.compute(daily, as_of)
+    return {"dataset": label, "daily_bars": len(daily), "from": str(daily.index[0].date()),
+            "to": str(daily.index[-1].date()), "cost_round_trip": OL.ROUND_TRIP_COST,
+            "rules": {v.horizon: {"rule_ar": OL.RULE_AR[v.horizon], "validated": v.validated,
+                                  "current_action": v.action, "current_tilt": v.tilt,
+                                  "stats": dataclasses.asdict(v.stats)} for v in views},
+            "note_ar": "القواعد ثابتة مسبقاً (بلا بحث عن معاملات)؛ النسبة تكرار تاريخي غير متداخل بعد التكاليف"}
+
+
 def research(hs: HistoryStore) -> None:
     from goldquant import setups
     from goldquant.precision import promotion as PR
@@ -155,10 +215,14 @@ def research(hs: HistoryStore) -> None:
     (MODELS / "feature_upgrade.json").write_text(json.dumps(fu, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
     su = setups.evaluate(bars["M15"], bars["H1"], bars["H4"])
     (MODELS / "setups.json").write_text(json.dumps(su, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    daily = hs.load_bars("TwelveData", "XAU/USD", "D1", limit=10_000)
+    (MODELS / "outlook_report.json").write_text(json.dumps(outlook_report(daily, "TwelveData D1"), ensure_ascii=False,
+                                                           indent=1, default=str), encoding="utf-8")
     print("research written")
 
 
 if __name__ == "__main__":
+    sys.stdout.reconfigure(line_buffering=True)  # show progress live in the Actions log
     ap = argparse.ArgumentParser()
     ap.add_argument("cmd", choices=["collect", "train", "research", "backfill"])
     ap.add_argument("--years", type=float, default=3.0)
