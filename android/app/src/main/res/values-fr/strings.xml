@@ -213,6 +213,18 @@
     <string name="perf_none">Pas encore de trades terminés</string>
     <string name="perf_hit_note">Heures : objectif atteint avant le stop. Semaine / mois : bonne direction après coûts.</string>
     <string name="closed_last_session">Marché fermé — tendance et niveaux de la dernière séance</string>
+    <string name="src_planner">Test hors échantillon du moteur de plans (walk-forward)</string>
+    <string name="perf_dir">Précision de direction %1$d%% (référence majoritaire %2$d%%)</string>
+    <string name="perf_base">Même plan pris à chaque fois, sans modèle : %1$s par trade</string>
+    <string name="perf_q_yes">Validé : l\'avantage a tenu hors échantillon</string>
+    <string name="perf_q_no">Non validé : aucun avantage prouvé sur la référence simple hors échantillon</string>
+    <string name="pl_probs">Objectif d\'abord %1$d%% · stop d\'abord %2$d%% · aucun %3$d%%</string>
+    <string name="pl_fill">Probabilité d\'exécution de l\'entrée sous %1$d jours : %2$d%%</string>
+    <string name="pl_days_to_target">Délai habituel jusqu\'à l\'objectif : %1$s jours</string>
+    <string name="pl_ev">Rendement net attendu après coûts : %1$s</string>
+    <string name="pl_expire_note">Le plan peut aussi se terminer sans atteindre l\'objectif ni le stop (limite de temps).</string>
+    <string name="pl_wait_buy_rec">Attendre pour acheter à %1$s · objectif %2$s · stop %3$s</string>
+    <string name="pl_wait_sell_rec">Attendre pour vendre à %1$s · objectif %2$s · stop %3$s</string>
     <string name="r_w_up" formatted="false">haussière</string>
     <string name="r_w_down" formatted="false">baissière</string>
     <string name="r_w_neutral" formatted="false">neutre</string>

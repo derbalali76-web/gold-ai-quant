@@ -214,6 +214,18 @@
     <string name="perf_none">No completed trades yet</string>
     <string name="perf_hit_note">Hours: target reached before stop. Week / month: right direction after costs.</string>
     <string name="closed_last_session">Market closed — trend and levels are from the last session</string>
+    <string name="src_planner">Out-of-sample test of the plan engine (walk-forward)</string>
+    <string name="perf_dir">Direction accuracy %1$d%% (always-majority baseline %2$d%%)</string>
+    <string name="perf_base">Same plan taken every time, without the model: %1$s per trade</string>
+    <string name="perf_q_yes">Qualified: the edge held out of sample</string>
+    <string name="perf_q_no">Not qualified: no proven edge over the simple baseline out of sample</string>
+    <string name="pl_probs">Target first %1$d%% · stop first %2$d%% · neither %3$d%%</string>
+    <string name="pl_fill">Chance the entry fills within %1$d days: %2$d%%</string>
+    <string name="pl_days_to_target">Typical time to target: %1$s days</string>
+    <string name="pl_ev">Expected net return after costs: %1$s</string>
+    <string name="pl_expire_note">The plan can also end without reaching the target or the stop (time limit).</string>
+    <string name="pl_wait_buy_rec">Wait to buy at %1$s · target %2$s · stop %3$s</string>
+    <string name="pl_wait_sell_rec">Wait to sell at %1$s · target %2$s · stop %3$s</string>
     <string name="r_w_up" formatted="false">up</string>
     <string name="r_w_down" formatted="false">down</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

@@ -1,0 +1,421 @@
+"""Trade-plan engine (v1): compare several entry / target / stop plans and pick the best by expected return after costs.
+
+For every decision day t and direction d, each candidate plan c = (entry kind, target multiple, stop multiple) is
+simulated on the bars AFTER t (no look-ahead): a LIMIT entry must first fill inside its window, then target and stop
+are checked bar by bar (same bar touching both = stop, conservative), otherwise the plan times out at the horizon.
+A multinomial model per (d, c) learns P(target first), P(stop first), P(timeout) and, for LIMIT, P(fill), from
+features known at t's close. Expected net return of a plan = what those probabilities imply minus round-trip cost.
+
+Walk-forward with purge + embargo: a training sample is used only once its outcome was known before the test block
+started. Three things are measured separately, never mixed:
+  * direction accuracy  — sign of the horizon return vs the majority-class baseline
+  * trade success       — share of taken plans that hit the target before the stop
+  * profitability       — mean net return per trade after costs, its bootstrap CI, drawdown
+A horizon qualifies only if profitability holds out of sample (CI > 0, both halves, final holdout) AND the
+probabilities are calibrated (Brier better than climatology, small reliability gap). Otherwise: no recommendation.
+"""
+from __future__ import annotations
+
+from dataclasses import asdict, dataclass, field
+from typing import Optional
+
+import numpy as np
+import pandas as pd
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+
+from . import outlook as OL
+
+PLANNER_VERSION = "planner-daily-1.0.0"
+COST = OL.ROUND_TRIP_COST  # fraction of price per round trip (spread + slippage)
+HORIZONS = {"WEEK": 5, "MONTH": 21}
+GEOMETRIES = {  # (target, stop) in ATR(20) units
+    "WEEK": [(1.0, 1.0), (1.5, 1.0), (2.0, 1.5), (2.5, 1.5)],
+    "MONTH": [(2.0, 1.5), (3.0, 2.0), (4.0, 2.5), (5.0, 3.0)],
+}
+LIMIT_PULLBACK = 0.5  # LIMIT entry 0.5 ATR better than the close
+FILL_WINDOW = {"WEEK": 2, "MONTH": 5}  # bars allowed for a LIMIT entry to fill
+MIN_TRAIN = 1000
+TEST_BLOCK = 250
+HOLDOUT_FRAC = 0.2
+MIN_EDGE = 0.0005  # require at least +0.05 % expected net return per trade
+
+
+@dataclass(frozen=True)
+class Candidate:
+    direction: int
+    entry: str  # MARKET | LIMIT
+    tp: float
+    sl: float
+
+    @property
+    def key(self) -> str:
+        return f"{'L' if self.direction > 0 else 'S'}_{self.entry}_{self.tp}_{self.sl}"
+
+
+def candidates(horizon: str) -> list[Candidate]:
+    return [Candidate(d, e, tp, sl) for d in (1, -1) for e in ("MARKET", "LIMIT") for tp, sl in GEOMETRIES[horizon]]
+
+
+# ------------------------------------------------------------------ features (row t uses bars up to t only)
+FEATURES = ["dist20", "dist50", "dist200", "mom63", "mom126", "mom252", "ret5", "ret20", "rsi", "rangepos", "atr_pct"]
+SIGNED = ["dist20", "dist50", "dist200", "mom63", "mom126", "mom252", "ret5", "ret20", "rsi", "rangepos"]
+
+
+def features(d: pd.DataFrame) -> pd.DataFrame:
+    f = OL.daily_features(d)
+    a = f["atr20"]
+    out = pd.DataFrame(index=d.index)
+    for k in (20, 50, 200):
+        out[f"dist{k}"] = (f["close"] - f[f"sma{k}"]) / a
+    for k in (63, 126, 252):
+        out[f"mom{k}"] = f[f"mom{k}"]
+    lc = np.log(d["close"])
+    out["ret5"] = lc - lc.shift(5)
+    out["ret20"] = lc - lc.shift(20)
+    out["rsi"] = (f["rsi14"] - 50) / 50
+    hi, lo = d["high"].rolling(20).max(), d["low"].rolling(20).min()
+    out["rangepos"] = (d["close"] - lo) / (hi - lo) - 0.5
+    out["atr_pct"] = a / d["close"]
+    out["atr"] = a
+    return out
+
+
+def signed(x: np.ndarray, direction: int) -> np.ndarray:
+    y = x.copy()
+    idx = [FEATURES.index(c) for c in SIGNED]
+    y[:, idx] *= direction
+    return y
+
+
+# ------------------------------------------------------------------ simulation (bars strictly after t)
+def simulate(o, h, l, c, atr, i: int, cand: Candidate, horizon_bars: int, fill_window: int) -> tuple:
+    """Returns (outcome, net_return, bars_held). outcome: 1 target, -1 stop, 0 timeout, nan unfilled / unresolvable."""
+    n = len(c)
+    a = atr[i]
+    if not np.isfinite(a) or a <= 0:
+        return np.nan, np.nan, np.nan
+    d = cand.direction
+    entry = c[i] - d * LIMIT_PULLBACK * a if cand.entry == "LIMIT" else c[i]
+    start = i + 1
+    if cand.entry == "LIMIT":
+        fill = None
+        for j in range(start, min(i + 1 + fill_window, n)):
+            if (l[j] <= entry if d > 0 else h[j] >= entry):
+                fill = j
+                break
+        if fill is None:
+            return (np.nan, 0.0, fill_window) if i + fill_window < n else (np.nan, np.nan, np.nan)
+        start = fill
+    tp, sl = entry + d * cand.tp * a, entry - d * cand.sl * a
+    end = i + horizon_bars
+    if end >= n:
+        return np.nan, np.nan, np.nan
+    for j in range(start, end + 1):
+        hit_sl = l[j] <= sl if d > 0 else h[j] >= sl
+        hit_tp = h[j] >= tp if d > 0 else l[j] <= tp
+        if hit_sl:
+            return -1.0, d * (sl - entry) / entry - COST, j - i
+        if hit_tp:
+            return 1.0, d * (tp - entry) / entry - COST, j - i
+    return 0.0, d * (c[end] - entry) / entry - COST, end - i
+
+
+def label_all(d: pd.DataFrame, horizon: str) -> dict:
+    o, h, l, c = (d[k].to_numpy(dtype=float) for k in ("open", "high", "low", "close"))
+    atr = features(d)["atr"].to_numpy()
+    H, F = HORIZONS[horizon], FILL_WINDOW[horizon]
+    out = {}
+    for cand in candidates(horizon):
+        res = np.array([simulate(o, h, l, c, atr, i, cand, H, F) for i in range(len(c))], dtype=float)
+        out[cand.key] = res  # columns: outcome, net_return, bars_held
+    return out
+
+
+# ------------------------------------------------------------------ models
+def _fit_multi(x, y):
+    m = make_pipeline(StandardScaler(), LogisticRegression(C=0.05, max_iter=2000))
+    m.fit(x, y)
+    return m
+
+
+def _proba(m, x, classes):
+    p = m.predict_proba(x)
+    cls = list(m.classes_)
+    return np.stack([p[:, cls.index(k)] if k in cls else np.zeros(len(x)) for k in classes], axis=1)
+
+
+@dataclass
+class CandModel:
+    cand: Candidate
+    outcome: object = None  # 3-class model on filled samples
+    fill: object = None  # binary model (LIMIT only)
+    mean_timeout: float = 0.0
+    tp_ret: float = 0.0  # mean net return when target / stop is hit, in ATR-relative terms (per unit atr_pct)
+    sl_ret: float = 0.0
+    base_tp: float = 0.0
+    median_days_tp: Optional[float] = None
+
+
+def fit_models(X: np.ndarray, labels: dict, train_idx: np.ndarray, horizon: str) -> dict:
+    models = {}
+    for cand in candidates(horizon):
+        lab = labels[cand.key][train_idx]
+        xs = signed(X[train_idx], cand.direction)
+        ok = np.isfinite(xs).all(axis=1)
+        filled = ok & np.isfinite(lab[:, 0])
+        cm = CandModel(cand)
+        if filled.sum() < 100 or len(np.unique(lab[filled, 0])) < 2:
+            models[cand.key] = cm
+            continue
+        cm.outcome = _fit_multi(xs[filled], lab[filled, 0].astype(int))
+        to = filled & (lab[:, 0] == 0)
+        cm.mean_timeout = float(np.mean(lab[to, 1])) if to.any() else 0.0
+        cm.base_tp = float(np.mean(lab[filled, 0] == 1))
+        tpd = lab[filled & (lab[:, 0] == 1), 2]
+        cm.median_days_tp = float(np.median(tpd)) if len(tpd) else None
+        if cand.entry == "LIMIT":
+            resolved = ok & np.isfinite(lab[:, 1])
+            yfill = np.isfinite(lab[resolved, 0]).astype(int)
+            if len(np.unique(yfill)) == 2:
+                cm.fill = _fit_multi(xs[resolved], yfill)
+        models[cand.key] = cm
+    return models
+
+
+def expected(cm: CandModel, x_row: np.ndarray, atr_pct: float) -> tuple:
+    """(EV after costs, p_tp, p_sl, p_to, p_fill) for one candidate at one decision time."""
+    if cm.outcome is None or not np.isfinite(x_row).all():
+        return -np.inf, None, None, None, None
+    xs = signed(x_row[None, :], cm.cand.direction)
+    p = _proba(cm.outcome, xs, [1, -1, 0])[0]
+    pf = 1.0
+    if cm.cand.entry == "LIMIT":
+        pf = float(_proba(cm.fill, xs, [1])[0, 0]) if cm.fill is not None else 0.0
+    gain = cm.cand.tp * atr_pct - COST
+    loss = -cm.cand.sl * atr_pct - COST
+    ev = pf * (p[0] * gain + p[1] * loss + p[2] * cm.mean_timeout)
+    return float(ev), float(p[0]), float(p[1]), float(p[2]), pf
+
+
+# ------------------------------------------------------------------ walk-forward evaluation
+@dataclass
+class PlannerReport:
+    horizon: str
+    version: str = PLANNER_VERSION
+    period: str = ""
+    decision_days: int = 0
+    direction_accuracy: Optional[float] = None
+    direction_baseline: Optional[float] = None
+    trades: int = 0
+    not_filled: int = 0
+    tp_first_rate: Optional[float] = None
+    timeout_rate: Optional[float] = None
+    avg_win_pct: Optional[float] = None
+    avg_loss_pct: Optional[float] = None
+    expectancy_pct: Optional[float] = None
+    expectancy_ci95: Optional[list] = None
+    expectancy_halves: list = field(default_factory=list)
+    holdout_expectancy_pct: Optional[float] = None
+    holdout_trades: int = 0
+    max_drawdown_pct: Optional[float] = None
+    profit_factor: Optional[float] = None
+    median_days_to_target: Optional[float] = None
+    brier_tp: Optional[float] = None
+    brier_climatology: Optional[float] = None
+    reliability_gap: Optional[float] = None
+    plans_used: dict = field(default_factory=dict)
+    baseline_plan: Optional[str] = None
+    baseline_expectancy_pct: Optional[float] = None  # same plan taken every time (no model), same period, same rules
+    baseline_trades: int = 0
+    edge_over_baseline_ci95: Optional[list] = None
+    qualified: bool = False  # the plan selection is profitable out of sample AND beats the no-model baseline
+    probabilities_calibrated: bool = False  # only then may probabilities be shown as numbers
+    reason: str = ""
+    checks: dict = field(default_factory=dict)
+
+
+def _purged_train(n_upto: int, H: int, F: int) -> np.ndarray:
+    """Samples whose outcome was known strictly before index n_upto (purge) with an extra embargo of H bars."""
+    last = n_upto - (H + F) - H
+    return np.arange(0, max(last, 0))
+
+
+def walk_forward(d: pd.DataFrame, horizon: str, seed: int = 7) -> PlannerReport:
+    d = d.dropna(subset=["open", "high", "low", "close"])
+    H, F = HORIZONS[horizon], FILL_WINDOW[horizon]
+    feats = features(d)
+    X = feats[FEATURES].to_numpy(dtype=float)
+    atr_pct = feats["atr_pct"].to_numpy(dtype=float)
+    labels = label_all(d, horizon)
+    c = d["close"].to_numpy(dtype=float)
+    n = len(c)
+    rep = PlannerReport(horizon)
+    if n < MIN_TRAIN + TEST_BLOCK:
+        rep.reason = f"insufficient daily history ({n} bars)"
+        return rep
+    hold_start = int(n * (1 - HOLDOUT_FRAC))
+    trades, dir_hits, dir_n, cal = [], 0, 0, []
+    dir_up = 0
+    i = MIN_TRAIN
+    models, model_block = None, -1
+    next_free = MIN_TRAIN
+    while i < n - H:
+        block = (i - MIN_TRAIN) // TEST_BLOCK
+        if block != model_block:
+            tr = _purged_train(MIN_TRAIN + block * TEST_BLOCK, H, F)
+            models = fit_models(X, labels, tr, horizon)
+            # direction model (sign of the H-day return)
+            fwd = np.full(n, np.nan)
+            fwd[:-H] = np.log(c[H:] / c[:-H])
+            ok = np.isfinite(X[tr]).all(axis=1) & np.isfinite(fwd[tr])
+            dir_model = _fit_multi(X[tr][ok], (fwd[tr][ok] > 0).astype(int)) if ok.sum() > 100 else None
+            model_block = block
+        if np.isfinite(X[i]).all() and dir_model is not None:
+            up = _proba(dir_model, X[i][None, :], [1])[0, 0] >= 0.5
+            real = np.log(c[i + H] / c[i]) > 0
+            dir_hits += int(up == real)
+            dir_up += int(real)
+            dir_n += 1
+        if i >= next_free and np.isfinite(atr_pct[i]):
+            best, best_key = (-np.inf,), None
+            for k, cm in models.items():
+                e = expected(cm, X[i], atr_pct[i])
+                if e[0] > best[0]:
+                    best, best_key = e, k
+            if best_key is not None and best[0] > MIN_EDGE:
+                out, ret, held = labels[best_key][i]
+                if np.isfinite(ret):
+                    filled = np.isfinite(out)
+                    trades.append({"i": i, "key": best_key, "filled": bool(filled), "outcome": out, "ret": ret,
+                                   "held": held, "p_tp": best[1], "base": models[best_key].base_tp,
+                                   "hold": i >= hold_start})
+                    next_free = i + int(held if np.isfinite(held) else F) + 1
+        i += 1
+    rep.period = f"{d.index[MIN_TRAIN].date()} → {d.index[min(i, n - 1)].date()}"
+    rep.decision_days = dir_n
+    if dir_n:
+        rep.direction_accuracy = round(dir_hits / dir_n, 4)
+        rep.direction_baseline = round(max(dir_up, dir_n - dir_up) / dir_n, 4)
+    filled = [t for t in trades if t["filled"]]
+    rep.not_filled = len(trades) - len(filled)
+    rep.trades = len(filled)
+    if not filled:
+        rep.reason = "no plan reached the minimum expected edge"
+        return rep
+    r = np.array([t["ret"] for t in filled]) * 100
+    oc = np.array([t["outcome"] for t in filled])
+    rep.tp_first_rate = round(float(np.mean(oc == 1)), 4)
+    rep.timeout_rate = round(float(np.mean(oc == 0)), 4)
+    rep.avg_win_pct = round(float(r[r > 0].mean()), 3) if (r > 0).any() else None
+    rep.avg_loss_pct = round(float(r[r <= 0].mean()), 3) if (r <= 0).any() else None
+    rep.expectancy_pct = round(float(r.mean()), 3)
+    rng = np.random.default_rng(seed)
+    boots = [rng.choice(r, len(r), replace=True).mean() for _ in range(2000)]
+    rep.expectancy_ci95 = [round(float(np.percentile(boots, 2.5)), 3), round(float(np.percentile(boots, 97.5)), 3)]
+    half = len(r) // 2
+    rep.expectancy_halves = [round(float(r[:half].mean()), 3) if half else None,
+                             round(float(r[half:].mean()), 3) if len(r) - half else None]
+    hr = np.array([t["ret"] for t in filled if t["hold"]]) * 100
+    rep.holdout_trades = int(len(hr))
+    rep.holdout_expectancy_pct = round(float(hr.mean()), 3) if len(hr) else None
+    eq = np.cumsum(r)
+    rep.max_drawdown_pct = round(float(np.max(np.maximum.accumulate(eq) - eq)), 3)
+    gp, gl = r[r > 0].sum(), -r[r < 0].sum()
+    rep.profit_factor = round(float(gp / gl), 3) if gl > 0 else None
+    tp_days = [t["held"] for t in filled if t["outcome"] == 1]
+    rep.median_days_to_target = float(np.median(tp_days)) if tp_days else None
+    p = np.array([t["p_tp"] for t in filled])
+    y = (oc == 1).astype(float)
+    base = np.array([t["base"] for t in filled])
+    rep.brier_tp = round(float(np.mean((p - y) ** 2)), 4)
+    rep.brier_climatology = round(float(np.mean((base - y) ** 2)), 4)
+    gaps = []
+    for lo in np.arange(0, 1, 0.2):
+        m = (p >= lo) & (p < lo + 0.2)
+        if m.sum() >= 15:
+            gaps.append(abs(float(p[m].mean() - y[m].mean())))
+    rep.reliability_gap = round(max(gaps), 4) if gaps else None
+    rep.plans_used = pd.Series([t["key"] for t in filled]).value_counts().head(6).to_dict()
+    # baseline: the model's most used plan, taken at every opportunity without the model (non-overlapping, same span)
+    top = max(rep.plans_used, key=rep.plans_used.get)
+    rep.baseline_plan = top
+    b, j = [], MIN_TRAIN
+    while j < n - H:
+        out_, ret_, held_ = labels[top][j]
+        if not np.isfinite(ret_):
+            j += 1
+            continue
+        if np.isfinite(out_):
+            b.append(ret_ * 100)
+        j += int(held_ if np.isfinite(held_) else F) + 1
+    rep.baseline_trades = len(b)
+    rep.baseline_expectancy_pct = round(float(np.mean(b)), 3) if b else None
+    diff_lo = None
+    if b:
+        bb = np.array(b)
+        diffs = [rng.choice(r, len(r)).mean() - rng.choice(bb, len(bb)).mean() for _ in range(2000)]
+        diff_lo = float(np.percentile(diffs, 2.5))
+        rep.edge_over_baseline_ci95 = [round(diff_lo, 3), round(float(np.percentile(diffs, 97.5)), 3)]
+    checks = {
+        "enough trades (>=30)": rep.trades >= 30,
+        "expectancy CI above zero": rep.expectancy_ci95[0] > 0,
+        "both halves positive": all(x is not None and x > 0 for x in rep.expectancy_halves),
+        "final holdout positive": rep.holdout_expectancy_pct is not None and rep.holdout_expectancy_pct > 0,
+        "beats the no-model baseline (CI)": diff_lo is not None and diff_lo > 0,
+    }
+    cal = {
+        "Brier better than climatology": rep.brier_tp <= rep.brier_climatology,
+        "reliability gap <= 0.10": rep.reliability_gap is not None and rep.reliability_gap <= 0.10,
+    }
+    rep.checks = {**checks, **cal}
+    rep.qualified = all(checks.values())
+    rep.probabilities_calibrated = rep.qualified and all(cal.values())
+    failed = [k for k, v in checks.items() if not v]
+    rep.reason = ("qualified" + ("" if rep.probabilities_calibrated else " (probabilities not calibrated: hidden)")
+                  if rep.qualified else "failed: " + "; ".join(failed))
+    return rep
+
+
+# ------------------------------------------------------------------ production model (fitted on all resolved data)
+@dataclass
+class PlannerModel:
+    horizon: str
+    models: dict
+    report: dict
+    trained_until: str
+    version: str = PLANNER_VERSION
+
+    @property
+    def qualified(self) -> bool:
+        return bool(self.report.get("qualified"))
+
+    def best_plan(self, d: pd.DataFrame) -> Optional[dict]:
+        """Best plan for the last CLOSED daily bar of d, or None when no candidate clears the edge."""
+        feats = features(d)
+        x = feats[FEATURES].to_numpy(dtype=float)[-1]
+        a, ap, close = float(feats["atr"].iloc[-1]), float(feats["atr_pct"].iloc[-1]), float(d["close"].iloc[-1])
+        best, cand = (-np.inf,), None
+        for cm in self.models.values():
+            e = expected(cm, x, ap)
+            if e[0] > best[0]:
+                best, cand = e, cm
+        if cand is None or best[0] <= MIN_EDGE:
+            return None
+        k = cand.cand
+        entry = close - k.direction * LIMIT_PULLBACK * a if k.entry == "LIMIT" else close
+        return {"direction": k.direction, "entry_kind": k.entry, "entry": round(entry, 2),
+                "target": round(entry + k.direction * k.tp * a, 2), "stop": round(entry - k.direction * k.sl * a, 2),
+                "ev_pct": round(best[0] * 100, 3), "p_target": round(best[1], 4), "p_stop": round(best[2], 4),
+                "p_timeout": round(best[3], 4), "p_fill": round(best[4], 4),
+                "median_days_to_target": cand.median_days_tp, "horizon_days": HORIZONS[self.horizon],
+                "fill_days": FILL_WINDOW[self.horizon] if k.entry == "LIMIT" else 0}
+
+
+def train_production(d: pd.DataFrame, horizon: str, report: PlannerReport) -> PlannerModel:
+    d = d.dropna(subset=["open", "high", "low", "close"])
+    X = features(d)[FEATURES].to_numpy(dtype=float)
+    labels = label_all(d, horizon)
+    tr = _purged_train(len(d), HORIZONS[horizon], FILL_WINDOW[horizon])
+    return PlannerModel(horizon, fit_models(X, labels, tr, horizon), asdict(report), str(d.index[-1].date()))

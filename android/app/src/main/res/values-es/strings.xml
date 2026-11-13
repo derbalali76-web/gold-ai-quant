@@ -213,6 +213,18 @@
     <string name="perf_none">Aún no hay operaciones completadas</string>
     <string name="perf_hit_note">Horas: objetivo antes del stop. Semana / mes: dirección correcta tras costes.</string>
     <string name="closed_last_session">Mercado cerrado — tendencia y niveles de la última sesión</string>
+    <string name="src_planner">Prueba fuera de muestra del motor de planes (walk-forward)</string>
+    <string name="perf_dir">Acierto de dirección %1$d%% (referencia mayoritaria %2$d%%)</string>
+    <string name="perf_base">Mismo plan siempre, sin modelo: %1$s por operación</string>
+    <string name="perf_q_yes">Validado: la ventaja se mantuvo fuera de muestra</string>
+    <string name="perf_q_no">No validado: sin ventaja probada sobre la referencia simple fuera de muestra</string>
+    <string name="pl_probs">Objetivo primero %1$d%% · stop primero %2$d%% · ninguno %3$d%%</string>
+    <string name="pl_fill">Probabilidad de que la entrada se ejecute en %1$d días: %2$d%%</string>
+    <string name="pl_days_to_target">Tiempo habitual hasta el objetivo: %1$s días</string>
+    <string name="pl_ev">Rendimiento neto esperado tras costes: %1$s</string>
+    <string name="pl_expire_note">El plan también puede terminar sin tocar objetivo ni stop (límite de tiempo).</string>
+    <string name="pl_wait_buy_rec">Esperar para comprar en %1$s · objetivo %2$s · stop %3$s</string>
+    <string name="pl_wait_sell_rec">Esperar para vender en %1$s · objetivo %2$s · stop %3$s</string>
     <string name="r_w_up" formatted="false">alcista</string>
     <string name="r_w_down" formatted="false">bajista</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

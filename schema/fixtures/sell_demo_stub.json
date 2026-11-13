@@ -360,7 +360,15 @@
             "args": [],
             "text_ar": "انتهاء صلاحية الإشارة دون دخول ضمن النطاق"
           }
-        ]
+        ],
+        "method": null,
+        "expected_net_return_pct": null,
+        "p_target_first": null,
+        "p_stop_first": null,
+        "p_timeout": null,
+        "p_fill": null,
+        "median_days_to_target": null,
+        "fill_days": null
       },
       "performance": []
     },
@@ -606,7 +614,15 @@
         "expected_minutes": null,
         "expected_days": null,
         "valid_until_utc": null,
-        "invalidation_refs": []
+        "invalidation_refs": [],
+        "method": "RULE",
+        "expected_net_return_pct": null,
+        "p_target_first": null,
+        "p_stop_first": null,
+        "p_timeout": null,
+        "p_fill": null,
+        "median_days_to_target": null,
+        "fill_days": null
       },
       "performance": []
     },
@@ -871,13 +887,21 @@
         "expected_minutes": null,
         "expected_days": null,
         "valid_until_utc": null,
-        "invalidation_refs": []
+        "invalidation_refs": [],
+        "method": "RULE",
+        "expected_net_return_pct": null,
+        "p_target_first": null,
+        "p_stop_first": null,
+        "p_timeout": null,
+        "p_fill": null,
+        "median_days_to_target": null,
+        "fill_days": null
       },
       "performance": []
     }
   ],
   "market_closed": false,
-  "audit_hash": "3109917737be249caaea3cc776d62cd8c7ba0720db754fbd3203f3046407c24c",
+  "audit_hash": "658a0672d467bf2c07a8c4f3bc455003fb6b7b2a95b726e4416988e933d5695b",
   "supporting_evidence": [
     {
       "engine": "mtf_bias",

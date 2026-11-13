@@ -279,6 +279,20 @@ def research(hs: HistoryStore) -> None:
     except Exception as exc:  # noqa: BLE001
         print("backtest failed:", exc)
     daily = hs.load_bars("TwelveData", "XAU/USD", "D1", limit=10_000)
+    try:  # trade-plan engine for WEEK / MONTH: walk-forward report + production model (used only if qualified)
+        import pickle
+        from dataclasses import asdict
+        from goldquant import planner as PLN
+        reps = {}
+        for hz in PLN.HORIZONS:
+            r = PLN.walk_forward(daily, hz)
+            reps[hz] = asdict(r)
+            (MODELS / f"planner_{hz}.pkl").write_bytes(pickle.dumps(PLN.train_production(daily, hz, r)))
+            print("planner", hz, r.reason, {k: reps[hz][k] for k in ("trades", "expectancy_pct", "baseline_expectancy_pct")})
+        (MODELS / "planner_report.json").write_text(json.dumps(reps, ensure_ascii=False, indent=1, default=str),
+                                                    encoding="utf-8")
+    except Exception as exc:  # noqa: BLE001
+        print("planner failed:", exc)
     (MODELS / "outlook_report.json").write_text(json.dumps(outlook_report(daily, "TwelveData D1"), ensure_ascii=False,
                                                            indent=1, default=str), encoding="utf-8")
     print("research written")

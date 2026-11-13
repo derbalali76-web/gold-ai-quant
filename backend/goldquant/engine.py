@@ -262,8 +262,8 @@ class DecisionEngine:
 
     def decide(self, provider: Optional[MarketDataProvider], mode: Mode, as_of: datetime, *args, **kwargs) -> Decision:
         """The decision plus one trade plan per horizon (plans only re-express the decision; see plans.py)."""
-        from . import plans as PL
-        return PL.attach(self._decide(provider, mode, as_of, *args, **kwargs))
+        self._daily = None
+        return self._decide(provider, mode, as_of, *args, **kwargs)
 
     def _decide(self, provider: Optional[MarketDataProvider], mode: Mode, as_of: datetime,
                context: Optional[MarketContext] = None) -> Decision:
@@ -294,6 +294,7 @@ class DecisionEngine:
                 daily = db.df
         except Exception:  # noqa: BLE001 — daily history is optional context; never blocks or creates a trade
             daily = None
+        self._daily = daily
         try:
             outlooks = daily_outlooks(daily, as_of, mode, context)
         except Exception:  # noqa: BLE001 — optional layer
@@ -654,6 +655,8 @@ class DecisionEngine:
         return self._finish(d, audit)
 
     def _finish(self, d: Decision, audit: dict | None = None) -> Decision:
+        from . import plans as PL
+        PL.attach(d, getattr(self, "planners", None), getattr(self, "_daily", None))  # plans are part of the audit
         record = {"decision": d.model_dump(mode="json"), "pit": (audit or {}).get("pit"),
                   "firewall": (audit or {}).get("firewall"),
                   "versions": {"schema": SCHEMA_VERSION, "path_model": P.PATH_VERSION, "baseline_model": M.MODEL_VERSION},

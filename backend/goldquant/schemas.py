@@ -181,25 +181,38 @@ class TradePlan(BaseModel):
     expected_days: Optional[int] = None
     valid_until_utc: Optional[datetime] = None
     invalidation_refs: list[ReasonRef] = Field(default_factory=list)
+    # planner output (v1.7.1): shown only for a qualified recommendation; probabilities only when calibrated
+    method: Optional[str] = None  # RULE | PLANNER
+    expected_net_return_pct: Optional[float] = None
+    p_target_first: Optional[float] = Field(default=None, ge=0.0, le=1.0)
+    p_stop_first: Optional[float] = Field(default=None, ge=0.0, le=1.0)
+    p_timeout: Optional[float] = Field(default=None, ge=0.0, le=1.0)
+    p_fill: Optional[float] = Field(default=None, ge=0.0, le=1.0)
+    median_days_to_target: Optional[float] = None
+    fill_days: Optional[int] = None
 
     @model_validator(mode="after")
     def _consistent(self) -> "TradePlan":
         now = self.setup in (Setup.BUY_NOW, Setup.SELL_NOW)
-        if self.recommendation and not now:
-            raise ValueError("only a BUY_NOW / SELL_NOW plan can be a recommendation")
-        if now and (self.entry_low is None or self.stop_loss is None or self.target is None):
-            raise ValueError("a *_NOW plan needs entry, stop and target")
-        if not now and (self.stop_loss is not None or self.target is not None):
+        cond = self.setup in (Setup.WAIT_TO_BUY, Setup.WAIT_TO_SELL)
+        if self.recommendation and not (now or cond):
+            raise ValueError("only a trade or a conditional entry can be a recommendation")
+        if (now or (cond and self.recommendation)) and (self.entry_low is None or self.stop_loss is None or self.target is None):
+            raise ValueError("a recommended plan needs entry, stop and target")
+        if not now and not self.recommendation and (self.stop_loss is not None or self.target is not None):
             raise ValueError("a watch / wait plan must not carry a stop or a target")
-        if self.setup in (Setup.WAIT_TO_BUY, Setup.WAIT_TO_SELL) and self.watch_price is None:
+        if cond and self.watch_price is None:
             raise ValueError("WAIT_TO_* needs its watch price")
+        if not self.recommendation and any(v is not None for v in (self.p_target_first, self.p_stop_first, self.p_timeout,
+                                                                   self.p_fill, self.expected_net_return_pct)):
+            raise ValueError("probabilities / expected return only for a qualified recommendation")
         return self
 
 
 class PerfStats(BaseModel):
     """Track record of one horizon from one source. Pending / never-filled signals are NOT counted as trades."""
     model_config = ConfigDict(extra="forbid")
-    source: str  # OOS_BACKTEST | LIVE_FORWARD | LIVE_PAPER
+    source: str  # OOS_BACKTEST | OOS_PLANNER | LIVE_FORWARD | LIVE_PAPER
     unit: str  # USD_OZ | PCT
     trades: int = Field(default=0, ge=0)
     hits: int = Field(default=0, ge=0)  # target before stop (HOURS) / right direction after costs (WEEK, MONTH)
@@ -210,6 +223,11 @@ class PerfStats(BaseModel):
     expectancy: Optional[float] = None  # mean result per trade after costs
     max_drawdown: Optional[float] = None
     period: Optional[str] = None
+    direction_accuracy: Optional[float] = None  # separate from trade success and profitability
+    direction_baseline: Optional[float] = None
+    baseline_expectancy: Optional[float] = None  # same plan without the model
+    qualified: Optional[bool] = None
+    verdict: Optional[str] = None
 
 
 class HorizonOutlook(BaseModel):

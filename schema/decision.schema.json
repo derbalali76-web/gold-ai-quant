@@ -614,6 +614,42 @@
           "default": null,
           "title": "Avg Win"
         },
+        "baseline_expectancy": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Baseline Expectancy"
+        },
+        "direction_accuracy": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Direction Accuracy"
+        },
+        "direction_baseline": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Direction Baseline"
+        },
         "expectancy": {
           "anyOf": [
             {
@@ -668,6 +704,18 @@
           "default": null,
           "title": "Period"
         },
+        "qualified": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Qualified"
+        },
         "source": {
           "title": "Source",
           "type": "string"
@@ -681,6 +729,18 @@
         "unit": {
           "title": "Unit",
           "type": "string"
+        },
+        "verdict": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Verdict"
         }
       },
       "required": [
@@ -876,12 +936,60 @@
           "default": null,
           "title": "Expected Minutes"
         },
+        "expected_net_return_pct": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Net Return Pct"
+        },
+        "fill_days": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fill Days"
+        },
         "invalidation_refs": {
           "items": {
             "$ref": "#/$defs/ReasonRef"
           },
           "title": "Invalidation Refs",
           "type": "array"
+        },
+        "median_days_to_target": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Median Days To Target"
+        },
+        "method": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Method"
         },
         "order": {
           "anyOf": [
@@ -894,6 +1002,62 @@
           ],
           "default": null,
           "title": "Order"
+        },
+        "p_fill": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "P Fill"
+        },
+        "p_stop_first": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "P Stop First"
+        },
+        "p_target_first": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "P Target First"
+        },
+        "p_timeout": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "P Timeout"
         },
         "recommendation": {
           "default": false,

@@ -55,7 +55,39 @@ def daily_plan(d: Decision, o: HorizonOutlook) -> TradePlan:
     return _wait_plan(o.tilt, o.wait_for_price)
 
 
-def attach(d: Decision) -> Decision:
+def planner_plan(d: Decision, o: HorizonOutlook, pm, daily) -> TradePlan | None:
+    """Qualified planner (v1.7.1): its best plan becomes the horizon's recommendation (LIVE only).
+    Returns None when the planner is absent / not qualified, so the rule-based plan is used instead."""
+    if pm is None or not pm.qualified or daily is None or d.mode != Mode.LIVE or o.action == Action.UNAVAILABLE:
+        return None
+    closed = daily[daily.index + timedelta(days=1) <= d.analyzed_at_utc]
+    bp = pm.best_plan(closed) if len(closed) else None
+    if bp is None:
+        return TradePlan(setup=Setup.WAIT, method="PLANNER")
+    buy = bp["direction"] > 0
+    cal = bool(pm.report.get("probabilities_calibrated"))
+    market = bp["entry_kind"] == "MARKET"
+    setup = (Setup.BUY_NOW if buy else Setup.SELL_NOW) if market else (Setup.WAIT_TO_BUY if buy else Setup.WAIT_TO_SELL)
+    o.action, o.tilt, o.validated = (Action.BUY if buy else Action.SELL) if market else Action.WAIT, bp["direction"], True
+    o.entry_price, o.stop_loss, o.target = bp["entry"], bp["stop"], bp["target"]
+    return TradePlan(
+        setup=setup, recommendation=True, side="BUY" if buy else "SELL", order="MARKET" if market else "LIMIT",
+        entry_low=bp["entry"], entry_high=bp["entry"], watch_price=None if market else bp["entry"],
+        stop_loss=bp["stop"], target=bp["target"], reward_risk=_rr(bp["entry"], bp["stop"], bp["target"]),
+        expected_days=bp["horizon_days"], fill_days=bp["fill_days"] or None, method="PLANNER",
+        valid_until_utc=d.analyzed_at_utc + timedelta(days=max(1, bp["fill_days"] or 1)),
+        median_days_to_target=bp["median_days_to_target"] if cal else None,
+        expected_net_return_pct=bp["ev_pct"] if cal else None,
+        p_target_first=bp["p_target"] if cal else None, p_stop_first=bp["p_stop"] if cal else None,
+        p_timeout=bp["p_timeout"] if cal else None, p_fill=(bp["p_fill"] if not market else None) if cal else None)
+
+
+def attach(d: Decision, planners: dict | None = None, daily=None) -> Decision:
     for o in d.outlooks:
-        o.plan = hours_plan(d, o) if o.horizon == "HOURS" else daily_plan(d, o)
+        if o.horizon == "HOURS":
+            o.plan = hours_plan(d, o)
+        else:
+            o.plan = planner_plan(d, o, (planners or {}).get(o.horizon), daily) or daily_plan(d, o)
+            if o.plan.method is None:
+                o.plan.method = "RULE"
     return d

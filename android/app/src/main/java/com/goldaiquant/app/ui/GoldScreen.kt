@@ -505,8 +505,12 @@ private fun planHeadline(p: Plan): String {
     return when (p.setup) {
         "BUY_NOW" -> stringResource(R.string.pl_buy_now, ltr(entry ?: "—"), ltr(p.target!!.p2()), ltr(p.stop!!.p2()))
         "SELL_NOW" -> stringResource(R.string.pl_sell_now, ltr(entry ?: "—"), ltr(p.target!!.p2()), ltr(p.stop!!.p2()))
-        "WAIT_TO_BUY" -> stringResource(R.string.pl_wait_buy, ltr(p.watchPrice?.p2() ?: "—"))
-        "WAIT_TO_SELL" -> stringResource(R.string.pl_wait_sell, ltr(p.watchPrice?.p2() ?: "—"))
+        "WAIT_TO_BUY" -> if (p.recommendation && p.stop != null && p.target != null)
+            stringResource(R.string.pl_wait_buy_rec, ltr(p.watchPrice?.p2() ?: "—"), ltr(p.target.p2()), ltr(p.stop.p2()))
+            else stringResource(R.string.pl_wait_buy, ltr(p.watchPrice?.p2() ?: "—"))
+        "WAIT_TO_SELL" -> if (p.recommendation && p.stop != null && p.target != null)
+            stringResource(R.string.pl_wait_sell_rec, ltr(p.watchPrice?.p2() ?: "—"), ltr(p.target.p2()), ltr(p.stop.p2()))
+            else stringResource(R.string.pl_wait_sell, ltr(p.watchPrice?.p2() ?: "—"))
         "UNAVAILABLE" -> stringResource(R.string.pl_unavailable)
         else -> stringResource(R.string.pl_wait)
     }
@@ -516,12 +520,12 @@ private fun planHeadline(p: Plan): String {
 private fun PlanLine(p: Plan, d: Decision) {
     val rec = p.recommendation && !d.isDemo
     val color = when {
-        p.isNow && rec -> if (p.side == "SELL") SellRed else BuyGreen
+        rec -> if (p.side == "SELL") SellRed else BuyGreen
         p.isNow -> WaitGold
         else -> TextMain
     }
     Text(planHeadline(p), color = color, fontSize = 13.sp, fontWeight = FontWeight.Bold, lineHeight = 17.sp)
-    if (p.isNow) Text(stringResource(if (rec) R.string.pl_rec else R.string.pl_not_rec),
+    if (p.isNow || rec) Text(stringResource(if (rec) R.string.pl_rec else R.string.pl_not_rec),
         color = if (rec) TextDim else WaitGold, fontSize = 10.sp)
 }
 
@@ -533,21 +537,30 @@ private fun setupName(s: String): String = stringResource(when (s) {
 
 @Composable
 private fun PlanSection(p: Plan, d: Decision) {
+    val rec = p.recommendation && !d.isDemo
     Section(stringResource(R.string.sec_plan))
     KV(stringResource(R.string.pl_setup), setupName(p.setup))
-    Body(stringResource(if (p.isNow && p.recommendation && !d.isDemo) R.string.pl_rec else if (p.isNow) R.string.pl_not_rec else R.string.pl_watch_note),
-        if (p.isNow && p.recommendation && !d.isDemo) TextDim else WaitGold, 11.sp)
-    if (p.isNow) {
-        val lo = p.entryLow!!
+    Body(stringResource(if (rec) R.string.pl_rec else if (p.isNow) R.string.pl_not_rec else R.string.pl_watch_note),
+        if (rec) TextDim else WaitGold, 11.sp)
+    if (p.stop != null && p.target != null && p.entryLow != null) {
+        val lo = p.entryLow
         KV(stringResource(R.string.pl_entry), ltr(p.entryHigh?.takeIf { it != lo }?.let { "${lo.p2()} – ${it.p2()}" } ?: lo.p2()))
-        KV(stringResource(R.string.l_target), p.target!!.p2())
-        KV(stringResource(R.string.l_stop), p.stop!!.p2())
+        KV(stringResource(R.string.l_target), p.target.p2())
+        KV(stringResource(R.string.l_stop), p.stop.p2())
         p.rewardRisk?.let { KV(stringResource(R.string.pl_rr), ltr("${it.p2()} : 1")) }
         val dur = p.expectedMinutes?.let { if (it % 60 == 0) stringResource(R.string.dur_hours, it / 60) else stringResource(R.string.dur_minutes, it) }
             ?: p.expectedDays?.let { stringResource(R.string.dur_days, it) }
         dur?.let { KV(stringResource(R.string.l_duration), it) }
         p.validUntil?.let { KV(stringResource(R.string.pl_valid), ltr(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
             .withZone(java.time.ZoneId.systemDefault()).format(it))) }
+        if (rec && p.pTarget != null && p.pStop != null && p.pTimeout != null) {
+            Body(stringResource(R.string.pl_probs, Math.round(p.pTarget * 100).toInt(), Math.round(p.pStop * 100).toInt(),
+                Math.round(p.pTimeout * 100).toInt()), TextMain, 11.sp)
+        }
+        if (rec && p.pFill != null && p.fillDays != null) Body(stringResource(R.string.pl_fill, p.fillDays, Math.round(p.pFill * 100).toInt()), TextMain, 11.sp)
+        if (rec) p.medianDaysToTarget?.let { Body(stringResource(R.string.pl_days_to_target, ltr(String.format(Locale.US, "%.0f", it))), TextMain, 11.sp) }
+        if (rec) p.evPct?.let { Body(stringResource(R.string.pl_ev, ltr(String.format(Locale.US, "%+.2f%%", it))), TextMain, 11.sp) }
+        Body(stringResource(R.string.pl_expire_note), TextDim, 11.sp)
         if (p.invalidation.isNotEmpty()) {
             Body(stringResource(R.string.pl_cancel), TextDim, 11.sp)
             p.invalidation.take(4).forEach { Body("• ${rt(it)}", TextMain, 11.sp) }
@@ -566,8 +579,11 @@ private fun PerfSection(list: List<Perf>) {
     }
     list.forEach { p ->
         Body(stringResource(when (p.source) {
-            "OOS_BACKTEST" -> R.string.src_oos; "LIVE_PAPER" -> R.string.src_paper; else -> R.string.src_live
+            "OOS_BACKTEST" -> R.string.src_oos; "OOS_PLANNER" -> R.string.src_planner
+            "LIVE_PAPER" -> R.string.src_paper; else -> R.string.src_live
         }), Gold, 12.sp)
+        if (p.directionAccuracy != null && p.directionBaseline != null) Body(stringResource(R.string.perf_dir,
+            Math.round(p.directionAccuracy * 100).toInt(), Math.round(p.directionBaseline * 100).toInt()), TextMain, 11.sp)
         val u = { v: Double? -> v?.let { if (p.unit == "PCT") String.format(Locale.US, "%+.2f%%", it) else String.format(Locale.US, "%+.2f $", it) } ?: "—" }
         if (p.trades > 0) {
             Body(stringResource(R.string.perf_trades, p.trades, Math.round(100.0 * p.hits / p.trades).toInt()), TextMain, 11.sp)
@@ -576,6 +592,8 @@ private fun PerfSection(list: List<Perf>) {
             if (p.trades < 30) Body(stringResource(R.string.live_few), WaitGold, 11.sp)
         } else Body(stringResource(R.string.perf_none), TextDim, 11.sp)
         if (p.pending > 0 || p.notFilled > 0) Body(stringResource(R.string.perf_pending, p.pending, p.notFilled), TextDim, 11.sp)
+        p.baselineExpectancy?.let { Body(stringResource(R.string.perf_base, ltr(u(it))), TextMain, 11.sp) }
+        p.qualified?.let { Body(stringResource(if (it) R.string.perf_q_yes else R.string.perf_q_no), if (it) BuyGreen else WaitGold, 11.sp) }
         p.period?.let { Body(ltr(it), TextDim, 10.sp) }
     }
     Body(stringResource(R.string.perf_hit_note), TextDim, 10.sp)

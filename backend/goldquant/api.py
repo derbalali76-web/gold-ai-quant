@@ -104,6 +104,12 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
             if stt is not None:
                 engine.paths.set_prebuilt(stt)
                 sync_state["model"] = meta
+            import pickle as _pk
+            engine.planners = {}
+            for hz in ("WEEK", "MONTH"):
+                pp = repo_dir / "models" / f"planner_{hz}.pkl"
+                if pp.exists():
+                    engine.planners[hz] = _pk.loads(pp.read_bytes())
             lvl_p = repo_dir / "models" / "levels_model.pkl"
             if lvl_p.exists():
                 import pickle
@@ -241,6 +247,7 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
         track = (jload("outlook_track.json") or {}).get("horizons", {})
         hours_ci = (jload("hours_track.json") or {}).get("HOURS")
         bt = jload("backtest_report.json") or {}
+        plr = jload("planner_report.json") or {}
         local = PAPER.perf(PAPER.export_rows(paper)) if paper is not None else None
         for o in d.outlooks:
             perf = []
@@ -257,7 +264,18 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
                                           **{k: live.get(k) for k in ("trades", "hits", "pending", "not_filled", "avg_win",
                                                                       "avg_loss", "expectancy", "max_drawdown", "period")}))
                     o.live_resolved, o.live_hits = int(live.get("trades") or 0), int(live.get("hits") or 0)
-            elif o.horizon in track:
+            if o.horizon in plr and plr[o.horizon].get("trades") is not None:
+                r = plr[o.horizon]
+                perf.append(PerfStats(source="OOS_PLANNER", unit="PCT", trades=int(r.get("trades") or 0),
+                                      hits=int(round((r.get("tp_first_rate") or 0) * (r.get("trades") or 0))),
+                                      not_filled=int(r.get("not_filled") or 0), avg_win=r.get("avg_win_pct"),
+                                      avg_loss=r.get("avg_loss_pct"), expectancy=r.get("expectancy_pct"),
+                                      max_drawdown=r.get("max_drawdown_pct"), period=r.get("period"),
+                                      direction_accuracy=r.get("direction_accuracy"),
+                                      direction_baseline=r.get("direction_baseline"),
+                                      baseline_expectancy=r.get("baseline_expectancy_pct"),
+                                      qualified=bool(r.get("qualified")), verdict=r.get("reason")))
+            if o.horizon != "HOURS" and o.horizon in track:
                 t = track[o.horizon]
                 o.live_resolved = int(t.get("resolved") or 0)
                 o.live_hits = int(t.get("hits") or 0)

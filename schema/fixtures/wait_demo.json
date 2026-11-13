@@ -355,7 +355,15 @@
         "expected_minutes": null,
         "expected_days": null,
         "valid_until_utc": null,
-        "invalidation_refs": []
+        "invalidation_refs": [],
+        "method": null,
+        "expected_net_return_pct": null,
+        "p_target_first": null,
+        "p_stop_first": null,
+        "p_timeout": null,
+        "p_fill": null,
+        "median_days_to_target": null,
+        "fill_days": null
       },
       "performance": []
     },
@@ -568,7 +576,15 @@
         "expected_minutes": null,
         "expected_days": null,
         "valid_until_utc": null,
-        "invalidation_refs": []
+        "invalidation_refs": [],
+        "method": "RULE",
+        "expected_net_return_pct": null,
+        "p_target_first": null,
+        "p_stop_first": null,
+        "p_timeout": null,
+        "p_fill": null,
+        "median_days_to_target": null,
+        "fill_days": null
       },
       "performance": []
     },
@@ -800,13 +816,21 @@
         "expected_minutes": null,
         "expected_days": null,
         "valid_until_utc": null,
-        "invalidation_refs": []
+        "invalidation_refs": [],
+        "method": "RULE",
+        "expected_net_return_pct": null,
+        "p_target_first": null,
+        "p_stop_first": null,
+        "p_timeout": null,
+        "p_fill": null,
+        "median_days_to_target": null,
+        "fill_days": null
       },
       "performance": []
     }
   ],
   "market_closed": false,
-  "audit_hash": "030d7afe5bd005b3aef9dd143b08f02dd1070cc6c4fdf54b3ff73ca37fd9eaa5",
+  "audit_hash": "4f307c058cb1058dfabb90ac7246911e8e879f67c3fd1a7be9f443953e7b94f6",
   "supporting_evidence": [
     {
       "engine": "mtf_bias",

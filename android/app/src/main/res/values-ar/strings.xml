@@ -213,6 +213,18 @@
     <string name="perf_none">لا صفقات مكتملة بعد</string>
     <string name="perf_hit_note">الساعات: الوصول إلى الهدف قبل الوقف. الأسبوع والشهر: الاتجاه الصحيح بعد التكاليف.</string>
     <string name="closed_last_session">السوق مغلق — الاتجاه والمستويات من آخر جلسة</string>
+    <string name="src_planner">اختبار خارج العينة لمحرك الخطط (walk-forward)</string>
+    <string name="perf_dir">دقة الاتجاه %1$d%% (مقابل %2$d%% لتوقّع الاتجاه الأغلب دائماً)</string>
+    <string name="perf_base">نفس الخطة دائماً بلا نموذج: %1$s لكل صفقة</string>
+    <string name="perf_q_yes">معتمد: صمد التفوّق خارج العينة</string>
+    <string name="perf_q_no">غير معتمد: لم يثبت تفوّقه على الخطة البسيطة خارج العينة</string>
+    <string name="pl_probs">الهدف أولاً %1$d%% · الوقف أولاً %2$d%% · لا شيء %3$d%%</string>
+    <string name="pl_fill">احتمال تفعّل الدخول خلال %1$d أيام: %2$d%%</string>
+    <string name="pl_days_to_target">المدة المعتادة للوصول إلى الهدف: %1$s يوم</string>
+    <string name="pl_ev">العائد الصافي المتوقع بعد التكاليف: %1$s</string>
+    <string name="pl_expire_note">قد تنتهي الخطة دون الوصول إلى الهدف أو الوقف (انتهاء المدة).</string>
+    <string name="pl_wait_buy_rec">انتظر للشراء عند %1$s · الهدف %2$s · الوقف %3$s</string>
+    <string name="pl_wait_sell_rec">انتظر للبيع عند %1$s · الهدف %2$s · الوقف %3$s</string>
     <string name="r_w_up" formatted="false">صاعد</string>
     <string name="r_w_down" formatted="false">هابط</string>
     <string name="r_w_neutral" formatted="false">محايد</string>

@@ -42,6 +42,8 @@ data class Plan(
     val setup: String, val recommendation: Boolean, val side: String?, val entryLow: Double?, val entryHigh: Double?,
     val watchPrice: Double?, val stop: Double?, val target: Double?, val rewardRisk: Double?,
     val expectedMinutes: Int?, val expectedDays: Int?, val validUntil: Instant?, val invalidation: List<Reason>,
+    val pTarget: Double? = null, val pStop: Double? = null, val pTimeout: Double? = null, val pFill: Double? = null,
+    val evPct: Double? = null, val medianDaysToTarget: Double? = null, val fillDays: Int? = null,
 ) {
     val isNow: Boolean get() = setup == "BUY_NOW" || setup == "SELL_NOW"
 }
@@ -50,6 +52,8 @@ data class Plan(
 data class Perf(
     val source: String, val unit: String, val trades: Int, val hits: Int, val pending: Int, val notFilled: Int,
     val avgWin: Double?, val avgLoss: Double?, val expectancy: Double?, val maxDrawdown: Double?, val period: String?,
+    val directionAccuracy: Double? = null, val directionBaseline: Double? = null, val baselineExpectancy: Double? = null,
+    val qualified: Boolean? = null,
 )
 
 data class HorizonProb(val minutes: Int, val pTarget: Double, val pStop: Double, val pNeither: Double, val qualified: Boolean)
@@ -337,8 +341,20 @@ object DecisionParser {
             p.dbl("reward_risk"), if (p.isNull("expected_minutes")) null else p.optInt("expected_minutes"),
             if (p.isNull("expected_days")) null else p.optInt("expected_days"), p.time("valid_until_utc"),
             p.reasons("invalidation_refs"))
-        if (now && (plan.entryLow == null || plan.stop == null || plan.target == null)) return null
-        return plan
+        val rec = p.optBoolean("recommendation", false)
+        val cond = setup == "WAIT_TO_BUY" || setup == "WAIT_TO_SELL"
+        val full = plan.copy(
+            recommendation = rec && (now || cond),
+            stop = if (now || (cond && rec)) p.dbl("stop_loss") else null,
+            target = if (now || (cond && rec)) p.dbl("target") else null,
+            // probabilities only ever accompany a qualified recommendation (the server enforces calibration)
+            pTarget = if (rec) p.dbl("p_target_first") else null, pStop = if (rec) p.dbl("p_stop_first") else null,
+            pTimeout = if (rec) p.dbl("p_timeout") else null, pFill = if (rec) p.dbl("p_fill") else null,
+            evPct = if (rec) p.dbl("expected_net_return_pct") else null,
+            medianDaysToTarget = if (rec) p.dbl("median_days_to_target") else null,
+            fillDays = if (p.isNull("fill_days")) null else p.optInt("fill_days"))
+        if ((now || (cond && rec)) && (full.entryLow == null || full.stop == null || full.target == null)) return null
+        return full
     }
 
     private fun JSONObject.perfList(k: String): List<Perf> {
@@ -347,7 +363,9 @@ object DecisionParser {
             val e = a.optJSONObject(i) ?: return@mapNotNull null
             Perf(e.optString("source"), e.optString("unit"), e.optInt("trades", 0).coerceAtLeast(0),
                 e.optInt("hits", 0).coerceAtLeast(0), e.optInt("pending", 0), e.optInt("not_filled", 0),
-                e.dbl("avg_win"), e.dbl("avg_loss"), e.dbl("expectancy"), e.dbl("max_drawdown"), e.str("period"))
+                e.dbl("avg_win"), e.dbl("avg_loss"), e.dbl("expectancy"), e.dbl("max_drawdown"), e.str("period"),
+                e.dbl("direction_accuracy"), e.dbl("direction_baseline"), e.dbl("baseline_expectancy"),
+                if (e.has("qualified") && !e.isNull("qualified")) e.optBoolean("qualified") else null)
         }
     }
 
