@@ -1,0 +1,70 @@
+{
+ "updated_at": "2026-11-13T16:35:54.851644Z",
+ "sources": {
+  "bls": "ok",
+  "fomc": "ok"
+ },
+ "events": [
+  {
+   "time_utc": "2026-11-13T13:30:00Z",
+   "name": "US PPI",
+   "importance": 2,
+   "source": "bls.gov",
+   "detail": "Producer Price Index"
+  },
+  {
+   "time_utc": "2026-12-01T15:00:00Z",
+   "name": "US JOLTS",
+   "importance": 2,
+   "source": "bls.gov",
+   "detail": "Job Openings and Labor Turnover Survey"
+  },
+  {
+   "time_utc": "2026-12-04T13:30:00Z",
+   "name": "US Nonfarm Payrolls (Employment Situation)",
+   "importance": 3,
+   "source": "bls.gov",
+   "detail": "Employment Situation"
+  },
+  {
+   "time_utc": "2026-12-08T13:30:00Z",
+   "name": "US Productivity and Costs",
+   "importance": 1,
+   "source": "bls.gov",
+   "detail": "Productivity and Costs"
+  },
+  {
+   "time_utc": "2026-12-09T19:00:00Z",
+   "name": "FOMC rate decision",
+   "importance": 3,
+   "source": "federalreserve.gov"
+  },
+  {
+   "time_utc": "2026-12-10T13:30:00Z",
+   "name": "US CPI",
+   "importance": 3,
+   "source": "bls.gov",
+   "detail": "Consumer Price Index"
+  },
+  {
+   "time_utc": "2026-12-15T13:30:00Z",
+   "name": "US PPI",
+   "importance": 2,
+   "source": "bls.gov",
+   "detail": "Producer Price Index"
+  },
+  {
+   "time_utc": "2027-01-26T19:00:00Z",
+   "name": "FOMC rate decision",
+   "importance": 3,
+   "source": "federalreserve.gov"
+  },
+  {
+   "time_utc": "2027-01-27T19:00:00Z",
+   "name": "FOMC rate decision",
+   "importance": 3,
+   "source": "federalreserve.gov"
+  }
+ ],
+ "_comment": "ملف مولّد تلقائياً من bls.gov و federalreserve.gov — لا تعدّله يدوياً؛ أضف أحداثك في config/calendar.json"
+}

@@ -1,0 +1,2 @@
+{"bar": "2026-11-12T00:00:00+00:00", "recorded_at": "2026-11-13T16:39:00.639728+00:00", "horizon": "WEEK", "version": "outlook-1.0", "action": "WAIT", "tilt": 0, "validated": false, "close": 3883.66}
+{"bar": "2026-11-12T00:00:00+00:00", "recorded_at": "2026-11-13T16:39:00.639787+00:00", "horizon": "MONTH", "version": "outlook-1.0", "action": "WAIT", "tilt": -1, "validated": false, "close": 3883.66}

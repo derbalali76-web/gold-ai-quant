@@ -1,0 +1,24 @@
+{
+ "generated_at": "2026-11-13T16:39:00.653293+00:00",
+ "horizons": {
+  "WEEK": {
+   "resolved": 0,
+   "hits": 0,
+   "hit_rate": null,
+   "pending": 0,
+   "resolved_validated": 0,
+   "hit_rate_validated": null,
+   "note_ar": "سجل أمامي حي: لا يُعتد بالنسبة قبل 30 نتيجة على الأقل"
+  },
+  "MONTH": {
+   "resolved": 0,
+   "hits": 0,
+   "hit_rate": null,
+   "pending": 1,
+   "resolved_validated": 0,
+   "hit_rate_validated": null,
+   "note_ar": "سجل أمامي حي: لا يُعتد بالنسبة قبل 30 نتيجة على الأقل"
+  }
+ },
+ "recent": []
+}
