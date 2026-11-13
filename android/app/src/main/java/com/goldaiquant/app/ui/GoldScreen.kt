@@ -188,7 +188,7 @@ fun GoldScreen(vm: MainViewModel, lang: Lang, onLanguage: (Lang) -> Unit) {
     val s by vm.state.collectAsStateWithLifecycle()
     GoldContent(s, lang, onAsk = vm::ask, onNextDemo = vm::nextDemoMoment,
         onSave = { u, t -> vm.setServerUrl(u); vm.setToken(t) }, onLive = vm::setLiveMode,
-        onHorizon = vm::selectHorizon, onLanguage = onLanguage)
+        onHorizon = vm::selectHorizon, onLanguage = onLanguage, onNotify = vm::setNotify)
 }
 
 private sealed interface Sheet {
@@ -202,7 +202,8 @@ private sealed interface Sheet {
 /** Stateless screen (also used by the UI tests on several screen sizes). */
 @Composable
 fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Unit, onSave: (String, String) -> Unit,
-                onLive: (Boolean) -> Unit, onHorizon: (String) -> Unit, onLanguage: (Lang) -> Unit) {
+                onLive: (Boolean) -> Unit, onHorizon: (String) -> Unit, onLanguage: (Lang) -> Unit,
+                onNotify: (Boolean) -> Unit = {}) {
     var sheet by remember { mutableStateOf<Sheet?>(null) }
     val d = s.decision
     val selected = HorizonModel.resolve(s.selectedHorizon, d)
@@ -258,7 +259,7 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
         Sheet.Probabilities -> if (card != null && d != null) ProbabilityDialog(card, d) { sheet = null }
         Sheet.TrendSheet -> if (card != null) TrendDialog(card) { sheet = null }
         Sheet.Details -> if (card != null && d != null) DetailsDialog(card, d) { sheet = null }
-        Sheet.Settings -> SettingsDialog(s, lang, onNextDemo, onSave, onLive, onLanguage) { sheet = null }
+        Sheet.Settings -> SettingsDialog(s, lang, onNextDemo, onSave, onLive, onLanguage, onNotify) { sheet = null }
         null -> Unit
     }
 }
@@ -513,9 +514,15 @@ private fun ProbabilityCard(c: HorizonCard, d: Decision, modifier: Modifier, onC
                 ProbRow(stringResource(R.string.prob_neither), o.neither, Color(0xFFB8BCC4))
                 Text(stringResource(R.string.prob_samples, o.samples), color = TextDim, fontSize = 9.sp)
             }
+            Text(liveLine(c), color = TextDim, fontSize = 10.sp)
         }
     }
 }
+
+@Composable
+private fun liveLine(c: HorizonCard): String =
+    if (c.liveResolved > 0) stringResource(R.string.live_record, c.liveHits, c.liveResolved)
+    else stringResource(R.string.live_none)
 
 @Composable
 private fun ProbRow(label: String, p: Double, color: Color) {
@@ -671,6 +678,11 @@ private fun ProbabilityDialog(c: HorizonCard, d: Decision, onClose: () -> Unit) 
                 Body(stringResource(R.string.prob_hist, Math.round(c.hitRate * 100), c.samples, Math.round(c.baseRate * 100)))
             }
         }
+        Section(stringResource(R.string.live_title))
+        Body(liveLine(c))
+        if (c.liveResolved < 30) Body(stringResource(R.string.live_few), WaitGold, 11.sp)
+        Body(stringResource(R.string.live_expl), TextDim, 11.sp)
+        if (c.horizon == "HOURS") Body(stringResource(R.string.live_hours_note), TextDim, 11.sp)
     }
 }
 
@@ -804,7 +816,10 @@ private fun DetailsDialog(c: HorizonCard, d: Decision, onClose: () -> Unit) {
 
 @Composable
 private fun SettingsDialog(s: UiState, lang: Lang, onNextDemo: () -> Unit, onSave: (String, String) -> Unit,
-                           onLive: (Boolean) -> Unit, onLanguage: (Lang) -> Unit, onClose: () -> Unit) {
+                           onLive: (Boolean) -> Unit, onLanguage: (Lang) -> Unit, onNotify: (Boolean) -> Unit,
+                           onClose: () -> Unit) {
+    val askPermission = androidx.activity.compose.rememberLauncherForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.RequestPermission()) { granted -> onNotify(granted) }
     Dialog(onDismissRequest = onClose) {
         Column(Modifier.fillMaxWidth().heightIn(max = 640.dp).background(Card, RoundedCornerShape(16.dp))
             .border(1.dp, Gold, RoundedCornerShape(16.dp)).verticalScroll(rememberScrollState()).padding(14.dp),
@@ -830,6 +845,14 @@ private fun SettingsDialog(s: UiState, lang: Lang, onNextDemo: () -> Unit, onSav
                 Text(stringResource(R.string.set_live), color = TextMain, fontSize = 14.sp, modifier = Modifier.weight(1f))
                 Switch(checked = s.liveMode, onCheckedChange = onLive)
             }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(stringResource(R.string.set_notify), color = TextMain, fontSize = 14.sp, modifier = Modifier.weight(1f))
+                Switch(checked = s.notify, onCheckedChange = { on ->
+                    if (on && android.os.Build.VERSION.SDK_INT >= 33) askPermission.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                    else onNotify(on)
+                })
+            }
+            Text(stringResource(R.string.set_notify_note), color = TextDim, fontSize = 11.sp)
             if (!s.liveMode) TextButton(onClick = { onNextDemo(); onClose() }) {
                 Text(stringResource(R.string.set_demo_next, s.demoStep + 1), color = TextDim)
             }

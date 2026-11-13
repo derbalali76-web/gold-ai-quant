@@ -141,7 +141,7 @@ def backfill(hs: HistoryStore, years: float) -> None:
             m1 = imp.fetch_range(sym, chunk_start, d)
             store_duka(hs, sym, m1)
             save(hs)  # persist every chunk so a kill never loses finished months
-            print(sym, chunk_start, d, len(m1), "errors:", len(imp.errors), flush=True)
+            print(sym, chunk_start, d, len(m1), "errors:", len(imp.errors), imp.errors[-2:], flush=True)
             d = chunk_start - timedelta(days=1)
 
 
@@ -221,10 +221,49 @@ def research(hs: HistoryStore) -> None:
     print("research written")
 
 
+def report(hs: HistoryStore) -> None:
+    """Weekly plain-language status: data coverage, model state, live forward record (no new numbers invented)."""
+    rd = ROOT / "reports"
+    rd.mkdir(parents=True, exist_ok=True)
+    now = datetime.now(timezone.utc)
+    L = [f"# GOLD AI QUANT — weekly report {now:%Y-%m-%d}", ""]
+    L.append("## Data coverage")
+    for prov, sym in (("Dukascopy", "XAUUSD"), ("TwelveData", "XAU/USD")):
+        for tf in ("M15", "D1"):
+            b = hs.load_bars(prov, sym, tf, limit=10_000_000)
+            if len(b):
+                L.append(f"- {prov} {sym} {tf}: {len(b):,} bars, {b.index[0]:%Y-%m-%d} → {b.index[-1]:%Y-%m-%d %H:%M} UTC")
+    def jload(name):
+        p = MODELS / name
+        return json.loads(p.read_text(encoding="utf-8")) if p.exists() else None
+    m = jload("manifest.json") or {}
+    L += ["", "## Intraday model (HOURS)",
+          f"- trained: {m.get('trained_at', '—')} on {m.get('dataset', '—')}",
+          f"- qualified for BUY/SELL: {'YES' if m.get('qualified') else 'NO'} — {m.get('reason', '')}",
+          f"- out-of-sample decisions evaluated: {m.get('n_oos', 0)}"]
+    t = (jload("outlook_track.json") or {}).get("horizons", {})
+    L += ["", "## Live forward record (WEEK / MONTH, after costs)"]
+    for hz in ("WEEK", "MONTH"):
+        h = t.get(hz) or {}
+        n, k = h.get("resolved", 0), h.get("hits", 0)
+        rate = f"{k / n:.0%}" if n else "—"
+        L.append(f"- {hz}: {k}/{n} correct ({rate}), {h.get('pending', 0)} pending"
+                 + (" — fewer than 30 results: not meaningful yet" if n < 30 else ""))
+    o = jload("outlook_report.json") or {}
+    if o:
+        L += ["", "## WEEK / MONTH rule validation (historical, non-overlapping)"]
+        for hz, v in (o.get("horizons") or {}).items():
+            if isinstance(v, dict):
+                L.append(f"- {hz}: validated={v.get('validated')} hit_rate={v.get('hit_rate')} n={v.get('n')}")
+    L += ["", "_Frequencies, not probabilities. Paper trading and research only._"]
+    (rd / "weekly.md").write_text("\n".join(L) + "\n", encoding="utf-8")
+    print("\n".join(L))
+
+
 if __name__ == "__main__":
     sys.stdout.reconfigure(line_buffering=True)  # show progress live in the Actions log
     ap = argparse.ArgumentParser()
-    ap.add_argument("cmd", choices=["collect", "train", "research", "backfill"])
+    ap.add_argument("cmd", choices=["collect", "train", "research", "backfill", "report"])
     ap.add_argument("--years", type=float, default=3.0)
     a = ap.parse_args()
     hs = load()
@@ -236,5 +275,7 @@ if __name__ == "__main__":
         save(hs)
     elif a.cmd == "train":
         train(hs)
+    elif a.cmd == "report":
+        report(hs)
     else:
         research(hs)

@@ -162,6 +162,17 @@
     <string name="err_unexpected">Erreur inattendue</string>
     <string name="err_retry">Réessayer</string>
     <string name="err_detail">Détails : %1$s</string>
+    <string name="live_record">Bilan en direct : %1$d justes sur %2$d</string>
+    <string name="live_none">Bilan en direct : pas encore de résultats</string>
+    <string name="live_few">Moins de 30 résultats — pas encore significatif.</string>
+    <string name="live_title">Bilan en direct</string>
+    <string name="live_expl">Chaque signal passé de cet horizon a été enregistré avant que son résultat soit connu, puis vérifié après sa période de détention (après coûts). C\'est le seul test sans biais rétrospectif. C\'est une fréquence, pas une probabilité.</string>
+    <string name="live_hours_note">Heures : trades papier depuis le dernier redémarrage du serveur.</string>
+    <string name="set_notify">Alertes pour les signaux validés</string>
+    <string name="set_notify_note">Vérifie toutes les 15 minutes en arrière-plan ; alerte uniquement pour un ACHAT ou une VENTE validés.</string>
+    <string name="notif_channel">Signaux de trading</string>
+    <string name="notif_title">%1$s · %2$s</string>
+    <string name="notif_text">Signal validé — ouvrez l\'application pour l\'entrée, le stop et l\'objectif. Trading papier uniquement.</string>
     <string name="r_w_up" formatted="false">haussière</string>
     <string name="r_w_down" formatted="false">baissière</string>
     <string name="r_w_neutral" formatted="false">neutre</string>

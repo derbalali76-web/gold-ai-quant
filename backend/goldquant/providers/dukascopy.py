@@ -78,15 +78,25 @@ class DukascopyImporter:
             raise
         return parse_day(r.content, symbol, d)
 
-    def fetch_range(self, symbol: str, start: date, end: date) -> pd.DataFrame:
-        parts = []
+    def fetch_range(self, symbol: str, start: date, end: date, second_pass_wait: float = 20.0) -> pd.DataFrame:
+        """Days that fail (throttling / timeouts) are retried once more after a pause, so a month is not left
+        with holes; days still failing are listed in self.errors and fetched again by the next backfill run."""
+        parts, failed = [], []
         d = start
         while d <= end:
             if d.weekday() != 5:  # Saturdays are always empty
                 try:
                     parts.append(self.fetch_day(symbol, d))
                 except HttpError:
-                    pass
+                    failed.append(d)
             d += timedelta(days=1)
+        if failed:
+            self.http.sleep(second_pass_wait)
+            for d in failed:
+                try:
+                    parts.append(self.fetch_day(symbol, d))
+                    self.errors = [e for e in self.errors if not e.startswith(f"{symbol} {d}:")]
+                except HttpError:
+                    pass
         parts = [p for p in parts if len(p)]
         return pd.concat(parts).sort_index() if parts else pd.DataFrame()

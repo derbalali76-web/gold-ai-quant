@@ -31,6 +31,8 @@ data class HorizonCard(
     val samples: Int,
     val validation: Reason?,
     val method: Reason?,
+    val liveResolved: Int = 0,
+    val liveHits: Int = 0,
 ) {
     val entryMid: Double? get() = if (entryLow != null && entryHigh != null) (entryLow + entryHigh) / 2 else entryLow ?: entryHigh
     val isTrade: Boolean get() = action == Action.BUY || action == Action.SELL
@@ -66,6 +68,7 @@ object HorizonModel {
             levels = o.levels, trend = o.trend, probState = ProbState.HORIZON_UNSUPPORTED, outcomes = null,
             validated = o.validated, hitRate = o.hitRate, baseRate = o.baseRate, samples = o.samples,
             validation = o.validation, method = o.method,
+            liveResolved = o.liveResolved, liveHits = o.liveHits.coerceAtMost(o.liveResolved),
         )
     }
 
@@ -89,6 +92,7 @@ object HorizonModel {
             facts = emptyList(), levels = d.levels, trend = d.trend, probState = state, outcomes = oc,
             validated = o?.validated ?: false, hitRate = null, baseRate = null, samples = 0,
             validation = o?.validation, method = o?.method,
+            liveResolved = o?.liveResolved ?: 0, liveHits = (o?.liveHits ?: 0).coerceAtMost(o?.liveResolved ?: 0),
         )
     }
 

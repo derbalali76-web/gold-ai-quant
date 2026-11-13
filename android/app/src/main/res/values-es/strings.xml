@@ -162,6 +162,17 @@
     <string name="err_unexpected">Error inesperado</string>
     <string name="err_retry">Reintentar</string>
     <string name="err_detail">Detalles: %1$s</string>
+    <string name="live_record">Registro en vivo: %1$d aciertos de %2$d</string>
+    <string name="live_none">Registro en vivo: aún sin resultados</string>
+    <string name="live_few">Menos de 30 resultados — aún no es significativo.</string>
+    <string name="live_title">Registro en vivo</string>
+    <string name="live_expl">Cada señal pasada de este horizonte se registró antes de conocer su resultado y se comprobó tras su periodo (después de costes). Es la única prueba sin sesgo retrospectivo. Es una frecuencia, no una probabilidad.</string>
+    <string name="live_hours_note">Horas: operaciones en papel desde el último reinicio del servidor.</string>
+    <string name="set_notify">Alertas de señales validadas</string>
+    <string name="set_notify_note">Comprueba cada 15 minutos en segundo plano; avisa solo ante una COMPRA o VENTA validada.</string>
+    <string name="notif_channel">Señales de trading</string>
+    <string name="notif_title">%1$s · %2$s</string>
+    <string name="notif_text">Señal validada — abre la app para ver entrada, stop y objetivo. Solo trading en papel.</string>
     <string name="r_w_up" formatted="false">alcista</string>
     <string name="r_w_down" formatted="false">bajista</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

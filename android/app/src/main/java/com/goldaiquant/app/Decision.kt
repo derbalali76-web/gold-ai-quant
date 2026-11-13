@@ -33,6 +33,7 @@ data class Outlook(
     val stance: Reason? = null, val reason: Reason? = null, val validation: Reason? = null, val method: Reason? = null,
     val warnings: List<Reason> = emptyList(), val facts: List<Reason> = emptyList(),
     val levels: Levels? = null, val trend: Trend? = null,
+    val liveResolved: Int = 0, val liveHits: Int = 0,
 )
 
 data class HorizonProb(val minutes: Int, val pTarget: Double, val pStop: Double, val pNeither: Double, val qualified: Boolean)
@@ -304,7 +305,8 @@ object DecisionParser {
                 e.dbl("stop_loss"), e.dbl("target"), e.dbl("wait_for_price"), e.strings("warnings_ar"),
                 e.reason("stance_ref"), e.reason("reason_ref"), e.reason("validation_ref"), e.reason("method_ref"),
                 e.reasons("warnings_ref"), e.reasons("facts_ref"),
-                e.optJSONObject("levels")?.let { parseLevels(it) }, e.optJSONObject("trend")?.let { parseTrend(it) })
+                e.optJSONObject("levels")?.let { parseLevels(it) }, e.optJSONObject("trend")?.let { parseTrend(it) },
+                e.optInt("live_resolved", 0).coerceAtLeast(0), e.optInt("live_hits", 0).coerceAtLeast(0))
         }
     }
     private fun JSONObject.horizons(k: String): List<HorizonProb> {

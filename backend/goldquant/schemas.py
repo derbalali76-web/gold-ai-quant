@@ -7,7 +7,7 @@ from typing import Any, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-SCHEMA_VERSION = "1.5.0"
+SCHEMA_VERSION = "1.6.0"
 
 
 class Action(str, Enum):
@@ -187,6 +187,10 @@ class HorizonOutlook(BaseModel):
     levels: Optional["LevelsBlock"] = None
     trend: Optional["MarketTrend"] = None
     probabilities_available: bool = False  # only HOURS can carry calibrated probabilities
+    # live forward record (v1.6): outcomes of past signals of this horizon recorded BEFORE they resolved.
+    # A frequency, never a probability; HOURS comes from the server's paper ledger (resets on redeploys).
+    live_resolved: int = Field(default=0, ge=0)
+    live_hits: int = Field(default=0, ge=0)
 
     @model_validator(mode="after")
     def _honest(self) -> "HorizonOutlook":

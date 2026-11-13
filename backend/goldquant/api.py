@@ -222,11 +222,33 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
         paper.record(d)
         return d
 
+    def attach_live_track(d: Decision) -> Decision:
+        """Fill each horizon's live forward record (never changes the decision itself)."""
+        import json as _json
+        track = {}
+        for p in (repo_dir / "models" / "outlook_track.json", st.data_dir / "outlook_track.json"):
+            if p.exists():
+                try:
+                    track = _json.loads(p.read_text(encoding="utf-8")).get("horizons", {})
+                except Exception:  # noqa: BLE001
+                    track = {}
+                break
+        ps = paper.stats() if paper is not None else {}
+        for o in d.outlooks:
+            if o.horizon == "HOURS":
+                n = int(ps.get("closed") or 0)
+                wr = ps.get("win_rate")
+                o.live_resolved, o.live_hits = n, int(round((wr or 0) * n))
+            elif o.horizon in track:
+                o.live_resolved = int(track[o.horizon].get("resolved") or 0)
+                o.live_hits = int(track[o.horizon].get("hits") or 0)
+        return d
+
     def refresh_live(force: bool = False) -> Decision:
         with live_lock:  # one computation at a time; concurrent callers reuse its result
             if not force and live_cache["d"] is not None and time.time() - live_cache["t"] < LIVE_TTL:
                 return live_cache["d"]
-            d = compute_live()
+            d = attach_live_track(compute_live())
             live_cache.update(d=d, t=time.time())
             return d
 

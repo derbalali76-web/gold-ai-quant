@@ -6,16 +6,18 @@ on:
     - cron: "7 * * * *"        # collect
     - cron: "27 */4 * * *"     # train
     - cron: "47 3 * * *"       # research
+    - cron: "37 1,13 * * *"    # backfill (3 years, resumes where it stopped; quick once complete)
+    - cron: "53 6 * * 1"       # weekly report (opens a GitHub issue → e-mail)
   workflow_dispatch:
     inputs:
       job:
-        description: "collect | train | research | backfill"
+        description: "collect | train | research | backfill | report"
         default: "collect"
       years:
         description: "backfill years (Dukascopy)"
         default: "3"
 concurrency: { group: cloud-data, cancel-in-progress: false }
-permissions: { contents: write }
+permissions: { contents: write, issues: write }
 jobs:
   run:
     runs-on: ubuntu-latest
@@ -31,6 +33,8 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then echo "name=${{ inputs.job }}" >> $GITHUB_OUTPUT
           elif [ "${{ github.event.schedule }}" = "27 */4 * * *" ]; then echo "name=train" >> $GITHUB_OUTPUT
           elif [ "${{ github.event.schedule }}" = "47 3 * * *" ]; then echo "name=research" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event.schedule }}" = "37 1,13 * * *" ]; then echo "name=backfill" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event.schedule }}" = "53 6 * * 1" ]; then echo "name=report" >> $GITHUB_OUTPUT
           else echo "name=collect" >> $GITHUB_OUTPUT; fi
       - name: run
         env:
@@ -42,9 +46,13 @@ jobs:
         run: |
           git config user.name "gold-ai-quant-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add market_data models || true
+          git add market_data models reports || true
           git diff --cached --quiet || git commit -m "data: ${{ steps.job.outputs.name }} $(date -u +%FT%TZ)"
           git push || (git pull --rebase && git push)
+      - name: open the weekly report as an issue
+        if: ${{ steps.job.outputs.name == 'report' }}
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: gh issue create --title "Weekly report $(date -u +%F)" --body-file reports/weekly.md || true
       - name: wake the web service
         if: ${{ env.RENDER_URL != '' }}
         env: { RENDER_URL: "${{ secrets.RENDER_URL }}" }

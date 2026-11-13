@@ -163,6 +163,17 @@
     <string name="err_unexpected">Unexpected error</string>
     <string name="err_retry">Retry</string>
     <string name="err_detail">Details: %1$s</string>
+    <string name="live_record">Live record: %1$d of %2$d right</string>
+    <string name="live_none">Live record: no results yet</string>
+    <string name="live_few">Fewer than 30 results — not meaningful yet.</string>
+    <string name="live_title">Live record</string>
+    <string name="live_expl">Every past signal of this horizon was recorded before its outcome was known, then checked after its holding period (after costs). This is the only test with no hindsight. It is a frequency, not a probability.</string>
+    <string name="live_hours_note">Hours: paper trades since the server last restarted.</string>
+    <string name="set_notify">Alerts for validated signals</string>
+    <string name="set_notify_note">Checks every 15 minutes in the background; alerts only for a validated BUY or SELL.</string>
+    <string name="notif_channel">Trading signals</string>
+    <string name="notif_title">%1$s · %2$s</string>
+    <string name="notif_text">Validated signal — open the app for entry, stop and target. Paper trading only.</string>
     <string name="r_w_up" formatted="false">up</string>
     <string name="r_w_down" formatted="false">down</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.5.0",
+  "schema_version": "1.6.0",
   "decision_id": "3a5b56f1a06b91ab",
   "mode": "DEMO",
   "action": "BUY",
@@ -290,7 +290,9 @@
       "facts_ref": [],
       "levels": null,
       "trend": null,
-      "probabilities_available": true
+      "probabilities_available": true,
+      "live_resolved": 0,
+      "live_hits": 0
     },
     {
       "horizon": "WEEK",
@@ -484,7 +486,9 @@
         },
         "note_ar": null
       },
-      "probabilities_available": false
+      "probabilities_available": false,
+      "live_resolved": 0,
+      "live_hits": 0
     },
     {
       "horizon": "MONTH",
@@ -697,10 +701,12 @@
         },
         "note_ar": null
       },
-      "probabilities_available": false
+      "probabilities_available": false,
+      "live_resolved": 0,
+      "live_hits": 0
     }
   ],
-  "audit_hash": "74c09f208148be518793ce14774b0c7a173fbdde4230ba92965f459dccb2bdc8",
+  "audit_hash": "b677a787115cb970ddac9cba56960ab327a00120f7090146dff36cd896b47ea8",
   "supporting_evidence": [
     {
       "engine": "mtf_bias",

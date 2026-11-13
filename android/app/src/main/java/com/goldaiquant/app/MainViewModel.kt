@@ -21,6 +21,7 @@ data class UiState(
     val receivedAt: Instant? = null,
     val error: ApiException? = null,
     val selectedHorizon: String = "HOURS",
+    val notify: Boolean = false,
 )
 
 class MainViewModel(app: Application) : AndroidViewModel(app) {
@@ -37,6 +38,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                 serverUrl = prefs.getString("server_url", it.serverUrl) ?: it.serverUrl,
                 token = prefs.getString("token", "") ?: "",
                 liveMode = prefs.getBoolean("live_mode", false),
+                notify = prefs.getBoolean("notify", false),
                 decision = cached,
                 selectedHorizon = HorizonModel.resolve(prefs.getString("horizon", null), cached),
                 decisionFromCache = cached != null,
@@ -82,6 +84,13 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     fun setToken(v: String) {
         _state.update { it.copy(token = v.trim()) }
         prefs.edit().putString("token", v.trim()).apply()
+    }
+
+    /** Background alerts for validated signals (needs live mode on the server side; checks every 15 min). */
+    fun setNotify(v: Boolean) {
+        _state.update { it.copy(notify = v) }
+        prefs.edit().putBoolean("notify", v).apply()
+        SignalWorker.schedule(getApplication(), v)
     }
 
     fun setLiveMode(v: Boolean) {

@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.5.0",
+  "schema_version": "1.6.0",
   "decision_id": "cb73d7e963c9639d",
   "mode": "DEMO",
   "action": "WAIT",
@@ -338,7 +338,9 @@
       "facts_ref": [],
       "levels": null,
       "trend": null,
-      "probabilities_available": false
+      "probabilities_available": false,
+      "live_resolved": 0,
+      "live_hits": 0
     },
     {
       "horizon": "WEEK",
@@ -532,7 +534,9 @@
         },
         "note_ar": null
       },
-      "probabilities_available": false
+      "probabilities_available": false,
+      "live_resolved": 0,
+      "live_hits": 0
     },
     {
       "horizon": "MONTH",
@@ -745,10 +749,12 @@
         },
         "note_ar": null
       },
-      "probabilities_available": false
+      "probabilities_available": false,
+      "live_resolved": 0,
+      "live_hits": 0
     }
   ],
-  "audit_hash": "e640e429cde87adcbe43ca9aa1794c2ce1946fb662a6354e65fd58b968bdf36f",
+  "audit_hash": "7034c82887abaa58b2b19d0f20894857639582a64cb19444eab609cba5ec2a5a",
   "supporting_evidence": [
     {
       "engine": "mtf_bias",

@@ -204,6 +204,18 @@
           ],
           "default": null
         },
+        "live_hits": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Live Hits",
+          "type": "integer"
+        },
+        "live_resolved": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Live Resolved",
+          "type": "integer"
+        },
         "method_ar": {
           "anyOf": [
             {
@@ -1163,7 +1175,7 @@
       "title": "Reward Risk"
     },
     "schema_version": {
-      "default": "1.5.0",
+      "default": "1.6.0",
       "title": "Schema Version",
       "type": "string"
     },

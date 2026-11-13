@@ -113,3 +113,32 @@ def test_msg_pickle_and_copy_roundtrip():
     m = M("md.no_provider")
     for r in (pickle.loads(pickle.dumps(m)), copy.copy(m), copy.deepcopy(m)):
         assert isinstance(r, Msg) and r.code == m.code and r.args == m.args and str(r) == str(m)
+
+
+def test_live_track_fields_are_counts_not_probabilities():
+    import pytest
+    from goldquant.schemas import HorizonOutlook, SCHEMA_VERSION
+    assert SCHEMA_VERSION == "1.6.0"
+    o = HorizonOutlook(horizon="WEEK", label_ar="أسبوع", action="WAIT", stance_ar="x", reason_ar="y")
+    assert o.live_resolved == 0 and o.live_hits == 0
+    with pytest.raises(Exception):
+        HorizonOutlook(horizon="WEEK", label_ar="أسبوع", action="WAIT", stance_ar="x", reason_ar="y", live_hits=-1)
+
+
+def test_live_decision_carries_live_track(tmp_path, monkeypatch):
+    import json
+    from fastapi.testclient import TestClient
+    from goldquant.api import create_app, Settings
+    from goldquant.providers.demo import DemoProvider
+    monkeypatch.setenv("GOLDQUANT_BG_REFRESH", "0")
+    (tmp_path / "outlook_track.json").write_text(json.dumps(
+        {"horizons": {"WEEK": {"resolved": 12, "hits": 7}, "MONTH": {"resolved": 3, "hits": 1}}}), encoding="utf-8")
+    st = Settings.from_env(str(tmp_path))
+    c = TestClient(create_app(str(tmp_path / "g.db"), settings=st, live_provider=DemoProvider()))
+    d = c.get("/decision", params={"mode": "LIVE"}).json()
+    by = {o["horizon"]: o for o in d["outlooks"]}
+    if "WEEK" in by:
+        assert (by["WEEK"]["live_resolved"], by["WEEK"]["live_hits"]) == (12, 7)
+    if "MONTH" in by:
+        assert (by["MONTH"]["live_resolved"], by["MONTH"]["live_hits"]) == (3, 1)
+    assert all(o["live_hits"] <= o["live_resolved"] for o in d["outlooks"])
