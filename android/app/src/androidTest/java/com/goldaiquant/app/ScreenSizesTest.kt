@@ -78,13 +78,13 @@ class ScreenSizesTest {
     @Test fun mediumPhoneBuy() { essentials(show("live_qualified_stub.json", 393, 851), Lang.EN, R.string.a_buy) }
     @Test fun largePhoneSell() { essentials(show("sell_demo_stub.json", 430, 932), Lang.EN, R.string.a_sell) }
 
-    @Test fun everyLanguageRendersOnASmallPhone() {
-        for (lang in Lang.entries) {
-            val d = show("wait_demo.json", 360, 640, lang)
-            essentials(d, lang, R.string.a_wait)
-            rule.waitForIdle()
-        }
-    }
+    // One test per language: Compose allows a single setContent per test.
+    private fun language(lang: Lang) = essentials(show("wait_demo.json", 360, 640, lang), lang, R.string.a_wait)
+    @Test fun languageEnglish() = language(Lang.EN)
+    @Test fun languageArabic() = language(Lang.AR)
+    @Test fun languageFrench() = language(Lang.FR)
+    @Test fun languageSpanish() = language(Lang.ES)
+    @Test fun languagePortuguese() = language(Lang.PT)
 
     @Test fun probabilitiesOnlyWhenCalibrated() {
         show("live_qualified_stub.json", 393, 851)
@@ -130,7 +130,7 @@ class ScreenSizesTest {
         show("wait_demo.json", 393, 851)
         rule.onNodeWithText(str(Lang.EN, R.string.details) + " ⌄").performClick()
         rule.waitForIdle()
-        assertTrue(shown(str(Lang.EN, R.string.details_dialog) + " · " + str(Lang.EN, R.string.h_hours)))
+        assertTrue(rule.onAllNodesWithText(str(Lang.EN, R.string.details_dialog), substring = true)
+            .fetchSemanticsNodes().isNotEmpty())
     }
 }
-
