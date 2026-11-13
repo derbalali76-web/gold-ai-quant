@@ -12,10 +12,22 @@ android {
         applicationId = "com.goldaiquant.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
+        // Grows with every CI build, so each new APK installs as an update over the previous one.
+        versionCode = (System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull() ?: 0) + 100
         versionName = "0.2.0"
         resourceConfigurations += listOf("en", "ar", "fr", "es", "pt-rBR")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    // One fixed signing key for every build (CI runners would otherwise each generate a new debug key, and
+    // Android refuses to update an app signed with a different key). Debug/test key only — not for the Play Store.
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file("ci-debug.jks")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
     }
 
     buildTypes {
