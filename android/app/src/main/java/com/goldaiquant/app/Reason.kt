@@ -12,7 +12,7 @@ fun interface ReasonStrings {
 }
 
 object ReasonText {
-    private val placeholder = Regex("""\{(\d+)}""")
+    private val placeholder = Regex("""\{(\d+)\}""")
 
     /** Resource name for a code: "ev.lv_sup_guard" -> "r_ev_lv_sup_guard". */
     fun resourceName(code: String): String = "r_" + code.replace('.', '_')
