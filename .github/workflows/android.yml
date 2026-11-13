@@ -3,6 +3,7 @@ on:
   push:
     paths: ["android/**", "schema/**", ".github/workflows/android.yml"]
   workflow_dispatch:
+permissions: { contents: write }
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -24,7 +25,16 @@ jobs:
         run: ./gradlew --no-daemon assembleDebug assembleRelease
       - name: APK sizes
         run: ls -la app/build/outputs/apk/*/*.apk
+      - name: Publish APK as release "Latest APK" (artifact storage quota is full)
+        if: ${{ github.ref == 'refs/heads/main' }}
+        env: { GH_TOKEN: "${{ github.token }}" }
+        working-directory: ${{ github.workspace }}
+        run: |
+          gh release delete latest-apk --cleanup-tag -y || true
+          gh release create latest-apk --title "Latest APK" --notes "Built from ${GITHUB_SHA::7}" \
+            android/app/build/outputs/apk/debug/*.apk android/app/build/outputs/apk/release/*.apk
       - uses: actions/upload-artifact@v4
+        continue-on-error: true
         with:
           name: gold-ai-quant-apk
           path: android/app/build/outputs/apk/**/*.apk
