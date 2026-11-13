@@ -41,4 +41,20 @@ class ApiClient(private val baseUrl: String, private val token: String = "") {
             conn.disconnect()
         }
     }
+
+    /** Live forward log (WEEK / MONTH). Best effort: any failure returns an empty list. */
+    suspend fun track(): List<TrackItem> = withContext(Dispatchers.IO) {
+        if (UrlPolicy.check(baseUrl) != null) return@withContext emptyList()
+        try {
+            val conn = (URI(baseUrl.trimEnd('/') + "/outlooks/track").toURL().openConnection() as HttpURLConnection).apply {
+                connectTimeout = 15_000; readTimeout = 30_000
+                setRequestProperty("Accept", "application/json")
+                if (token.isNotBlank()) setRequestProperty("X-Goldquant-Token", token.trim())
+            }
+            try {
+                if (conn.responseCode != 200) emptyList()
+                else TrackParser.parse(conn.inputStream.bufferedReader(Charsets.UTF_8).use { it.readText() }.take(512_000))
+            } finally { conn.disconnect() }
+        } catch (e: Exception) { emptyList() }
+    }
 }

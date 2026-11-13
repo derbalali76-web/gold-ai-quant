@@ -173,6 +173,12 @@
     <string name="notif_channel">Sinais de negociação</string>
     <string name="notif_title">%1$s · %2$s</string>
     <string name="notif_text">Sinal validado — abra o app para ver entrada, stop e alvo. Apenas negociação simulada.</string>
+    <string name="track_title">Últimos sinais</string>
+    <string name="track_row">%1$s · %2$s · %3$s → %4$s · %5$s</string>
+    <string name="track_up">viés de alta</string>
+    <string name="track_down">viés de baixa</string>
+    <string name="track_hit">acerto</string>
+    <string name="track_miss">erro</string>
     <string name="r_w_up" formatted="false">de alta</string>
     <string name="r_w_down" formatted="false">de baixa</string>
     <string name="r_w_neutral" formatted="false">neutra</string>

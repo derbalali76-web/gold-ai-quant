@@ -173,6 +173,12 @@
     <string name="notif_channel">Señales de trading</string>
     <string name="notif_title">%1$s · %2$s</string>
     <string name="notif_text">Señal validada — abre la app para ver entrada, stop y objetivo. Solo trading en papel.</string>
+    <string name="track_title">Últimas señales</string>
+    <string name="track_row">%1$s · %2$s · %3$s → %4$s · %5$s</string>
+    <string name="track_up">sesgo alcista</string>
+    <string name="track_down">sesgo bajista</string>
+    <string name="track_hit">acierto</string>
+    <string name="track_miss">fallo</string>
     <string name="r_w_up" formatted="false">alcista</string>
     <string name="r_w_down" formatted="false">bajista</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

@@ -173,6 +173,12 @@
     <string name="notif_channel">Signaux de trading</string>
     <string name="notif_title">%1$s · %2$s</string>
     <string name="notif_text">Signal validé — ouvrez l\'application pour l\'entrée, le stop et l\'objectif. Trading papier uniquement.</string>
+    <string name="track_title">Derniers signaux</string>
+    <string name="track_row">%1$s · %2$s · %3$s → %4$s · %5$s</string>
+    <string name="track_up">biais haussier</string>
+    <string name="track_down">biais baissier</string>
+    <string name="track_hit">juste</string>
+    <string name="track_miss">faux</string>
     <string name="r_w_up" formatted="false">haussière</string>
     <string name="r_w_down" formatted="false">baissière</string>
     <string name="r_w_neutral" formatted="false">neutre</string>

@@ -75,6 +75,16 @@ def collect(hs: HistoryStore) -> None:
                 hs.upsert_bars("TwelveData", name, "M15", df, now)
             except Exception as exc:  # noqa: BLE001
                 print("TD aux", td_sym, exc)
+        try:  # credit monitoring (shared by this job AND the web service): kept for the weekly report
+            u = json.loads(td.http.get("https://api.twelvedata.com/api_usage", {"apikey": key}).text)
+            rec = {"at": now.isoformat(), "daily_usage": u.get("daily_usage"), "plan_daily_limit": u.get("plan_daily_limit")}
+            log = MODELS / "td_usage.jsonl"
+            MODELS.mkdir(parents=True, exist_ok=True)
+            lines = (log.read_text(encoding="utf-8").splitlines() if log.exists() else [])[-335:]
+            log.write_text("\n".join(lines + [json.dumps(rec)]) + "\n", encoding="utf-8")
+            print("TD credits:", rec)
+        except Exception as exc:  # noqa: BLE001
+            print("TD usage check failed:", exc)
     imp = DukascopyImporter()
     for sym in DUKA:  # yesterday + today-so-far (closed minutes only)
         try:
@@ -255,6 +265,16 @@ def report(hs: HistoryStore) -> None:
         for hz, v in (o.get("horizons") or {}).items():
             if isinstance(v, dict):
                 L.append(f"- {hz}: validated={v.get('validated')} hit_rate={v.get('hit_rate')} n={v.get('n')}")
+    log = MODELS / "td_usage.jsonl"
+    if log.exists():
+        recs = [json.loads(x) for x in log.read_text(encoding="utf-8").splitlines() if x.strip()]
+        recs = [r for r in recs if isinstance(r.get("daily_usage"), (int, float))]
+        if recs:
+            peak = max(recs, key=lambda r: r["daily_usage"])
+            lim = peak.get("plan_daily_limit") or 0
+            L += ["", "## Twelve Data credits (free plan)",
+                  f"- highest daily use seen this week: {peak['daily_usage']} of {lim or '?'}"
+                  + (" — WARNING: above 80 %, raise GOLDQUANT_LIVE_TTL_S on Render" if lim and peak["daily_usage"] > 0.8 * lim else "")]
     L += ["", "_Frequencies, not probabilities. Paper trading and research only._"]
     (rd / "weekly.md").write_text("\n".join(L) + "\n", encoding="utf-8")
     print("\n".join(L))

@@ -196,7 +196,7 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
 
     live_cache: dict = {"d": None, "t": 0.0}
     live_lock = threading.Lock()
-    LIVE_TTL = float(os.getenv("GOLDQUANT_LIVE_TTL_S", "240"))  # a decision is reused for a few minutes
+    LIVE_TTL = float(os.getenv("GOLDQUANT_LIVE_TTL_S", "300"))  # a decision is reused for a few minutes
 
     def compute_live() -> Decision:
         """The slow part (data fetch + models). Runs in the background loop and, if needed, on a request."""

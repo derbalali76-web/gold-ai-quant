@@ -209,4 +209,10 @@ UI = {
 "notif_channel": ("Trading signals", "إشارات التداول", "Signaux de trading", "Señales de trading", "Sinais de negociação"),
 "notif_title": ("%1$s · %2$s", "%1$s · %2$s", "%1$s · %2$s", "%1$s · %2$s", "%1$s · %2$s"),
 "notif_text": ("Validated signal — open the app for entry, stop and target. Paper trading only.", "إشارة محقَّقة — افتح التطبيق لرؤية الدخول والوقف والهدف. للتداول الورقي فقط.", "Signal validé — ouvrez l'application pour l'entrée, le stop et l'objectif. Trading papier uniquement.", "Señal validada — abre la app para ver entrada, stop y objetivo. Solo trading en papel.", "Sinal validado — abra o app para ver entrada, stop e alvo. Apenas negociação simulada."),
+"track_title": ("Latest signals", "آخر الإشارات", "Derniers signaux", "Últimas señales", "Últimos sinais"),
+"track_row": ("%1$s · %2$s · %3$s → %4$s · %5$s", "%1$s · %2$s · %3$s ← %4$s · %5$s", "%1$s · %2$s · %3$s → %4$s · %5$s", "%1$s · %2$s · %3$s → %4$s · %5$s", "%1$s · %2$s · %3$s → %4$s · %5$s"),
+"track_up": ("lean up", "ميل صاعد", "biais haussier", "sesgo alcista", "viés de alta"),
+"track_down": ("lean down", "ميل هابط", "biais baissier", "sesgo bajista", "viés de baixa"),
+"track_hit": ("right", "صحيحة", "juste", "acierto", "acerto"),
+"track_miss": ("wrong", "خاطئة", "faux", "fallo", "erro"),
 }

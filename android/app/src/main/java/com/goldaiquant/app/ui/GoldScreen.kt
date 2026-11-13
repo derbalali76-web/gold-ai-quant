@@ -64,6 +64,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.goldaiquant.app.TrackItem
 import com.goldaiquant.app.Action
 import com.goldaiquant.app.ApiException
 import com.goldaiquant.app.Decision
@@ -256,7 +257,7 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
     val card = d?.let { HorizonModel.card(it, selected) }
     when (val sh = sheet) {
         is Sheet.LevelSheet -> if (card != null) LevelDialog(sh.level, sh.isSupport, card) { sheet = null }
-        Sheet.Probabilities -> if (card != null && d != null) ProbabilityDialog(card, d) { sheet = null }
+        Sheet.Probabilities -> if (card != null && d != null) ProbabilityDialog(card, d, s.track) { sheet = null }
         Sheet.TrendSheet -> if (card != null) TrendDialog(card) { sheet = null }
         Sheet.Details -> if (card != null && d != null) DetailsDialog(card, d) { sheet = null }
         Sheet.Settings -> SettingsDialog(s, lang, onNextDemo, onSave, onLive, onLanguage, onNotify) { sheet = null }
@@ -654,7 +655,7 @@ private fun LevelDialog(l: Level, isSupport: Boolean, c: HorizonCard, onClose: (
 }
 
 @Composable
-private fun ProbabilityDialog(c: HorizonCard, d: Decision, onClose: () -> Unit) {
+private fun ProbabilityDialog(c: HorizonCard, d: Decision, track: List<TrackItem>, onClose: () -> Unit) {
     DialogFrame(stringResource(R.string.prob_dialog_title) + " · " + horizonName(c.horizon), onClose) {
         Body(stringResource(R.string.prob_expl_what))
         Body(stringResource(R.string.prob_expl_horizon))
@@ -683,6 +684,17 @@ private fun ProbabilityDialog(c: HorizonCard, d: Decision, onClose: () -> Unit) 
         if (c.liveResolved < 30) Body(stringResource(R.string.live_few), WaitGold, 11.sp)
         Body(stringResource(R.string.live_expl), TextDim, 11.sp)
         if (c.horizon == "HOURS") Body(stringResource(R.string.live_hours_note), TextDim, 11.sp)
+        val mine = track.filter { it.horizon == c.horizon }.take(8)
+        if (mine.isNotEmpty()) {
+            Section(stringResource(R.string.track_title))
+            mine.forEach { t ->
+                Body(stringResource(R.string.track_row, ltr(t.bar),
+                    stringResource(if (t.tilt > 0) R.string.track_up else R.string.track_down),
+                    ltr(t.close.p2()), ltr(t.exitClose.p2()),
+                    stringResource(if (t.hit) R.string.track_hit else R.string.track_miss)),
+                    if (t.hit) BuyGreen else SellRed, 11.sp)
+            }
+        }
     }
 }
 

@@ -22,6 +22,7 @@ data class UiState(
     val error: ApiException? = null,
     val selectedHorizon: String = "HOURS",
     val notify: Boolean = false,
+    val track: List<TrackItem> = emptyList(),
 )
 
 class MainViewModel(app: Application) : AndroidViewModel(app) {
@@ -63,6 +64,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                                 selectedHorizon = HorizonModel.resolve(it.selectedHorizon, f.decision))
                         }
                         prefs.edit().putString("last_decision", f.raw).putLong("last_received", now.toEpochMilli()).apply()
+                        if (_state.value.track.isEmpty()) loadTrack()
                     } catch (e: Exception) { /* silent: the tap path reports errors */ }
                 }
                 kotlinx.coroutines.delay(if (_state.value.decision == null) 20_000L else 240_000L)
@@ -84,6 +86,15 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     fun setToken(v: String) {
         _state.update { it.copy(token = v.trim()) }
         prefs.edit().putString("token", v.trim()).apply()
+    }
+
+    private fun loadTrack() {
+        val s = _state.value
+        if (!s.liveMode) return
+        viewModelScope.launch {
+            val t = ApiClient(s.serverUrl, s.token).track()
+            if (t.isNotEmpty()) _state.update { it.copy(track = t) }
+        }
     }
 
     /** Background alerts for validated signals (needs live mode on the server side; checks every 15 min). */
@@ -116,6 +127,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                         selectedHorizon = HorizonModel.resolve(it.selectedHorizon, f.decision))
                 }
                 prefs.edit().putString("last_decision", f.raw).putLong("last_received", now.toEpochMilli()).apply()
+                loadTrack()
             } catch (e: ApiException) {
                 _state.update { it.copy(loading = false, error = e) }
             } catch (e: Exception) {

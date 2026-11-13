@@ -173,6 +173,12 @@
     <string name="notif_channel">إشارات التداول</string>
     <string name="notif_title">%1$s · %2$s</string>
     <string name="notif_text">إشارة محقَّقة — افتح التطبيق لرؤية الدخول والوقف والهدف. للتداول الورقي فقط.</string>
+    <string name="track_title">آخر الإشارات</string>
+    <string name="track_row">%1$s · %2$s · %3$s ← %4$s · %5$s</string>
+    <string name="track_up">ميل صاعد</string>
+    <string name="track_down">ميل هابط</string>
+    <string name="track_hit">صحيحة</string>
+    <string name="track_miss">خاطئة</string>
     <string name="r_w_up" formatted="false">صاعد</string>
     <string name="r_w_down" formatted="false">هابط</string>
     <string name="r_w_neutral" formatted="false">محايد</string>
