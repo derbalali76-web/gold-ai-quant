@@ -65,7 +65,9 @@ def to_timeframe(m1: pd.DataFrame, minutes: int) -> pd.DataFrame:
 
 class DukascopyImporter:
     def __init__(self, http: HttpClient | None = None):
-        self.http = http or HttpClient(limiter=RateLimiter(calls=60, period=60.0), retries=2)
+        # Measured on GitHub runners: at 60 req/min Dukascopy answers HTTP 503 and lets TLS handshakes time out on about
+        # half the days. Slower, with longer timeouts and patient retries, the same budget fetches more data.
+        self.http = http or HttpClient(limiter=RateLimiter(calls=25, period=60.0), retries=4, backoff=4.0, timeout=30.0)
         self.errors: list[str] = []
 
     def fetch_day(self, symbol: str, d: date) -> pd.DataFrame:
@@ -78,7 +80,7 @@ class DukascopyImporter:
             raise
         return parse_day(r.content, symbol, d)
 
-    def fetch_range(self, symbol: str, start: date, end: date, second_pass_wait: float = 20.0) -> pd.DataFrame:
+    def fetch_range(self, symbol: str, start: date, end: date, second_pass_wait: float = 60.0) -> pd.DataFrame:
         """Days that fail (throttling / timeouts) are retried once more after a pause, so a month is not left
         with holes; days still failing are listed in self.errors and fetched again by the next backfill run."""
         parts, failed = [], []
