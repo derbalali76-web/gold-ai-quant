@@ -55,7 +55,20 @@
    "beats the no-model baseline (CI)": false,
    "Brier better than climatology": true,
    "reliability gap <= 0.10": true
-  }
+  },
+  "features": [
+   "dist20",
+   "dist50",
+   "dist200",
+   "mom63",
+   "mom126",
+   "mom252",
+   "ret5",
+   "ret20",
+   "rsi",
+   "rangepos",
+   "atr_pct"
+  ]
  },
  "MONTH": {
   "horizon": "MONTH",
@@ -113,6 +126,19 @@
    "beats the no-model baseline (CI)": false,
    "Brier better than climatology": false,
    "reliability gap <= 0.10": false
-  }
+  },
+  "features": [
+   "dist20",
+   "dist50",
+   "dist200",
+   "mom63",
+   "mom126",
+   "mom252",
+   "ret5",
+   "ret20",
+   "rsi",
+   "rangepos",
+   "atr_pct"
+  ]
  }
 }
