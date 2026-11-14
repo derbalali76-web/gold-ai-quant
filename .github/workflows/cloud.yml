@@ -3,10 +3,10 @@ name: cloud-data-and-models
 # training every 4 h, research daily. The hourly commit also keeps scheduled workflows active.
 on:
   schedule:
-    - cron: "7 * * * *"        # collect
-    - cron: "27 */4 * * *"     # train
-    - cron: "47 3 * * *"       # research
-    - cron: "37 1,13 * * *"    # backfill (3 years, resumes where it stopped; quick once complete)
+    - cron: "7 */2 * * *"      # collect (every 2 h: private repo = 2000 free minutes / month)
+    - cron: "27 4 * * *"       # train (daily)
+    - cron: "47 3 * * 0"       # research (weekly, ~20 min)
+    - cron: "37 1 * * *"       # backfill (daily) (3 years, resumes where it stopped; quick once complete)
     - cron: "53 6 * * 1"       # weekly report (opens a GitHub issue → e-mail)
   workflow_dispatch:
     inputs:
@@ -31,9 +31,9 @@ jobs:
         id: job
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then echo "name=${{ inputs.job }}" >> $GITHUB_OUTPUT
-          elif [ "${{ github.event.schedule }}" = "27 */4 * * *" ]; then echo "name=train" >> $GITHUB_OUTPUT
-          elif [ "${{ github.event.schedule }}" = "47 3 * * *" ]; then echo "name=research" >> $GITHUB_OUTPUT
-          elif [ "${{ github.event.schedule }}" = "37 1,13 * * *" ]; then echo "name=backfill" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event.schedule }}" = "27 4 * * *" ]; then echo "name=train" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event.schedule }}" = "47 3 * * 0" ]; then echo "name=research" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event.schedule }}" = "37 1 * * *" ]; then echo "name=backfill" >> $GITHUB_OUTPUT
           elif [ "${{ github.event.schedule }}" = "53 6 * * 1" ]; then echo "name=report" >> $GITHUB_OUTPUT
           else echo "name=collect" >> $GITHUB_OUTPUT; fi
       - name: run
