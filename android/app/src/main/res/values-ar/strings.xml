@@ -233,6 +233,8 @@
     <string name="asset_btc">بيتكوين</string>
     <string name="asset_eth">إيثيريوم</string>
     <string name="asset_sol">سولانا</string>
+    <string name="asset_analysis">تحليل فقط</string>
+    <string name="trust_gold_only">للذهب حالياً</string>
     <string name="asset_soon">قريباً</string>
     <string name="brief_title">سيناريوهات اليوم — للمراقبة، ليست توصيات</string>
     <string name="brief_bias_up">الميل العام: صاعد</string>
@@ -341,6 +343,7 @@
     <string name="r_un_corrupt" formatted="false">بيانات المزوّد تالفة أو غير متسقة — رُفضت</string>
     <string name="r_un_no_quote" formatted="false">لا يوجد سعر متاح من المزوّد</string>
     <string name="r_un_closed" formatted="false">سوق الذهب الفوري مغلق حالياً (عطلة نهاية الأسبوع)</string>
+    <string name="r_va_crypto_unq" formatted="false">تحليل فقط: لم يُعتمد أي نموذج لهذه العملة بعد — لا توصيات حتى يجتاز اختبار خارج العينة</string>
     <string name="r_un_dq_fail" formatted="false">فحص جودة البيانات فشل ({0}) — لا قرار على بيانات معيبة</string>
     <string name="r_un_stale" formatted="false">السعر قديم ({0} ثانية) — لا يُعتمد عليه</string>
     <string name="r_un_firewall" formatted="false">جدار جودة البيانات: {0}</string>

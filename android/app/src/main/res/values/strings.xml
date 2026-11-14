@@ -234,6 +234,8 @@
     <string name="asset_btc">Bitcoin</string>
     <string name="asset_eth">Ethereum</string>
     <string name="asset_sol">Solana</string>
+    <string name="asset_analysis">Analysis only</string>
+    <string name="trust_gold_only">Gold only for now</string>
     <string name="asset_soon">Coming soon</string>
     <string name="brief_title">Today\'s scenarios — to watch, not recommendations</string>
     <string name="brief_bias_up">Overall bias: up</string>
@@ -342,6 +344,7 @@
     <string name="r_un_corrupt" formatted="false">Provider data is corrupt or inconsistent — rejected</string>
     <string name="r_un_no_quote" formatted="false">No price is available from the provider</string>
     <string name="r_un_closed" formatted="false">The spot gold market is closed (weekend)</string>
+    <string name="r_va_crypto_unq" formatted="false">Analysis only: no model is validated for this coin yet — no recommendations until one passes out-of-sample testing</string>
     <string name="r_un_dq_fail" formatted="false">Data quality check failed ({0}) — no decision on faulty data</string>
     <string name="r_un_stale" formatted="false">Price is stale ({0} s) — not relied upon</string>
     <string name="r_un_firewall" formatted="false">Data-quality firewall: {0}</string>

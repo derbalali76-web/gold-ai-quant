@@ -214,6 +214,80 @@ def training_bars(hs: HistoryStore):
     return td, "LIVE HISTORY (TwelveData)"
 
 
+CRYPTO_START = {"BTCUSDT": (2018, 1), "ETHUSDT": (2018, 1), "SOLUSDT": (2020, 9)}
+
+
+def crypto(budget_min: float | None = None) -> None:
+    """Binance public archive -> market_data/crypto: 1h + 1d klines (real + taker-buy volume) and perp funding.
+    Already complete months are skipped; the current month comes from the daily files."""
+    import time
+    from goldquant import crypto_store as CS
+    from goldquant.providers.binance_archive import BinanceArchive, months
+    t0, arc = time.monotonic(), BinanceArchive()
+    today = date.today()
+    last_full = (today.replace(day=1) - timedelta(days=1))
+    for sym, (y0, m0) in CRYPTO_START.items():
+        for tf, rows in (("1h", 600), ("1d", 25)):
+            for y, m in months(date(y0, m0, 1), last_full):
+                if budget_min and time.monotonic() - t0 > budget_min * 60:
+                    print("crypto: time budget reached")
+                    return
+                if CS.have_month(MD, sym, tf, y, m, rows):
+                    continue
+                df = arc.klines_month(sym, tf, y, m)
+                print(sym, tf, f"{y}-{m:02d}", len(df), CS.save_bars(MD, sym, tf, df), flush=True)
+            d = today.replace(day=1)
+            parts = []
+            while d < today:  # current month so far (daily archive files appear the next day)
+                parts.append(arc.klines_day(sym, tf, d))
+                d += timedelta(days=1)
+            parts = [p for p in parts if len(p)]
+            if parts:
+                CS.save_bars(MD, sym, tf, pd.concat(parts))
+        for y, m in months(date(max(y0, 2019), m0 if y0 >= 2019 else 9, 1), last_full):
+            p = MD / "crypto" / sym / "funding" / f"{y:04d}.csv.gz"
+            if p.exists() and (y < today.year) and len(CS.read(p)) >= 1000:
+                continue
+            CS.save_funding(MD, sym, arc.funding_month(sym, y, m))
+    print("crypto archive errors:", len(arc.errors), arc.errors[-3:])
+
+
+def crypto_research() -> dict:
+    """Walk-forward for each coin: HOURS on 1h bars (base vs + real-volume / funding features, same period),
+    WEEK / MONTH on 1d bars. Reported only — a coin gets recommendations only if a horizon qualifies."""
+    from dataclasses import asdict
+    from goldquant import crypto_store as CS, data_quality as DQ
+    from goldquant import planner as PLN
+    now = datetime.now(timezone.utc)
+    out = {"generated_at": now.isoformat(), "assets": {}}
+    for sym in CRYPTO_START:
+        h1, d1 = CS.load_bars(MD, sym, "1h"), CS.load_bars(MD, sym, "1d")
+        fund = CS.load_funding(MD, sym)
+        if len(h1) < 5000:
+            continue
+        a = {"bars_1h": len(h1), "first": str(h1.index[0]), "last": str(h1.index[-1]),
+             "data_quality": DQ.check_bars(h1, "1h", now, None, market="crypto")}
+        base_cols = PLN.FEATURES + PLN.INTRADAY
+        rb = PLN.walk_forward(h1, "HOURS", cols=base_cols, asset=sym)
+        a["HOURS"] = asdict(rb)
+        since = str(fund.index[0] + pd.Timedelta(days=30))[:10] if len(fund) else None
+        if since:
+            cb = PLN.walk_forward(h1, "HOURS", cols=base_cols, asset=sym, since=since)
+            cf = PLN.walk_forward(h1, "HOURS", cols=base_cols + PLN.FLOW, asset=sym, since=since, funding=fund)
+            a["HOURS_flow_ab"] = {"since": since, "base": asdict(cb), "flow": asdict(cf)}
+            print(sym, "HOURS A/B", since, "| base", cb.expectancy_pct, cb.direction_accuracy, cb.reason,
+                  "| flow", cf.expectancy_pct, cf.direction_accuracy, cf.reason, flush=True)
+        if len(d1) > 1300:
+            for hz in PLN.DAILY_HZ:
+                r = PLN.walk_forward(d1, hz, asset=sym)
+                a[hz] = asdict(r)
+                print(sym, hz, r.trades, r.expectancy_pct, r.baseline_expectancy_pct, r.reason, flush=True)
+        out["assets"][sym] = a
+    (MODELS / "crypto_report.json").write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str),
+                                               encoding="utf-8")
+    return out
+
+
 def data_quality_report(hs: HistoryStore) -> dict:
     """Full-history + last-7-days quality of every stored series -> models/data_quality.json (app + weekly report)."""
     from goldquant import data_quality as DQ
@@ -388,6 +462,10 @@ def research(hs: HistoryStore) -> None:
                                                       encoding="utf-8")
     except Exception as exc:  # noqa: BLE001
         print("planner failed:", exc)
+    try:
+        crypto_research()
+    except Exception as exc:  # noqa: BLE001
+        print("crypto research failed:", exc)
     (MODELS / "outlook_report.json").write_text(json.dumps(outlook_report(daily, "TwelveData D1"), ensure_ascii=False,
                                                            indent=1, default=str), encoding="utf-8")
     print("research written")
@@ -445,13 +523,17 @@ def report(hs: HistoryStore) -> None:
 if __name__ == "__main__":
     sys.stdout.reconfigure(line_buffering=True)  # show progress live in the Actions log
     ap = argparse.ArgumentParser()
-    ap.add_argument("cmd", choices=["collect", "train", "research", "backfill", "report"])
+    ap.add_argument("cmd", choices=["collect", "train", "research", "backfill", "report", "crypto", "crypto_research"])
     ap.add_argument("--years", type=float, default=3.0)
     ap.add_argument("--first", type=date.fromisoformat, default=None, help="backfill range start (YYYY-MM-DD)")
     ap.add_argument("--last", type=date.fromisoformat, default=None, help="backfill range end (YYYY-MM-DD)")
     ap.add_argument("--budget-min", type=float, default=None)
     ap.add_argument("--symbols", default="", help="comma-separated Dukascopy symbols (backfill); default: all")
     a = ap.parse_args()
+    if a.cmd in ("crypto", "crypto_research"):  # crypto lives in its own files; no HistoryStore import needed
+        MODELS.mkdir(parents=True, exist_ok=True)
+        crypto(a.budget_min) if a.cmd == "crypto" else crypto_research()
+        raise SystemExit(0)
     hs = load()
     if a.cmd == "collect":
         collect(hs)

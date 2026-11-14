@@ -233,6 +233,8 @@
     <string name="asset_btc">Bitcoin</string>
     <string name="asset_eth">Ethereum</string>
     <string name="asset_sol">Solana</string>
+    <string name="asset_analysis">Apenas análise</string>
+    <string name="trust_gold_only">Só ouro por enquanto</string>
     <string name="asset_soon">Em breve</string>
     <string name="brief_title">Cenários de hoje — para observar, não recomendações</string>
     <string name="brief_bias_up">Viés geral: de alta</string>
@@ -337,6 +339,7 @@
     <string name="r_un_corrupt" formatted="false">Dados do provedor corrompidos ou inconsistentes — rejeitados</string>
     <string name="r_un_no_quote" formatted="false">Nenhum preço disponível do provedor</string>
     <string name="r_un_closed" formatted="false">O mercado de ouro à vista está fechado (fim de semana)</string>
+    <string name="r_va_crypto_unq" formatted="false">Apenas análise: nenhum modelo validado para esta cripto — sem recomendações até passar num teste fora da amostra</string>
     <string name="r_un_dq_fail" formatted="false">Verificação de qualidade dos dados falhou ({0}) — nenhuma decisão com dados defeituosos</string>
     <string name="r_un_stale" formatted="false">Preço desatualizado ({0} s) — não utilizado</string>
     <string name="r_un_firewall" formatted="false">Firewall de qualidade dos dados: {0}</string>

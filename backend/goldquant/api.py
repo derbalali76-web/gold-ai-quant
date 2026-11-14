@@ -306,8 +306,28 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
     if live_provider is not None and not mem and os.getenv("GOLDQUANT_BG_REFRESH", "1") == "1":
         threading.Thread(target=live_loop, daemon=True).start()
 
+    crypto_state: dict = {"feed": None, "levels": None, "cache": {}}
+
+    def crypto_decision(asset: str) -> Decision:
+        from . import crypto_engine as CE
+        from .levels import LevelService
+        if crypto_state["feed"] is None:
+            crypto_state["feed"], crypto_state["levels"] = CE.CryptoFeed(), LevelService()
+        hit = crypto_state["cache"].get(asset)
+        if hit and time.time() - hit[0] < 60:
+            return hit[1]
+        d = CE.decide(asset, crypto_state["feed"], utcnow(), crypto_state["levels"])
+        crypto_state["cache"][asset] = (time.time(), d)
+        return d
+
     @app.get("/decision", response_model=Decision, dependencies=[Depends(auth)])
-    def decision(mode: Mode = Query(Mode.DEMO), demo_step: int = Query(0)):
+    def decision(mode: Mode = Query(Mode.DEMO), demo_step: int = Query(0), asset: str = Query("XAU")):
+        a = asset.upper()
+        if a != "XAU":
+            from .crypto_engine import ASSETS
+            if a not in ASSETS:
+                raise HTTPException(422, "asset must be XAU, BTC, ETH or SOL")
+            return crypto_decision(a)
         if mode == Mode.DEMO:
             d = engine.decide(demo, Mode.DEMO, demo_as_of(demo_step))
             paper.record(d)

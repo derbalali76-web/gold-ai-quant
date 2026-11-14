@@ -28,7 +28,25 @@ from sklearn.preprocessing import StandardScaler
 from . import outlook as OL
 
 PLANNER_VERSION = "planner-daily-1.0.0"
-COST = OL.ROUND_TRIP_COST  # fraction of price per round trip (spread + slippage)
+COST = OL.ROUND_TRIP_COST  # fraction of price per round trip (spread + slippage); per asset via cost_of()
+ASSET_COST = {"XAUUSD": OL.ROUND_TRIP_COST,
+              # crypto spot: 0.10 % taker fee each side + spread/slippage (conservative, no fee discounts)
+              "BTCUSDT": 0.0022, "ETHUSDT": 0.0022, "SOLUSDT": 0.0025}
+FLOW = ["vol_z", "taker20", "taker_imb", "funding", "funding_chg"]  # crypto only (real volume, perp funding)
+
+
+class cost_of:
+    """Context manager: simulate / expected use this asset's round-trip cost."""
+    def __init__(self, asset: Optional[str]):
+        self.c = ASSET_COST.get(asset or "XAUUSD", OL.ROUND_TRIP_COST)
+
+    def __enter__(self):
+        global COST
+        self.old, COST = COST, self.c
+
+    def __exit__(self, *a):
+        global COST
+        COST = self.old
 HORIZONS = {"WEEK": 5, "MONTH": 21, "HOURS": 8}  # in bars: daily bars for WEEK / MONTH, H1 bars for HOURS
 DAILY_HZ = ("WEEK", "MONTH")
 GEOMETRIES = {  # (target, stop) in ATR(20) units of the horizon's own bars
@@ -87,7 +105,7 @@ FEATURES = ["dist20", "dist50", "dist200", "mom63", "mom126", "mom252", "ret5", 
 MACRO = ["ry5", "ry20", "usd5", "usd20", "gvz_z", "gvz5"]
 MACRO_SERIES = ("DFII10", "DTWEXBGS", "GVZCLS")
 SIGNED = ["dist20", "dist50", "dist200", "mom63", "mom126", "mom252", "ret5", "ret20", "rsi", "rangepos",
-          "ry5", "ry20", "usd5", "usd20"]
+          "ry5", "ry20", "usd5", "usd20", "taker20", "taker_imb", "funding", "funding_chg"]
 
 
 def macro_features(index: pd.DatetimeIndex, macro: dict) -> pd.DataFrame:
@@ -120,7 +138,32 @@ def macro_features(index: pd.DatetimeIndex, macro: dict) -> pd.DataFrame:
     return out
 
 
-def features(d: pd.DataFrame, macro: Optional[dict] = None, aux: Optional[dict] = None) -> pd.DataFrame:
+def flow_features(d: pd.DataFrame, funding: Optional[pd.DataFrame] = None) -> pd.DataFrame:
+    """Crypto: real-volume z-score, taker-buy share (who initiated trades), and the perpetual funding rate known
+    at the bar's close (asof on the funding time)."""
+    out = pd.DataFrame(index=d.index)
+    if "volume" in d.columns:
+        lv = np.log(d["volume"].astype(float).clip(lower=1e-12))
+        out["vol_z"] = (lv - lv.rolling(48).mean()) / lv.rolling(48).std()
+    if "taker_buy_volume" in d.columns and "volume" in d.columns:
+        share = (d["taker_buy_volume"] / d["volume"].replace(0, np.nan)) - 0.5
+        out["taker20"] = share.rolling(20).mean()
+        out["taker_imb"] = share.rolling(4).mean()
+    if funding is not None and len(funding):
+        f = funding["funding"].astype(float).sort_index()
+        close_t = pd.DataFrame({"t": np.asarray(d.index + (d.index.to_series().diff().median()
+                                                           if len(d) > 2 else pd.Timedelta(hours=1)))})
+        m = pd.merge_asof(close_t, pd.DataFrame({"t": np.asarray(f.index), "funding": f.to_numpy(),
+                                                 "funding_chg": f.diff(3).to_numpy()}), on="t", direction="backward")
+        out["funding"], out["funding_chg"] = m["funding"].to_numpy(), m["funding_chg"].to_numpy()
+    for c in FLOW:
+        if c not in out.columns:
+            out[c] = np.nan
+    return out
+
+
+def features(d: pd.DataFrame, macro: Optional[dict] = None, aux: Optional[dict] = None,
+             funding: Optional[pd.DataFrame] = None) -> pd.DataFrame:
     f = OL.daily_features(d)
     a = f["atr20"]
     out = pd.DataFrame(index=d.index)
@@ -140,6 +183,8 @@ def features(d: pd.DataFrame, macro: Optional[dict] = None, aux: Optional[dict] 
         out = out.join(macro_features(d.index, macro))
     if aux:
         out = out.join(cross_features(d.index, aux))
+    if "volume" in d.columns and "taker_buy_volume" in d.columns:
+        out = out.join(flow_features(d, funding))
     hr = (d.index.hour + 1) % 24  # hour at the bar's close
     out["hsin"], out["hcos"] = np.sin(2 * np.pi * hr / 24), np.cos(2 * np.pi * hr / 24)
     return out
@@ -322,13 +367,19 @@ def _purged_train(n_upto: int, H: int, F: int) -> np.ndarray:
 
 
 def walk_forward(d: pd.DataFrame, horizon: str, seed: int = 7, macro: Optional[dict] = None,
-                 cols: Optional[list] = None, since=None, aux: Optional[dict] = None) -> PlannerReport:
+                 cols: Optional[list] = None, since=None, aux: Optional[dict] = None, asset: str = "XAUUSD",
+                 funding: Optional[pd.DataFrame] = None) -> PlannerReport:
+    with cost_of(asset):
+        return _walk_forward(d, horizon, seed, macro, cols, since, aux, asset, funding)
+
+
+def _walk_forward(d, horizon, seed, macro, cols, since, aux, asset, funding) -> PlannerReport:
     """cols: feature columns (default FEATURES; FEATURES + MACRO needs `macro`). since: evaluate only from this
     date (features and labels still use the earlier bars), so two feature sets can be compared on one period."""
     d = d.dropna(subset=["open", "high", "low", "close"])
     cols = cols or FEATURES
     H, F = HORIZONS[horizon], FILL_WINDOW[horizon]
-    feats = features(d, macro if any(c in MACRO for c in cols) else None, aux)
+    feats = features(d, macro if any(c in MACRO for c in cols) else None, aux, funding)
     labels = label_all(d, horizon)
     if since is not None:
         ts_ = pd.Timestamp(since)
@@ -338,7 +389,8 @@ def walk_forward(d: pd.DataFrame, horizon: str, seed: int = 7, macro: Optional[d
         d, feats = d[keep], feats[keep]
         labels = {k: v[keep] for k, v in labels.items()}
     X = feats[cols].to_numpy(dtype=float)
-    if horizon == "HOURS":  # no decision (and no training sample) that would carry a trade over the weekend
+    if horizon == "HOURS" and not asset.endswith("USDT"):
+        # metals: no decision (and no training sample) that would carry a trade over the weekend; crypto is 24/7
         X[~intraday_allowed(d.index, HORIZONS[horizon])] = np.nan
     atr_pct = feats["atr_pct"].to_numpy(dtype=float)
     c = d["close"].to_numpy(dtype=float)

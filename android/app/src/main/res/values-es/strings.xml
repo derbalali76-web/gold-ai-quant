@@ -233,6 +233,8 @@
     <string name="asset_btc">Bitcoin</string>
     <string name="asset_eth">Ethereum</string>
     <string name="asset_sol">Solana</string>
+    <string name="asset_analysis">Solo análisis</string>
+    <string name="trust_gold_only">Solo oro por ahora</string>
     <string name="asset_soon">Próximamente</string>
     <string name="brief_title">Escenarios de hoy — para vigilar, no recomendaciones</string>
     <string name="brief_bias_up">Sesgo general: alcista</string>
@@ -337,6 +339,7 @@
     <string name="r_un_corrupt" formatted="false">Datos del proveedor corruptos o incoherentes — rechazados</string>
     <string name="r_un_no_quote" formatted="false">No hay precio disponible del proveedor</string>
     <string name="r_un_closed" formatted="false">El mercado del oro al contado está cerrado (fin de semana)</string>
+    <string name="r_va_crypto_unq" formatted="false">Solo análisis: ningún modelo validado para esta cripto — sin recomendaciones hasta superar una prueba fuera de muestra</string>
     <string name="r_un_dq_fail" formatted="false">Control de calidad de datos fallido ({0}) — ninguna decisión con datos defectuosos</string>
     <string name="r_un_stale" formatted="false">Precio obsoleto ({0} s) — no se usa</string>
     <string name="r_un_firewall" formatted="false">Cortafuegos de calidad de datos: {0}</string>

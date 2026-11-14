@@ -135,6 +135,7 @@ data class Decision(
     val marketClosed: Boolean = false,
     val brief: Brief? = null,
     val dataHealth: DataHealth? = null,
+    val instrument: String = "XAU/USD",
 ) {
     val isDemo: Boolean get() = mode == "DEMO"
 
@@ -220,6 +221,7 @@ object DecisionParser {
             marketClosed = o.optBoolean("market_closed", false),
             brief = o.optJSONObject("daily_brief")?.let { parseBrief(it) },
             dataHealth = o.optJSONObject("data_health")?.let { parseHealth(it) },
+            instrument = o.optString("instrument", "XAU/USD"),
             reasonShort = o.reason("reason_short_ref"), waitFor = o.reason("wait_for_ref"), warning = o.reason("warning_ref"),
             invalidationRefs = o.reasons("invalidation_refs"), missingRefs = o.reasons("missing_refs"),
             alternativeEntryNote = o.reason("alternative_entry_note_ref"),

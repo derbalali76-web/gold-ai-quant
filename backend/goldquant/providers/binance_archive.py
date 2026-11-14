@@ -1,0 +1,93 @@
+"""Binance public data archive (data.binance.vision): free monthly ZIP files, no key, no throttling.
+
+Spot klines carry REAL exchange volume and taker-buy volume (who initiated the trades) — what spot gold lacks.
+USD-M perpetual funding-rate history is published the same way.
+Note: Binance blocks its trading API (api.binance.com) from US IPs (HTTP 451); the archive and the public
+market-data mirror data-api.binance.vision are used instead. Since 2025 spot files use microsecond timestamps.
+"""
+from __future__ import annotations
+
+import io
+import zipfile
+from datetime import date
+from typing import Optional
+
+import pandas as pd
+
+from .http import HttpClient, HttpError, RateLimiter
+
+BASE = "https://data.binance.vision/data"
+LIVE = "https://data-api.binance.vision/api/v3"
+CRYPTO = {"BTCUSDT": "BTC/USD", "ETHUSDT": "ETH/USD", "SOLUSDT": "SOL/USD"}
+KLINE_COLS = ["open_time", "open", "high", "low", "close", "volume", "close_time", "quote_volume", "trades",
+              "taker_buy_volume", "taker_buy_quote_volume", "ignore"]
+
+
+def _ts(v: pd.Series) -> pd.DatetimeIndex:
+    v = pd.to_numeric(v, errors="coerce")
+    unit = "us" if v.dropna().median() > 1e14 else "ms"  # spot switched to microseconds in 2025
+    return pd.to_datetime(v, unit=unit, utc=True)
+
+
+def parse_klines_zip(payload: bytes) -> pd.DataFrame:
+    with zipfile.ZipFile(io.BytesIO(payload)) as z:
+        raw = z.read(z.namelist()[0]).decode("utf-8")
+    first = raw.split("\n", 1)[0]
+    header = 0 if first[:1].isalpha() else None
+    df = pd.read_csv(io.StringIO(raw), header=header, names=None if header == 0 else KLINE_COLS)
+    df.columns = [c.strip().lower() for c in df.columns]
+    if "count" in df.columns and "trades" not in df.columns:
+        df = df.rename(columns={"count": "trades"})
+    out = pd.DataFrame({k: pd.to_numeric(df[k], errors="coerce") for k in
+                        ("open", "high", "low", "close", "volume", "taker_buy_volume")})
+    out.index = _ts(df["open_time"])
+    out.index.name = "open_time"
+    out = out.dropna(subset=["open", "high", "low", "close"])
+    return out[~out.index.duplicated()].sort_index()
+
+
+def parse_funding_zip(payload: bytes) -> pd.DataFrame:
+    with zipfile.ZipFile(io.BytesIO(payload)) as z:
+        raw = z.read(z.namelist()[0]).decode("utf-8")
+    df = pd.read_csv(io.StringIO(raw))
+    df.columns = [c.strip().lower() for c in df.columns]
+    tcol = "calc_time" if "calc_time" in df.columns else df.columns[0]
+    rcol = "last_funding_rate" if "last_funding_rate" in df.columns else df.columns[-1]
+    out = pd.DataFrame({"funding": pd.to_numeric(df[rcol], errors="coerce")})
+    out.index = _ts(df[tcol])
+    return out.dropna().sort_index()
+
+
+def months(start: date, end: date) -> list[tuple[int, int]]:
+    y, m, out = start.year, start.month, []
+    while (y, m) <= (end.year, end.month):
+        out.append((y, m))
+        y, m = (y + 1, 1) if m == 12 else (y, m + 1)
+    return out
+
+
+class BinanceArchive:
+    def __init__(self, http: Optional[HttpClient] = None):
+        self.http = http or HttpClient(limiter=RateLimiter(calls=120, period=60.0), retries=3, backoff=2.0, timeout=60.0)
+        self.errors: list[str] = []
+
+    def _get(self, url: str) -> Optional[bytes]:
+        try:
+            return self.http.get(url).content
+        except HttpError as exc:
+            if exc.status == 404:  # month not published (yet) / symbol not listed then
+                return None
+            self.errors.append(f"{url}: {exc}")
+            return None
+
+    def klines_month(self, symbol: str, interval: str, y: int, m: int) -> pd.DataFrame:
+        p = self._get(f"{BASE}/spot/monthly/klines/{symbol}/{interval}/{symbol}-{interval}-{y:04d}-{m:02d}.zip")
+        return parse_klines_zip(p) if p else pd.DataFrame()
+
+    def klines_day(self, symbol: str, interval: str, d: date) -> pd.DataFrame:
+        p = self._get(f"{BASE}/spot/daily/klines/{symbol}/{interval}/{symbol}-{interval}-{d.isoformat()}.zip")
+        return parse_klines_zip(p) if p else pd.DataFrame()
+
+    def funding_month(self, symbol: str, y: int, m: int) -> pd.DataFrame:
+        p = self._get(f"{BASE}/futures/um/monthly/fundingRate/{symbol}/{symbol}-fundingRate-{y:04d}-{m:02d}.zip")
+        return parse_funding_zip(p) if p else pd.DataFrame()

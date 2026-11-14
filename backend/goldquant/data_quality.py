@@ -21,7 +21,7 @@ from typing import Optional
 import numpy as np
 import pandas as pd
 
-TF_MIN = {"M15": 15, "M30": 30, "H1": 60, "H4": 240}
+TF_MIN = {"M15": 15, "M30": 30, "H1": 60, "H4": 240, "1h": 60, "15m": 15}
 OK, WARN, FAIL = "OK", "WARN", "FAIL"
 RANK = {OK: 0, WARN: 1, FAIL: 2}
 
@@ -41,9 +41,11 @@ def _daily_break(t: pd.DatetimeIndex) -> np.ndarray:
     return np.asarray(_ny(t).hour == 17)  # 17:00-18:00 New York
 
 
-def expected_index(start: pd.Timestamp, end: pd.Timestamp, tf: str) -> pd.DatetimeIndex:
-    """Bar open times in [start, end) during trading hours (no weekly close, no daily break)."""
+def expected_index(start: pd.Timestamp, end: pd.Timestamp, tf: str, market: str = "metal") -> pd.DatetimeIndex:
+    """Bar open times in [start, end) during trading hours (metal: no weekly close / daily break; crypto: 24/7)."""
     idx = pd.date_range(start.floor(f"{TF_MIN[tf]}min"), end, freq=f"{TF_MIN[tf]}min", inclusive="left")
+    if market == "crypto":
+        return idx
     keep = ~_closed(idx) & ~_daily_break(idx)
     return idx[keep]
 
@@ -53,7 +55,7 @@ def _check(code: str, status: str, value=None) -> dict:
 
 
 def check_bars(df: pd.DataFrame, tf: str, now: datetime, window_days: Optional[float] = 7.0,
-               other: Optional[pd.DataFrame] = None) -> dict:
+               other: Optional[pd.DataFrame] = None, market: str = "metal") -> dict:
     """Quality report for one bar series. window_days=None checks the whole history."""
     now_ts = pd.Timestamp(now)
     checks = []
@@ -65,13 +67,13 @@ def check_bars(df: pd.DataFrame, tf: str, now: datetime, window_days: Optional[f
     w = df[df.index >= start]
 
     # freshness: the most recent expected bar that should be closed by now
-    exp_recent = expected_index(now_ts - pd.Timedelta(days=4), now_ts - step, tf)
+    exp_recent = expected_index(now_ts - pd.Timedelta(days=4), now_ts - step, tf, market)
     if len(exp_recent):
         lag = (exp_recent[-1] - df.index[-1]) / step
         checks.append(_check("freshness", OK if lag <= 2 else WARN if lag <= 8 else FAIL, f"{max(lag, 0):.0f}"))
 
     # coverage + longest gap over the window
-    exp = expected_index(start, min(now_ts, w.index[-1] + step) if len(w) else now_ts, tf)
+    exp = expected_index(start, min(now_ts, w.index[-1] + step) if len(w) else now_ts, tf, market)
     if len(exp):
         present = exp.isin(w.index)
         cov = float(present.mean())
@@ -89,8 +91,9 @@ def check_bars(df: pd.DataFrame, tf: str, now: datetime, window_days: Optional[f
         bad = int(((h < np.maximum(o, c)) | (l > np.minimum(o, c)) | (l <= 0)).sum())
         checks.append(_check("ohlc", OK if bad == 0 else FAIL, bad))
 
-        wk = int(_closed(w.index).sum())
-        checks.append(_check("weekend", OK if wk == 0 else WARN, wk))
+        if market != "crypto":
+            wk = int(_closed(w.index).sum())
+            checks.append(_check("weekend", OK if wk == 0 else WARN, wk))
 
         r = np.log(c).diff()
         r = r[(r.index.to_series().diff() == step).to_numpy()].dropna()  # intra-session only (no gap-opening bars)
@@ -104,7 +107,7 @@ def check_bars(df: pd.DataFrame, tf: str, now: datetime, window_days: Optional[f
             checks.append(_check("outliers", OK if n15 == 0 else FAIL if n25 > 0 and window_days is not None else WARN,
                                  n15))
 
-        openh = ~_closed(w.index) & ~_daily_break(w.index)
+        openh = np.ones(len(w), bool) if market == "crypto" else ~_closed(w.index) & ~_daily_break(w.index)
         same = (c.diff() == 0) & (h == l) & openh
         longest, run = 0, 0
         for s in same.to_numpy():

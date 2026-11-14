@@ -200,7 +200,7 @@ fun GoldScreen(vm: MainViewModel, lang: Lang, onLanguage: (Lang) -> Unit) {
     val s by vm.state.collectAsStateWithLifecycle()
     GoldContent(s, lang, onAsk = vm::ask, onNextDemo = vm::nextDemoMoment,
         onSave = { u, t -> vm.setServerUrl(u); vm.setToken(t) }, onLive = vm::setLiveMode,
-        onHorizon = vm::selectHorizon, onLanguage = onLanguage, onNotify = vm::setNotify)
+        onHorizon = vm::selectHorizon, onLanguage = onLanguage, onNotify = vm::setNotify, onAssetPick = vm::setAsset)
 }
 
 private sealed interface Sheet {
@@ -217,7 +217,7 @@ private sealed interface Sheet {
 @Composable
 fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Unit, onSave: (String, String) -> Unit,
                 onLive: (Boolean) -> Unit, onHorizon: (String) -> Unit, onLanguage: (Lang) -> Unit,
-                onNotify: (Boolean) -> Unit = {}) {
+                onNotify: (Boolean) -> Unit = {}, onAssetPick: (String) -> Unit = {}) {
     var sheet by remember { mutableStateOf<Sheet?>(null) }
     val d = s.decision
     val selected = HorizonModel.resolve(s.selectedHorizon, d)
@@ -250,7 +250,8 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
                 Row(Modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(gap)) {
                     ProbTile(card, Modifier.weight(1f).fillMaxHeight()) { sheet = Sheet.Probabilities }
                     Tile(stringResource(R.string.trust_short),
-                        s.trust?.let { stringResource(R.string.trust_tile, it.all.completed) } ?: "…",
+                        if (s.asset != "XAU") stringResource(R.string.trust_gold_only)
+                        else s.trust?.let { stringResource(R.string.trust_tile, it.all.completed) } ?: "…",
                         WaitGold, Modifier.weight(1f).fillMaxHeight()) { sheet = Sheet.TrustSheet }
                     Tile(stringResource(R.string.details), stringResource(R.string.why_title), WaitGold,
                         Modifier.weight(1f).fillMaxHeight()) { sheet = Sheet.Details }
@@ -273,7 +274,7 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
         Sheet.Probabilities -> if (card != null && d != null) ProbabilityDialog(card, d, s.track) { sheet = null }
         Sheet.TrendSheet -> if (card != null) TrendDialog(card) { sheet = null }
         Sheet.Details -> if (card != null && d != null) DetailsDialog(card, d) { sheet = null }
-        Sheet.Assets -> AssetDialog(s) { sheet = null }
+        Sheet.Assets -> AssetDialog(s, { a -> sheet = null; onAssetPick(a) }) { sheet = null }
         Sheet.TrustSheet -> TrustDialog(s.trust) { sheet = null }
         Sheet.Settings -> SettingsDialog(s, lang, onNextDemo, onSave, onLive, onLanguage, onNotify) { sheet = null }
         null -> Unit
@@ -309,7 +310,7 @@ private fun TopBar(s: UiState, compact: Boolean, onAsset: () -> Unit, onSettings
             verticalAlignment = Alignment.CenterVertically) {
             Box(Modifier.size(8.dp).background(h.color, CircleShape))
             Spacer(Modifier.width(6.dp))
-            Text(ltr("XAU/USD"), color = TextMain, fontSize = 12.sp, fontWeight = FontWeight.SemiBold, maxLines = 1)
+            Text(ltr(assetPair(s.asset)), color = TextMain, fontSize = 12.sp, fontWeight = FontWeight.SemiBold, maxLines = 1)
             Spacer(Modifier.width(4.dp))
             Text("▾", color = Gold, fontSize = 12.sp)
         }
@@ -324,8 +325,10 @@ private fun TopBar(s: UiState, compact: Boolean, onAsset: () -> Unit, onSettings
     }
 }
 
+fun assetPair(a: String): String = if (a == "XAU") "XAU/USD" else "$a/USD"
+
 @Composable
-private fun AssetDialog(s: UiState, onClose: () -> Unit) {
+private fun AssetDialog(s: UiState, onPick: (String) -> Unit, onClose: () -> Unit) {
     val h = health(s)
     DialogFrame(stringResource(R.string.asset_title), onClose) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -333,18 +336,21 @@ private fun AssetDialog(s: UiState, onClose: () -> Unit) {
             Spacer(Modifier.width(6.dp))
             Body(stringResource(R.string.asset_status, stringResource(h.label)), TextDim, 12.sp)
         }
-        s.decision?.dataHealth?.let { DataHealthSection(it) }
-        listOf(Triple(R.string.asset_gold, "XAU/USD", true), Triple(R.string.asset_btc, "BTC/USD", false),
-            Triple(R.string.asset_eth, "ETH/USD", false), Triple(R.string.asset_sol, "SOL/USD", false)).forEach { (name, sym, on) ->
+        listOf(R.string.asset_gold to "XAU", R.string.asset_btc to "BTC", R.string.asset_eth to "ETH",
+            R.string.asset_sol to "SOL").forEach { (name, code) ->
+            val on = code == s.asset
             Row(Modifier.fillMaxWidth().border(1.dp, if (on) Gold else Track, RoundedCornerShape(12.dp))
+                .clickable(role = Role.Button) { onPick(code) }
                 .padding(horizontal = 12.dp, vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
-                    Text(stringResource(name), color = if (on) TextMain else TextDim, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
-                    Text(ltr(sym), color = TextDim, fontSize = 11.sp)
+                    Text(stringResource(name), color = TextMain, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+                    Text(ltr(assetPair(code)), color = TextDim, fontSize = 11.sp)
                 }
-                Text(if (on) "✓" else stringResource(R.string.asset_soon), color = if (on) Gold else TextDim, fontSize = 12.sp)
+                Text(if (on) "✓" else if (code == "XAU") "" else stringResource(R.string.asset_analysis),
+                    color = if (on) Gold else TextDim, fontSize = 11.sp)
             }
         }
+        s.decision?.dataHealth?.let { DataHealthSection(it) }
     }
 }
 
@@ -352,7 +358,7 @@ private fun AssetDialog(s: UiState, onClose: () -> Unit) {
 private fun PriceCard(d: Decision?, s: UiState, modifier: Modifier) {
     Panel(modifier) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
-            Text("XAU/USD", color = TextDim, fontSize = 12.sp)
+            Text(ltr(assetPair(s.asset)), color = TextDim, fontSize = 12.sp)
             Text(d?.quote?.p2() ?: "—", color = TextMain, fontSize = 28.sp, fontWeight = FontWeight.Bold, maxLines = 1)
             val ch = d?.quoteChange
             if (ch != null) {

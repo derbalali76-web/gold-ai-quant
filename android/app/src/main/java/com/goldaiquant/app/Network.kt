@@ -12,10 +12,10 @@ class ApiException(val kind: ErrorKind, val detail: String? = null) : Exception(
 data class Fetched(val raw: String, val decision: Decision)
 
 class ApiClient(private val baseUrl: String, private val token: String = "") {
-    suspend fun decision(mode: String, demoStep: Int): Fetched = withContext(Dispatchers.IO) {
+    suspend fun decision(mode: String, demoStep: Int, asset: String = "XAU"): Fetched = withContext(Dispatchers.IO) {
         UrlPolicy.check(baseUrl)?.let { throw ApiException(it) }
         val url = URI(baseUrl.trimEnd('/') + "/decision?mode=" + URLEncoder.encode(mode, "UTF-8") +
-            "&demo_step=" + demoStep).toURL()
+            "&demo_step=" + demoStep + "&asset=" + URLEncoder.encode(asset, "UTF-8")).toURL()
         val conn = (url.openConnection() as HttpURLConnection).apply {
             connectTimeout = 20_000
             readTimeout = 100_000 // a sleeping free cloud service needs ~1 minute to wake up

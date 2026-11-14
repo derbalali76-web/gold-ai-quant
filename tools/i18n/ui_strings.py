@@ -269,6 +269,8 @@ UI = {
 "asset_btc": ("Bitcoin", "بيتكوين", "Bitcoin", "Bitcoin", "Bitcoin"),
 "asset_eth": ("Ethereum", "إيثيريوم", "Ethereum", "Ethereum", "Ethereum"),
 "asset_sol": ("Solana", "سولانا", "Solana", "Solana", "Solana"),
+"asset_analysis": ("Analysis only", "تحليل فقط", "Analyse seule", "Solo análisis", "Apenas análise"),
+"trust_gold_only": ("Gold only for now", "للذهب حالياً", "Or uniquement pour l'instant", "Solo oro por ahora", "Só ouro por enquanto"),
 "asset_soon": ("Coming soon", "قريباً", "Bientôt", "Próximamente", "Em breve"),
 "brief_title": ("Today's scenarios — to watch, not recommendations", "سيناريوهات اليوم — للمراقبة، ليست توصيات", "Scénarios du jour — à surveiller, pas des recommandations", "Escenarios de hoy — para vigilar, no recomendaciones", "Cenários de hoje — para observar, não recomendações"),
 "brief_bias_up": ("Overall bias: up", "الميل العام: صاعد", "Biais général : haussier", "Sesgo general: alcista", "Viés geral: de alta"),

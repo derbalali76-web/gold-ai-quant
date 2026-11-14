@@ -24,6 +24,7 @@ data class UiState(
     val notify: Boolean = false,
     val track: List<TrackItem> = emptyList(),
     val trust: Trust? = null,
+    val asset: String = "XAU",  // XAU | BTC | ETH | SOL
 )
 
 class MainViewModel(app: Application) : AndroidViewModel(app) {
@@ -31,8 +32,25 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     private val _state = MutableStateFlow(UiState())
     val state: StateFlow<UiState> = _state
 
+    private fun key(asset: String) = if (asset == "XAU") "last_decision" else "last_decision_$asset"
+
+    private fun cachedFor(asset: String): Decision? = prefs.getString(key(asset), null)?.let {
+        try { DecisionParser.parse(it) } catch (e: Exception) { null }
+    }
+
+    /** Switch the analysed asset: show its last saved analysis at once, then refresh it. */
+    fun setAsset(a: String) {
+        if (a == _state.value.asset) return
+        prefs.edit().putString("asset", a).apply()
+        val cached = cachedFor(a)
+        _state.update { it.copy(asset = a, decision = cached, decisionFromCache = cached != null, error = null,
+            selectedHorizon = HorizonModel.resolve(it.selectedHorizon, cached)) }
+        ask()
+    }
+
     init {
-        val cached = prefs.getString("last_decision", null)?.let {
+        val asset0 = prefs.getString("asset", "XAU") ?: "XAU"
+        val cached = prefs.getString(if (asset0 == "XAU") "last_decision" else "last_decision_$asset0", null)?.let {
             try { DecisionParser.parse(it) } catch (e: Exception) { null }
         }
         _state.update {
@@ -46,6 +64,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                 decisionFromCache = cached != null,
                 receivedAt = prefs.getLong("last_received", 0L).takeIf { v -> v > 0 }?.let(Instant::ofEpochMilli),
                 trust = TrustParser.parse(prefs.getString("trust", null)),
+                asset = asset0,
             )
         }
         startPrefetchLoop()
@@ -59,14 +78,14 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                 val s = _state.value
                 if (s.liveMode && !s.loading) {
                     try {
-                        val f = ApiClient(s.serverUrl, s.token).decision("LIVE", 0)
+                        val f = ApiClient(s.serverUrl, s.token).decision("LIVE", 0, s.asset)
                         val now = Instant.now()
                         _state.update {
-                            if (!it.liveMode || it.loading) it
+                            if (!it.liveMode || it.loading || it.asset != s.asset) it
                             else it.copy(decision = f.decision, decisionFromCache = false, receivedAt = now, error = null,
                                 selectedHorizon = HorizonModel.resolve(it.selectedHorizon, f.decision))
                         }
-                        prefs.edit().putString("last_decision", f.raw).putLong("last_received", now.toEpochMilli()).apply()
+                        prefs.edit().putString(key(s.asset), f.raw).putLong("last_received", now.toEpochMilli()).apply()
                         if (_state.value.track.isEmpty()) loadTrack()
                     } catch (e: Exception) { /* silent: the tap path reports errors */ }
                 }
@@ -139,13 +158,14 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         loadTrust()
         viewModelScope.launch {
             try {
-                val f = ApiClient(s.serverUrl, s.token).decision(if (s.liveMode) "LIVE" else "DEMO", s.demoStep)
+                val f = ApiClient(s.serverUrl, s.token).decision(if (s.liveMode) "LIVE" else "DEMO", s.demoStep, s.asset)
                 val now = Instant.now()
                 _state.update {
-                    it.copy(loading = false, decision = f.decision, decisionFromCache = false, receivedAt = now,
+                    if (it.asset != s.asset) it.copy(loading = false)  // the user switched asset meanwhile
+                    else it.copy(loading = false, decision = f.decision, decisionFromCache = false, receivedAt = now,
                         selectedHorizon = HorizonModel.resolve(it.selectedHorizon, f.decision))
                 }
-                prefs.edit().putString("last_decision", f.raw).putLong("last_received", now.toEpochMilli()).apply()
+                prefs.edit().putString(key(s.asset), f.raw).putLong("last_received", now.toEpochMilli()).apply()
                 loadTrack()
             } catch (e: ApiException) {
                 _state.update { it.copy(loading = false, error = e) }

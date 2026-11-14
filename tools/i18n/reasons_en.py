@@ -20,6 +20,7 @@ EN = {
     "un.no_provider": "No live data provider is configured yet. Use demo mode or add a free key.",
     "un.corrupt": "Provider data is corrupt or inconsistent — rejected", "un.no_quote": "No price is available from the provider",
     "un.closed": "The spot gold market is closed (weekend)",
+    "va.crypto_unq": "Analysis only: no model is validated for this coin yet — no recommendations until one passes out-of-sample testing",
     "un.dq_fail": "Data quality check failed ({0}) — no decision on faulty data", "un.stale": "Price is stale ({0} s) — not relied upon",
     "un.firewall": "Data-quality firewall: {0}", "un.insufficient": "Not enough historical data for analysis",
     "fw.future_ts": "Price timestamp is in the future — provider or server clock out of sync", "fw.bad_price": "Invalid price",
