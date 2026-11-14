@@ -87,6 +87,8 @@ import com.goldaiquant.app.Reason
 import com.goldaiquant.app.ReasonStrings
 import com.goldaiquant.app.ReasonText
 import com.goldaiquant.app.Trend
+import com.goldaiquant.app.Trust
+import com.goldaiquant.app.TrustLedger
 import com.goldaiquant.app.UiState
 import java.time.Instant
 import java.time.ZoneId
