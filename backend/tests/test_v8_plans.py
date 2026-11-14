@@ -107,3 +107,19 @@ def test_daily_brief_is_context_not_a_trade():
             else:
                 assert s.trigger < b.price and (s.target is None or s.target < s.trigger)
         assert "probability" not in b.model_dump_json()
+
+
+def test_checklist_never_says_ready_without_a_validated_model():
+    from datetime import datetime, timezone
+    from goldquant.engine import DecisionEngine
+    from goldquant.providers.demo import DemoProvider
+    from goldquant.schemas import Mode
+    from goldquant.store import Store
+    d = DecisionEngine(Store()).decide(DemoProvider(), Mode.DEMO, datetime(2026, 11, 11, 14, tzinfo=timezone.utc))
+    for o in d.outlooks:
+        codes = [c.code for c in o.checklist]
+        assert {"session", "news", "trend", "level", "model"} <= set(codes)
+        m = next(c for c in o.checklist if c.code == "model")
+        assert m.ok == bool(o.validated)
+    sat = DecisionEngine(Store()).decide(DemoProvider(), Mode.DEMO, datetime(2026, 11, 7, 14, tzinfo=timezone.utc))
+    assert all(next(c for c in o.checklist if c.code == "session").ok is False for o in sat.outlooks)

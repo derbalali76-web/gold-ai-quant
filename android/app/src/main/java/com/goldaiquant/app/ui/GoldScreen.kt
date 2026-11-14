@@ -68,6 +68,7 @@ import com.goldaiquant.app.TrackItem
 import com.goldaiquant.app.Plan
 import com.goldaiquant.app.Brief
 import com.goldaiquant.app.Scenario
+import com.goldaiquant.app.Check
 import com.goldaiquant.app.Perf
 import com.goldaiquant.app.Action
 import com.goldaiquant.app.ApiException
@@ -506,7 +507,10 @@ private fun DecisionCard(c: HorizonCard, s: UiState, d: Decision, compact: Boole
             }
             Text(horizonName(c.horizon), color = Gold, fontSize = 11.sp)
             c.plan?.let { PlanLine(it, d) }
-            if (c.plan?.recommendation != true) d.brief?.let { BriefLines(it) }
+            if (c.plan?.recommendation != true) {
+                CheckSummary(c.checklist)
+                d.brief?.let { BriefLines(it) }
+            }
             if (s.decisionFromCache || expired) Text(stringResource(R.string.saved_decision), color = WaitGold, fontSize = 11.sp)
             when (c.action) {
                 Action.BUY, Action.SELL -> {
@@ -568,6 +572,47 @@ private fun briefLine(sc: Scenario): String = when {
     sc.kind == "BULL" -> stringResource(R.string.sc_bull_open, ltr(sc.trigger.p2()), sc.triggerLevel)
     sc.target != null -> stringResource(R.string.sc_bear, ltr(sc.trigger.p2()), sc.triggerLevel, ltr(sc.target.p2()), sc.targetLevel ?: "")
     else -> stringResource(R.string.sc_bear_open, ltr(sc.trigger.p2()), sc.triggerLevel)
+}
+
+@Composable
+private fun checkText(k: Check): String {
+    val a0 = k.args.getOrNull(0) ?: ""; val a1 = k.args.getOrNull(1)?.let { ltr(it) } ?: ""
+    return when (k.code) {
+        "session" -> stringResource(if (k.ok == true) R.string.ck_session_ok else R.string.ck_session_no)
+        "news" -> when (k.ok) { true -> stringResource(R.string.ck_news_ok); false -> stringResource(R.string.ck_news_no, a0)
+            else -> stringResource(R.string.ck_news_na) }
+        "volatility" -> stringResource(when (k.ok) { true -> R.string.ck_vol_ok; false -> R.string.ck_vol_no; else -> R.string.ck_vol_na })
+        "trend" -> stringResource(when (k.ok) { true -> R.string.ck_trend_ok; false -> R.string.ck_trend_no; else -> R.string.ck_trend_na })
+        "level" -> when (k.ok) { true -> stringResource(R.string.ck_level_ok, a0); false -> stringResource(R.string.ck_level_no, a0, a1)
+            else -> stringResource(R.string.ck_level_na) }
+        "reward_risk" -> stringResource(if (k.ok == true) R.string.ck_rr_ok else R.string.ck_rr_no, ltr(a0))
+        "model" -> stringResource(if (k.ok == true) R.string.ck_model_ok else R.string.ck_model_no)
+        else -> k.code
+    }
+}
+
+@Composable
+private fun CheckSummary(list: List<Check>) {
+    val known = list.filter { it.ok != null }
+    if (known.isEmpty()) return
+    Spacer(Modifier.height(6.dp))
+    Text(stringResource(R.string.ck_count, known.count { it.ok == true }, known.size), color = Gold, fontSize = 11.sp,
+        fontWeight = FontWeight.SemiBold)
+    val failing = known.filter { it.ok == false }
+    if (failing.isNotEmpty()) {
+        Text(stringResource(R.string.why_title), color = TextDim, fontSize = 11.sp)
+        failing.take(2).forEach { Text("✗ " + checkText(it), color = TextMain, fontSize = 12.sp, lineHeight = 16.sp) }
+    }
+}
+
+@Composable
+private fun CheckSection(list: List<Check>) {
+    if (list.isEmpty()) return
+    Section(stringResource(R.string.ck_title))
+    list.forEach { k ->
+        val (mark, col) = when (k.ok) { true -> "✓" to BuyGreen; false -> "✗" to SellRed; else -> "?" to TextDim }
+        Body("$mark  " + checkText(k), col, 12.sp)
+    }
 }
 
 @Composable
@@ -899,6 +944,7 @@ private fun DetailsDialog(c: HorizonCard, d: Decision, onClose: () -> Unit) {
     DialogFrame(stringResource(R.string.details_dialog) + " · " + horizonName(c.horizon), onClose) {
         Section(stringResource(R.string.reason_title))
         Body(rt(c.reason))
+        CheckSection(c.checklist)
         c.plan?.let { PlanSection(it, d) }
         PerfSection(c.performance)
         // trend

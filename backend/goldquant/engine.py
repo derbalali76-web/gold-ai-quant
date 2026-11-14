@@ -262,11 +262,12 @@ class DecisionEngine:
 
     def decide(self, provider: Optional[MarketDataProvider], mode: Mode, as_of: datetime, *args, **kwargs) -> Decision:
         """The decision plus one trade plan per horizon (plans only re-express the decision; see plans.py)."""
-        self._daily = None
+        self._daily, self._ctx = None, None
         return self._decide(provider, mode, as_of, *args, **kwargs)
 
     def _decide(self, provider: Optional[MarketDataProvider], mode: Mode, as_of: datetime,
                context: Optional[MarketContext] = None) -> Decision:
+        self._ctx = context
         max_age = MAX_QUOTE_AGE_S[mode]
         if provider is None:
             fr = DataFreshness(max_allowed_seconds=max_age, is_fresh=False)
@@ -658,6 +659,11 @@ class DecisionEngine:
         from . import plans as PL
         PL.attach(d, getattr(self, "planners", None), getattr(self, "_daily", None))  # plans are part of the audit
         from . import brief as BR
+        from . import checklist as CK
+        try:
+            CK.attach(d, getattr(self, "_ctx", None))
+        except Exception:  # noqa: BLE001 — context only
+            pass
         try:
             d.daily_brief = BR.build(d)
         except Exception:  # noqa: BLE001 — context only

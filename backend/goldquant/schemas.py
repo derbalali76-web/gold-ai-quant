@@ -230,6 +230,14 @@ class PerfStats(BaseModel):
     verdict: Optional[str] = None
 
 
+class Check(BaseModel):
+    """One entry condition (v1.7.3). ok=None means it cannot be checked right now (e.g. calendar not connected)."""
+    model_config = ConfigDict(extra="forbid")
+    code: str  # session | news | volatility | trend | level | reward_risk | model
+    ok: Optional[bool] = None
+    args: list[str] = Field(default_factory=list)
+
+
 class Scenario(BaseModel):
     """A level-based scenario to WATCH today (v1.7.2). Not a recommendation: no probability, no position size."""
     model_config = ConfigDict(extra="forbid")
@@ -290,6 +298,7 @@ class HorizonOutlook(BaseModel):
     # A frequency, never a probability; HOURS comes from the server's paper ledger (resets on redeploys).
     live_resolved: int = Field(default=0, ge=0)
     live_hits: int = Field(default=0, ge=0)
+    checklist: list[Check] = Field(default_factory=list)  # v1.7.3 live entry conditions
     plan: Optional[TradePlan] = None  # v1.7
     performance: list[PerfStats] = Field(default_factory=list)
 

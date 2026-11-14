@@ -341,6 +341,41 @@
       "probabilities_available": false,
       "live_resolved": 0,
       "live_hits": 0,
+      "checklist": [
+        {
+          "code": "session",
+          "ok": true,
+          "args": []
+        },
+        {
+          "code": "news",
+          "ok": null,
+          "args": []
+        },
+        {
+          "code": "volatility",
+          "ok": true,
+          "args": []
+        },
+        {
+          "code": "trend",
+          "ok": true,
+          "args": []
+        },
+        {
+          "code": "level",
+          "ok": false,
+          "args": [
+            "S1",
+            "2.37"
+          ]
+        },
+        {
+          "code": "model",
+          "ok": false,
+          "args": []
+        }
+      ],
       "plan": {
         "setup": "WAIT_TO_BUY",
         "recommendation": false,
@@ -562,6 +597,36 @@
       "probabilities_available": false,
       "live_resolved": 0,
       "live_hits": 0,
+      "checklist": [
+        {
+          "code": "session",
+          "ok": true,
+          "args": []
+        },
+        {
+          "code": "news",
+          "ok": null,
+          "args": []
+        },
+        {
+          "code": "trend",
+          "ok": true,
+          "args": []
+        },
+        {
+          "code": "level",
+          "ok": false,
+          "args": [
+            "S1",
+            "32.18"
+          ]
+        },
+        {
+          "code": "model",
+          "ok": false,
+          "args": []
+        }
+      ],
       "plan": {
         "setup": "WAIT",
         "recommendation": false,
@@ -802,6 +867,36 @@
       "probabilities_available": false,
       "live_resolved": 0,
       "live_hits": 0,
+      "checklist": [
+        {
+          "code": "session",
+          "ok": true,
+          "args": []
+        },
+        {
+          "code": "news",
+          "ok": null,
+          "args": []
+        },
+        {
+          "code": "trend",
+          "ok": true,
+          "args": []
+        },
+        {
+          "code": "level",
+          "ok": false,
+          "args": [
+            "S1",
+            "32.18"
+          ]
+        },
+        {
+          "code": "model",
+          "ok": false,
+          "args": []
+        }
+      ],
       "plan": {
         "setup": "WAIT",
         "recommendation": false,
@@ -854,7 +949,7 @@
     ],
     "source": "H1_LEVELS"
   },
-  "audit_hash": "aaf6472df6c1426f75398947cf4c0065ebf61ea26f944e263707be5fe485f179",
+  "audit_hash": "efbfe05855a72d900ed88744a2830a8a3bab6b4a4d8c9f5bf286245b6657e6fe",
   "supporting_evidence": [
     {
       "engine": "mtf_bias",

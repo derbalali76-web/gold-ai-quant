@@ -10,6 +10,40 @@
       "title": "Action",
       "type": "string"
     },
+    "Check": {
+      "additionalProperties": false,
+      "description": "One entry condition (v1.7.3). ok=None means it cannot be checked right now (e.g. calendar not connected).",
+      "properties": {
+        "args": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Args",
+          "type": "array"
+        },
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "ok": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ok"
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "Check",
+      "type": "object"
+    },
     "CourtJudgement": {
       "additionalProperties": false,
       "description": "V4 AI Decision Court: one independent judge's ruling.",
@@ -176,6 +210,13 @@
           ],
           "default": null,
           "title": "Base Rate"
+        },
+        "checklist": {
+          "items": {
+            "$ref": "#/$defs/Check"
+          },
+          "title": "Checklist",
+          "type": "array"
         },
         "entry_price": {
           "anyOf": [

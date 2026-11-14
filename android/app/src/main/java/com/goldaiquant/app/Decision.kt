@@ -35,7 +35,11 @@ data class Outlook(
     val levels: Levels? = null, val trend: Trend? = null,
     val liveResolved: Int = 0, val liveHits: Int = 0,
     val plan: Plan? = null, val performance: List<Perf> = emptyList(),
+    val checklist: List<Check> = emptyList(),
 )
+
+/** v1.7.3 live entry condition; ok == null: cannot be checked right now. */
+data class Check(val code: String, val ok: Boolean?, val args: List<String>)
 
 /** Daily context (v1.7.2): bias + level scenarios to WATCH; never a recommendation. */
 data class Scenario(val kind: String, val trigger: Double, val triggerLevel: String, val target: Double?, val targetLevel: String?)
@@ -335,9 +339,19 @@ object DecisionParser {
                 e.reasons("warnings_ref"), e.reasons("facts_ref"),
                 e.optJSONObject("levels")?.let { parseLevels(it) }, e.optJSONObject("trend")?.let { parseTrend(it) },
                 e.optInt("live_resolved", 0).coerceAtLeast(0), e.optInt("live_hits", 0).coerceAtLeast(0),
-                e.optJSONObject("plan")?.let { parsePlan(it) }, e.perfList("performance"))
+                e.optJSONObject("plan")?.let { parsePlan(it) }, e.perfList("performance"), e.checks("checklist"))
         }
     }
+    private fun JSONObject.checks(k: String): List<Check> {
+        val a = optJSONArray(k) ?: return emptyList()
+        return (0 until a.length()).mapNotNull { i ->
+            val e = a.optJSONObject(i) ?: return@mapNotNull null
+            val args = e.optJSONArray("args")
+            Check(e.optString("code"), if (e.isNull("ok") || !e.has("ok")) null else e.optBoolean("ok"),
+                if (args == null) emptyList() else (0 until args.length()).map { args.optString(it) })
+        }
+    }
+
     private fun parseBrief(b: JSONObject): Brief? {
         val a = b.optJSONArray("scenarios") ?: return null
         val sc = (0 until a.length()).mapNotNull { i ->

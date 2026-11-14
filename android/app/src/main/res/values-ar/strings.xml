@@ -242,6 +242,30 @@
     <string name="sc_bear">هبوط: إغلاق ساعة تحت %1$s (%2$s) يفتح الطريق نحو %3$s (%4$s)</string>
     <string name="sc_bear_open">هبوط: إغلاق ساعة تحت %1$s (%2$s) يقوّي الهبوط</string>
     <string name="notif_brief_title">خطة اليوم — XAU/USD</string>
+    <string name="ck_title">شروط الدخول</string>
+    <string name="ck_count">شروط الدخول: %1$d من %2$d محققة</string>
+    <string name="why_title">لماذا ليس الآن؟</string>
+    <string name="ck_session_ok">السوق مفتوح</string>
+    <string name="ck_session_no">السوق مغلق</string>
+    <string name="ck_news_ok">لا أخبار قوية قريبة</string>
+    <string name="ck_news_no">خبر قوي قريب: %1$s</string>
+    <string name="ck_news_na">تقويم الأخبار غير متصل</string>
+    <string name="ck_vol_ok">التقلّب طبيعي</string>
+    <string name="ck_vol_no">التقلّب مرتفع جداً</string>
+    <string name="ck_vol_na">التقلّب غير معروف</string>
+    <string name="ck_trend_ok">الاتجاه واضح ومتوافق</string>
+    <string name="ck_trend_no">الاتجاه غير واضح أو متضارب</string>
+    <string name="ck_trend_na">الاتجاه غير معروف</string>
+    <string name="ck_level_ok">السعر عند مستوى مهم (%1$s)</string>
+    <string name="ck_level_no">السعر بعيد عن المستويات (%2$s عن %1$s)</string>
+    <string name="ck_level_na">لا مستوى قريب</string>
+    <string name="ck_rr_ok">العائد : المخاطرة %1$s</string>
+    <string name="ck_rr_no">العائد : المخاطرة ضعيف (%1$s)</string>
+    <string name="ck_model_ok">النموذج معتمد</string>
+    <string name="ck_model_no">النموذج غير معتمد بعد</string>
+    <string name="notif_level_title">السعر وصل إلى %1$s (%2$s)</string>
+    <string name="notif_level_up">تجاوز مستوى المراقبة صعوداً — راجع سيناريو الصعود. ليست توصية.</string>
+    <string name="notif_level_down">كسر مستوى المراقبة هبوطاً — راجع سيناريو الهبوط. ليست توصية.</string>
     <string name="r_w_up" formatted="false">صاعد</string>
     <string name="r_w_down" formatted="false">هابط</string>
     <string name="r_w_neutral" formatted="false">محايد</string>

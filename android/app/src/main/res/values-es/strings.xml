@@ -242,6 +242,30 @@
     <string name="sc_bear">Baja: un cierre horario bajo %1$s (%2$s) abre camino hacia %3$s (%4$s)</string>
     <string name="sc_bear_open">Baja: un cierre horario bajo %1$s (%2$s) reforzaría la caída</string>
     <string name="notif_brief_title">Plan de hoy — XAU/USD</string>
+    <string name="ck_title">Condiciones de entrada</string>
+    <string name="ck_count">Condiciones de entrada: %1$d de %2$d cumplidas</string>
+    <string name="why_title">¿Por qué no ahora?</string>
+    <string name="ck_session_ok">Mercado abierto</string>
+    <string name="ck_session_no">Mercado cerrado</string>
+    <string name="ck_news_ok">Sin noticias de alto impacto cerca</string>
+    <string name="ck_news_no">Noticia de alto impacto cerca: %1$s</string>
+    <string name="ck_news_na">Calendario no conectado</string>
+    <string name="ck_vol_ok">Volatilidad normal</string>
+    <string name="ck_vol_no">Volatilidad demasiado alta</string>
+    <string name="ck_vol_na">Volatilidad desconocida</string>
+    <string name="ck_trend_ok">Tendencia clara y alineada</string>
+    <string name="ck_trend_no">Tendencia poco clara o contradictoria</string>
+    <string name="ck_trend_na">Tendencia desconocida</string>
+    <string name="ck_level_ok">Precio en un nivel clave (%1$s)</string>
+    <string name="ck_level_no">Precio lejos de los niveles (%2$s de %1$s)</string>
+    <string name="ck_level_na">Ningún nivel cercano</string>
+    <string name="ck_rr_ok">Beneficio : riesgo %1$s</string>
+    <string name="ck_rr_no">Beneficio : riesgo demasiado bajo (%1$s)</string>
+    <string name="ck_model_ok">Modelo validado</string>
+    <string name="ck_model_no">Modelo aún no validado</string>
+    <string name="notif_level_title">El precio llegó a %1$s (%2$s)</string>
+    <string name="notif_level_up">Nivel vigilado cruzado al alza — revisa el escenario alcista. No es una recomendación.</string>
+    <string name="notif_level_down">Nivel vigilado cruzado a la baja — revisa el escenario bajista. No es una recomendación.</string>
     <string name="r_w_up" formatted="false">alcista</string>
     <string name="r_w_down" formatted="false">bajista</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

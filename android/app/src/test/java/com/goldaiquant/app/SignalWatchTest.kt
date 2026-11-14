@@ -29,4 +29,14 @@ class SignalWatchTest {
         val (_, cleared) = SignalWatch.diff(load("unavailable_live.json"), mem)
         assertTrue(cleared.isEmpty())
     }
+
+    @Test fun levelCrossingOnlyInTheScenarioDirection() {
+        val up = Scenario("BULL", 3921.10, "R1", 3938.25, "R2")
+        assertTrue(SignalWatch.crossed(up, 3915.0, 3922.0))
+        assertTrue(!SignalWatch.crossed(up, 3925.0, 3930.0)) // already above: no new crossing
+        assertTrue(!SignalWatch.crossed(up, 3925.0, 3915.0)) // moving down through it is not the up scenario
+        val down = Scenario("BEAR", 3871.89, "S1", 3853.27, "S2")
+        assertTrue(SignalWatch.crossed(down, 3880.0, 3870.0))
+        assertTrue(!SignalWatch.crossed(down, 3865.0, 3875.0))
+    }
 }

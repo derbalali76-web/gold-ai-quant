@@ -243,6 +243,30 @@
     <string name="sc_bear">Down: an hourly close below %1$s (%2$s) opens the way to %3$s (%4$s)</string>
     <string name="sc_bear_open">Down: an hourly close below %1$s (%2$s) would strengthen the fall</string>
     <string name="notif_brief_title">Today\'s plan — XAU/USD</string>
+    <string name="ck_title">Entry conditions</string>
+    <string name="ck_count">Entry conditions: %1$d of %2$d met</string>
+    <string name="why_title">Why not now?</string>
+    <string name="ck_session_ok">Market open</string>
+    <string name="ck_session_no">Market closed</string>
+    <string name="ck_news_ok">No high-impact news nearby</string>
+    <string name="ck_news_no">High-impact news nearby: %1$s</string>
+    <string name="ck_news_na">News calendar not connected</string>
+    <string name="ck_vol_ok">Normal volatility</string>
+    <string name="ck_vol_no">Volatility too high</string>
+    <string name="ck_vol_na">Volatility unknown</string>
+    <string name="ck_trend_ok">Clear, aligned trend</string>
+    <string name="ck_trend_no">Trend unclear or conflicting</string>
+    <string name="ck_trend_na">Trend unknown</string>
+    <string name="ck_level_ok">Price at a key level (%1$s)</string>
+    <string name="ck_level_no">Price away from levels (%2$s from %1$s)</string>
+    <string name="ck_level_na">No nearby level</string>
+    <string name="ck_rr_ok">Reward : risk %1$s</string>
+    <string name="ck_rr_no">Reward : risk too low (%1$s)</string>
+    <string name="ck_model_ok">Model validated</string>
+    <string name="ck_model_no">Model not validated yet</string>
+    <string name="notif_level_title">Price reached %1$s (%2$s)</string>
+    <string name="notif_level_up">Watch level crossed upward — review today\'s up scenario. Not a recommendation.</string>
+    <string name="notif_level_down">Watch level crossed downward — review today\'s down scenario. Not a recommendation.</string>
     <string name="r_w_up" formatted="false">up</string>
     <string name="r_w_down" formatted="false">down</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

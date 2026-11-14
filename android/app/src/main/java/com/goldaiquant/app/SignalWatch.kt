@@ -22,4 +22,8 @@ object SignalWatch {
         val fresh = now.filter { last[it.horizon] != it.action.name }
         return fresh to now.associate { it.horizon to it.action.name }
     }
+
+    /** True when the price moved through a scenario's trigger since the previous check (in the scenario's direction). */
+    fun crossed(sc: Scenario, prev: Double, price: Double): Boolean =
+        if (sc.kind == "BULL") prev < sc.trigger && price >= sc.trigger else prev > sc.trigger && price <= sc.trigger
 }

@@ -293,6 +293,48 @@
       "probabilities_available": true,
       "live_resolved": 0,
       "live_hits": 0,
+      "checklist": [
+        {
+          "code": "session",
+          "ok": true,
+          "args": []
+        },
+        {
+          "code": "news",
+          "ok": null,
+          "args": []
+        },
+        {
+          "code": "volatility",
+          "ok": false,
+          "args": []
+        },
+        {
+          "code": "trend",
+          "ok": true,
+          "args": []
+        },
+        {
+          "code": "level",
+          "ok": true,
+          "args": [
+            "S1",
+            "0.55"
+          ]
+        },
+        {
+          "code": "reward_risk",
+          "ok": false,
+          "args": [
+            "1.00"
+          ]
+        },
+        {
+          "code": "model",
+          "ok": true,
+          "args": []
+        }
+      ],
       "plan": {
         "setup": "BUY_NOW",
         "recommendation": false,
@@ -548,6 +590,36 @@
       "probabilities_available": false,
       "live_resolved": 0,
       "live_hits": 0,
+      "checklist": [
+        {
+          "code": "session",
+          "ok": true,
+          "args": []
+        },
+        {
+          "code": "news",
+          "ok": null,
+          "args": []
+        },
+        {
+          "code": "trend",
+          "ok": true,
+          "args": []
+        },
+        {
+          "code": "level",
+          "ok": false,
+          "args": [
+            "S1",
+            "37.25"
+          ]
+        },
+        {
+          "code": "model",
+          "ok": false,
+          "args": []
+        }
+      ],
       "plan": {
         "setup": "WAIT",
         "recommendation": false,
@@ -788,6 +860,36 @@
       "probabilities_available": false,
       "live_resolved": 0,
       "live_hits": 0,
+      "checklist": [
+        {
+          "code": "session",
+          "ok": true,
+          "args": []
+        },
+        {
+          "code": "news",
+          "ok": null,
+          "args": []
+        },
+        {
+          "code": "trend",
+          "ok": true,
+          "args": []
+        },
+        {
+          "code": "level",
+          "ok": false,
+          "args": [
+            "S1",
+            "37.25"
+          ]
+        },
+        {
+          "code": "model",
+          "ok": false,
+          "args": []
+        }
+      ],
       "plan": {
         "setup": "WAIT",
         "recommendation": false,
@@ -840,7 +942,7 @@
     ],
     "source": "H1_LEVELS"
   },
-  "audit_hash": "ab5673151acd0ed14d6a112fcd6be5b4a323b439f4c265f9eba20a90ad20858c",
+  "audit_hash": "c3c4687d2fac84690dadb9332e3791e2a154c7c80913e1c8e0306ad5eabfed54",
   "supporting_evidence": [
     {
       "engine": "mtf_bias",
