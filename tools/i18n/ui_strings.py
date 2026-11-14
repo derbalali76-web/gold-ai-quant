@@ -261,4 +261,12 @@ UI = {
 "pl_expire_note": ("The plan can also end without reaching the target or the stop (time limit).", "قد تنتهي الخطة دون الوصول إلى الهدف أو الوقف (انتهاء المدة).", "Le plan peut aussi se terminer sans atteindre l'objectif ni le stop (limite de temps).", "El plan también puede terminar sin tocar objetivo ni stop (límite de tiempo).", "O plano também pode terminar sem atingir alvo nem stop (limite de tempo)."),
 "pl_wait_buy_rec": ("Wait to buy at %1$s · target %2$s · stop %3$s", "انتظر للشراء عند %1$s · الهدف %2$s · الوقف %3$s", "Attendre pour acheter à %1$s · objectif %2$s · stop %3$s", "Esperar para comprar en %1$s · objetivo %2$s · stop %3$s", "Aguardar para comprar em %1$s · alvo %2$s · stop %3$s"),
 "pl_wait_sell_rec": ("Wait to sell at %1$s · target %2$s · stop %3$s", "انتظر للبيع عند %1$s · الهدف %2$s · الوقف %3$s", "Attendre pour vendre à %1$s · objectif %2$s · stop %3$s", "Esperar para vender en %1$s · objetivo %2$s · stop %3$s", "Aguardar para vender em %1$s · alvo %2$s · stop %3$s"),
+"cd_asset": ("Choose asset", "اختيار الأصل", "Choisir l'actif", "Elegir activo", "Escolher ativo"),
+"asset_title": ("Asset", "الأصل", "Actif", "Activo", "Ativo"),
+"asset_status": ("Data: %1$s", "البيانات: %1$s", "Données : %1$s", "Datos: %1$s", "Dados: %1$s"),
+"asset_gold": ("Gold", "الذهب", "Or", "Oro", "Ouro"),
+"asset_btc": ("Bitcoin", "بيتكوين", "Bitcoin", "Bitcoin", "Bitcoin"),
+"asset_eth": ("Ethereum", "إيثيريوم", "Ethereum", "Ethereum", "Ethereum"),
+"asset_sol": ("Solana", "سولانا", "Solana", "Solana", "Solana"),
+"asset_soon": ("Coming soon", "قريباً", "Bientôt", "Próximamente", "Em breve"),
 }

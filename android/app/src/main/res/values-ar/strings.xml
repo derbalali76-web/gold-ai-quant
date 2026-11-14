@@ -225,6 +225,14 @@
     <string name="pl_expire_note">قد تنتهي الخطة دون الوصول إلى الهدف أو الوقف (انتهاء المدة).</string>
     <string name="pl_wait_buy_rec">انتظر للشراء عند %1$s · الهدف %2$s · الوقف %3$s</string>
     <string name="pl_wait_sell_rec">انتظر للبيع عند %1$s · الهدف %2$s · الوقف %3$s</string>
+    <string name="cd_asset">اختيار الأصل</string>
+    <string name="asset_title">الأصل</string>
+    <string name="asset_status">البيانات: %1$s</string>
+    <string name="asset_gold">الذهب</string>
+    <string name="asset_btc">بيتكوين</string>
+    <string name="asset_eth">إيثيريوم</string>
+    <string name="asset_sol">سولانا</string>
+    <string name="asset_soon">قريباً</string>
     <string name="r_w_up" formatted="false">صاعد</string>
     <string name="r_w_down" formatted="false">هابط</string>
     <string name="r_w_neutral" formatted="false">محايد</string>

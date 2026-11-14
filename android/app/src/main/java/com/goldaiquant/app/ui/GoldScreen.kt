@@ -200,6 +200,7 @@ private sealed interface Sheet {
     data object TrendSheet : Sheet
     data object Details : Sheet
     data object Settings : Sheet
+    data object Assets : Sheet
 }
 
 /** Stateless screen (also used by the UI tests on several screen sizes). */
@@ -218,7 +219,7 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
             Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 12.dp, vertical = 6.dp),
             verticalArrangement = Arrangement.spacedBy(gap),
         ) {
-            TopBar(s, compact) { sheet = Sheet.Settings }
+            TopBar(s, compact, onAsset = { sheet = Sheet.Assets }) { sheet = Sheet.Settings }
             val card = d?.let { HorizonModel.card(it, selected) }
             Row(horizontalArrangement = Arrangement.spacedBy(gap)) {
                 PriceCard(d, s, Modifier.weight(1.1f))
@@ -264,6 +265,7 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
         Sheet.Probabilities -> if (card != null && d != null) ProbabilityDialog(card, d, s.track) { sheet = null }
         Sheet.TrendSheet -> if (card != null) TrendDialog(card) { sheet = null }
         Sheet.Details -> if (card != null && d != null) DetailsDialog(card, d) { sheet = null }
+        Sheet.Assets -> AssetDialog(s) { sheet = null }
         Sheet.Settings -> SettingsDialog(s, lang, onNextDemo, onSave, onLive, onLanguage, onNotify) { sheet = null }
         null -> Unit
     }
@@ -288,14 +290,19 @@ private fun Bar(fraction: Float, color: Color, modifier: Modifier = Modifier, he
 }
 
 @Composable
-private fun TopBar(s: UiState, compact: Boolean, onSettings: () -> Unit) {
+private fun TopBar(s: UiState, compact: Boolean, onAsset: () -> Unit, onSettings: () -> Unit) {
     val h = health(s)
+    val cdA = stringResource(R.string.cd_asset) + " · " + stringResource(h.label)
     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        Row(Modifier.border(1.dp, h.color, RoundedCornerShape(50)).padding(horizontal = 8.dp, vertical = 4.dp),
+        // asset selector; the dot keeps the data-health colour that this pill used to spell out
+        Row(Modifier.border(1.dp, Gold, RoundedCornerShape(50)).clickable(role = Role.Button, onClick = onAsset)
+            .semantics { contentDescription = cdA }.padding(horizontal = 10.dp, vertical = 6.dp),
             verticalAlignment = Alignment.CenterVertically) {
             Box(Modifier.size(8.dp).background(h.color, CircleShape))
-            Spacer(Modifier.width(5.dp))
-            Text(stringResource(h.label), color = TextMain, fontSize = 11.sp, maxLines = 1)
+            Spacer(Modifier.width(6.dp))
+            Text(ltr("XAU/USD"), color = TextMain, fontSize = 12.sp, fontWeight = FontWeight.SemiBold, maxLines = 1)
+            Spacer(Modifier.width(4.dp))
+            Text("▾", color = Gold, fontSize = 12.sp)
         }
         Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
             Text(stringResource(R.string.app_name), color = Gold, fontWeight = FontWeight.ExtraBold, fontSize = 18.sp, maxLines = 1)
@@ -305,6 +312,29 @@ private fun TopBar(s: UiState, compact: Boolean, onSettings: () -> Unit) {
         Box(Modifier.size(40.dp).border(1.dp, Gold, CircleShape)
             .clickable(role = Role.Button, onClick = onSettings).semantics { contentDescription = cd },
             contentAlignment = Alignment.Center) { Text("⚙", color = Gold, fontSize = 18.sp) }
+    }
+}
+
+@Composable
+private fun AssetDialog(s: UiState, onClose: () -> Unit) {
+    val h = health(s)
+    DialogFrame(stringResource(R.string.asset_title), onClose) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(Modifier.size(8.dp).background(h.color, CircleShape))
+            Spacer(Modifier.width(6.dp))
+            Body(stringResource(R.string.asset_status, stringResource(h.label)), TextDim, 12.sp)
+        }
+        listOf(Triple(R.string.asset_gold, "XAU/USD", true), Triple(R.string.asset_btc, "BTC/USD", false),
+            Triple(R.string.asset_eth, "ETH/USD", false), Triple(R.string.asset_sol, "SOL/USD", false)).forEach { (name, sym, on) ->
+            Row(Modifier.fillMaxWidth().border(1.dp, if (on) Gold else Track, RoundedCornerShape(12.dp))
+                .padding(horizontal = 12.dp, vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) {
+                Column(Modifier.weight(1f)) {
+                    Text(stringResource(name), color = if (on) TextMain else TextDim, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+                    Text(ltr(sym), color = TextDim, fontSize = 11.sp)
+                }
+                Text(if (on) "✓" else stringResource(R.string.asset_soon), color = if (on) Gold else TextDim, fontSize = 12.sp)
+            }
+        }
     }
 }
 

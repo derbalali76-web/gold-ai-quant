@@ -225,6 +225,14 @@
     <string name="pl_expire_note">O plano também pode terminar sem atingir alvo nem stop (limite de tempo).</string>
     <string name="pl_wait_buy_rec">Aguardar para comprar em %1$s · alvo %2$s · stop %3$s</string>
     <string name="pl_wait_sell_rec">Aguardar para vender em %1$s · alvo %2$s · stop %3$s</string>
+    <string name="cd_asset">Escolher ativo</string>
+    <string name="asset_title">Ativo</string>
+    <string name="asset_status">Dados: %1$s</string>
+    <string name="asset_gold">Ouro</string>
+    <string name="asset_btc">Bitcoin</string>
+    <string name="asset_eth">Ethereum</string>
+    <string name="asset_sol">Solana</string>
+    <string name="asset_soon">Em breve</string>
     <string name="r_w_up" formatted="false">de alta</string>
     <string name="r_w_down" formatted="false">de baixa</string>
     <string name="r_w_neutral" formatted="false">neutra</string>
