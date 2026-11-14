@@ -485,15 +485,15 @@
   "primary_raw_p_tp": {
    "verdict": {
     "n": 16603,
-    "ece": 0.0442446512339048,
-    "spiegelhalter_z": 14.713202618170586,
-    "spiegelhalter_p": 5.3036756782525374e-49,
+    "ece": 0.044244651233904544,
+    "spiegelhalter_z": 14.713202618170207,
+    "spiegelhalter_p": 5.303675678282292e-49,
     "passed": false,
     "reason_ar": "خطأ المعايرة ECE=0.044 أكبر من 0.03"
    },
    "decomposition": {
-    "brier": 0.22991995388390438,
-    "reliability": 0.0027602899664924303,
+    "brier": 0.22991995388390418,
+    "reliability": 0.0027602899664924047,
     "resolution": 0.007497663661523401,
     "uncertainty": 0.2346429940702702
    },
@@ -553,16 +553,16 @@
   "primary_calibrated_p_tp": {
    "verdict": {
     "n": 16603,
-    "ece": 0.032605529101169504,
-    "spiegelhalter_z": 8.892107318862617,
-    "spiegelhalter_p": 5.9960740091754465e-19,
+    "ece": 0.032846449416774295,
+    "spiegelhalter_z": 8.89210731886308,
+    "spiegelhalter_p": 5.996074009150562e-19,
     "passed": false,
     "reason_ar": "خطأ المعايرة ECE=0.033 أكبر من 0.03"
    },
    "decomposition": {
-    "brier": 0.22886987851818924,
-    "reliability": 0.0016307560338231788,
-    "resolution": 0.007120299497076318,
+    "brier": 0.22886987851818952,
+    "reliability": 0.001641060519408752,
+    "resolution": 0.0070972337050096,
     "uncertainty": 0.2346429940702702
    },
    "reliability": [
@@ -574,115 +574,115 @@
     {
      "n": 1661,
      "mean_pred": 0.2053,
-     "observed": 0.2342
+     "observed": 0.2336
     },
     {
      "n": 1661,
      "mean_pred": 0.3306,
-     "observed": 0.363
+     "observed": 0.3648
     },
     {
      "n": 1660,
      "mean_pred": 0.4108,
-     "observed": 0.406
+     "observed": 0.4054
     },
     {
      "n": 1660,
      "mean_pred": 0.4285,
-     "observed": 0.4193
+     "observed": 0.4163
     },
     {
      "n": 1660,
      "mean_pred": 0.4428,
-     "observed": 0.4048
+     "observed": 0.4078
     },
     {
      "n": 1660,
      "mean_pred": 0.4523,
-     "observed": 0.4398
+     "observed": 0.438
     },
     {
      "n": 1660,
      "mean_pred": 0.4564,
-     "observed": 0.4241
+     "observed": 0.438
     },
     {
      "n": 1660,
      "mean_pred": 0.4648,
-     "observed": 0.444
+     "observed": 0.4337
     },
     {
      "n": 1660,
      "mean_pred": 0.4908,
-     "observed": 0.4319
+     "observed": 0.4295
     }
    ]
   },
   "meta_calibrated_p_profit": {
    "verdict": {
     "n": 16603,
-    "ece": 0.03947638462491479,
+    "ece": 0.040035111459834766,
     "spiegelhalter_z": 11.07127572679063,
     "spiegelhalter_p": 1.7292120309793896e-28,
     "passed": false,
-    "reason_ar": "خطأ المعايرة ECE=0.039 أكبر من 0.03"
+    "reason_ar": "خطأ المعايرة ECE=0.040 أكبر من 0.03"
    },
    "decomposition": {
     "brier": 0.251553542450159,
-    "reliability": 0.0020229664014117543,
-    "resolution": 0.0005053828413294027,
+    "reliability": 0.002134714108880686,
+    "resolution": 0.0006624177334403007,
     "uncertainty": 0.2498570619390235
    },
    "reliability": [
     {
      "n": 1661,
      "mean_pred": 0.4642,
-     "observed": 0.54
+     "observed": 0.543
     },
     {
      "n": 1661,
      "mean_pred": 0.4886,
-     "observed": 0.5123
+     "observed": 0.4931
     },
     {
      "n": 1661,
      "mean_pred": 0.4921,
-     "observed": 0.5298
+     "observed": 0.5503
     },
     {
      "n": 1660,
      "mean_pred": 0.496,
-     "observed": 0.5157
+     "observed": 0.5253
     },
     {
      "n": 1660,
      "mean_pred": 0.4994,
-     "observed": 0.5355
+     "observed": 0.5289
     },
     {
      "n": 1660,
      "mean_pred": 0.5016,
-     "observed": 0.506
+     "observed": 0.4958
     },
     {
      "n": 1660,
      "mean_pred": 0.525,
-     "observed": 0.4663
+     "observed": 0.4602
     },
     {
      "n": 1660,
      "mean_pred": 0.5351,
-     "observed": 0.4777
+     "observed": 0.4952
     },
     {
      "n": 1660,
      "mean_pred": 0.5411,
-     "observed": 0.5199
+     "observed": 0.5054
     },
     {
      "n": 1660,
      "mean_pred": 0.5761,
-     "observed": 0.5163
+     "observed": 0.5223
     }
    ]
   }
