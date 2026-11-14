@@ -849,7 +849,31 @@
     }
   ],
   "market_closed": false,
-  "audit_hash": "6fd6fa96004bd5b6cb840b8105cca10c8d551849a616bbd46affa492b9d9f193",
+  "daily_brief": {
+    "date": "2025-12-31",
+    "bias": "UP",
+    "price": 2115.64,
+    "scenarios": [
+      {
+        "kind": "BULL",
+        "trigger": 2121.53,
+        "trigger_level": "R1",
+        "target": 2125.49,
+        "target_level": "R2",
+        "invalidation": 2115.09
+      },
+      {
+        "kind": "BEAR",
+        "trigger": 2115.09,
+        "trigger_level": "S1",
+        "target": 2112.98,
+        "target_level": "S2",
+        "invalidation": 2121.53
+      }
+    ],
+    "source": "H1_LEVELS"
+  },
+  "audit_hash": "a7750baa06722d632b71873749d060aa4261a2ca52486ba1a212985ec97b6168",
   "supporting_evidence": [
     {
       "engine": "mtf_bias",

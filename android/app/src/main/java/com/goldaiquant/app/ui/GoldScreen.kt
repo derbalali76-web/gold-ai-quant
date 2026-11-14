@@ -66,6 +66,8 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.goldaiquant.app.TrackItem
 import com.goldaiquant.app.Plan
+import com.goldaiquant.app.Brief
+import com.goldaiquant.app.Scenario
 import com.goldaiquant.app.Perf
 import com.goldaiquant.app.Action
 import com.goldaiquant.app.ApiException
@@ -504,6 +506,7 @@ private fun DecisionCard(c: HorizonCard, s: UiState, d: Decision, compact: Boole
             }
             Text(horizonName(c.horizon), color = Gold, fontSize = 11.sp)
             c.plan?.let { PlanLine(it, d) }
+            if (c.plan?.recommendation != true) d.brief?.let { BriefLines(it) }
             if (s.decisionFromCache || expired) Text(stringResource(R.string.saved_decision), color = WaitGold, fontSize = 11.sp)
             when (c.action) {
                 Action.BUY, Action.SELL -> {
@@ -557,6 +560,25 @@ private fun PlanLine(p: Plan, d: Decision) {
     Text(planHeadline(p), color = color, fontSize = 13.sp, fontWeight = FontWeight.Bold, lineHeight = 17.sp)
     if (p.isNow || rec) Text(stringResource(if (rec) R.string.pl_rec else R.string.pl_not_rec),
         color = if (rec) TextDim else WaitGold, fontSize = 10.sp)
+}
+
+@Composable
+private fun briefLine(sc: Scenario): String = when {
+    sc.kind == "BULL" && sc.target != null -> stringResource(R.string.sc_bull, ltr(sc.trigger.p2()), sc.triggerLevel, ltr(sc.target.p2()), sc.targetLevel ?: "")
+    sc.kind == "BULL" -> stringResource(R.string.sc_bull_open, ltr(sc.trigger.p2()), sc.triggerLevel)
+    sc.target != null -> stringResource(R.string.sc_bear, ltr(sc.trigger.p2()), sc.triggerLevel, ltr(sc.target.p2()), sc.targetLevel ?: "")
+    else -> stringResource(R.string.sc_bear_open, ltr(sc.trigger.p2()), sc.triggerLevel)
+}
+
+@Composable
+private fun BriefLines(b: Brief) {
+    Spacer(Modifier.height(6.dp))
+    Text(stringResource(R.string.brief_title), color = Gold, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+    Text(stringResource(when (b.bias) { "UP" -> R.string.brief_bias_up; "DOWN" -> R.string.brief_bias_down; else -> R.string.brief_bias_side }),
+        color = TextDim, fontSize = 11.sp)
+    b.scenarios.take(2).forEach { sc ->
+        Text("• " + briefLine(sc), color = if (sc.kind == "BULL") BuyGreen else SellRed, fontSize = 12.sp, lineHeight = 16.sp)
+    }
 }
 
 @Composable

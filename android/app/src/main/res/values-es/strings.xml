@@ -169,7 +169,7 @@
     <string name="live_expl">Cada señal pasada de este horizonte se registró antes de conocer su resultado y se comprobó tras su periodo (después de costes). Es la única prueba sin sesgo retrospectivo. Es una frecuencia, no una probabilidad.</string>
     <string name="live_hours_note">Horas: operaciones en papel desde el último reinicio del servidor.</string>
     <string name="set_notify">Alertas de señales validadas</string>
-    <string name="set_notify_note">Comprueba cada 15 minutos en segundo plano; avisa solo ante una COMPRA o VENTA validada.</string>
+    <string name="set_notify_note">Un plan cada mañana de mercado y un aviso por cada nueva COMPRA o VENTA validada (cada 15 minutos).</string>
     <string name="notif_channel">Señales de trading</string>
     <string name="notif_title">%1$s · %2$s</string>
     <string name="notif_text">Señal validada — abre la app para ver entrada, stop y objetivo. Solo trading en papel.</string>
@@ -233,6 +233,15 @@
     <string name="asset_eth">Ethereum</string>
     <string name="asset_sol">Solana</string>
     <string name="asset_soon">Próximamente</string>
+    <string name="brief_title">Escenarios de hoy — para vigilar, no recomendaciones</string>
+    <string name="brief_bias_up">Sesgo general: alcista</string>
+    <string name="brief_bias_down">Sesgo general: bajista</string>
+    <string name="brief_bias_side">Sesgo general: lateral</string>
+    <string name="sc_bull">Alza: un cierre horario sobre %1$s (%2$s) abre camino hacia %3$s (%4$s)</string>
+    <string name="sc_bull_open">Alza: un cierre horario sobre %1$s (%2$s) reforzaría la subida</string>
+    <string name="sc_bear">Baja: un cierre horario bajo %1$s (%2$s) abre camino hacia %3$s (%4$s)</string>
+    <string name="sc_bear_open">Baja: un cierre horario bajo %1$s (%2$s) reforzaría la caída</string>
+    <string name="notif_brief_title">Plan de hoy — XAU/USD</string>
     <string name="r_w_up" formatted="false">alcista</string>
     <string name="r_w_down" formatted="false">bajista</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

@@ -169,7 +169,7 @@
     <string name="live_expl">Cada sinal passado deste horizonte foi registrado antes de o resultado ser conhecido e verificado após o período (depois dos custos). É o único teste sem viés retrospectivo. É uma frequência, não uma probabilidade.</string>
     <string name="live_hours_note">Horas: operações simuladas desde a última reinicialização do servidor.</string>
     <string name="set_notify">Alertas de sinais validados</string>
-    <string name="set_notify_note">Verifica a cada 15 minutos em segundo plano; alerta apenas para COMPRA ou VENDA validada.</string>
+    <string name="set_notify_note">Um plano a cada manhã de pregão e um alerta para cada nova COMPRA ou VENDA validada (a cada 15 minutos).</string>
     <string name="notif_channel">Sinais de negociação</string>
     <string name="notif_title">%1$s · %2$s</string>
     <string name="notif_text">Sinal validado — abra o app para ver entrada, stop e alvo. Apenas negociação simulada.</string>
@@ -233,6 +233,15 @@
     <string name="asset_eth">Ethereum</string>
     <string name="asset_sol">Solana</string>
     <string name="asset_soon">Em breve</string>
+    <string name="brief_title">Cenários de hoje — para observar, não recomendações</string>
+    <string name="brief_bias_up">Viés geral: de alta</string>
+    <string name="brief_bias_down">Viés geral: de baixa</string>
+    <string name="brief_bias_side">Viés geral: lateral</string>
+    <string name="sc_bull">Alta: um fechamento horário acima de %1$s (%2$s) abre caminho para %3$s (%4$s)</string>
+    <string name="sc_bull_open">Alta: um fechamento horário acima de %1$s (%2$s) reforçaria a alta</string>
+    <string name="sc_bear">Baixa: um fechamento horário abaixo de %1$s (%2$s) abre caminho para %3$s (%4$s)</string>
+    <string name="sc_bear_open">Baixa: um fechamento horário abaixo de %1$s (%2$s) reforçaria a queda</string>
+    <string name="notif_brief_title">Plano de hoje — XAU/USD</string>
     <string name="r_w_up" formatted="false">de alta</string>
     <string name="r_w_down" formatted="false">de baixa</string>
     <string name="r_w_neutral" formatted="false">neutra</string>

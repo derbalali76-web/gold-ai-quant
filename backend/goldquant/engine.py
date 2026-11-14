@@ -657,6 +657,11 @@ class DecisionEngine:
     def _finish(self, d: Decision, audit: dict | None = None) -> Decision:
         from . import plans as PL
         PL.attach(d, getattr(self, "planners", None), getattr(self, "_daily", None))  # plans are part of the audit
+        from . import brief as BR
+        try:
+            d.daily_brief = BR.build(d)
+        except Exception:  # noqa: BLE001 — context only
+            d.daily_brief = None
         record = {"decision": d.model_dump(mode="json"), "pit": (audit or {}).get("pit"),
                   "firewall": (audit or {}).get("firewall"),
                   "versions": {"schema": SCHEMA_VERSION, "path_model": P.PATH_VERSION, "baseline_model": M.MODEL_VERSION},

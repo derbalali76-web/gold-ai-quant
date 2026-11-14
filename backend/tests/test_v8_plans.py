@@ -86,3 +86,24 @@ def test_closed_market_keeps_last_session_context_but_never_trades():
     assert d.action.value == "UNAVAILABLE" and d.market_closed
     assert d.market_trend is not None
     assert all(o.plan.setup.value != "BUY_NOW" and o.plan.setup.value != "SELL_NOW" for o in d.outlooks if o.horizon == "HOURS")
+
+
+def test_daily_brief_is_context_not_a_trade():
+    from datetime import datetime, timezone
+    from goldquant.engine import DecisionEngine
+    from goldquant.providers.demo import DemoProvider
+    from goldquant.schemas import Mode
+    from goldquant.store import Store
+    eng = DecisionEngine(Store())
+    for day in (10, 11, 12, 7):  # weekdays + a Saturday (closed market keeps last-session context)
+        d = eng.decide(DemoProvider(), Mode.DEMO, datetime(2026, 11, day, 14, tzinfo=timezone.utc))
+        b = d.daily_brief
+        if b is None:
+            continue
+        assert b.scenarios and all(s.kind in ("BULL", "BEAR") for s in b.scenarios)
+        for s in b.scenarios:
+            if s.kind == "BULL":
+                assert s.trigger > b.price and (s.target is None or s.target > s.trigger)
+            else:
+                assert s.trigger < b.price and (s.target is None or s.target < s.trigger)
+        assert "probability" not in b.model_dump_json()

@@ -44,6 +44,43 @@
       "title": "CourtJudgement",
       "type": "object"
     },
+    "DailyBrief": {
+      "additionalProperties": false,
+      "description": "Every day, even when no trade is validated: today's bias and the two levels that would change the picture.",
+      "properties": {
+        "bias": {
+          "title": "Bias",
+          "type": "string"
+        },
+        "date": {
+          "title": "Date",
+          "type": "string"
+        },
+        "price": {
+          "title": "Price",
+          "type": "number"
+        },
+        "scenarios": {
+          "items": {
+            "$ref": "#/$defs/Scenario"
+          },
+          "title": "Scenarios",
+          "type": "array"
+        },
+        "source": {
+          "default": "H1_LEVELS",
+          "title": "Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "date",
+        "bias",
+        "price"
+      ],
+      "title": "DailyBrief",
+      "type": "object"
+    },
     "DataFreshness": {
       "additionalProperties": false,
       "properties": {
@@ -862,6 +899,67 @@
       "title": "ReasonRef",
       "type": "object"
     },
+    "Scenario": {
+      "additionalProperties": false,
+      "description": "A level-based scenario to WATCH today (v1.7.2). Not a recommendation: no probability, no position size.",
+      "properties": {
+        "invalidation": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Invalidation"
+        },
+        "kind": {
+          "title": "Kind",
+          "type": "string"
+        },
+        "target": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target"
+        },
+        "target_level": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Level"
+        },
+        "trigger": {
+          "title": "Trigger",
+          "type": "number"
+        },
+        "trigger_level": {
+          "title": "Trigger Level",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "trigger",
+        "trigger_level"
+      ],
+      "title": "Scenario",
+      "type": "object"
+    },
     "Setup": {
       "enum": [
         "BUY_NOW",
@@ -1303,6 +1401,17 @@
       },
       "title": "Court",
       "type": "array"
+    },
+    "daily_brief": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DailyBrief"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     },
     "data_freshness": {
       "$ref": "#/$defs/DataFreshness"

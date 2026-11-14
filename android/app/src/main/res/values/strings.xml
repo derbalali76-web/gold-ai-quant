@@ -170,7 +170,7 @@
     <string name="live_expl">Every past signal of this horizon was recorded before its outcome was known, then checked after its holding period (after costs). This is the only test with no hindsight. It is a frequency, not a probability.</string>
     <string name="live_hours_note">Hours: paper trades since the server last restarted.</string>
     <string name="set_notify">Alerts for validated signals</string>
-    <string name="set_notify_note">Checks every 15 minutes in the background; alerts only for a validated BUY or SELL.</string>
+    <string name="set_notify_note">A morning plan every trading day, plus an alert for each new validated BUY or SELL (checked every 15 minutes).</string>
     <string name="notif_channel">Trading signals</string>
     <string name="notif_title">%1$s · %2$s</string>
     <string name="notif_text">Validated signal — open the app for entry, stop and target. Paper trading only.</string>
@@ -234,6 +234,15 @@
     <string name="asset_eth">Ethereum</string>
     <string name="asset_sol">Solana</string>
     <string name="asset_soon">Coming soon</string>
+    <string name="brief_title">Today\'s scenarios — to watch, not recommendations</string>
+    <string name="brief_bias_up">Overall bias: up</string>
+    <string name="brief_bias_down">Overall bias: down</string>
+    <string name="brief_bias_side">Overall bias: sideways</string>
+    <string name="sc_bull">Up: an hourly close above %1$s (%2$s) opens the way to %3$s (%4$s)</string>
+    <string name="sc_bull_open">Up: an hourly close above %1$s (%2$s) would strengthen the rise</string>
+    <string name="sc_bear">Down: an hourly close below %1$s (%2$s) opens the way to %3$s (%4$s)</string>
+    <string name="sc_bear_open">Down: an hourly close below %1$s (%2$s) would strengthen the fall</string>
+    <string name="notif_brief_title">Today\'s plan — XAU/USD</string>
     <string name="r_w_up" formatted="false">up</string>
     <string name="r_w_down" formatted="false">down</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

@@ -36,4 +36,12 @@ class PlanParseTest {
         val p = HorizonModel.card(load("unavailable_live.json"), "HOURS").plan
         assertTrue(p == null || p.setup == "UNAVAILABLE") // no outlooks at all when the data are unusable
     }
+
+    @Test fun dailyBriefIsParsedAsScenariosOnly() {
+        listOf("wait_demo.json", "buy_demo_stub.json", "live_qualified_stub.json").forEach { f ->
+            val b = load(f).brief ?: return@forEach
+            assertTrue(b.scenarios.isNotEmpty())
+            b.scenarios.forEach { assertTrue(it.kind == "BULL" || it.kind == "BEAR") }
+        }
+    }
 }

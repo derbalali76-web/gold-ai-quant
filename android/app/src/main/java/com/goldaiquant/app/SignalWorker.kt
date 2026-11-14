@@ -33,6 +33,14 @@ class SignalWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx
         prefs.edit().putString("notified", memory.entries.joinToString(";") { "${it.key}=${it.value}" })
             .putString("last_decision", f.raw).putLong("last_received", System.currentTimeMillis()).apply()
         if (fresh.isNotEmpty()) notify(fresh)
+        // once a day, in the morning: today's plan (bias + watch scenarios), so the user sees the app at work
+        val today = java.time.LocalDate.now().toString()
+        val hour = java.time.LocalTime.now().hour
+        val b = f.decision.brief
+        if (b != null && !f.decision.marketClosed && hour >= 7 && prefs.getString("brief_day", "") != today) {
+            prefs.edit().putString("brief_day", today).apply()
+            notifyBrief(b)
+        }
         return Result.success()
     }
 
@@ -59,7 +67,38 @@ class SignalWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx
         }
     }
 
+    private fun notifyBrief(b: Brief) {
+        val ctx = LanguageStore.wrap(applicationContext, LanguageStore.resolve(applicationContext))
+        if (Build.VERSION.SDK_INT >= 33 && ContextCompat.checkSelfPermission(applicationContext,
+                android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) return
+        val nm = applicationContext.getSystemService(NotificationManager::class.java)
+        nm.createNotificationChannel(NotificationChannel(CHANNEL, ctx.getString(R.string.notif_channel),
+            NotificationManager.IMPORTANCE_HIGH))
+        val p2 = { v: Double -> String.format(java.util.Locale.US, "%.2f", v) }
+        val lines = mutableListOf(ctx.getString(when (b.bias) { "UP" -> R.string.brief_bias_up; "DOWN" -> R.string.brief_bias_down; else -> R.string.brief_bias_side }))
+        b.scenarios.take(2).forEach { sc ->
+            lines += when {
+                sc.kind == "BULL" && sc.target != null -> ctx.getString(R.string.sc_bull, p2(sc.trigger), sc.triggerLevel, p2(sc.target), sc.targetLevel ?: "")
+                sc.kind == "BULL" -> ctx.getString(R.string.sc_bull_open, p2(sc.trigger), sc.triggerLevel)
+                sc.target != null -> ctx.getString(R.string.sc_bear, p2(sc.trigger), sc.triggerLevel, p2(sc.target), sc.targetLevel ?: "")
+                else -> ctx.getString(R.string.sc_bear_open, p2(sc.trigger), sc.triggerLevel)
+            }
+        }
+        lines += ctx.getString(R.string.brief_title)
+        val open = PendingIntent.getActivity(applicationContext, 1,
+            Intent(applicationContext, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),
+            PendingIntent.FLAG_IMMUTABLE)
+        val n = NotificationCompat.Builder(applicationContext, CHANNEL)
+            .setSmallIcon(android.R.drawable.stat_notify_more)
+            .setContentTitle(ctx.getString(R.string.notif_brief_title))
+            .setContentText(lines.getOrElse(1) { lines[0] })
+            .setStyle(NotificationCompat.BigTextStyle().bigText(lines.joinToString("\n")))
+            .setContentIntent(open).setAutoCancel(true).build()
+        NotificationManagerCompat.from(applicationContext).notify(BRIEF_ID, n)
+    }
+
     companion object {
+        private const val BRIEF_ID = 4711
         private const val CHANNEL = "signals"
         private const val WORK = "signal-watch"
 

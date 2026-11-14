@@ -37,6 +37,10 @@ data class Outlook(
     val plan: Plan? = null, val performance: List<Perf> = emptyList(),
 )
 
+/** Daily context (v1.7.2): bias + level scenarios to WATCH; never a recommendation. */
+data class Scenario(val kind: String, val trigger: Double, val triggerLevel: String, val target: Double?, val targetLevel: String?)
+data class Brief(val date: String, val bias: String, val scenarios: List<Scenario>)
+
 /** v1.7 trade plan of one horizon. A watch plan (WAIT_TO_*) never carries a stop or a target. */
 data class Plan(
     val setup: String, val recommendation: Boolean, val side: String?, val entryLow: Double?, val entryHigh: Double?,
@@ -121,6 +125,7 @@ data class Decision(
     val alternativeEntryNote: Reason? = null,
     val reevaluateRefs: List<Reason> = emptyList(),
     val marketClosed: Boolean = false,
+    val brief: Brief? = null,
 ) {
     val isDemo: Boolean get() = mode == "DEMO"
 
@@ -204,6 +209,7 @@ object DecisionParser {
             reevaluateAr = o.strings("reevaluate_ar"),
             outlooks = o.outlooks("outlooks"),
             marketClosed = o.optBoolean("market_closed", false),
+            brief = o.optJSONObject("daily_brief")?.let { parseBrief(it) },
             reasonShort = o.reason("reason_short_ref"), waitFor = o.reason("wait_for_ref"), warning = o.reason("warning_ref"),
             invalidationRefs = o.reasons("invalidation_refs"), missingRefs = o.reasons("missing_refs"),
             alternativeEntryNote = o.reason("alternative_entry_note_ref"),
@@ -332,6 +338,18 @@ object DecisionParser {
                 e.optJSONObject("plan")?.let { parsePlan(it) }, e.perfList("performance"))
         }
     }
+    private fun parseBrief(b: JSONObject): Brief? {
+        val a = b.optJSONArray("scenarios") ?: return null
+        val sc = (0 until a.length()).mapNotNull { i ->
+            val e = a.optJSONObject(i) ?: return@mapNotNull null
+            val kind = e.optString("kind"); val trig = e.dbl("trigger") ?: return@mapNotNull null
+            if (kind != "BULL" && kind != "BEAR") return@mapNotNull null
+            Scenario(kind, trig, e.optString("trigger_level"), e.dbl("target"), e.str("target_level"))
+        }
+        if (sc.isEmpty()) return null
+        return Brief(b.optString("date"), b.optString("bias", "UNKNOWN"), sc)
+    }
+
     private fun parsePlan(p: JSONObject): Plan? {
         val setup = p.str("setup") ?: return null
         if (setup !in setOf("BUY_NOW", "SELL_NOW", "WAIT_TO_BUY", "WAIT_TO_SELL", "WAIT", "UNAVAILABLE")) return null

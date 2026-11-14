@@ -169,7 +169,7 @@
     <string name="live_expl">Chaque signal passé de cet horizon a été enregistré avant que son résultat soit connu, puis vérifié après sa période de détention (après coûts). C\'est le seul test sans biais rétrospectif. C\'est une fréquence, pas une probabilité.</string>
     <string name="live_hours_note">Heures : trades papier depuis le dernier redémarrage du serveur.</string>
     <string name="set_notify">Alertes pour les signaux validés</string>
-    <string name="set_notify_note">Vérifie toutes les 15 minutes en arrière-plan ; alerte uniquement pour un ACHAT ou une VENTE validés.</string>
+    <string name="set_notify_note">Un plan chaque matin de séance, plus une alerte pour chaque nouvel ACHAT ou VENTE validé (vérifié toutes les 15 minutes).</string>
     <string name="notif_channel">Signaux de trading</string>
     <string name="notif_title">%1$s · %2$s</string>
     <string name="notif_text">Signal validé — ouvrez l\'application pour l\'entrée, le stop et l\'objectif. Trading papier uniquement.</string>
@@ -233,6 +233,15 @@
     <string name="asset_eth">Ethereum</string>
     <string name="asset_sol">Solana</string>
     <string name="asset_soon">Bientôt</string>
+    <string name="brief_title">Scénarios du jour — à surveiller, pas des recommandations</string>
+    <string name="brief_bias_up">Biais général : haussier</string>
+    <string name="brief_bias_down">Biais général : baissier</string>
+    <string name="brief_bias_side">Biais général : neutre</string>
+    <string name="sc_bull">Hausse : une clôture horaire au-dessus de %1$s (%2$s) ouvre la voie vers %3$s (%4$s)</string>
+    <string name="sc_bull_open">Hausse : une clôture horaire au-dessus de %1$s (%2$s) renforcerait la hausse</string>
+    <string name="sc_bear">Baisse : une clôture horaire sous %1$s (%2$s) ouvre la voie vers %3$s (%4$s)</string>
+    <string name="sc_bear_open">Baisse : une clôture horaire sous %1$s (%2$s) renforcerait la baisse</string>
+    <string name="notif_brief_title">Plan du jour — XAU/USD</string>
     <string name="r_w_up" formatted="false">haussière</string>
     <string name="r_w_down" formatted="false">baissière</string>
     <string name="r_w_neutral" formatted="false">neutre</string>

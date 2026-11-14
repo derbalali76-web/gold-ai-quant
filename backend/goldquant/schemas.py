@@ -230,6 +230,27 @@ class PerfStats(BaseModel):
     verdict: Optional[str] = None
 
 
+class Scenario(BaseModel):
+    """A level-based scenario to WATCH today (v1.7.2). Not a recommendation: no probability, no position size."""
+    model_config = ConfigDict(extra="forbid")
+    kind: str  # BULL | BEAR
+    trigger: float
+    trigger_level: str  # e.g. R1 / S1
+    target: Optional[float] = None
+    target_level: Optional[str] = None
+    invalidation: Optional[float] = None
+
+
+class DailyBrief(BaseModel):
+    """Every day, even when no trade is validated: today's bias and the two levels that would change the picture."""
+    model_config = ConfigDict(extra="forbid")
+    date: str
+    bias: str  # UP | DOWN | SIDEWAYS | UNKNOWN (from the analytic trend, not a forecast probability)
+    price: float
+    scenarios: list[Scenario] = Field(default_factory=list)
+    source: str = "H1_LEVELS"  # H1_LEVELS | DAILY_LEVELS
+
+
 class HorizonOutlook(BaseModel):
     """Per-horizon view: HOURS mirrors the main intraday decision; WEEK / MONTH come from daily rules.
 
@@ -340,6 +361,7 @@ class Decision(BaseModel):
     outlooks: list[HorizonOutlook] = Field(default_factory=list)
     # v1.7: the market is closed (weekend / daily break); trend and levels are those of the LAST session, for planning
     market_closed: bool = False
+    daily_brief: Optional[DailyBrief] = None
     audit_hash: Optional[str] = None
 
     supporting_evidence: list[Evidence] = Field(default_factory=list)

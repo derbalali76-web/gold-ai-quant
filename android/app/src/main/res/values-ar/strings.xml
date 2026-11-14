@@ -169,7 +169,7 @@
     <string name="live_expl">كل إشارة سابقة لهذا الأفق سُجّلت قبل معرفة نتيجتها، ثم فُحصت بعد انتهاء مدتها (بعد التكاليف). هذا هو الاختبار الوحيد الخالي من النظر إلى الماضي. إنها نسبة تكرار، لا احتمال.</string>
     <string name="live_hours_note">الساعات: صفقات ورقية منذ آخر إعادة تشغيل للخادم.</string>
     <string name="set_notify">تنبيهات للإشارات المحقَّقة</string>
-    <string name="set_notify_note">يفحص كل 15 دقيقة في الخلفية؛ ينبّه فقط عند شراء أو بيع محقَّق.</string>
+    <string name="set_notify_note">خطة صباحية كل يوم تداول، وتنبيه عند كل شراء أو بيع محقَّق جديد (يُفحص كل 15 دقيقة).</string>
     <string name="notif_channel">إشارات التداول</string>
     <string name="notif_title">%1$s · %2$s</string>
     <string name="notif_text">إشارة محقَّقة — افتح التطبيق لرؤية الدخول والوقف والهدف. للتداول الورقي فقط.</string>
@@ -233,6 +233,15 @@
     <string name="asset_eth">إيثيريوم</string>
     <string name="asset_sol">سولانا</string>
     <string name="asset_soon">قريباً</string>
+    <string name="brief_title">سيناريوهات اليوم — للمراقبة، ليست توصيات</string>
+    <string name="brief_bias_up">الميل العام: صاعد</string>
+    <string name="brief_bias_down">الميل العام: هابط</string>
+    <string name="brief_bias_side">الميل العام: عرضي</string>
+    <string name="sc_bull">صعود: إغلاق ساعة فوق %1$s (%2$s) يفتح الطريق نحو %3$s (%4$s)</string>
+    <string name="sc_bull_open">صعود: إغلاق ساعة فوق %1$s (%2$s) يقوّي الصعود</string>
+    <string name="sc_bear">هبوط: إغلاق ساعة تحت %1$s (%2$s) يفتح الطريق نحو %3$s (%4$s)</string>
+    <string name="sc_bear_open">هبوط: إغلاق ساعة تحت %1$s (%2$s) يقوّي الهبوط</string>
+    <string name="notif_brief_title">خطة اليوم — XAU/USD</string>
     <string name="r_w_up" formatted="false">صاعد</string>
     <string name="r_w_down" formatted="false">هابط</string>
     <string name="r_w_neutral" formatted="false">محايد</string>
