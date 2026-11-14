@@ -26,7 +26,7 @@ from goldquant.providers.twelvedata import TwelveDataProvider, parse_time_series
 
 ROOT = Path(os.environ.get("GOLDQUANT_REPO_ROOT", Path(__file__).resolve().parents[2]))
 MD, MODELS = ROOT / "market_data", ROOT / "models"
-DUKA = ("XAUUSD", "XAGUSD", "EURUSD", "USDJPY")
+DUKA = ("XAUUSD", "XAGUSD", "EURUSD", "USDJPY", "DOLLARIDXUSD", "USA500IDXUSD", "USTBONDTRUSD")
 AUX_TD = {"EUR/USD": "EURUSD", "USD/JPY": "USDJPY", "XAG/USD": "XAGUSD"}
 TFS = {"M15": 15, "H1": 60, "H4": 240}
 
@@ -170,7 +170,7 @@ BACKFILL_BUDGET = timedelta(minutes=70)  # the workflow is killed at 120 min: st
 
 
 def backfill(hs: HistoryStore, years: float, first: date | None = None, last: date | None = None,
-             budget_min: float | None = None) -> None:
+             budget_min: float | None = None, symbols: tuple | None = None) -> None:
     """Newest data first, gold first; stops before the CI time limit so the commit step always runs.
     Re-running backfill continues where the previous run stopped (already-stored months are skipped)."""
     import time
@@ -179,7 +179,7 @@ def backfill(hs: HistoryStore, years: float, first: date | None = None, last: da
     end = last or (date.today() - timedelta(days=1))
     start = first or (end - timedelta(days=int(365 * years)))
     budget = timedelta(minutes=budget_min) if budget_min else BACKFILL_BUDGET
-    for sym in DUKA:
+    for sym in (symbols or DUKA):
         d = end
         while d >= start:
             if time.monotonic() - t0 > budget.total_seconds():
@@ -295,7 +295,8 @@ def research(hs: HistoryStore) -> None:
     (MODELS / "precision_report.json").write_text(json.dumps(rep, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
     PR.save(MODELS / "promotions.json", rep.get("promotion", []), label)
     prov = "Dukascopy" if "Dukascopy" in label else "TwelveData"
-    aux = {s: hs.load_bars(prov, s, "M15") for s in ("XAGUSD", "EURUSD", "USDJPY")}
+    from goldquant.features_ext import CROSS_ASSETS
+    aux = {s: hs.load_bars(prov, s, "M15") for s in CROSS_ASSETS}
     aux = {k: v for k, v in aux.items() if len(v) > 1000}
     fu = compare(bars["M15"], bars["H1"], bars["H4"], aux or None, dataset_label=label)
     (MODELS / "feature_upgrade.json").write_text(json.dumps(fu, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
@@ -407,13 +408,14 @@ if __name__ == "__main__":
     ap.add_argument("--first", type=date.fromisoformat, default=None, help="backfill range start (YYYY-MM-DD)")
     ap.add_argument("--last", type=date.fromisoformat, default=None, help="backfill range end (YYYY-MM-DD)")
     ap.add_argument("--budget-min", type=float, default=None)
+    ap.add_argument("--symbols", default="", help="comma-separated Dukascopy symbols (backfill); default: all")
     a = ap.parse_args()
     hs = load()
     if a.cmd == "collect":
         collect(hs)
         save(hs)
     elif a.cmd == "backfill":
-        backfill(hs, a.years, a.first, a.last, a.budget_min)
+        backfill(hs, a.years, a.first, a.last, a.budget_min, tuple(x for x in a.symbols.split(",") if x) or None)
         save(hs)
     elif a.cmd == "train":
         train(hs)

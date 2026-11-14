@@ -21,7 +21,9 @@ import pandas as pd
 from .http import HttpClient, HttpError, RateLimiter
 
 BASE = "https://datafeed.dukascopy.com/datafeed"
-PLAUSIBLE = {"XAUUSD": (200.0, 20000.0), "XAGUSD": (2.0, 500.0), "EURUSD": (0.5, 2.5), "USDJPY": (50.0, 400.0)}
+PLAUSIBLE = {"XAUUSD": (200.0, 20000.0), "XAGUSD": (2.0, 500.0), "EURUSD": (0.5, 2.5), "USDJPY": (50.0, 400.0),
+             # cross-asset context (ranges < 10x wide so the price scale is unambiguous)
+             "DOLLARIDXUSD": (60.0, 160.0), "USA500IDXUSD": (900.0, 9000.0), "USTBONDTRUSD": (70.0, 250.0)}
 SCALES = (100000.0, 1000.0, 100.0, 10.0)
 REC = struct.Struct(">5If")
 

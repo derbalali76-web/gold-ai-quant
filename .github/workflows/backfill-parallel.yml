@@ -15,7 +15,7 @@ jobs:
     timeout-minutes: 120
     strategy:
       fail-fast: false
-      max-parallel: 10
+      max-parallel: 20
       matrix:
         include: ${{ fromJSON(inputs.chunks != '' && inputs.chunks || '[{"first":"2023-11-01","last":"2024-01-31"},{"first":"2024-02-01","last":"2024-04-30"},{"first":"2024-05-01","last":"2024-07-31"},{"first":"2024-08-01","last":"2024-10-31"},{"first":"2024-11-01","last":"2025-01-31"},{"first":"2025-02-01","last":"2025-04-30"},{"first":"2025-05-01","last":"2025-07-31"},{"first":"2025-08-01","last":"2025-10-31"},{"first":"2025-11-01","last":"2026-01-31"}]') }}
     steps:
@@ -24,27 +24,28 @@ jobs:
         with: { python-version: "3.12", cache: pip, cache-dependency-path: backend/requirements.txt }
       - run: pip install -r backend/requirements.txt
       - name: backfill ${{ matrix.first }} → ${{ matrix.last }}
-        run: timeout 105m python backend/tools/cloud_job.py backfill --first ${{ matrix.first }} --last ${{ matrix.last }} --budget-min 95
+        run: timeout 105m python backend/tools/cloud_job.py backfill --first ${{ matrix.first }} --last ${{ matrix.last }} --budget-min 95 --symbols "${{ matrix.symbols || '' }}"
         env: { GOLDQUANT_REPO_ROOT: "${{ github.workspace }}" }
       - name: commit this chunk's months only
         if: ${{ always() }}
         run: |
           git config user.name gold-ai-quant-bot
           git config user.email bot@users.noreply.github.com
-          python - "${{ matrix.first }}" "${{ matrix.last }}" > files.txt <<'PY'
+          python - "${{ matrix.first }}" "${{ matrix.last }}" "${{ matrix.symbols || '' }}" > files.txt <<'PY'
           import sys, subprocess
           a, b = sys.argv[1][:7], sys.argv[2][:7]
+          syms = [x for x in sys.argv[3].split(",") if x]
           out = subprocess.run(["git", "status", "--porcelain", "market_data/bars/Dukascopy"], capture_output=True, text=True).stdout
           for line in out.splitlines():
               p = line[3:].strip()
               m = p.rsplit("/", 1)[-1][:7]
-              if p.endswith(".csv.gz") and a <= m <= b:
+              if p.endswith(".csv.gz") and a <= m <= b and (not syms or any(f"/{x}/" in p for x in syms)):
                   print(p)
           PY
           cat files.txt
           [ -s files.txt ] || exit 0
           xargs git add < files.txt
-          git commit -m "data: backfill ${{ matrix.first }}..${{ matrix.last }}"
+          git commit -m "data: backfill ${{ matrix.symbols || 'all' }} ${{ matrix.first }}..${{ matrix.last }}"
           git stash --include-untracked -q || true
           for i in 1 2 3 4 5 6 7 8; do
             # our commit only touches this chunk's months: on a conflict keep our (freshly fetched) version

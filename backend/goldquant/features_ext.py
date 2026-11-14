@@ -13,7 +13,8 @@ import pandas as pd
 LONDON, NEW_YORK = ZoneInfo("Europe/London"), ZoneInfo("America/New_York")
 TIME_FEATURES = ["min_since_london_open", "min_since_ny_open", "near_london_pm_fix", "dow_sin", "dow_cos",
                  "month_end"]
-CROSS_ASSETS = {"EURUSD": -1.0, "USDJPY": 1.0, "XAGUSD": 1.0}  # sign: + means "moves like a stronger dollar" for FX
+CROSS_ASSETS = {"EURUSD": -1.0, "USDJPY": 1.0, "XAGUSD": 1.0,
+                "DOLLARIDXUSD": 1.0, "USA500IDXUSD": 0.0, "USTBONDTRUSD": -1.0}  # sign: + means "moves like a stronger dollar" for FX
 
 
 def time_features(close_times: pd.DatetimeIndex) -> pd.DataFrame:
