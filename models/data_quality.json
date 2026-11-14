@@ -1,0 +1,1292 @@
+{
+ "generated_at": "2026-11-14T22:57:59.498127+00:00",
+ "series": {
+  "Dukascopy:XAUUSD:M15": {
+   "history": {
+    "status": "FAIL",
+    "checks": [
+     {
+      "code": "freshness",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "coverage",
+      "status": "OK",
+      "value": "97.6%"
+     },
+     {
+      "code": "gaps",
+      "status": "FAIL",
+      "value": "92.0h"
+     },
+     {
+      "code": "ohlc",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "weekend",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "outliers",
+      "status": "WARN",
+      "value": "76"
+     },
+     {
+      "code": "flat",
+      "status": "OK",
+      "value": "1"
+     },
+     {
+      "code": "cross_source",
+      "status": "OK",
+      "value": "0.018%/0.32%"
+     }
+    ],
+    "bars": 254560,
+    "first": "2016-01-03 23:00:00+00:00",
+    "last": "2026-11-13 21:45:00+00:00"
+   },
+   "last_7_days": {
+    "status": "OK",
+    "checks": [
+     {
+      "code": "freshness",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "coverage",
+      "status": "OK",
+      "value": "100.0%"
+     },
+     {
+      "code": "gaps",
+      "status": "OK",
+      "value": "0.0h"
+     },
+     {
+      "code": "ohlc",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "weekend",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "outliers",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "flat",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "cross_source",
+      "status": "OK",
+      "value": "0.018%/0.24%"
+     }
+    ],
+    "bars": 460,
+    "first": "2016-01-03 23:00:00+00:00",
+    "last": "2026-11-13 21:45:00+00:00"
+   }
+  },
+  "Dukascopy:XAUUSD:H1": {
+   "history": {
+    "status": "FAIL",
+    "checks": [
+     {
+      "code": "freshness",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "coverage",
+      "status": "OK",
+      "value": "97.6%"
+     },
+     {
+      "code": "gaps",
+      "status": "FAIL",
+      "value": "92.0h"
+     },
+     {
+      "code": "ohlc",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "weekend",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "outliers",
+      "status": "WARN",
+      "value": "5"
+     },
+     {
+      "code": "flat",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "cross_source",
+      "status": "OK",
+      "value": "0.018%/0.46%"
+     }
+    ],
+    "bars": 63702,
+    "first": "2016-01-03 23:00:00+00:00",
+    "last": "2026-11-13 21:00:00+00:00"
+   },
+   "last_7_days": {
+    "status": "OK",
+    "checks": [
+     {
+      "code": "freshness",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "coverage",
+      "status": "OK",
+      "value": "100.0%"
+     },
+     {
+      "code": "gaps",
+      "status": "OK",
+      "value": "0.0h"
+     },
+     {
+      "code": "ohlc",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "weekend",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "outliers",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "flat",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "cross_source",
+      "status": "OK",
+      "value": "0.020%/0.12%"
+     }
+    ],
+    "bars": 115,
+    "first": "2016-01-03 23:00:00+00:00",
+    "last": "2026-11-13 21:00:00+00:00"
+   }
+  },
+  "Dukascopy:XAGUSD:M15": {
+   "history": {
+    "status": "FAIL",
+    "checks": [
+     {
+      "code": "freshness",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "coverage",
+      "status": "FAIL",
+      "value": "32.9%"
+     },
+     {
+      "code": "gaps",
+      "status": "FAIL",
+      "value": "6165.0h"
+     },
+     {
+      "code": "ohlc",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "weekend",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "outliers",
+      "status": "WARN",
+      "value": "5"
+     },
+     {
+      "code": "flat",
+      "status": "OK",
+      "value": "2"
+     }
+    ],
+    "bars": 22004,
+    "first": "2024-02-01 00:00:00+00:00",
+    "last": "2026-11-13 21:45:00+00:00"
+   },
+   "last_7_days": {
+    "status": "FAIL",
+    "checks": [
+     {
+      "code": "freshness",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "coverage",
+      "status": "FAIL",
+      "value": "39.1%"
+     },
+     {
+      "code": "gaps",
+      "status": "FAIL",
+      "value": "70.0h"
+     },
+     {
+      "code": "ohlc",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "weekend",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "outliers",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "flat",
+      "status": "OK",
+      "value": "0"
+     }
+    ],
+    "bars": 180,
+    "first": "2024-02-01 00:00:00+00:00",
+    "last": "2026-11-13 21:45:00+00:00"
+   }
+  },
+  "Dukascopy:XAGUSD:H1": {
+   "history": {
+    "status": "FAIL",
+    "checks": [
+     {
+      "code": "freshness",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "coverage",
+      "status": "FAIL",
+      "value": "32.9%"
+     },
+     {
+      "code": "gaps",
+      "status": "FAIL",
+      "value": "6165.0h"
+     },
+     {
+      "code": "ohlc",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "weekend",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "outliers",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "flat",
+      "status": "OK",
+      "value": "0"
+     }
+    ],
+    "bars": 5505,
+    "first": "2024-02-01 00:00:00+00:00",
+    "last": "2026-11-13 21:00:00+00:00"
+   },
+   "last_7_days": {
+    "status": "FAIL",
+    "checks": [
+     {
+      "code": "freshness",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "coverage",
+      "status": "FAIL",
+      "value": "39.1%"
+     },
+     {
+      "code": "gaps",
+      "status": "FAIL",
+      "value": "70.0h"
+     },
+     {
+      "code": "ohlc",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "weekend",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "flat",
+      "status": "OK",
+      "value": "0"
+     }
+    ],
+    "bars": 45,
+    "first": "2024-02-01 00:00:00+00:00",
+    "last": "2026-11-13 21:00:00+00:00"
+   }
+  },
+  "Dukascopy:EURUSD:M15": {
+   "history": {
+    "status": "OK",
+    "checks": [
+     {
+      "code": "freshness",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "coverage",
+      "status": "OK",
+      "value": "100.0%"
+     },
+     {
+      "code": "gaps",
+      "status": "OK",
+      "value": "0.0h"
+     },
+     {
+      "code": "ohlc",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "weekend",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "outliers",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "flat",
+      "status": "OK",
+      "value": "0"
+     }
+    ],
+    "bars": 184,
+    "first": "2026-11-12 00:00:00+00:00",
+    "last": "2026-11-13 21:45:00+00:00"
+   },
+   "last_7_days": {
+    "status": "OK",
+    "checks": [
+     {
+      "code": "freshness",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "coverage",
+      "status": "OK",
+      "value": "100.0%"
+     },
+     {
+      "code": "gaps",
+      "status": "OK",
+      "value": "0.0h"
+     },
+     {
+      "code": "ohlc",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "weekend",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "outliers",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "flat",
+      "status": "OK",
+      "value": "0"
+     }
+    ],
+    "bars": 184,
+    "first": "2026-11-12 00:00:00+00:00",
+    "last": "2026-11-13 21:45:00+00:00"
+   }
+  },
+  "Dukascopy:EURUSD:H1": {
+   "history": {
+    "status": "OK",
+    "checks": [
+     {
+      "code": "freshness",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "coverage",
+      "status": "OK",
+      "value": "100.0%"
+     },
+     {
+      "code": "gaps",
+      "status": "OK",
+      "value": "0.0h"
+     },
+     {
+      "code": "ohlc",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "weekend",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "flat",
+      "status": "OK",
+      "value": "0"
+     }
+    ],
+    "bars": 46,
+    "first": "2026-11-12 00:00:00+00:00",
+    "last": "2026-11-13 21:00:00+00:00"
+   },
+   "last_7_days": {
+    "status": "OK",
+    "checks": [
+     {
+      "code": "freshness",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "coverage",
+      "status": "OK",
+      "value": "100.0%"
+     },
+     {
+      "code": "gaps",
+      "status": "OK",
+      "value": "0.0h"
+     },
+     {
+      "code": "ohlc",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "weekend",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "flat",
+      "status": "OK",
+      "value": "0"
+     }
+    ],
+    "bars": 46,
+    "first": "2026-11-12 00:00:00+00:00",
+    "last": "2026-11-13 21:00:00+00:00"
+   }
+  },
+  "Dukascopy:USDJPY:M15": {
+   "history": {
+    "status": "OK",
+    "checks": [
+     {
+      "code": "freshness",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "coverage",
+      "status": "OK",
+      "value": "100.0%"
+     },
+     {
+      "code": "gaps",
+      "status": "OK",
+      "value": "0.0h"
+     },
+     {
+      "code": "ohlc",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "weekend",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "outliers",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "flat",
+      "status": "OK",
+      "value": "0"
+     }
+    ],
+    "bars": 88,
+    "first": "2026-11-13 00:00:00+00:00",
+    "last": "2026-11-13 21:45:00+00:00"
+   },
+   "last_7_days": {
+    "status": "OK",
+    "checks": [
+     {
+      "code": "freshness",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "coverage",
+      "status": "OK",
+      "value": "100.0%"
+     },
+     {
+      "code": "gaps",
+      "status": "OK",
+      "value": "0.0h"
+     },
+     {
+      "code": "ohlc",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "weekend",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "outliers",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "flat",
+      "status": "OK",
+      "value": "0"
+     }
+    ],
+    "bars": 88,
+    "first": "2026-11-13 00:00:00+00:00",
+    "last": "2026-11-13 21:45:00+00:00"
+   }
+  },
+  "Dukascopy:USDJPY:H1": {
+   "history": {
+    "status": "OK",
+    "checks": [
+     {
+      "code": "freshness",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "coverage",
+      "status": "OK",
+      "value": "100.0%"
+     },
+     {
+      "code": "gaps",
+      "status": "OK",
+      "value": "0.0h"
+     },
+     {
+      "code": "ohlc",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "weekend",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "flat",
+      "status": "OK",
+      "value": "0"
+     }
+    ],
+    "bars": 22,
+    "first": "2026-11-13 00:00:00+00:00",
+    "last": "2026-11-13 21:00:00+00:00"
+   },
+   "last_7_days": {
+    "status": "OK",
+    "checks": [
+     {
+      "code": "freshness",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "coverage",
+      "status": "OK",
+      "value": "100.0%"
+     },
+     {
+      "code": "gaps",
+      "status": "OK",
+      "value": "0.0h"
+     },
+     {
+      "code": "ohlc",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "weekend",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "flat",
+      "status": "OK",
+      "value": "0"
+     }
+    ],
+    "bars": 22,
+    "first": "2026-11-13 00:00:00+00:00",
+    "last": "2026-11-13 21:00:00+00:00"
+   }
+  },
+  "Dukascopy:DOLLARIDXUSD:M15": {
+   "history": {
+    "status": "OK",
+    "checks": [
+     {
+      "code": "freshness",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "coverage",
+      "status": "OK",
+      "value": "100.0%"
+     },
+     {
+      "code": "gaps",
+      "status": "OK",
+      "value": "0.0h"
+     },
+     {
+      "code": "ohlc",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "weekend",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "outliers",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "flat",
+      "status": "OK",
+      "value": "0"
+     }
+    ],
+    "bars": 84,
+    "first": "2026-11-13 01:00:00+00:00",
+    "last": "2026-11-13 21:45:00+00:00"
+   },
+   "last_7_days": {
+    "status": "OK",
+    "checks": [
+     {
+      "code": "freshness",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "coverage",
+      "status": "OK",
+      "value": "100.0%"
+     },
+     {
+      "code": "gaps",
+      "status": "OK",
+      "value": "0.0h"
+     },
+     {
+      "code": "ohlc",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "weekend",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "outliers",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "flat",
+      "status": "OK",
+      "value": "0"
+     }
+    ],
+    "bars": 84,
+    "first": "2026-11-13 01:00:00+00:00",
+    "last": "2026-11-13 21:45:00+00:00"
+   }
+  },
+  "Dukascopy:DOLLARIDXUSD:H1": {
+   "history": {
+    "status": "OK",
+    "checks": [
+     {
+      "code": "freshness",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "coverage",
+      "status": "OK",
+      "value": "100.0%"
+     },
+     {
+      "code": "gaps",
+      "status": "OK",
+      "value": "0.0h"
+     },
+     {
+      "code": "ohlc",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "weekend",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "flat",
+      "status": "OK",
+      "value": "0"
+     }
+    ],
+    "bars": 21,
+    "first": "2026-11-13 01:00:00+00:00",
+    "last": "2026-11-13 21:00:00+00:00"
+   },
+   "last_7_days": {
+    "status": "OK",
+    "checks": [
+     {
+      "code": "freshness",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "coverage",
+      "status": "OK",
+      "value": "100.0%"
+     },
+     {
+      "code": "gaps",
+      "status": "OK",
+      "value": "0.0h"
+     },
+     {
+      "code": "ohlc",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "weekend",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "flat",
+      "status": "OK",
+      "value": "0"
+     }
+    ],
+    "bars": 21,
+    "first": "2026-11-13 01:00:00+00:00",
+    "last": "2026-11-13 21:00:00+00:00"
+   }
+  },
+  "Dukascopy:USA500IDXUSD:M15": {
+   "history": {
+    "status": "WARN",
+    "checks": [
+     {
+      "code": "freshness",
+      "status": "WARN",
+      "value": "3"
+     },
+     {
+      "code": "coverage",
+      "status": "OK",
+      "value": "100.0%"
+     },
+     {
+      "code": "gaps",
+      "status": "OK",
+      "value": "0.0h"
+     },
+     {
+      "code": "ohlc",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "weekend",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "outliers",
+      "status": "WARN",
+      "value": "2"
+     },
+     {
+      "code": "flat",
+      "status": "OK",
+      "value": "0"
+     }
+    ],
+    "bars": 85,
+    "first": "2026-11-13 00:00:00+00:00",
+    "last": "2026-11-13 21:00:00+00:00"
+   },
+   "last_7_days": {
+    "status": "WARN",
+    "checks": [
+     {
+      "code": "freshness",
+      "status": "WARN",
+      "value": "3"
+     },
+     {
+      "code": "coverage",
+      "status": "OK",
+      "value": "100.0%"
+     },
+     {
+      "code": "gaps",
+      "status": "OK",
+      "value": "0.0h"
+     },
+     {
+      "code": "ohlc",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "weekend",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "outliers",
+      "status": "WARN",
+      "value": "2"
+     },
+     {
+      "code": "flat",
+      "status": "OK",
+      "value": "0"
+     }
+    ],
+    "bars": 85,
+    "first": "2026-11-13 00:00:00+00:00",
+    "last": "2026-11-13 21:00:00+00:00"
+   }
+  },
+  "Dukascopy:USA500IDXUSD:H1": {
+   "history": {
+    "status": "OK",
+    "checks": [
+     {
+      "code": "freshness",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "coverage",
+      "status": "OK",
+      "value": "100.0%"
+     },
+     {
+      "code": "gaps",
+      "status": "OK",
+      "value": "0.0h"
+     },
+     {
+      "code": "ohlc",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "weekend",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "flat",
+      "status": "OK",
+      "value": "0"
+     }
+    ],
+    "bars": 22,
+    "first": "2026-11-13 00:00:00+00:00",
+    "last": "2026-11-13 21:00:00+00:00"
+   },
+   "last_7_days": {
+    "status": "OK",
+    "checks": [
+     {
+      "code": "freshness",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "coverage",
+      "status": "OK",
+      "value": "100.0%"
+     },
+     {
+      "code": "gaps",
+      "status": "OK",
+      "value": "0.0h"
+     },
+     {
+      "code": "ohlc",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "weekend",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "flat",
+      "status": "OK",
+      "value": "0"
+     }
+    ],
+    "bars": 22,
+    "first": "2026-11-13 00:00:00+00:00",
+    "last": "2026-11-13 21:00:00+00:00"
+   }
+  },
+  "Dukascopy:USTBONDTRUSD:M15": {
+   "history": {
+    "status": "OK",
+    "checks": [
+     {
+      "code": "freshness",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "coverage",
+      "status": "OK",
+      "value": "100.0%"
+     },
+     {
+      "code": "gaps",
+      "status": "OK",
+      "value": "0.0h"
+     },
+     {
+      "code": "ohlc",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "weekend",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "outliers",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "flat",
+      "status": "OK",
+      "value": "0"
+     }
+    ],
+    "bars": 88,
+    "first": "2026-11-13 00:00:00+00:00",
+    "last": "2026-11-13 21:45:00+00:00"
+   },
+   "last_7_days": {
+    "status": "OK",
+    "checks": [
+     {
+      "code": "freshness",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "coverage",
+      "status": "OK",
+      "value": "100.0%"
+     },
+     {
+      "code": "gaps",
+      "status": "OK",
+      "value": "0.0h"
+     },
+     {
+      "code": "ohlc",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "weekend",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "outliers",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "flat",
+      "status": "OK",
+      "value": "0"
+     }
+    ],
+    "bars": 88,
+    "first": "2026-11-13 00:00:00+00:00",
+    "last": "2026-11-13 21:45:00+00:00"
+   }
+  },
+  "Dukascopy:USTBONDTRUSD:H1": {
+   "history": {
+    "status": "OK",
+    "checks": [
+     {
+      "code": "freshness",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "coverage",
+      "status": "OK",
+      "value": "100.0%"
+     },
+     {
+      "code": "gaps",
+      "status": "OK",
+      "value": "0.0h"
+     },
+     {
+      "code": "ohlc",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "weekend",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "flat",
+      "status": "OK",
+      "value": "0"
+     }
+    ],
+    "bars": 22,
+    "first": "2026-11-13 00:00:00+00:00",
+    "last": "2026-11-13 21:00:00+00:00"
+   },
+   "last_7_days": {
+    "status": "OK",
+    "checks": [
+     {
+      "code": "freshness",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "coverage",
+      "status": "OK",
+      "value": "100.0%"
+     },
+     {
+      "code": "gaps",
+      "status": "OK",
+      "value": "0.0h"
+     },
+     {
+      "code": "ohlc",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "weekend",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "flat",
+      "status": "OK",
+      "value": "0"
+     }
+    ],
+    "bars": 22,
+    "first": "2026-11-13 00:00:00+00:00",
+    "last": "2026-11-13 21:00:00+00:00"
+   }
+  },
+  "TwelveData:XAU/USD:M15": {
+   "last_7_days": {
+    "status": "OK",
+    "checks": [
+     {
+      "code": "freshness",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "coverage",
+      "status": "OK",
+      "value": "100.0%"
+     },
+     {
+      "code": "gaps",
+      "status": "OK",
+      "value": "0.0h"
+     },
+     {
+      "code": "ohlc",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "weekend",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "outliers",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "flat",
+      "status": "OK",
+      "value": "0"
+     }
+    ],
+    "bars": 476,
+    "first": "2026-09-22 14:45:00+00:00",
+    "last": "2026-11-13 21:45:00+00:00"
+   }
+  },
+  "TwelveData:XAU/USD:H1": {
+   "last_7_days": {
+    "status": "OK",
+    "checks": [
+     {
+      "code": "freshness",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "coverage",
+      "status": "OK",
+      "value": "100.0%"
+     },
+     {
+      "code": "gaps",
+      "status": "OK",
+      "value": "0.0h"
+     },
+     {
+      "code": "ohlc",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "weekend",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "outliers",
+      "status": "OK",
+      "value": "0"
+     },
+     {
+      "code": "flat",
+      "status": "OK",
+      "value": "0"
+     }
+    ],
+    "bars": 119,
+    "first": "2026-04-19 22:00:00+00:00",
+    "last": "2026-11-13 21:00:00+00:00"
+   }
+  }
+ }
+}
