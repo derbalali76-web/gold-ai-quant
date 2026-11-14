@@ -41,8 +41,10 @@ def export_bars(history: HistoryStore, root: Path, provider: str, symbol: str, t
             old = read_bars_file(p)
             part = pd.concat([old, part])
             part = part[~part.index.duplicated(keep="last")].sort_index()
-        with gzip.open(p, "wt", encoding="utf-8") as f:
-            part.to_csv(f, index_label="open_time", float_format="%.5f")
+        # deterministic gzip (no timestamp) and no rewrite when unchanged: commits only touch months that changed
+        raw = gzip.compress(part.to_csv(index_label="open_time", float_format="%.5f").encode("utf-8"), mtime=0)
+        if not (p.exists() and p.read_bytes() == raw):
+            p.write_bytes(raw)
         n += len(part)
     return n
 

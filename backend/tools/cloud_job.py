@@ -169,18 +169,20 @@ def hours_forward_log(hs: HistoryStore, td, ctx, now: datetime) -> None:
 BACKFILL_BUDGET = timedelta(minutes=70)  # the workflow is killed at 120 min: stop early and SAVE what we have
 
 
-def backfill(hs: HistoryStore, years: float) -> None:
+def backfill(hs: HistoryStore, years: float, first: date | None = None, last: date | None = None,
+             budget_min: float | None = None) -> None:
     """Newest data first, gold first; stops before the CI time limit so the commit step always runs.
     Re-running backfill continues where the previous run stopped (already-stored months are skipped)."""
     import time
     t0 = time.monotonic()
     imp = DukascopyImporter()
-    end = date.today() - timedelta(days=1)
-    start = end - timedelta(days=int(365 * years))
+    end = last or (date.today() - timedelta(days=1))
+    start = first or (end - timedelta(days=int(365 * years)))
+    budget = timedelta(minutes=budget_min) if budget_min else BACKFILL_BUDGET
     for sym in DUKA:
         d = end
         while d >= start:
-            if time.monotonic() - t0 > BACKFILL_BUDGET.total_seconds():
+            if time.monotonic() - t0 > budget.total_seconds():
                 print("time budget reached — saving; run backfill again to continue", flush=True)
                 return
             chunk_start = max(start, d - timedelta(days=30))
@@ -352,13 +354,16 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("cmd", choices=["collect", "train", "research", "backfill", "report"])
     ap.add_argument("--years", type=float, default=3.0)
+    ap.add_argument("--first", type=date.fromisoformat, default=None, help="backfill range start (YYYY-MM-DD)")
+    ap.add_argument("--last", type=date.fromisoformat, default=None, help="backfill range end (YYYY-MM-DD)")
+    ap.add_argument("--budget-min", type=float, default=None)
     a = ap.parse_args()
     hs = load()
     if a.cmd == "collect":
         collect(hs)
         save(hs)
     elif a.cmd == "backfill":
-        backfill(hs, a.years)
+        backfill(hs, a.years, a.first, a.last, a.budget_min)
         save(hs)
     elif a.cmd == "train":
         train(hs)
