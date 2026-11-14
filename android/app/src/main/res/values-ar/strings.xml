@@ -318,6 +318,22 @@
     <string name="pos_side_cash">انتظر — راقب %1$s و %2$s</string>
     <string name="pos_side_hold">احتفظ وراقب %1$s و %2$s</string>
     <string name="pos_watch_note">للمراقبة — ليست توصية</string>
+    <string name="how_title">كيف يعمل</string>
+    <string name="how_1">كل تحليل يستخدم فقط البيانات المتاحة في تلك اللحظة: النماذج تُختبر على فترات لم ترها.</string>
+    <string name="how_2">لا تظهر توصية إلا إذا تفوّق النموذج على خطة بسيطة بعد التكاليف، خارج العينة، في نصفي الفترة وفي فترة أخيرة مقفلة.</string>
+    <string name="how_3">حتى ذلك الحين يعرض التطبيق الاتجاه والمستويات والسيناريوهات للمراقبة — ولا يجبر أي إشارة.</string>
+    <string name="how_4">تُعرض الاحتمالات فقط إذا كانت معايرة (أي أن فرصة 3 من 5 تحدث فعلاً 3 مرات من 5).</string>
+    <string name="how_5">فحوص بيانات تلقائية قبل كل قرار؛ البيانات المعيبة توقف القرار.</string>
+    <string name="how_6">كل توصية تُكتب في سجل علني غير قابل للتعديل قبل نتيجتها؛ والنموذج الذي يصبح سجله الحي سلبياً يُوقف تلقائياً.</string>
+    <string name="how_disclaimer">أداة تحليل، وليست نصيحة مالية. التداول ينطوي على خطر الخسارة؛ ولا توجد نتيجة مضمونة.</string>
+    <string name="news_title">ما الجديد</string>
+    <string name="app_version">الإصدار %1$s (%2$d)</string>
+    <string name="news_1">بيتكوين وإيثيريوم وسولانا: تحليل كامل (بلا توصيات حتى الاعتماد)</string>
+    <string name="news_2">«وضعي»: نفس التحليل بصياغة لمن لديه سيولة أو يملك الأصل</string>
+    <string name="news_3">سجل ثقة علني لكل أصل</string>
+    <string name="news_4">فحص تلقائي لصحة البيانات قبل كل قرار</string>
+    <string name="news_5">شاشة واحدة بلا تمرير؛ المستويات مع قوتها</string>
+    <string name="news_6">مراقبة تلقائية، وتقارير أعطال، وإيقاف تلقائي للنماذج</string>
     <string name="r_w_up" formatted="false">صاعد</string>
     <string name="r_w_down" formatted="false">هابط</string>
     <string name="r_w_neutral" formatted="false">محايد</string>
@@ -356,6 +372,7 @@
     <string name="r_un_corrupt" formatted="false">بيانات المزوّد تالفة أو غير متسقة — رُفضت</string>
     <string name="r_un_no_quote" formatted="false">لا يوجد سعر متاح من المزوّد</string>
     <string name="r_un_closed" formatted="false">سوق الذهب الفوري مغلق حالياً (عطلة نهاية الأسبوع)</string>
+    <string name="r_va_live_disabled" formatted="false">أوقف تلقائياً: أداؤه في السجل العلني الحي سلبي ({0} صفقة) — يعود فقط بعد اعتماد جديد</string>
     <string name="r_va_crypto_unq" formatted="false">تحليل فقط: لم يُعتمد أي نموذج لهذه العملة بعد — لا توصيات حتى يجتاز اختبار خارج العينة</string>
     <string name="r_un_dq_fail" formatted="false">فحص جودة البيانات فشل ({0}) — لا قرار على بيانات معيبة</string>
     <string name="r_un_stale" formatted="false">السعر قديم ({0} ثانية) — لا يُعتمد عليه</string>

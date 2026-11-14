@@ -466,6 +466,14 @@ def research(hs: HistoryStore) -> None:
                       "| macro", rm.expectancy_pct, rm.direction_accuracy, rm.reason)
                 if rm.qualified and not r.qualified:
                     chosen, chosen_macro = rm, macro  # macro variant is used only if IT qualified on its own
+            regs = {}
+            for rg in PLN.REGIMES:  # pre-registered regimes; a regime model must qualify on its own (>= 30 holdout trades)
+                rr = PLN.walk_forward(daily, hz, regime=rg)
+                regs[rg] = asdict(rr)
+                print("planner", hz, "regime", rg, rr.trades, rr.expectancy_pct, rr.reason)
+                if not chosen.qualified and rr.qualified and rr.holdout_trades >= 30:
+                    chosen, chosen_macro = rr, None
+            cmp_.setdefault("regimes", {})[hz] = regs
             reps[hz] = asdict(chosen)
             (MODELS / f"planner_{hz}.pkl").write_bytes(pickle.dumps(PLN.train_production(daily, hz, chosen, chosen_macro)))
             print("planner", hz, chosen.reason, {k: reps[hz][k] for k in ("trades", "expectancy_pct", "baseline_expectancy_pct")})
@@ -473,6 +481,8 @@ def research(hs: HistoryStore) -> None:
         if len(h1) > 4000:  # HOURS plan engine on H1 bars: reported (app performance block), not used for trades
             rh = PLN.walk_forward(h1, "HOURS", cols=PLN.FEATURES + PLN.INTRADAY)
             reps["HOURS"] = asdict(rh)
+            cmp_.setdefault("regimes", {})["HOURS"] = {
+                rg: asdict(PLN.walk_forward(h1, "HOURS", cols=PLN.FEATURES + PLN.INTRADAY, regime=rg)) for rg in PLN.REGIMES}
             aux = {s_: hs.load_bars("Dukascopy", s_, "H1", limit=200_000) for s_ in PLN.CROSS_SYMBOLS}
             aux = {k: v for k, v in aux.items() if len(v) > 4000}
             if len(aux) >= 3:  # same period, with vs without intraday cross-asset returns (both reported)

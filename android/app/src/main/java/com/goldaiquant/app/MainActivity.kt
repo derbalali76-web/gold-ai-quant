@@ -37,7 +37,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val crash = try { crashFile().takeIf { it.exists() }?.readText() } catch (_: Throwable) { null }
-        if (crash != null) { showCrash(crash); return }
+        if (crash != null) { reportCrash(crash); showCrash(crash); return }
         enableEdgeToEdge()
         setContent {
             GoldTheme {
@@ -53,6 +53,31 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    /** Sends the crash report to the user's own server once, in the background (no personal data: stack trace,
+     *  app version, Android version). Never blocks or fails the screen. */
+    private fun reportCrash(text: String) {
+        val prefs = getSharedPreferences("gold_ai_quant", Context.MODE_PRIVATE)
+        if (prefs.getString("crash_sent", null) == text.hashCode().toString()) return
+        val url = prefs.getString("server_url", "https://gold-ai-quant.onrender.com") ?: return
+        val token = prefs.getString("token", "") ?: ""
+        Thread {
+            try {
+                if (UrlPolicy.check(url) != null) return@Thread
+                val body = org.json.JSONObject().put("trace", text.take(6000))
+                    .put("app", BuildConfig.VERSION_NAME + " (" + BuildConfig.VERSION_CODE + ")")
+                    .put("android", android.os.Build.VERSION.SDK_INT).toString()
+                val c = (java.net.URI(url.trimEnd('/') + "/crash").toURL().openConnection() as java.net.HttpURLConnection).apply {
+                    requestMethod = "POST"; doOutput = true; connectTimeout = 20_000; readTimeout = 60_000
+                    setRequestProperty("Content-Type", "application/json")
+                    if (token.isNotBlank()) setRequestProperty("X-Goldquant-Token", token.trim())
+                }
+                c.outputStream.use { it.write(body.toByteArray(Charsets.UTF_8)) }
+                if (c.responseCode in 200..299) prefs.edit().putString("crash_sent", text.hashCode().toString()).apply()
+                c.disconnect()
+            } catch (_: Throwable) {}
+        }.start()
     }
 
     /** Diagnostic screen: shows the previous crash's stack trace (selectable) with a button to clear it and retry. */

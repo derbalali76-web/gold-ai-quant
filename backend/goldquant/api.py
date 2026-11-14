@@ -44,7 +44,8 @@ from .providers.history import HistoryStore
 from .providers.live import LiveProvider
 from .providers.twelvedata import SYMBOL, TwelveDataProvider
 from .providers.xaus import XausSpot
-from .schemas import SCHEMA_VERSION, Decision, Mode
+from .schemas import SCHEMA_VERSION, Action, Decision, Mode
+from .msg import M as Mg
 from .risk import EST_SLIPPAGE, EST_SPREAD
 from .store import Store
 
@@ -286,11 +287,47 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
             o.performance = perf
         return d
 
+    guard = {"t": 0.0, "off": {}}  # horizon -> completed trades, for models whose LIVE public record turned negative
+    LEDGER_STATS = os.getenv("GOLDQUANT_LEDGER_STATS",
+                             "https://raw.githubusercontent.com/derbalali76-web/ai-quant-ledger/main/stats.json")
+
+    def live_guard(d: Decision, asset: str = "XAU") -> Decision:
+        """Automatic switch-off: a horizon whose recommendations are losing in the public ledger (>= 20 completed and
+        average R < 0, or >= 40 and worse than the always-buy baseline) issues no recommendation until revalidated."""
+        if time.time() - guard["t"] > 3600:
+            guard["t"] = time.time()
+            try:
+                import json as _json
+                from .providers.http import HttpClient
+                st_ = _json.loads(HttpClient(retries=1, timeout=10.0).get(LEDGER_STATS).text)
+                node = st_ if asset == "XAU" else (st_.get("assets") or {}).get(asset, {})
+                off = {}
+                for hz, b in (node.get("by_horizon") or {}).items():
+                    n, r, base = b.get("completed") or 0, b.get("avg_r"), b.get("baseline_avg_r")
+                    if r is not None and ((n >= 20 and r < 0) or (n >= 40 and base is not None and r < base)):
+                        off[hz] = n
+                guard["off"] = off
+            except Exception:  # noqa: BLE001 — unreachable ledger: keep the last known state
+                pass
+        from .engine import _ref
+        from .schemas import Setup, TradePlan
+        for o in d.outlooks:
+            n = guard["off"].get(o.horizon)
+            if n is None:
+                continue
+            msg = Mg("va.live_disabled", n)
+            if o.plan is not None and o.plan.recommendation:
+                o.plan = TradePlan(setup=Setup.WAIT, method=o.plan.method)
+            o.validated, o.validation_ar, o.validation_ref = False, str(msg), _ref(msg)
+            if o.horizon == "HOURS" and d.action in (Action.BUY, Action.SELL):
+                d.action = Action.WAIT
+        return d
+
     def refresh_live(force: bool = False) -> Decision:
         with live_lock:  # one computation at a time; concurrent callers reuse its result
             if not force and live_cache["d"] is not None and time.time() - live_cache["t"] < LIVE_TTL:
                 return live_cache["d"]
-            d = attach_live_track(compute_live())
+            d = live_guard(attach_live_track(compute_live()))
             live_cache.update(d=d, t=time.time())
             return d
 
@@ -360,7 +397,39 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
         return {"schema": 1, "as_of": d.analyzed_at_utc.isoformat(), "symbol": "XAUUSD", "price": d.quote,
                 "cost": EST_SPREAD + EST_SLIPPAGE, "market_closed": d.market_closed, "mode": d.mode.value,
                 "model_version": d.model_version, "recommendations": recs if d.mode == Mode.LIVE else [],
-                "brief": d.daily_brief.model_dump(mode="json") if d.daily_brief else None, "bars": bars}
+                "brief": d.daily_brief.model_dump(mode="json") if d.daily_brief else None, "bars": bars,
+                # for the public monitor: is the analysis healthy right now?
+                "health": d.data_health.status if d.data_health else None, "action": d.action.value,
+                "quote_time": d.quote_timestamp_utc.isoformat() if d.quote_timestamp_utc else None,
+                "app_crashes_7d": crashes_recent()}
+
+    crash_log = st.data_dir / "crashes.jsonl"
+
+    def crashes_recent(days: int = 7) -> int:
+        import json as _json
+        if not crash_log.exists():
+            return 0
+        cut = (utcnow() - pd.Timedelta(days=days)).isoformat()
+        return sum(1 for ln in crash_log.read_text(encoding="utf-8").splitlines()
+                   if ln.strip() and _json.loads(ln).get("at", "") >= cut)
+
+    @app.post("/crash", dependencies=[Depends(auth)])
+    def crash_report(payload: dict):
+        """App crash reports (stack trace, app / Android version). Counted in the public snapshot so the public
+        monitor raises an alert automatically; contents stay behind the token (GET /crashes)."""
+        import json as _json
+        rec = {"at": utcnow().isoformat(), "trace": str(payload.get("trace", ""))[:6000],
+               "app": str(payload.get("app", ""))[:40], "android": str(payload.get("android", ""))[:10]}
+        lines = crash_log.read_text(encoding="utf-8").splitlines()[-199:] if crash_log.exists() else []
+        crash_log.write_text("\n".join(lines + [_json.dumps(rec, ensure_ascii=False)]) + "\n", encoding="utf-8")
+        return {"ok": True}
+
+    @app.get("/crashes", dependencies=[Depends(auth)])
+    def crash_list():
+        import json as _json
+        if not crash_log.exists():
+            return []
+        return [_json.loads(ln) for ln in crash_log.read_text(encoding="utf-8").splitlines() if ln.strip()][-50:]
 
     @app.get("/data-quality", dependencies=[Depends(auth)])
     def data_quality_ep():

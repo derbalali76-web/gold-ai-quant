@@ -318,6 +318,22 @@
     <string name="pos_side_cash">Espera — vigila %1$s y %2$s</string>
     <string name="pos_side_hold">Mantén y vigila %1$s y %2$s</string>
     <string name="pos_watch_note">Para vigilar — no es una recomendación</string>
+    <string name="how_title">Cómo funciona</string>
+    <string name="how_1">Cada análisis usa solo los datos disponibles en ese momento: los modelos se prueban en periodos que nunca vieron.</string>
+    <string name="how_2">Solo hay recomendación si un modelo supera una referencia simple tras costes, fuera de muestra, en ambas mitades y en un periodo final cerrado.</string>
+    <string name="how_3">Hasta entonces la app muestra tendencia, niveles y escenarios — nunca una señal forzada.</string>
+    <string name="how_4">Las probabilidades se muestran solo si están calibradas (una probabilidad de 3 de 5 que ocurre de verdad 3 de cada 5 veces).</string>
+    <string name="how_5">Controles automáticos antes de cada decisión; los datos defectuosos la bloquean.</string>
+    <string name="how_6">Cada recomendación se escribe en un registro público inalterable antes de su resultado; un modelo cuyo historial en vivo se vuelve negativo se apaga automáticamente.</string>
+    <string name="how_disclaimer">Herramienta de análisis, no asesoramiento financiero. Operar implica riesgo de pérdida; ningún resultado está garantizado.</string>
+    <string name="news_title">Novedades</string>
+    <string name="app_version">Versión %1$s (%2$d)</string>
+    <string name="news_1">Bitcoin, Ethereum y Solana: análisis completo (sin recomendaciones hasta validar)</string>
+    <string name="news_2">«Mi posición»: el mismo análisis para quien tiene liquidez o el activo</string>
+    <string name="news_3">Registro de confianza público para cada activo</string>
+    <string name="news_4">Controles automáticos de salud de datos antes de cada decisión</string>
+    <string name="news_5">Una sola pantalla sin desplazamiento; niveles con su fuerza</string>
+    <string name="news_6">Monitorización automática, informes de fallos y apagado de modelos</string>
     <string name="r_w_up" formatted="false">alcista</string>
     <string name="r_w_down" formatted="false">bajista</string>
     <string name="r_w_neutral" formatted="false">neutral</string>
@@ -352,6 +368,7 @@
     <string name="r_un_corrupt" formatted="false">Datos del proveedor corruptos o incoherentes — rechazados</string>
     <string name="r_un_no_quote" formatted="false">No hay precio disponible del proveedor</string>
     <string name="r_un_closed" formatted="false">El mercado del oro al contado está cerrado (fin de semana)</string>
+    <string name="r_va_live_disabled" formatted="false">Desactivado automáticamente: su registro público en vivo es negativo ({0} operaciones) — vuelve solo tras una nueva validación</string>
     <string name="r_va_crypto_unq" formatted="false">Solo análisis: ningún modelo validado para esta cripto — sin recomendaciones hasta superar una prueba fuera de muestra</string>
     <string name="r_un_dq_fail" formatted="false">Control de calidad de datos fallido ({0}) — ninguna decisión con datos defectuosos</string>
     <string name="r_un_stale" formatted="false">Precio obsoleto ({0} s) — no se usa</string>

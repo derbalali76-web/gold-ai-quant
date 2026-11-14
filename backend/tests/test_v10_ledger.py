@@ -174,3 +174,37 @@ def test_crypto_has_its_own_record_and_trades_on_sunday(tmp_path):
     st = L.stats(led.entries, nxt)
     assert st["assets"]["BTC"]["analysis"]["correct"] == 1 and st["analysis"]["scored"] == 0  # gold untouched
     assert L.Ledger(tmp_path).verify() == []
+
+
+def test_live_guard_switches_off_a_losing_horizon(tmp_path, monkeypatch):
+    import json as _json
+    from fastapi.testclient import TestClient
+    from goldquant import api as API
+    from goldquant.providers.demo import DemoProvider
+    from goldquant.providers import http as H
+    monkeypatch.setenv("GOLDQUANT_BG_REFRESH", "0")
+    stats = {"chain_head": "x", "by_horizon": {"WEEK": {"completed": 25, "avg_r": -0.2}}}
+
+    class R:
+        text = _json.dumps(stats)
+    monkeypatch.setattr(H.HttpClient, "get", lambda self, url, params=None: R())
+    app = API.create_app(str(tmp_path / "g.db"), settings=API.Settings.from_env(str(tmp_path)), live_provider=DemoProvider())
+    c = TestClient(app)
+    token = API.Settings.from_env(str(tmp_path)).token
+    d = c.get("/decision?mode=LIVE", headers={"X-Goldquant-Token": token or ""}).json()
+    week = next(o for o in d["outlooks"] if o["horizon"] == "WEEK")
+    assert week["validated"] is False and "25" in (week["validation_ar"] or "")
+    assert not (week.get("plan") or {}).get("recommendation")
+
+
+def test_crash_reports_are_counted_in_the_public_snapshot(tmp_path, monkeypatch):
+    from fastapi.testclient import TestClient
+    from goldquant.api import create_app, Settings
+    from goldquant.providers.demo import DemoProvider
+    monkeypatch.setenv("GOLDQUANT_BG_REFRESH", "0")
+    st = Settings.from_env(str(tmp_path))
+    c = TestClient(create_app(str(tmp_path / "g.db"), settings=st, live_provider=DemoProvider()))
+    h = {"X-Goldquant-Token": st.token or ""}
+    assert c.post("/crash", json={"trace": "java.lang.X at y", "app": "0.3.0 (150)", "android": 34}, headers=h).status_code == 200
+    assert c.get("/public/snapshot").json()["app_crashes_7d"] == 1
+    assert c.get("/crashes", headers=h).json()[0]["app"] == "0.3.0 (150)"

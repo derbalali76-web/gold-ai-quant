@@ -212,6 +212,8 @@ private sealed interface Sheet {
     data object Settings : Sheet
     data object Assets : Sheet
     data object TrustSheet : Sheet
+    data object HowSheet : Sheet
+    data object NewsSheet : Sheet
 }
 
 /** Stateless screen (also used by the UI tests on several screen sizes). */
@@ -276,7 +278,10 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
         Sheet.Details -> if (card != null && d != null) DetailsDialog(card, d) { sheet = null }
         Sheet.Assets -> AssetDialog(s, { a -> sheet = null; onAssetPick(a) }) { sheet = null }
         Sheet.TrustSheet -> TrustDialog(s.trust) { sheet = null }
-        Sheet.Settings -> SettingsDialog(s, lang, onNextDemo, onSave, onLive, onLanguage, onNotify) { sheet = null }
+        Sheet.Settings -> SettingsDialog(s, lang, onNextDemo, onSave, onLive, onLanguage, onNotify,
+            onHow = { sheet = Sheet.HowSheet }, onNews = { sheet = Sheet.NewsSheet }) { sheet = null }
+        Sheet.HowSheet -> HowDialog { sheet = null }
+        Sheet.NewsSheet -> NewsDialog { sheet = null }
         null -> Unit
     }
 }
@@ -1016,7 +1021,7 @@ private fun DetailsDialog(c: HorizonCard, d: Decision, onClose: () -> Unit) {
 @Composable
 private fun SettingsDialog(s: UiState, lang: Lang, onNextDemo: () -> Unit, onSave: (String, String) -> Unit,
                            onLive: (Boolean) -> Unit, onLanguage: (Lang) -> Unit, onNotify: (Boolean) -> Unit,
-                           onClose: () -> Unit) {
+                           onHow: () -> Unit = {}, onNews: () -> Unit = {}, onClose: () -> Unit) {
     val askPermission = androidx.activity.compose.rememberLauncherForActivityResult(
         androidx.activity.result.contract.ActivityResultContracts.RequestPermission()) { granted -> onNotify(granted) }
     Dialog(onDismissRequest = onClose) {
@@ -1055,6 +1060,12 @@ private fun SettingsDialog(s: UiState, lang: Lang, onNextDemo: () -> Unit, onSav
             if (!s.liveMode) TextButton(onClick = { onNextDemo(); onClose() }) {
                 Text(stringResource(R.string.set_demo_next, s.demoStep + 1), color = TextDim)
             }
+            Row {
+                TextButton(onClick = onHow) { Text(stringResource(R.string.how_title), color = Gold) }
+                TextButton(onClick = onNews) { Text(stringResource(R.string.news_title), color = Gold) }
+            }
+            Text(stringResource(R.string.app_version, com.goldaiquant.app.BuildConfig.VERSION_NAME,
+                com.goldaiquant.app.BuildConfig.VERSION_CODE), color = TextDim, fontSize = 11.sp)
             Row {
                 TextButton(onClick = { onSave(url, tok); onClose() }) { Text(stringResource(R.string.save), color = Gold) }
                 TextButton(onClick = onClose) { Text(stringResource(R.string.cancel), color = TextDim) }
@@ -1170,4 +1181,30 @@ private fun PositionLine(c: HorizonCard, d: Decision, pos: String, rec: Boolean)
     }
     Text(txt, color = TextMain, fontSize = 13.sp, fontWeight = FontWeight.SemiBold, lineHeight = 17.sp)
     Text(stringResource(R.string.pos_watch_note), color = TextDim, fontSize = 10.sp)
+}
+
+// ---------------------------------------------------------------- how it works / what's new
+@Composable
+private fun HowDialog(onClose: () -> Unit) {
+    val uri = LocalUriHandler.current
+    DialogFrame(stringResource(R.string.how_title), onClose) {
+        listOf(R.string.how_1, R.string.how_2, R.string.how_3, R.string.how_4, R.string.how_5, R.string.how_6).forEach {
+            Body("• " + stringResource(it), TextMain, 12.sp)
+        }
+        TextButton(onClick = { uri.openUri(TrustLedger.REPO_URL) }) {
+            Text(stringResource(R.string.trust_verify), color = Gold, fontWeight = FontWeight.Bold)
+        }
+        Body(stringResource(R.string.how_disclaimer), TextDim, 11.sp)
+    }
+}
+
+@Composable
+private fun NewsDialog(onClose: () -> Unit) {
+    DialogFrame(stringResource(R.string.news_title), onClose) {
+        Body(stringResource(R.string.app_version, com.goldaiquant.app.BuildConfig.VERSION_NAME,
+            com.goldaiquant.app.BuildConfig.VERSION_CODE), Gold, 12.sp)
+        listOf(R.string.news_1, R.string.news_2, R.string.news_3, R.string.news_4, R.string.news_5, R.string.news_6).forEach {
+            Body("• " + stringResource(it), TextMain, 12.sp)
+        }
+    }
 }

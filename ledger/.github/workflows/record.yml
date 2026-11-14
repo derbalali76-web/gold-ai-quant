@@ -4,7 +4,7 @@ name: record
 on:
   schedule: [{ cron: "17 * * * *" }]
   workflow_dispatch:
-permissions: { contents: write }
+permissions: { contents: write, issues: write }
 concurrency: { group: ledger, cancel-in-progress: false }
 jobs:
   record:
@@ -25,6 +25,19 @@ jobs:
           done
       - run: python3 ledger.py update snap_XAU.json snap_BTC.json snap_ETH.json snap_SOL.json
       - run: python3 ledger.py verify
+      - name: health monitor (one open issue while something is wrong -> e-mail to the owner)
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: |
+          python3 monitor.py snap_XAU.json snap_BTC.json snap_ETH.json snap_SOL.json | tee monitor.txt
+          open=$(gh issue list --state open --label alert --json number -q '.[0].number' 2>/dev/null || true)
+          if grep -q '^ALERT' monitor.txt; then
+            body=$(printf "Automatic check at %s UTC\n\n%s\n\nThis issue closes itself when everything is healthy again." "$(date -u +%F\ %H:%M)" "$(grep '^ALERT' monitor.txt | sed 's/^ALERT /- /')")
+            gh label create alert --color B60205 2>/dev/null || true
+            if [ -z "$open" ]; then gh issue create --title "AI QUANT alert" --label alert --body "$body"
+            fi  # already open: no hourly repeat e-mails
+          elif [ -n "$open" ]; then
+            gh issue close "$open" --comment "All checks healthy again at $(date -u +%F\ %H:%M) UTC."
+          fi
       - name: commit
         run: |
           rm -f snapshot.json snap_*.json

@@ -102,3 +102,15 @@ def test_macro_model_never_plans_without_macro():
     from goldquant import planner as P
     pm = P.PlannerModel("WEEK", {}, {"qualified": True}, "2026-01-01", cols=P.FEATURES + P.MACRO)
     assert pm.best_plan(_walk(400)) is None
+
+
+def test_regime_model_learns_and_trades_only_inside_its_regime():
+    d = _walk(1600, drift=0.0003)
+    r = PL.walk_forward(d, "WEEK", regime="RANGE")
+    assert r.regime == "RANGE"
+    feats = PL.features(d)
+    m = PL.regime_mask(feats, "RANGE")
+    assert 0 < m.sum() < len(m)
+    pm = PL.train_production(d, "WEEK", r)
+    out_of_regime = d.iloc[: int(np.flatnonzero(~m)[-1]) + 1]
+    assert pm.best_plan(out_of_regime) is None

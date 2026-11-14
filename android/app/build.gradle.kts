@@ -44,7 +44,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions { jvmTarget = "17" }
-    buildFeatures { compose = true }
+    buildFeatures { compose = true; buildConfig = true }
     // Reason codes without a translation intentionally fall back to the English default (see tools/gen_strings.py).
     lint { disable += "MissingTranslation" }
     packaging { resources.excludes += "/META-INF/{AL2.0,LGPL2.1}" }

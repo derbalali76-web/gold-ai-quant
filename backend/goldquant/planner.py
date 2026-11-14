@@ -200,6 +200,26 @@ def features(d: pd.DataFrame, macro: Optional[dict] = None, aux: Optional[dict] 
     return out
 
 
+# Pre-registered market regimes (fixed BEFORE testing, few on purpose: every extra variant raises the chance of a
+# lucky result). A regime model only trades — and only learns — inside its regime.
+REGIMES = ("TREND", "RANGE", "HIGH_VOL")
+
+
+def regime_mask(feats: pd.DataFrame, regime: Optional[str]) -> np.ndarray:
+    if not regime:
+        return np.ones(len(feats), bool)
+    d50, m63, ap = feats["dist50"], feats["mom63"], feats["atr_pct"]
+    if regime == "TREND":
+        m = (d50.abs() >= 1.0) & (np.sign(d50) == np.sign(m63))
+    elif regime == "RANGE":
+        m = d50.abs() < 0.5
+    elif regime == "HIGH_VOL":
+        m = ap > ap.rolling(250, min_periods=100).median().shift(1) * 1.3
+    else:
+        raise ValueError(regime)
+    return m.fillna(False).to_numpy()
+
+
 def intraday_allowed(index: pd.DatetimeIndex, horizon_bars: int) -> np.ndarray:
     """H1 decision times that can be held for the whole horizon inside one trading week: not in the weekly close
     or the daily break, and the horizon must end before Friday 21:00 UTC (no weekend gap inside a trade)."""
@@ -368,6 +388,7 @@ class PlannerReport:
     reason: str = ""
     checks: dict = field(default_factory=dict)
     features: list = field(default_factory=lambda: list(FEATURES))
+    regime: Optional[str] = None
 
 
 def _purged_train(n_upto: int, H: int, F: int) -> np.ndarray:
@@ -379,14 +400,15 @@ def _purged_train(n_upto: int, H: int, F: int) -> np.ndarray:
 def walk_forward(d: pd.DataFrame, horizon: str, seed: int = 7, macro: Optional[dict] = None,
                  cols: Optional[list] = None, since=None, aux: Optional[dict] = None, asset: str = "XAUUSD",
                  funding: Optional[pd.DataFrame] = None, min_train: Optional[int] = None,
-                 test_block: Optional[int] = None) -> PlannerReport:
-    """min_train / test_block override the horizon defaults (long H1 histories refit less often)."""
+                 test_block: Optional[int] = None, regime: Optional[str] = None) -> PlannerReport:
+    """min_train / test_block override the horizon defaults (long H1 histories refit less often).
+    regime: one of REGIMES — the model learns and trades only inside that regime."""
     with cost_of(asset):
-        return _walk_forward(d, horizon, seed, macro, cols, since, aux, asset, funding, min_train, test_block)
+        return _walk_forward(d, horizon, seed, macro, cols, since, aux, asset, funding, min_train, test_block, regime)
 
 
 def _walk_forward(d, horizon, seed, macro, cols, since, aux, asset, funding, min_train=None,
-                  test_block=None) -> PlannerReport:
+                  test_block=None, regime=None) -> PlannerReport:
     """cols: feature columns (default FEATURES; FEATURES + MACRO needs `macro`). since: evaluate only from this
     date (features and labels still use the earlier bars), so two feature sets can be compared on one period."""
     d = d.dropna(subset=["open", "high", "low", "close"])
@@ -402,13 +424,15 @@ def _walk_forward(d, horizon, seed, macro, cols, since, aux, asset, funding, min
         d, feats = d[keep], feats[keep]
         labels = {k: v[keep] for k, v in labels.items()}
     X = feats[cols].to_numpy(dtype=float)
+    if regime:
+        X[~regime_mask(feats, regime)] = np.nan
     if horizon == "HOURS" and "USDT" not in asset:
         # metals: no decision (and no training sample) that would carry a trade over the weekend; crypto is 24/7
         X[~intraday_allowed(d.index, HORIZONS[horizon])] = np.nan
     atr_pct = feats["atr_pct"].to_numpy(dtype=float)
     c = d["close"].to_numpy(dtype=float)
     n = len(c)
-    rep = PlannerReport(horizon, features=list(cols))
+    rep = PlannerReport(horizon, features=list(cols), regime=regime)
     MIN_TRAIN = min_train or TRAIN_BARS.get(horizon, globals()["MIN_TRAIN"])
     TEST_BLOCK = test_block or BLOCK_BARS.get(horizon, globals()["TEST_BLOCK"])
     if n < MIN_TRAIN + TEST_BLOCK:
@@ -503,7 +527,7 @@ def _walk_forward(d, horizon, seed, macro, cols, since, aux, asset, funding, min
     b, j = [], MIN_TRAIN
     while j < n - H:
         out_, ret_, held_ = labels[top][j]
-        if not np.isfinite(ret_) or (horizon == "HOURS" and not np.isfinite(X[j]).all()):
+        if not np.isfinite(ret_) or ((horizon == "HOURS" or regime) and not np.isfinite(X[j]).all()):
             j += 1  # same eligible decision times as the model (no weekend-crossing trade)
             continue
         if np.isfinite(out_):
@@ -559,6 +583,9 @@ class PlannerModel:
         if needs_macro and not macro:
             return None
         feats = features(d, macro if needs_macro else None)
+        reg = (self.report or {}).get("regime")
+        if reg and not regime_mask(feats, reg)[-1]:
+            return None  # a regime model is silent outside its regime
         x = feats[cols].to_numpy(dtype=float)[-1]
         a, ap, close = float(feats["atr"].iloc[-1]), float(feats["atr_pct"].iloc[-1]), float(d["close"].iloc[-1])
         best, cand = (-np.inf,), None
@@ -581,7 +608,10 @@ class PlannerModel:
 def train_production(d: pd.DataFrame, horizon: str, report: PlannerReport, macro: Optional[dict] = None) -> PlannerModel:
     d = d.dropna(subset=["open", "high", "low", "close"])
     cols = list(report.features or FEATURES)
-    X = features(d, macro if any(c in MACRO for c in cols) else None)[cols].to_numpy(dtype=float)
+    feats = features(d, macro if any(c in MACRO for c in cols) else None)
+    X = feats[cols].to_numpy(dtype=float)
+    if report.regime:
+        X[~regime_mask(feats, report.regime)] = np.nan
     labels = label_all(d, horizon)
     tr = _purged_train(len(d), HORIZONS[horizon], FILL_WINDOW[horizon])
     return PlannerModel(horizon, fit_models(X, labels, tr, horizon, cols), asdict(report), str(d.index[-1].date()),

@@ -319,6 +319,22 @@
     <string name="pos_side_cash">Wait — watch %1$s and %2$s</string>
     <string name="pos_side_hold">Hold and watch %1$s and %2$s</string>
     <string name="pos_watch_note">To watch — not a recommendation</string>
+    <string name="how_title">How it works</string>
+    <string name="how_1">Every analysis uses only data available at that moment: models are tested on periods they never saw.</string>
+    <string name="how_2">A recommendation appears only if a model beats a simple baseline after costs, out of sample, in both halves and in a final locked period.</string>
+    <string name="how_3">Until then the app shows the trend, levels and scenarios to watch — never a forced signal.</string>
+    <string name="how_4">Probabilities are shown only when they are calibrated (a 3-in-5 chance that really happens 3 times in 5).</string>
+    <string name="how_5">Automatic data checks run before every decision; faulty data blocks the decision.</string>
+    <string name="how_6">Each recommendation is written to a public, tamper-evident ledger before its outcome; a model whose live record turns negative is switched off automatically.</string>
+    <string name="how_disclaimer">Analysis tool, not financial advice. Trading involves risk of loss; no result is guaranteed.</string>
+    <string name="news_title">What\'s new</string>
+    <string name="app_version">Version %1$s (%2$d)</string>
+    <string name="news_1">Bitcoin, Ethereum and Solana: full analysis (no recommendation until validated)</string>
+    <string name="news_2">\'My position\': the same analysis phrased for cash or for holders</string>
+    <string name="news_3">Public trust record for every asset</string>
+    <string name="news_4">Automatic data-health checks before every decision</string>
+    <string name="news_5">One screen, no scrolling; levels listed with their strength</string>
+    <string name="news_6">Automatic monitoring, crash reports and model switch-off</string>
     <string name="r_w_up" formatted="false">up</string>
     <string name="r_w_down" formatted="false">down</string>
     <string name="r_w_neutral" formatted="false">neutral</string>
@@ -357,6 +373,7 @@
     <string name="r_un_corrupt" formatted="false">Provider data is corrupt or inconsistent — rejected</string>
     <string name="r_un_no_quote" formatted="false">No price is available from the provider</string>
     <string name="r_un_closed" formatted="false">The spot gold market is closed (weekend)</string>
+    <string name="r_va_live_disabled" formatted="false">Switched off automatically: its live public record is negative ({0} trades) — back only after a new validation</string>
     <string name="r_va_crypto_unq" formatted="false">Analysis only: no model is validated for this coin yet — no recommendations until one passes out-of-sample testing</string>
     <string name="r_un_dq_fail" formatted="false">Data quality check failed ({0}) — no decision on faulty data</string>
     <string name="r_un_stale" formatted="false">Price is stale ({0} s) — not relied upon</string>
