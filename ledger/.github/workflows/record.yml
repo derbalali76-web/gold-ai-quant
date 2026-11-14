@@ -1,0 +1,34 @@
+name: record
+# Every hour: fetch the app server's public snapshot, append new recommendations / results to the hash chain,
+# verify the whole chain, and commit. The commit time is GitHub's independent timestamp for each line.
+on:
+  schedule: [{ cron: "17 * * * *" }]
+  workflow_dispatch:
+permissions: { contents: write }
+concurrency: { group: ledger, cancel-in-progress: false }
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - name: fetch snapshot (the free server may need a minute to wake up)
+        env:
+          URL: ${{ vars.SNAPSHOT_URL || 'https://gold-ai-quant.onrender.com/public/snapshot' }}
+        run: |
+          for i in 1 2 3 4; do
+            curl -fsS --max-time 120 "$URL" -o snapshot.json && break
+            rm -f snapshot.json; sleep 45
+          done
+          [ -s snapshot.json ] || echo '{}' > snapshot.json
+      - run: python3 ledger.py update snapshot.json
+      - run: python3 ledger.py verify
+      - name: commit
+        run: |
+          rm -f snapshot.json
+          git config user.name ai-quant-ledger
+          git config user.email ledger@users.noreply.github.com
+          git add -A
+          git diff --cached --quiet && exit 0
+          git commit -q -m "ledger: $(date -u +%Y-%m-%dT%H:%MZ) head $(tail -c 80 ledger.jsonl | grep -o '"hash":"[0-9a-f]\{12\}' | cut -d'"' -f4)"
+          git push -q

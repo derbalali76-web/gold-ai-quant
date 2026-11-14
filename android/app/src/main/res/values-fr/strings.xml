@@ -266,6 +266,25 @@
     <string name="notif_level_title">Le prix a atteint %1$s (%2$s)</string>
     <string name="notif_level_up">Niveau surveillé franchi à la hausse — revoyez le scénario haussier. Pas une recommandation.</string>
     <string name="notif_level_down">Niveau surveillé franchi à la baisse — revoyez le scénario baissier. Pas une recommandation.</string>
+    <string name="trust_title">Registre de confiance en direct</string>
+    <string name="trust_summary">%1$d recommandations terminées · %2$d jours suivis</string>
+    <string name="trust_win">Taux de réussite %1$d%% · moyenne %2$s par trade</string>
+    <string name="trust_base">Référence (toujours acheter, mêmes distances) : %1$s</string>
+    <string name="trust_better">Meilleur que la référence</string>
+    <string name="trust_worse">Pas meilleur que la référence</string>
+    <string name="trust_empty">0 recommandation pour l\'instant : aucune n\'est publiée avant la validation d\'un modèle. C\'est le registre honnête.</string>
+    <string name="trust_open">Ouvertes : %1$d</string>
+    <string name="trust_analysis">Analyse quotidienne : juste %1$d%% sur %2$d jours (toujours haussier %3$d%%)</string>
+    <string name="trust_analysis_none">Analyse quotidienne : enregistrée, notée à chaque clôture</string>
+    <string name="trust_how">Chaque recommandation est inscrite dans un registre public chaîné par empreintes avant son résultat, et chaque résultat est conservé — pertes comprises. Personne ne peut le modifier sans casser la chaîne.</string>
+    <string name="trust_recent">Derniers résultats</string>
+    <string name="trust_by_model">Par version du modèle</string>
+    <string name="trust_model_row">%1$s : %2$d trades · %3$s</string>
+    <string name="trust_verify">Vérifiez vous-même</string>
+    <string name="trust_loading">Registre de confiance : chargement…</string>
+    <string name="out_target">objectif</string>
+    <string name="out_stop">stop</string>
+    <string name="out_timeout">délai</string>
     <string name="r_w_up" formatted="false">haussière</string>
     <string name="r_w_down" formatted="false">baissière</string>
     <string name="r_w_neutral" formatted="false">neutre</string>

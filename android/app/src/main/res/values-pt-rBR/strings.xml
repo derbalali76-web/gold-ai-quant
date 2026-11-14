@@ -266,6 +266,25 @@
     <string name="notif_level_title">O preço chegou a %1$s (%2$s)</string>
     <string name="notif_level_up">Nível observado cruzado para cima — revise o cenário de alta. Não é recomendação.</string>
     <string name="notif_level_down">Nível observado cruzado para baixo — revise o cenário de baixa. Não é recomendação.</string>
+    <string name="trust_title">Registro de confiança ao vivo</string>
+    <string name="trust_summary">%1$d recomendações concluídas · %2$d dias acompanhados</string>
+    <string name="trust_win">Taxa de acerto %1$d%% · média %2$s por operação</string>
+    <string name="trust_base">Referência (sempre comprar, mesmas distâncias): %1$s</string>
+    <string name="trust_better">Melhor que a referência</string>
+    <string name="trust_worse">Não melhor que a referência</string>
+    <string name="trust_empty">0 recomendações até agora: nenhuma é publicada antes de um modelo ser validado. Esse é o registro honesto.</string>
+    <string name="trust_open">Abertas agora: %1$d</string>
+    <string name="trust_analysis">Análise diária: acerto %1$d%% de %2$d dias (sempre alta %3$d%%)</string>
+    <string name="trust_analysis_none">Análise diária: registrada e avaliada no fechamento de cada dia</string>
+    <string name="trust_how">Cada recomendação é gravada num registro público encadeado por hashes antes do resultado, e todos os resultados ficam — perdas incluídas. Ninguém pode editá-lo sem quebrar a cadeia.</string>
+    <string name="trust_recent">Últimos resultados</string>
+    <string name="trust_by_model">Por versão do modelo</string>
+    <string name="trust_model_row">%1$s: %2$d operações · %3$s</string>
+    <string name="trust_verify">Verifique você mesmo</string>
+    <string name="trust_loading">Registro de confiança: carregando…</string>
+    <string name="out_target">alvo</string>
+    <string name="out_stop">stop</string>
+    <string name="out_timeout">prazo</string>
     <string name="r_w_up" formatted="false">de alta</string>
     <string name="r_w_down" formatted="false">de baixa</string>
     <string name="r_w_neutral" formatted="false">neutra</string>

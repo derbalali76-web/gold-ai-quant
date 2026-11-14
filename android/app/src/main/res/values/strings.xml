@@ -267,6 +267,25 @@
     <string name="notif_level_title">Price reached %1$s (%2$s)</string>
     <string name="notif_level_up">Watch level crossed upward — review today\'s up scenario. Not a recommendation.</string>
     <string name="notif_level_down">Watch level crossed downward — review today\'s down scenario. Not a recommendation.</string>
+    <string name="trust_title">Live trust record</string>
+    <string name="trust_summary">%1$d completed recommendations · %2$d days tracked</string>
+    <string name="trust_win">Win rate %1$d%% · average %2$s per trade</string>
+    <string name="trust_base">Baseline (always buy, same distances): %1$s</string>
+    <string name="trust_better">Better than the baseline</string>
+    <string name="trust_worse">Not better than the baseline</string>
+    <string name="trust_empty">0 recommendations so far: none is published before a model is validated. That is the honest record.</string>
+    <string name="trust_open">Open now: %1$d</string>
+    <string name="trust_analysis">Daily analysis: right %1$d%% of %2$d days (always-up %3$d%%)</string>
+    <string name="trust_analysis_none">Daily analysis: being recorded, scored at each day\'s close</string>
+    <string name="trust_how">Each recommendation is written to a public, hash-chained ledger before its outcome, and every result is kept — losses included. Nobody can edit it without breaking the chain.</string>
+    <string name="trust_recent">Latest results</string>
+    <string name="trust_by_model">By model version</string>
+    <string name="trust_model_row">%1$s: %2$d trades · %3$s</string>
+    <string name="trust_verify">Verify it yourself</string>
+    <string name="trust_loading">Live trust record: loading…</string>
+    <string name="out_target">target</string>
+    <string name="out_stop">stop</string>
+    <string name="out_timeout">time limit</string>
     <string name="r_w_up" formatted="false">up</string>
     <string name="r_w_down" formatted="false">down</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

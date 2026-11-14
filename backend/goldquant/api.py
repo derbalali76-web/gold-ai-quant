@@ -314,6 +314,40 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
             return d
         return refresh_live()
 
+    def public_snapshot(d: Decision) -> dict:
+        """What the public trust ledger records: only published recommendations, today's analysis and closed bars.
+        No token needed: it contains nothing that is not shown in the app, and it is what makes the record checkable."""
+        recs = []
+        for o in d.outlooks:
+            p = o.plan
+            if p is None or not p.recommendation or p.side not in ("BUY", "SELL") or p.stop_loss is None \
+                    or p.target is None:
+                continue
+            recs.append({"horizon": o.horizon, "side": p.side, "order": p.order or "MARKET",
+                         "entry_low": p.entry_low, "entry_high": p.entry_high, "stop": p.stop_loss,
+                         "target": p.target, "method": p.method, "model_version": d.model_version,
+                         "valid_until": p.valid_until_utc.isoformat() if p.valid_until_utc else None})
+        bars = {}
+        if live_provider is not None:
+            for tf, n in (("H1", 120), ("D1", 45)):
+                try:
+                    b = live_provider.bars(tf, d.analyzed_at_utc, n)
+                except Exception:  # noqa: BLE001
+                    b = None
+                bars[tf] = [] if b is None else [[t.isoformat(), round(float(r.open), 3), round(float(r.high), 3),
+                                                  round(float(r.low), 3), round(float(r.close), 3)]
+                                                 for t, r in b.df.iterrows()]
+        return {"schema": 1, "as_of": d.analyzed_at_utc.isoformat(), "symbol": "XAUUSD", "price": d.quote,
+                "cost": EST_SPREAD + EST_SLIPPAGE, "market_closed": d.market_closed, "mode": d.mode.value,
+                "model_version": d.model_version, "recommendations": recs if d.mode == Mode.LIVE else [],
+                "brief": d.daily_brief.model_dump(mode="json") if d.daily_brief else None, "bars": bars}
+
+    @app.get("/public/snapshot")
+    def public_snapshot_ep():
+        if live_provider is None:
+            raise HTTPException(503, "no live data source")
+        return public_snapshot(refresh_live())
+
     @app.get("/history", dependencies=[Depends(auth)])
     def history_ep(limit: int = Query(50, ge=1, le=500)):
         return {"decisions": store.history(limit)}

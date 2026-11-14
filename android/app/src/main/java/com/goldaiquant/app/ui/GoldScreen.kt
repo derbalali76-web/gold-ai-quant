@@ -50,6 +50,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -204,6 +205,7 @@ private sealed interface Sheet {
     data object Details : Sheet
     data object Settings : Sheet
     data object Assets : Sheet
+    data object TrustSheet : Sheet
 }
 
 /** Stateless screen (also used by the UI tests on several screen sizes). */
@@ -258,6 +260,7 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
                 Text(stringResource(R.string.prompt_ask), color = TextDim, fontSize = 14.sp,
                     textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth().padding(16.dp))
             }
+            TrustCard(s.trust) { sheet = Sheet.TrustSheet }
             Text(stringResource(R.string.footer_disclaimer), color = TextDim, fontSize = 10.sp,
                 textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
         }
@@ -269,6 +272,7 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
         Sheet.TrendSheet -> if (card != null) TrendDialog(card) { sheet = null }
         Sheet.Details -> if (card != null && d != null) DetailsDialog(card, d) { sheet = null }
         Sheet.Assets -> AssetDialog(s) { sheet = null }
+        Sheet.TrustSheet -> TrustDialog(s.trust) { sheet = null }
         Sheet.Settings -> SettingsDialog(s, lang, onNextDemo, onSave, onLive, onLanguage, onNotify) { sheet = null }
         null -> Unit
     }
@@ -1080,6 +1084,73 @@ private fun SettingsDialog(s: UiState, lang: Lang, onNextDemo: () -> Unit, onSav
                 TextButton(onClick = { onSave(url, tok); onClose() }) { Text(stringResource(R.string.save), color = Gold) }
                 TextButton(onClick = onClose) { Text(stringResource(R.string.cancel), color = TextDim) }
             }
+        }
+    }
+}
+
+// ---------------------------------------------------------------- public trust ledger
+private fun rFmt(v: Double?): String = v?.let { String.format(Locale.US, "%+.2fR", it) } ?: "—"
+private fun pct(v: Double?): Int = Math.round((v ?: 0.0) * 100).toInt()
+
+@Composable
+private fun TrustCard(t: Trust?, onClick: () -> Unit) {
+    Panel(Modifier.fillMaxWidth(), onClick = onClick) {
+        Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(3.dp)) {
+            if (t == null) {
+                Text(stringResource(R.string.trust_loading), color = TextDim, fontSize = 12.sp)
+                return@Column
+            }
+            Text(stringResource(R.string.trust_title), color = Gold, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.trust_summary, t.all.completed, t.daysTracked), color = TextMain, fontSize = 12.sp)
+            if (t.all.completed > 0) {
+                Text(stringResource(R.string.trust_win, pct(t.all.winRate), ltr(rFmt(t.all.avgR))),
+                    color = if ((t.all.avgR ?: 0.0) > 0) BuyGreen else SellRed, fontSize = 12.sp)
+            } else Text(stringResource(R.string.trust_empty), color = TextDim, fontSize = 11.sp)
+            if (t.analysisScored > 0) Text(stringResource(R.string.trust_analysis, pct(t.accuracy), t.analysisScored,
+                pct(t.baselineAccuracy)), color = TextMain, fontSize = 11.sp)
+            else Text(stringResource(R.string.trust_analysis_none), color = TextDim, fontSize = 11.sp)
+        }
+    }
+}
+
+@Composable
+private fun TrustDialog(t: Trust?, onClose: () -> Unit) {
+    val uri = LocalUriHandler.current
+    DialogFrame(stringResource(R.string.trust_title), onClose) {
+        Body(stringResource(R.string.trust_how))
+        if (t != null) {
+            Body(stringResource(R.string.trust_summary, t.all.completed, t.daysTracked))
+            if (t.open > 0) Body(stringResource(R.string.trust_open, t.open), TextDim, 11.sp)
+            if (t.all.completed > 0) {
+                Body(stringResource(R.string.trust_win, pct(t.all.winRate), ltr(rFmt(t.all.avgR))))
+                t.all.baselineAvgR?.let { b ->
+                    Body(stringResource(R.string.trust_base, ltr(rFmt(b))), TextMain, 11.sp)
+                    val better = (t.all.avgR ?: 0.0) > b
+                    Body(stringResource(if (better) R.string.trust_better else R.string.trust_worse),
+                        if (better) BuyGreen else WaitGold, 12.sp)
+                }
+                if (t.all.completed < 30) Body(stringResource(R.string.live_few), WaitGold, 11.sp)
+            } else Body(stringResource(R.string.trust_empty), TextDim, 11.sp)
+            if (t.analysisScored > 0) Body(stringResource(R.string.trust_analysis, pct(t.accuracy), t.analysisScored,
+                pct(t.baselineAccuracy)), TextMain, 11.sp)
+            else Body(stringResource(R.string.trust_analysis_none), TextDim, 11.sp)
+            if (t.byModel.isNotEmpty()) {
+                Section(stringResource(R.string.trust_by_model))
+                t.byModel.forEach { (v, b) -> Body(stringResource(R.string.trust_model_row, ltr(v), b.completed, ltr(rFmt(b.avgR))), TextMain, 11.sp) }
+            }
+            if (t.recent.isNotEmpty()) {
+                Section(stringResource(R.string.trust_recent))
+                t.recent.filter { it.r != null }.take(10).forEach { r ->
+                    val out = stringResource(when (r.outcome) {
+                        "TARGET" -> R.string.out_target; "STOP" -> R.string.out_stop; else -> R.string.out_timeout })
+                    Body("${ltr(r.date)} · ${horizonName(r.horizon)} · ${if (r.side == "BUY") "BUY" else "SELL"} · $out · ${ltr(rFmt(r.r))}",
+                        if ((r.r ?: 0.0) > 0) BuyGreen else SellRed, 11.sp)
+                }
+            }
+            Body(ltr("SHA-256 " + t.head.take(16) + "…"), TextDim, 10.sp)
+        }
+        TextButton(onClick = { uri.openUri(TrustLedger.REPO_URL) }) {
+            Text(stringResource(R.string.trust_verify), color = Gold, fontWeight = FontWeight.Bold)
         }
     }
 }

@@ -266,6 +266,25 @@
     <string name="notif_level_title">El precio llegó a %1$s (%2$s)</string>
     <string name="notif_level_up">Nivel vigilado cruzado al alza — revisa el escenario alcista. No es una recomendación.</string>
     <string name="notif_level_down">Nivel vigilado cruzado a la baja — revisa el escenario bajista. No es una recomendación.</string>
+    <string name="trust_title">Registro de confianza en vivo</string>
+    <string name="trust_summary">%1$d recomendaciones completadas · %2$d días de seguimiento</string>
+    <string name="trust_win">Tasa de acierto %1$d%% · media %2$s por operación</string>
+    <string name="trust_base">Referencia (comprar siempre, mismas distancias): %1$s</string>
+    <string name="trust_better">Mejor que la referencia</string>
+    <string name="trust_worse">No mejor que la referencia</string>
+    <string name="trust_empty">0 recomendaciones por ahora: ninguna se publica antes de validar un modelo. Ese es el registro honesto.</string>
+    <string name="trust_open">Abiertas ahora: %1$d</string>
+    <string name="trust_analysis">Análisis diario: acierto %1$d%% de %2$d días (siempre alcista %3$d%%)</string>
+    <string name="trust_analysis_none">Análisis diario: se registra y se evalúa al cierre de cada día</string>
+    <string name="trust_how">Cada recomendación se escribe en un registro público encadenado por huellas antes de su resultado, y se conservan todos los resultados, pérdidas incluidas. Nadie puede editarlo sin romper la cadena.</string>
+    <string name="trust_recent">Últimos resultados</string>
+    <string name="trust_by_model">Por versión del modelo</string>
+    <string name="trust_model_row">%1$s: %2$d operaciones · %3$s</string>
+    <string name="trust_verify">Verifícalo tú mismo</string>
+    <string name="trust_loading">Registro de confianza: cargando…</string>
+    <string name="out_target">objetivo</string>
+    <string name="out_stop">stop</string>
+    <string name="out_timeout">tiempo</string>
     <string name="r_w_up" formatted="false">alcista</string>
     <string name="r_w_down" formatted="false">bajista</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

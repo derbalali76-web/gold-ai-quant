@@ -266,6 +266,25 @@
     <string name="notif_level_title">السعر وصل إلى %1$s (%2$s)</string>
     <string name="notif_level_up">تجاوز مستوى المراقبة صعوداً — راجع سيناريو الصعود. ليست توصية.</string>
     <string name="notif_level_down">كسر مستوى المراقبة هبوطاً — راجع سيناريو الهبوط. ليست توصية.</string>
+    <string name="trust_title">سجل الثقة الحي</string>
+    <string name="trust_summary">%1$d توصية مكتملة · %2$d يوماً من التتبع</string>
+    <string name="trust_win">نسبة الفوز %1$d%% · المتوسط %2$s لكل صفقة</string>
+    <string name="trust_base">الأساس (شراء دائماً بنفس المسافات): %1$s</string>
+    <string name="trust_better">أفضل من الأساس</string>
+    <string name="trust_worse">ليس أفضل من الأساس</string>
+    <string name="trust_empty">0 توصيات حتى الآن: لا تُنشر أي توصية قبل اعتماد نموذج. هذا هو السجل الصادق.</string>
+    <string name="trust_open">مفتوحة الآن: %1$d</string>
+    <string name="trust_analysis">التحليل اليومي: صحيح %1$d%% من %2$d يوماً (مقابل %3$d%% لتوقّع الصعود دائماً)</string>
+    <string name="trust_analysis_none">التحليل اليومي: يُسجَّل الآن ويُقيَّم عند إغلاق كل يوم</string>
+    <string name="trust_how">تُكتب كل توصية في سجل عام مترابط بالبصمات قبل معرفة نتيجتها، وتبقى كل النتائج — بما فيها الخاسرة. لا يمكن لأحد تعديله دون كسر السلسلة.</string>
+    <string name="trust_recent">آخر النتائج</string>
+    <string name="trust_by_model">حسب إصدار النموذج</string>
+    <string name="trust_model_row">%1$s: %2$d صفقة · %3$s</string>
+    <string name="trust_verify">تحقق بنفسك</string>
+    <string name="trust_loading">سجل الثقة الحي: جارٍ التحميل…</string>
+    <string name="out_target">الهدف</string>
+    <string name="out_stop">الوقف</string>
+    <string name="out_timeout">انتهاء المدة</string>
     <string name="r_w_up" formatted="false">صاعد</string>
     <string name="r_w_down" formatted="false">هابط</string>
     <string name="r_w_neutral" formatted="false">محايد</string>

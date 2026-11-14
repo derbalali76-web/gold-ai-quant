@@ -23,6 +23,7 @@ data class UiState(
     val selectedHorizon: String = "HOURS",
     val notify: Boolean = false,
     val track: List<TrackItem> = emptyList(),
+    val trust: Trust? = null,
 )
 
 class MainViewModel(app: Application) : AndroidViewModel(app) {
@@ -44,9 +45,11 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                 selectedHorizon = HorizonModel.resolve(prefs.getString("horizon", null), cached),
                 decisionFromCache = cached != null,
                 receivedAt = prefs.getLong("last_received", 0L).takeIf { v -> v > 0 }?.let(Instant::ofEpochMilli),
+                trust = TrustParser.parse(prefs.getString("trust", null)),
             )
         }
         startPrefetchLoop()
+        loadTrust()
     }
 
     /** Silent background refresh: the server keeps a fresh decision ready, so a later tap shows it at once. */
@@ -88,6 +91,21 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         prefs.edit().putString("token", v.trim()).apply()
     }
 
+    private var trustAt = 0L
+
+    /** Public ledger stats: works in every mode (no server, no token); refreshed at most every 20 minutes. */
+    fun loadTrust() {
+        val now = System.currentTimeMillis()
+        if (now - trustAt < 20 * 60_000L && _state.value.trust != null) return
+        trustAt = now
+        viewModelScope.launch {
+            val body = TrustLedger.fetch() ?: return@launch
+            val t = TrustParser.parse(body) ?: return@launch
+            prefs.edit().putString("trust", body).apply()
+            _state.update { it.copy(trust = t) }
+        }
+    }
+
     private fun loadTrack() {
         val s = _state.value
         if (!s.liveMode) return
@@ -118,6 +136,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         val s = _state.value
         if (s.loading) return
         _state.update { it.copy(loading = true, error = null) }
+        loadTrust()
         viewModelScope.launch {
             try {
                 val f = ApiClient(s.serverUrl, s.token).decision(if (s.liveMode) "LIVE" else "DEMO", s.demoStep)
