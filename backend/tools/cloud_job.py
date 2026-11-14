@@ -262,18 +262,21 @@ def crypto_research() -> dict:
     out = {"generated_at": now.isoformat(), "assets": {}}
     for sym in CRYPTO_START:
         h1, d1 = CS.load_bars(MD, sym, "1h"), CS.load_bars(MD, sym, "1d")
+        h1 = h1[h1.index >= pd.Timestamp("2021-01-01", tz="UTC")]  # 5+ years of H1 is plenty; keeps CI under its limit
         fund = CS.load_funding(MD, sym)
+        fast = {"min_train": 4380, "test_block": 2190}  # 6 months of training, refit every quarter
         if len(h1) < 5000:
             continue
         a = {"bars_1h": len(h1), "first": str(h1.index[0]), "last": str(h1.index[-1]),
              "data_quality": DQ.check_bars(h1, "1h", now, None, market="crypto")}
         base_cols = PLN.FEATURES + PLN.INTRADAY
-        rb = PLN.walk_forward(h1, "HOURS", cols=base_cols, asset=sym)
+        rb = PLN.walk_forward(h1, "HOURS", cols=base_cols, asset=sym, **fast)
         a["HOURS"] = asdict(rb)
-        since = str(fund.index[0] + pd.Timedelta(days=30))[:10] if len(fund) else None
+        print(sym, "HOURS", rb.trades, rb.expectancy_pct, rb.baseline_expectancy_pct, rb.reason, flush=True)
+        since = str(max(fund.index[0], h1.index[0]) + pd.Timedelta(days=30))[:10] if len(fund) else None
         if since:
-            cb = PLN.walk_forward(h1, "HOURS", cols=base_cols, asset=sym, since=since)
-            cf = PLN.walk_forward(h1, "HOURS", cols=base_cols + PLN.FLOW, asset=sym, since=since, funding=fund)
+            cb = PLN.walk_forward(h1, "HOURS", cols=base_cols, asset=sym, since=since, **fast)
+            cf = PLN.walk_forward(h1, "HOURS", cols=base_cols + PLN.FLOW, asset=sym, since=since, funding=fund, **fast)
             a["HOURS_flow_ab"] = {"since": since, "base": asdict(cb), "flow": asdict(cf)}
             print(sym, "HOURS A/B", since, "| base", cb.expectancy_pct, cb.direction_accuracy, cb.reason,
                   "| flow", cf.expectancy_pct, cf.direction_accuracy, cf.reason, flush=True)
@@ -462,10 +465,6 @@ def research(hs: HistoryStore) -> None:
                                                       encoding="utf-8")
     except Exception as exc:  # noqa: BLE001
         print("planner failed:", exc)
-    try:
-        crypto_research()
-    except Exception as exc:  # noqa: BLE001
-        print("crypto research failed:", exc)
     (MODELS / "outlook_report.json").write_text(json.dumps(outlook_report(daily, "TwelveData D1"), ensure_ascii=False,
                                                            indent=1, default=str), encoding="utf-8")
     print("research written")
@@ -523,16 +522,20 @@ def report(hs: HistoryStore) -> None:
 if __name__ == "__main__":
     sys.stdout.reconfigure(line_buffering=True)  # show progress live in the Actions log
     ap = argparse.ArgumentParser()
-    ap.add_argument("cmd", choices=["collect", "train", "research", "backfill", "report", "crypto", "crypto_research"])
+    ap.add_argument("cmd", choices=["collect", "train", "research", "backfill", "report", "crypto", "crypto_research",
+                                    "crypto_weekly"])
     ap.add_argument("--years", type=float, default=3.0)
     ap.add_argument("--first", type=date.fromisoformat, default=None, help="backfill range start (YYYY-MM-DD)")
     ap.add_argument("--last", type=date.fromisoformat, default=None, help="backfill range end (YYYY-MM-DD)")
     ap.add_argument("--budget-min", type=float, default=None)
     ap.add_argument("--symbols", default="", help="comma-separated Dukascopy symbols (backfill); default: all")
     a = ap.parse_args()
-    if a.cmd in ("crypto", "crypto_research"):  # crypto lives in its own files; no HistoryStore import needed
+    if a.cmd.startswith("crypto"):  # crypto lives in its own files; no HistoryStore import needed
         MODELS.mkdir(parents=True, exist_ok=True)
-        crypto(a.budget_min) if a.cmd == "crypto" else crypto_research()
+        if a.cmd in ("crypto", "crypto_weekly"):
+            crypto(a.budget_min)
+        if a.cmd in ("crypto_research", "crypto_weekly"):
+            crypto_research()
         raise SystemExit(0)
     hs = load()
     if a.cmd == "collect":

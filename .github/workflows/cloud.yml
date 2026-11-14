@@ -8,6 +8,7 @@ on:
     - cron: "47 3 * * 0"       # research (weekly, ~20 min)
     - cron: "37 1 * * *"       # backfill (daily) (3 years, resumes where it stopped; quick once complete)
     - cron: "53 6 * * 1"       # weekly report (opens a GitHub issue → e-mail)
+    - cron: "17 2 * * 6"       # crypto: refresh archive data + research (weekly, ~60 min)
   workflow_dispatch:
     inputs:
       job:
@@ -35,6 +36,7 @@ jobs:
           elif [ "${{ github.event.schedule }}" = "47 3 * * 0" ]; then echo "name=research" >> $GITHUB_OUTPUT
           elif [ "${{ github.event.schedule }}" = "37 1 * * *" ]; then echo "name=backfill" >> $GITHUB_OUTPUT
           elif [ "${{ github.event.schedule }}" = "53 6 * * 1" ]; then echo "name=report" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event.schedule }}" = "17 2 * * 6" ]; then echo "name=crypto_weekly" >> $GITHUB_OUTPUT
           else echo "name=collect" >> $GITHUB_OUTPUT; fi
       - name: run
         env:

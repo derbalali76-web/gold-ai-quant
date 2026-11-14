@@ -368,12 +368,15 @@ def _purged_train(n_upto: int, H: int, F: int) -> np.ndarray:
 
 def walk_forward(d: pd.DataFrame, horizon: str, seed: int = 7, macro: Optional[dict] = None,
                  cols: Optional[list] = None, since=None, aux: Optional[dict] = None, asset: str = "XAUUSD",
-                 funding: Optional[pd.DataFrame] = None) -> PlannerReport:
+                 funding: Optional[pd.DataFrame] = None, min_train: Optional[int] = None,
+                 test_block: Optional[int] = None) -> PlannerReport:
+    """min_train / test_block override the horizon defaults (long H1 histories refit less often)."""
     with cost_of(asset):
-        return _walk_forward(d, horizon, seed, macro, cols, since, aux, asset, funding)
+        return _walk_forward(d, horizon, seed, macro, cols, since, aux, asset, funding, min_train, test_block)
 
 
-def _walk_forward(d, horizon, seed, macro, cols, since, aux, asset, funding) -> PlannerReport:
+def _walk_forward(d, horizon, seed, macro, cols, since, aux, asset, funding, min_train=None,
+                  test_block=None) -> PlannerReport:
     """cols: feature columns (default FEATURES; FEATURES + MACRO needs `macro`). since: evaluate only from this
     date (features and labels still use the earlier bars), so two feature sets can be compared on one period."""
     d = d.dropna(subset=["open", "high", "low", "close"])
@@ -396,7 +399,8 @@ def _walk_forward(d, horizon, seed, macro, cols, since, aux, asset, funding) -> 
     c = d["close"].to_numpy(dtype=float)
     n = len(c)
     rep = PlannerReport(horizon, features=list(cols))
-    MIN_TRAIN, TEST_BLOCK = TRAIN_BARS.get(horizon, globals()["MIN_TRAIN"]), BLOCK_BARS.get(horizon, globals()["TEST_BLOCK"])
+    MIN_TRAIN = min_train or TRAIN_BARS.get(horizon, globals()["MIN_TRAIN"])
+    TEST_BLOCK = test_block or BLOCK_BARS.get(horizon, globals()["TEST_BLOCK"])
     if n < MIN_TRAIN + TEST_BLOCK:
         rep.reason = f"insufficient daily history ({n} bars)"
         return rep
