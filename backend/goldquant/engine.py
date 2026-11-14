@@ -38,7 +38,7 @@ from .msg import M as Mg, cut_short, ref_dict as _ref_dict
 from .levels import LevelService, compute_levels as compute_sr
 from .trend import market_trend
 from .features import frame_features, session_of
-from .providers.base import MarketDataProvider
+from .providers.base import MarketDataProvider, Quote
 from .regime import VOL_REGIME_AR, classify, volatility_regime
 from .risk import compute_levels, estimated_cost, stop_inside_structure
 from .schemas import (Action, CourtJudgement, DataFreshness, Decision, Evidence, HorizonOutlook, HorizonProbability, Mode,
@@ -287,6 +287,13 @@ class DecisionEngine:
                     corrupt.append(f"{tf}: {exc}")
                     b = None
             counts[tf] = 0 if b is None else len(b.df)
+        if quote is None and session_of(pd.Timestamp(as_of)) == "CLOSED" and len(bars.get("M15", [])):
+            # weekend: no live print is a market price; the last session's close (at its real time) is the price
+            last = bars["M15"].index[-1]
+            quote = Quote(price=round(float(bars["M15"]["close"].iloc[-1]), 2),
+                          observed_at=(last + pd.Timedelta(minutes=15)).to_pydatetime(), fetched_at=as_of,
+                          provider=provider.meta.name)
+            age = quote.age_seconds(as_of)
         daily = None
         try:
             db = provider.bars("D1", as_of, DAILY_BARS)

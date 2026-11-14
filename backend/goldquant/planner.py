@@ -29,15 +29,20 @@ from . import outlook as OL
 
 PLANNER_VERSION = "planner-daily-1.0.0"
 COST = OL.ROUND_TRIP_COST  # fraction of price per round trip (spread + slippage)
-HORIZONS = {"WEEK": 5, "MONTH": 21}
-GEOMETRIES = {  # (target, stop) in ATR(20) units
+HORIZONS = {"WEEK": 5, "MONTH": 21, "HOURS": 8}  # in bars: daily bars for WEEK / MONTH, H1 bars for HOURS
+DAILY_HZ = ("WEEK", "MONTH")
+GEOMETRIES = {  # (target, stop) in ATR(20) units of the horizon's own bars
     "WEEK": [(1.0, 1.0), (1.5, 1.0), (2.0, 1.5), (2.5, 1.5)],
     "MONTH": [(2.0, 1.5), (3.0, 2.0), (4.0, 2.5), (5.0, 3.0)],
+    "HOURS": [(1.0, 1.0), (1.5, 1.0), (2.0, 1.0), (2.0, 1.5)],
 }
 LIMIT_PULLBACK = 0.5  # LIMIT entry 0.5 ATR better than the close
-FILL_WINDOW = {"WEEK": 2, "MONTH": 5}  # bars allowed for a LIMIT entry to fill
+FILL_WINDOW = {"WEEK": 2, "MONTH": 5, "HOURS": 2}  # bars allowed for a LIMIT entry to fill
 MIN_TRAIN = 1000
 TEST_BLOCK = 250
+TRAIN_BARS = {"HOURS": 3000}  # ~6 months of H1 bars before the first test block
+BLOCK_BARS = {"HOURS": 500}  # refit about monthly
+INTRADAY = ["hsin", "hcos"]  # hour of day (unsigned): London / New York sessions behave differently
 HOLDOUT_FRAC = 0.2
 MIN_EDGE = 0.0005  # require at least +0.05 % expected net return per trade
 
@@ -116,7 +121,22 @@ def features(d: pd.DataFrame, macro: Optional[dict] = None) -> pd.DataFrame:
     out["atr"] = a
     if macro is not None:
         out = out.join(macro_features(d.index, macro))
+    hr = (d.index.hour + 1) % 24  # hour at the bar's close
+    out["hsin"], out["hcos"] = np.sin(2 * np.pi * hr / 24), np.cos(2 * np.pi * hr / 24)
     return out
+
+
+def intraday_allowed(index: pd.DatetimeIndex, horizon_bars: int) -> np.ndarray:
+    """H1 decision times that can be held for the whole horizon inside one trading week: not in the weekly close
+    or the daily break, and the horizon must end before Friday 21:00 UTC (no weekend gap inside a trade)."""
+    close_t = index + pd.Timedelta(hours=1)
+    end_t = close_t + pd.Timedelta(hours=horizon_bars + 2)
+
+    def closed(t):
+        dow, h = t.day_of_week, t.hour
+        return (dow == 5) | ((dow == 4) & (h >= 21)) | ((dow == 6) & (h < 22))
+    bad = closed(close_t) | (close_t.hour == 21) | closed(end_t) | ((close_t.day_of_week == 4) & (end_t.day_of_week != 4))
+    return ~np.asarray(bad)
 
 
 def signed(x: np.ndarray, direction: int, cols: Optional[list] = None) -> np.ndarray:
@@ -299,10 +319,13 @@ def walk_forward(d: pd.DataFrame, horizon: str, seed: int = 7, macro: Optional[d
         d, feats = d[keep], feats[keep]
         labels = {k: v[keep] for k, v in labels.items()}
     X = feats[cols].to_numpy(dtype=float)
+    if horizon == "HOURS":  # no decision (and no training sample) that would carry a trade over the weekend
+        X[~intraday_allowed(d.index, HORIZONS[horizon])] = np.nan
     atr_pct = feats["atr_pct"].to_numpy(dtype=float)
     c = d["close"].to_numpy(dtype=float)
     n = len(c)
     rep = PlannerReport(horizon, features=list(cols))
+    MIN_TRAIN, TEST_BLOCK = TRAIN_BARS.get(horizon, globals()["MIN_TRAIN"]), BLOCK_BARS.get(horizon, globals()["TEST_BLOCK"])
     if n < MIN_TRAIN + TEST_BLOCK:
         rep.reason = f"insufficient daily history ({n} bars)"
         return rep
@@ -395,8 +418,8 @@ def walk_forward(d: pd.DataFrame, horizon: str, seed: int = 7, macro: Optional[d
     b, j = [], MIN_TRAIN
     while j < n - H:
         out_, ret_, held_ = labels[top][j]
-        if not np.isfinite(ret_):
-            j += 1
+        if not np.isfinite(ret_) or (horizon == "HOURS" and not np.isfinite(X[j]).all()):
+            j += 1  # same eligible decision times as the model (no weekend-crossing trade)
             continue
         if np.isfinite(out_):
             b.append(ret_ * 100)

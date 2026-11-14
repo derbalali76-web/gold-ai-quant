@@ -320,7 +320,7 @@ def research(hs: HistoryStore) -> None:
         from goldquant import planner as PLN
         reps, cmp_ = {}, {}
         since = _macro_since(macro)
-        for hz in PLN.HORIZONS:
+        for hz in PLN.DAILY_HZ:
             r = PLN.walk_forward(daily, hz)
             chosen, chosen_macro = r, None
             if since is not None:  # same period, with vs without FRED macro features (honest A/B, both reported)
@@ -334,6 +334,11 @@ def research(hs: HistoryStore) -> None:
             reps[hz] = asdict(chosen)
             (MODELS / f"planner_{hz}.pkl").write_bytes(pickle.dumps(PLN.train_production(daily, hz, chosen, chosen_macro)))
             print("planner", hz, chosen.reason, {k: reps[hz][k] for k in ("trades", "expectancy_pct", "baseline_expectancy_pct")})
+        h1 = hs.load_bars("Dukascopy", "XAUUSD", "H1", limit=200_000)
+        if len(h1) > 4000:  # HOURS plan engine on H1 bars: reported (app performance block), not used for trades
+            rh = PLN.walk_forward(h1, "HOURS", cols=PLN.FEATURES + PLN.INTRADAY)
+            reps["HOURS"] = asdict(rh)
+            print("planner HOURS", rh.reason, {k: reps["HOURS"][k] for k in ("trades", "expectancy_pct", "baseline_expectancy_pct")})
         (MODELS / "planner_report.json").write_text(json.dumps(reps, ensure_ascii=False, indent=1, default=str),
                                                     encoding="utf-8")
         (MODELS / "planner_macro_ab.json").write_text(json.dumps(cmp_, ensure_ascii=False, indent=1, default=str),

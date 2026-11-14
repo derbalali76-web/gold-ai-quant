@@ -139,3 +139,19 @@ def test_provider_drops_weekend_bars():
     df = pd.DataFrame({"open": 1.0, "high": 1.0, "low": 1.0, "close": 1.0}, index=i)
     out = closed_bars(df, "H1", pd.Timestamp("2026-11-16", tz="UTC"))
     assert [t.hour for t in out.index] == [19, 20, 22, 23]
+
+
+def test_weekend_without_quote_uses_last_session_close():
+    from goldquant.engine import DecisionEngine
+    from goldquant.store import Store
+    from goldquant.providers.demo import DemoProvider
+    from goldquant.schemas import Mode
+
+    class NoWeekendQuote(DemoProvider):
+        def quote(self, as_of):
+            return None
+    eng = DecisionEngine(Store())
+    sat = datetime(2026, 11, 14, 12, tzinfo=timezone.utc)
+    d = eng.decide(NoWeekendQuote(), Mode.DEMO, sat)
+    assert d.market_closed and d.quote is not None
+    assert d.quote_timestamp_utc is not None and d.quote_timestamp_utc <= sat  # the last real bar, never "now"
