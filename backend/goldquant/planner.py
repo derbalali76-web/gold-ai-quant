@@ -42,7 +42,24 @@ MIN_TRAIN = 1000
 TEST_BLOCK = 250
 TRAIN_BARS = {"HOURS": 3000}  # ~6 months of H1 bars before the first test block
 BLOCK_BARS = {"HOURS": 500}  # refit about monthly
-INTRADAY = ["hsin", "hcos"]  # hour of day (unsigned): London / New York sessions behave differently
+INTRADAY = ["hsin", "hcos"]
+CROSS_SYMBOLS = ("DOLLARIDXUSD", "USTBONDTRUSD", "USA500IDXUSD", "EURUSD", "USDJPY", "XAGUSD")
+
+
+def cross_cols(symbols) -> list:
+    return [f"{s_}_r{k}" for s_ in symbols for k in (1, 4, 8)]
+
+
+def cross_features(index: pd.DatetimeIndex, aux: dict) -> pd.DataFrame:
+    """Log returns of related markets over the last 1 / 4 / 8 H1 bars, aligned on the SAME bar (both known at the
+    bar's close). Missing hours stay NaN (no forward fill across gaps)."""
+    out = pd.DataFrame(index=index)
+    for s_, df in aux.items():
+        lc = np.log(df["close"].astype(float))
+        lc = lc[~lc.index.duplicated()].reindex(index)
+        for k in (1, 4, 8):
+            out[f"{s_}_r{k}"] = lc - lc.shift(k)
+    return out  # hour of day (unsigned): London / New York sessions behave differently
 HOLDOUT_FRAC = 0.2
 MIN_EDGE = 0.0005  # require at least +0.05 % expected net return per trade
 
@@ -103,7 +120,7 @@ def macro_features(index: pd.DatetimeIndex, macro: dict) -> pd.DataFrame:
     return out
 
 
-def features(d: pd.DataFrame, macro: Optional[dict] = None) -> pd.DataFrame:
+def features(d: pd.DataFrame, macro: Optional[dict] = None, aux: Optional[dict] = None) -> pd.DataFrame:
     f = OL.daily_features(d)
     a = f["atr20"]
     out = pd.DataFrame(index=d.index)
@@ -121,6 +138,8 @@ def features(d: pd.DataFrame, macro: Optional[dict] = None) -> pd.DataFrame:
     out["atr"] = a
     if macro is not None:
         out = out.join(macro_features(d.index, macro))
+    if aux:
+        out = out.join(cross_features(d.index, aux))
     hr = (d.index.hour + 1) % 24  # hour at the bar's close
     out["hsin"], out["hcos"] = np.sin(2 * np.pi * hr / 24), np.cos(2 * np.pi * hr / 24)
     return out
@@ -142,7 +161,7 @@ def intraday_allowed(index: pd.DatetimeIndex, horizon_bars: int) -> np.ndarray:
 def signed(x: np.ndarray, direction: int, cols: Optional[list] = None) -> np.ndarray:
     cols = cols or FEATURES
     y = x.copy()
-    idx = [i for i, c in enumerate(cols) if c in SIGNED]
+    idx = [i for i, c in enumerate(cols) if c in SIGNED or c.rsplit("_", 1)[-1] in ("r1", "r4", "r8")]
     y[:, idx] *= direction
     return y
 
@@ -303,13 +322,13 @@ def _purged_train(n_upto: int, H: int, F: int) -> np.ndarray:
 
 
 def walk_forward(d: pd.DataFrame, horizon: str, seed: int = 7, macro: Optional[dict] = None,
-                 cols: Optional[list] = None, since=None) -> PlannerReport:
+                 cols: Optional[list] = None, since=None, aux: Optional[dict] = None) -> PlannerReport:
     """cols: feature columns (default FEATURES; FEATURES + MACRO needs `macro`). since: evaluate only from this
     date (features and labels still use the earlier bars), so two feature sets can be compared on one period."""
     d = d.dropna(subset=["open", "high", "low", "close"])
     cols = cols or FEATURES
     H, F = HORIZONS[horizon], FILL_WINDOW[horizon]
-    feats = features(d, macro if any(c in MACRO for c in cols) else None)
+    feats = features(d, macro if any(c in MACRO for c in cols) else None, aux)
     labels = label_all(d, horizon)
     if since is not None:
         ts_ = pd.Timestamp(since)

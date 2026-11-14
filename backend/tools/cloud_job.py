@@ -102,6 +102,11 @@ def collect(hs: HistoryStore) -> None:
             print("calendar:", calendar_auto.refresh(auto_cal, now))
     except Exception as exc:  # noqa: BLE001 — never fatal; the calendar simply ages
         print("calendar refresh failed:", exc)
+    try:  # point-in-time consensus forecasts (future "surprise" feature): market_data/calendar/ff_forecasts.jsonl
+        from goldquant.sources import ff_calendar
+        print("forecasts:", ff_calendar.refresh(MD / "calendar" / "ff_forecasts.jsonl", now))
+    except Exception as exc:  # noqa: BLE001
+        print("forecast recorder failed:", exc)
     ctx = ContextService(hs, ROOT / "config" / "calendar.json", auto_calendar_path=auto_cal)
     ctx.refresh(now)
     outlook_forward_log(hs, now)
@@ -339,6 +344,16 @@ def research(hs: HistoryStore) -> None:
         if len(h1) > 4000:  # HOURS plan engine on H1 bars: reported (app performance block), not used for trades
             rh = PLN.walk_forward(h1, "HOURS", cols=PLN.FEATURES + PLN.INTRADAY)
             reps["HOURS"] = asdict(rh)
+            aux = {s_: hs.load_bars("Dukascopy", s_, "H1", limit=200_000) for s_ in PLN.CROSS_SYMBOLS}
+            aux = {k: v for k, v in aux.items() if len(v) > 4000}
+            if len(aux) >= 3:  # same period, with vs without intraday cross-asset returns (both reported)
+                since = str(max(v.index[0] for v in aux.values()) + pd.Timedelta(days=30))[:10]
+                cb = PLN.walk_forward(h1, "HOURS", cols=PLN.FEATURES + PLN.INTRADAY, since=since)
+                cx = PLN.walk_forward(h1, "HOURS", cols=PLN.FEATURES + PLN.INTRADAY + PLN.cross_cols(aux),
+                                      since=since, aux=aux)
+                cmp_["HOURS_cross"] = {"since": since, "assets": sorted(aux), "base": asdict(cb), "cross": asdict(cx)}
+                print("planner HOURS A/B since", since, sorted(aux), "| base", cb.expectancy_pct, cb.direction_accuracy,
+                      cb.reason, "| cross", cx.expectancy_pct, cx.direction_accuracy, cx.reason)
             print("planner HOURS", rh.reason, {k: reps["HOURS"][k] for k in ("trades", "expectancy_pct", "baseline_expectancy_pct")})
         (MODELS / "planner_report.json").write_text(json.dumps(reps, ensure_ascii=False, indent=1, default=str),
                                                     encoding="utf-8")
