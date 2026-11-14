@@ -1,0 +1,32 @@
+{
+ "dataset": "LIVE HISTORY (Dukascopy)",
+ "horizon": 240,
+ "variants": {
+  "production": {
+   "n_oos": 15988,
+   "brier": 0.5479511944900834,
+   "climatology": 0.6655019307684379,
+   "max_reliability_gap": 0.06964415315220823,
+   "delta_vs_production": 0.0,
+   "promotable": false
+  },
+  "plus_time": {
+   "n_oos": 15988,
+   "brier": 0.5425637519519005,
+   "climatology": 0.6655019307684379,
+   "max_reliability_gap": 0.07920703683084657,
+   "delta_vs_production": -0.00539,
+   "promotable": true
+  },
+  "plus_time_cross": {
+   "n_oos": 15988,
+   "brier": 0.5398238873294836,
+   "climatology": 0.6655019307684379,
+   "max_reliability_gap": 0.11913505214772702,
+   "delta_vs_production": -0.00813,
+   "promotable": true
+  }
+ },
+ "cross_asset_available": true,
+ "note_ar": "قيمة سالبة = تحسّن. لا تدخل الإنتاج إلا بعد الترقية على بيانات حية."
+}

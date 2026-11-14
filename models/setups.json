@@ -1,0 +1,110 @@
+{
+ "setups": {
+  "LONDON_BREAKOUT": {
+   "signals": 390,
+   "development_raw": {
+    "accepted": 319,
+    "coverage": 1.0,
+    "win_rate": 0.4671,
+    "win_rate_ci95": [
+     0.4131,
+     0.5219
+    ],
+    "tp_rate": 0.3981,
+    "ev_per_trade": -0.7566,
+    "ev_ci95": [
+     -1.9274,
+     0.5393
+    ],
+    "total_pnl": -241.37
+   },
+   "development_model_gated_oos": {
+    "accepted": 54,
+    "coverage": 0.1693,
+    "win_rate": 0.4259,
+    "win_rate_ci95": [
+     0.3033,
+     0.5584
+    ],
+    "tp_rate": 0.2778,
+    "ev_per_trade": -2.4228,
+    "ev_ci95": [
+     -6.0413,
+     1.5255
+    ],
+    "total_pnl": -130.83
+   }
+  },
+  "SWEEP_RECLAIM": {
+   "signals": 6399,
+   "development_raw": {
+    "accepted": 5038,
+    "coverage": 1.0,
+    "win_rate": 0.4813,
+    "win_rate_ci95": [
+     0.4676,
+     0.4951
+    ],
+    "tp_rate": 0.3674,
+    "ev_per_trade": -0.7379,
+    "ev_ci95": [
+     -1.1843,
+     -0.2903
+    ],
+    "total_pnl": -3717.31
+   },
+   "development_model_gated_oos": {
+    "accepted": 84,
+    "coverage": 0.0167,
+    "win_rate": 0.5476,
+    "win_rate_ci95": [
+     0.4414,
+     0.6496
+    ],
+    "tp_rate": 0.369,
+    "ev_per_trade": -0.0426,
+    "ev_ci95": [
+     -5.7073,
+     5.5782
+    ],
+    "total_pnl": -3.58
+   }
+  },
+  "NY_OPEN_DRIVE": {
+   "signals": 503,
+   "development_raw": {
+    "accepted": 406,
+    "coverage": 1.0,
+    "win_rate": 0.4975,
+    "win_rate_ci95": [
+     0.4492,
+     0.546
+    ],
+    "tp_rate": 0.4828,
+    "ev_per_trade": -0.7618,
+    "ev_ci95": [
+     -2.181,
+     0.6077
+    ],
+    "total_pnl": -309.28
+   },
+   "development_model_gated_oos": {
+    "accepted": 42,
+    "coverage": 0.1034,
+    "win_rate": 0.4048,
+    "win_rate_ci95": [
+     0.2704,
+     0.5551
+    ],
+    "tp_rate": 0.381,
+    "ev_per_trade": -4.3655,
+    "ev_ci95": [
+     -10.7602,
+     2.4205
+    ],
+    "total_pnl": -183.35
+   }
+  }
+ },
+ "note_ar": "عائد بعد التكاليف؛ فترة التطوير فقط؛ الحجز النهائي لم يُلمس"
+}
