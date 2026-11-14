@@ -81,3 +81,29 @@ def load_funding(root: Path, symbol: str) -> pd.DataFrame:
         return pd.DataFrame(columns=["funding"])
     df = pd.concat(read(f) for f in files)
     return df[~df.index.duplicated(keep="last")].sort_index()
+
+
+def save_metrics(root: Path, symbol: str, df: pd.DataFrame) -> int:
+    if df is None or df.empty:
+        return 0
+    n = 0
+    for key, part in df.groupby(df.index.strftime("%Y-%m")):
+        p = root / "crypto" / symbol / "metrics" / f"{key}.csv.gz"
+        if p.exists():
+            part = pd.concat([read(p), part])
+            part = part[~part.index.duplicated(keep="last")]
+        n += _write(p, part.sort_index())
+    return n
+
+
+def load_metrics(root: Path, symbol: str) -> pd.DataFrame:
+    files = sorted((root / "crypto" / symbol / "metrics").glob("*.csv.gz"))
+    if not files:
+        return pd.DataFrame()
+    df = pd.concat(read(f) for f in files)
+    return df[~df.index.duplicated(keep="last")].sort_index()
+
+
+def metrics_days_have(root: Path, symbol: str, y: int, m: int) -> int:
+    p = root / "crypto" / symbol / "metrics" / f"{y:04d}-{m:02d}.csv.gz"
+    return len(read(p)) if p.exists() else 0

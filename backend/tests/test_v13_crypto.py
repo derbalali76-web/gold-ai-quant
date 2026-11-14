@@ -90,6 +90,9 @@ def test_crypto_job_downloads_and_researches(tmp_path, monkeypatch):
                                                                      "close": "last", "volume": "sum", "taker_buy_volume": "sum"})
         def klines_day(self, sym, tf, d):
             return pd.DataFrame()
+        def metrics_day(self, sym, d):
+            idx = pd.date_range(pd.Timestamp(d, tz="UTC"), periods=24, freq="h")
+            return pd.DataFrame({"oi": np.linspace(100, 120, 24), "top_ls_ratio": 1.1, "taker_ls_ratio": 1.0}, index=idx)
         def funding_month(self, sym, y, m):
             return pd.DataFrame({"funding": [1e-4, -1e-4]}, index=pd.DatetimeIndex(
                 [pd.Timestamp(y, m, 1, tz="UTC"), pd.Timestamp(y, m, 2, tz="UTC")]))
@@ -157,3 +160,13 @@ def test_public_snapshot_for_crypto(tmp_path, monkeypatch):
     s = c.get("/public/snapshot?asset=ETH").json()
     assert s["asset"] == "ETH" and s["recommendations"] == [] and len(s["bars"]["H1"]) == 120 and s["cost"] > 0
     assert c.get("/public/snapshot?asset=DOGE").status_code == 422
+
+
+def test_parse_metrics_hourly_known_at_bar_close():
+    t = ("create_time,symbol,sum_open_interest,sum_open_interest_value,count_toptrader_long_short_ratio,"
+         "sum_toptrader_long_short_ratio,count_long_short_ratio,sum_taker_long_short_vol_ratio\n"
+         "2024-01-01 00:05:00,BTCUSDT,100,1,1,1.2,1,0.9\n2024-01-01 01:00:00,BTCUSDT,110,1,1,1.3,1,1.1\n"
+         "2024-01-01 01:05:00,BTCUSDT,120,1,1,1.4,1,1.0\n")
+    m = BA.parse_metrics_zip(_zip(t))
+    # 00:05 .. 01:00 -> bar 00:00 (last = 01:00 snapshot, known at the bar's close)
+    assert m.loc["2024-01-01 00:00", "oi"] == 110 and m.loc["2024-01-01 01:00", "oi"] == 120

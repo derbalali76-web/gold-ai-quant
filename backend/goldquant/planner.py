@@ -31,8 +31,11 @@ PLANNER_VERSION = "planner-daily-1.0.0"
 COST = OL.ROUND_TRIP_COST  # fraction of price per round trip (spread + slippage); per asset via cost_of()
 ASSET_COST = {"XAUUSD": OL.ROUND_TRIP_COST,
               # crypto spot: 0.10 % taker fee each side + spread/slippage (conservative, no fee discounts)
-              "BTCUSDT": 0.0022, "ETHUSDT": 0.0022, "SOLUSDT": 0.0025}
+              "BTCUSDT": 0.0022, "ETHUSDT": 0.0022, "SOLUSDT": 0.0025,
+              # USD-M perpetuals: 0.05 % taker each side + slippage (no maker assumption: fills are not guaranteed)
+              "BTCUSDT_PERP": 0.0012, "ETHUSDT_PERP": 0.0012, "SOLUSDT_PERP": 0.0014}
 FLOW = ["vol_z", "taker20", "taker_imb", "funding", "funding_chg"]  # crypto only (real volume, perp funding)
+METRICS = ["oi_chg4", "oi_chg24", "top_ls", "taker_ls"]  # crypto perps: open interest, top-trader & taker ratios
 
 
 class cost_of:
@@ -105,7 +108,7 @@ FEATURES = ["dist20", "dist50", "dist200", "mom63", "mom126", "mom252", "ret5", 
 MACRO = ["ry5", "ry20", "usd5", "usd20", "gvz_z", "gvz5"]
 MACRO_SERIES = ("DFII10", "DTWEXBGS", "GVZCLS")
 SIGNED = ["dist20", "dist50", "dist200", "mom63", "mom126", "mom252", "ret5", "ret20", "rsi", "rangepos",
-          "ry5", "ry20", "usd5", "usd20", "taker20", "taker_imb", "funding", "funding_chg"]
+          "ry5", "ry20", "usd5", "usd20", "taker20", "taker_imb", "funding", "funding_chg", "top_ls", "taker_ls"]
 
 
 def macro_features(index: pd.DatetimeIndex, macro: dict) -> pd.DataFrame:
@@ -156,7 +159,14 @@ def flow_features(d: pd.DataFrame, funding: Optional[pd.DataFrame] = None) -> pd
         m = pd.merge_asof(close_t, pd.DataFrame({"t": np.asarray(f.index), "funding": f.to_numpy(),
                                                  "funding_chg": f.diff(3).to_numpy()}), on="t", direction="backward")
         out["funding"], out["funding_chg"] = m["funding"].to_numpy(), m["funding_chg"].to_numpy()
-    for c in FLOW:
+    if "oi" in d.columns:
+        loi = np.log(d["oi"].astype(float).where(d["oi"] > 0))
+        out["oi_chg4"], out["oi_chg24"] = loi - loi.shift(4), loi - loi.shift(24)
+    if "top_ls_ratio" in d.columns:
+        out["top_ls"] = np.log(d["top_ls_ratio"].astype(float).where(d["top_ls_ratio"] > 0))
+    if "taker_ls_ratio" in d.columns:
+        out["taker_ls"] = np.log(d["taker_ls_ratio"].astype(float).where(d["taker_ls_ratio"] > 0)).rolling(4).mean()
+    for c in FLOW + METRICS:
         if c not in out.columns:
             out[c] = np.nan
     return out
@@ -392,7 +402,7 @@ def _walk_forward(d, horizon, seed, macro, cols, since, aux, asset, funding, min
         d, feats = d[keep], feats[keep]
         labels = {k: v[keep] for k, v in labels.items()}
     X = feats[cols].to_numpy(dtype=float)
-    if horizon == "HOURS" and not asset.endswith("USDT"):
+    if horizon == "HOURS" and "USDT" not in asset:
         # metals: no decision (and no training sample) that would carry a trade over the weekend; crypto is 24/7
         X[~intraday_allowed(d.index, HORIZONS[horizon])] = np.nan
     atr_pct = feats["atr_pct"].to_numpy(dtype=float)

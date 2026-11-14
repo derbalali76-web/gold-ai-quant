@@ -249,6 +249,21 @@ def crypto(budget_min: float | None = None) -> None:
             if p.exists() and (y < today.year) and len(CS.read(p)) >= 1000:
                 continue
             CS.save_funding(MD, sym, arc.funding_month(sym, y, m))
+    # USD-M futures metrics (open interest, top-trader and taker long/short ratios): daily files, kept hourly
+    import calendar
+    for sym in CRYPTO_START:
+        for y, m in months(date(2022, 1, 1), today):
+            if budget_min and time.monotonic() - t0 > budget_min * 60:
+                print("crypto: time budget reached (metrics)")
+                return
+            ndays = calendar.monthrange(y, m)[1]
+            last_day = min(ndays, (today - timedelta(days=1)).day) if (y, m) == (today.year, today.month) else ndays
+            if CS.metrics_days_have(MD, sym, y, m) >= last_day * 24 * 0.95:
+                continue
+            parts = [arc.metrics_day(sym, date(y, m, dd)) for dd in range(1, last_day + 1)]
+            parts = [p for p in parts if len(p)]
+            if parts:
+                print(sym, "metrics", f"{y}-{m:02d}", CS.save_metrics(MD, sym, pd.concat(parts)), flush=True)
     print("crypto archive errors:", len(arc.errors), arc.errors[-3:])
 
 
@@ -272,19 +287,29 @@ def crypto_research() -> dict:
         base_cols = PLN.FEATURES + PLN.INTRADAY
         rb = PLN.walk_forward(h1, "HOURS", cols=base_cols, asset=sym, **fast)
         a["HOURS"] = asdict(rb)
-        print(sym, "HOURS", rb.trades, rb.expectancy_pct, rb.baseline_expectancy_pct, rb.reason, flush=True)
-        since = str(max(fund.index[0], h1.index[0]) + pd.Timedelta(days=30))[:10] if len(fund) else None
-        if since:
-            cb = PLN.walk_forward(h1, "HOURS", cols=base_cols, asset=sym, since=since, **fast)
-            cf = PLN.walk_forward(h1, "HOURS", cols=base_cols + PLN.FLOW, asset=sym, since=since, funding=fund, **fast)
-            a["HOURS_flow_ab"] = {"since": since, "base": asdict(cb), "flow": asdict(cf)}
-            print(sym, "HOURS A/B", since, "| base", cb.expectancy_pct, cb.direction_accuracy, cb.reason,
-                  "| flow", cf.expectancy_pct, cf.direction_accuracy, cf.reason, flush=True)
+        print(sym, "HOURS spot", rb.trades, rb.expectancy_pct, rb.baseline_expectancy_pct, rb.reason, flush=True)
+        rp = PLN.walk_forward(h1, "HOURS", cols=base_cols, asset=sym + "_PERP", **fast)
+        a["HOURS_perp"] = asdict(rp)
+        print(sym, "HOURS perp", rp.trades, rp.expectancy_pct, rp.baseline_expectancy_pct, rp.reason, flush=True)
+        met = CS.load_metrics(MD, sym)
+        starts = [h1.index[0]] + ([fund.index[0]] if len(fund) else []) + ([met.index[0]] if len(met) else [])
+        since = str(max(starts) + pd.Timedelta(days=30))[:10]
+        hx = h1.join(met, how="left") if len(met) else h1
+        cb = PLN.walk_forward(hx, "HOURS", cols=base_cols, asset=sym + "_PERP", since=since, **fast)
+        extra = PLN.FLOW + (PLN.METRICS if len(met) else [])
+        cf = PLN.walk_forward(hx, "HOURS", cols=base_cols + extra, asset=sym + "_PERP", since=since,
+                              funding=fund if len(fund) else None, **fast)
+        a["HOURS_flow_ab"] = {"since": since, "cost": "perp", "features": extra, "base": asdict(cb), "flow": asdict(cf)}
+        print(sym, "HOURS perp A/B", since, "| base", cb.expectancy_pct, cb.direction_accuracy, cb.reason,
+              "| flow+metrics", cf.expectancy_pct, cf.direction_accuracy, cf.reason, flush=True)
         if len(d1) > 1300:
             for hz in PLN.DAILY_HZ:
                 r = PLN.walk_forward(d1, hz, asset=sym)
                 a[hz] = asdict(r)
-                print(sym, hz, r.trades, r.expectancy_pct, r.baseline_expectancy_pct, r.reason, flush=True)
+                rq = PLN.walk_forward(d1, hz, asset=sym + "_PERP")
+                a[hz + "_perp"] = asdict(rq)
+                print(sym, hz, "spot", r.expectancy_pct, r.baseline_expectancy_pct, r.reason, "| perp", rq.expectancy_pct,
+                      rq.baseline_expectancy_pct, rq.reason, flush=True)
         out["assets"][sym] = a
     (MODELS / "crypto_report.json").write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str),
                                                encoding="utf-8")
