@@ -298,7 +298,7 @@ private fun TopBar(s: UiState, compact: Boolean, onSettings: () -> Unit) {
             Text(stringResource(h.label), color = TextMain, fontSize = 11.sp, maxLines = 1)
         }
         Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
-            Text("GOLD AI QUANT", color = Gold, fontWeight = FontWeight.ExtraBold, fontSize = 18.sp, maxLines = 1)
+            Text(stringResource(R.string.app_name), color = Gold, fontWeight = FontWeight.ExtraBold, fontSize = 18.sp, maxLines = 1)
             if (!compact) Text(stringResource(R.string.tagline), color = TextDim, fontSize = 10.sp)
         }
         val cd = stringResource(R.string.cd_settings)

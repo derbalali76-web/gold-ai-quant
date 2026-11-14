@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">GOLD AI QUANT</string>
+    <string name="app_name" translatable="false">AI QUANT</string>
     <string name="tagline">AI for gold</string>
     <string name="health_live">Live data</string>
     <string name="health_stale">Delayed data</string>

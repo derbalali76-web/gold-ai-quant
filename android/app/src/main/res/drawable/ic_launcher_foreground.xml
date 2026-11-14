@@ -1,8 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- AI QUANT mark (original artwork): three rising candles and a signal line through model nodes.
+     Everything sits inside the 66 dp adaptive-icon safe zone (21..87). -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp" android:height="108dp"
     android:viewportWidth="108" android:viewportHeight="108">
-    <!-- simple gold bar mark (original artwork) -->
-    <path android:fillColor="#D4AF37" android:pathData="M30,66 L40,44 L68,44 L78,66 Z" />
-    <path android:fillColor="#F2D16B" android:pathData="M42,47 L66,47 L63,53 L45,53 Z" />
+    <!-- candle wicks -->
+    <path android:strokeColor="#B8942A" android:strokeWidth="1.6" android:pathData="M37,58 L37,80 M54,48 L54,76 M71,36 L71,70" />
+    <!-- candle bodies, rising -->
+    <path android:fillColor="#B8942A" android:pathData="M33,64 h8 v12 h-8 z" />
+    <path android:fillColor="#D4AF37" android:pathData="M50,54 h8 v17 h-8 z" />
+    <path android:fillColor="#F2D16B" android:pathData="M67,41 h8 v23 h-8 z" />
+    <!-- signal line through model nodes -->
+    <path android:strokeColor="#F7E3A1" android:strokeWidth="2.4" android:strokeLineCap="round" android:strokeLineJoin="round"
+        android:pathData="M27,55 L41,46 L56,50 L80,29" />
+    <path android:fillColor="#F7E3A1" android:pathData="M80,29 m-3.4,0 a3.4,3.4 0 1,0 6.8,0 a3.4,3.4 0 1,0 -6.8,0" />
+    <path android:fillColor="#F7E3A1" android:pathData="M41,46 m-2.4,0 a2.4,2.4 0 1,0 4.8,0 a2.4,2.4 0 1,0 -4.8,0" />
+    <path android:fillColor="#F7E3A1" android:pathData="M56,50 m-2.4,0 a2.4,2.4 0 1,0 4.8,0 a2.4,2.4 0 1,0 -4.8,0" />
+    <path android:fillColor="#F7E3A1" android:pathData="M27,55 m-2.4,0 a2.4,2.4 0 1,0 4.8,0 a2.4,2.4 0 1,0 -4.8,0" />
 </vector>

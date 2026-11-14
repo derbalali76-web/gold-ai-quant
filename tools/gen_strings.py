@@ -35,7 +35,7 @@ def rname(code: str) -> str:
 def render(folder: str, idx: int) -> str:
     out = ['<?xml version="1.0" encoding="utf-8"?>', "<resources>"]
     if idx == 0:
-        out.append('    <string name="app_name" translatable="false">GOLD AI QUANT</string>')
+        out.append('    <string name="app_name" translatable="false">AI QUANT</string>')
     for k, v in UI.items():
         out.append(f'    <string name="{k}">{esc(v[idx])}</string>')
     for code in CATALOG_AR:
