@@ -3,27 +3,27 @@
  "horizon": 240,
  "variants": {
   "production": {
-   "n_oos": 15988,
-   "brier": 0.5479511944900834,
-   "climatology": 0.6655019307684379,
-   "max_reliability_gap": 0.06964415315220823,
+   "n_oos": 19416,
+   "brier": 0.5502345663513409,
+   "climatology": 0.6658693005111705,
+   "max_reliability_gap": 0.07611010292944542,
    "delta_vs_production": 0.0,
    "promotable": false
   },
   "plus_time": {
-   "n_oos": 15988,
-   "brier": 0.5425637519519005,
-   "climatology": 0.6655019307684379,
-   "max_reliability_gap": 0.07920703683084657,
-   "delta_vs_production": -0.00539,
+   "n_oos": 19416,
+   "brier": 0.546201415248966,
+   "climatology": 0.6658693005111705,
+   "max_reliability_gap": 0.0920314909544212,
+   "delta_vs_production": -0.00403,
    "promotable": true
   },
   "plus_time_cross": {
-   "n_oos": 15988,
-   "brier": 0.5398238873294836,
-   "climatology": 0.6655019307684379,
-   "max_reliability_gap": 0.11913505214772702,
-   "delta_vs_production": -0.00813,
+   "n_oos": 19416,
+   "brier": 0.5434296051401948,
+   "climatology": 0.6658693005111705,
+   "max_reliability_gap": 0.05190614580473962,
+   "delta_vs_production": -0.0068,
    "promotable": true
   }
  },
