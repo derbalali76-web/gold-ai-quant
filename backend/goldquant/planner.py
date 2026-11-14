@@ -72,7 +72,7 @@ def macro_features(index: pd.DatetimeIndex, macro: dict) -> pd.DataFrame:
     """Macro columns for daily bars `index` (bar OPEN times). A value is used only once PUBLISHED before the bar
     closed (published_at <= open + 1 day): FRED rows carry a conservative publication lag (sources/fred.py)."""
     out = pd.DataFrame(index=index)
-    close_t = pd.DataFrame({"t": index + pd.Timedelta(days=1)}, index=index)
+    close_t = pd.DataFrame({"t": np.asarray(index + pd.Timedelta(days=1))})
 
     def series(name, fn):
         df = macro.get(name)
@@ -83,7 +83,7 @@ def macro_features(index: pd.DatetimeIndex, macro: dict) -> pd.DataFrame:
         df["value"] = pd.to_numeric(df["value"], errors="coerce")
         df = df.dropna(subset=["value"]).sort_values("published_at").reset_index(drop=True)
         vals = fn(df["value"])
-        m = pd.merge_asof(close_t.sort_values("t"), pd.DataFrame({"t": df["published_at"], **vals}),
+        m = pd.merge_asof(close_t, pd.DataFrame({"t": np.asarray(df["published_at"]), **vals}),
                           on="t", direction="backward")
         m.index = index
         return m
