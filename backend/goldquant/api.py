@@ -334,7 +334,7 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
             return d
         return refresh_live()
 
-    def public_snapshot(d: Decision) -> dict:
+    def public_snapshot(d: Decision, with_bars: bool = True) -> dict:
         """What the public trust ledger records: only published recommendations, today's analysis and closed bars.
         No token needed: it contains nothing that is not shown in the app, and it is what makes the record checkable."""
         recs = []
@@ -348,7 +348,7 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
                          "target": p.target, "method": p.method, "model_version": d.model_version,
                          "valid_until": p.valid_until_utc.isoformat() if p.valid_until_utc else None})
         bars = {}
-        if live_provider is not None:
+        if live_provider is not None and with_bars:
             for tf, n in (("H1", 120), ("D1", 45)):
                 try:
                     b = live_provider.bars(tf, d.analyzed_at_utc, n)
@@ -373,10 +373,31 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
         return {"series": {}, "note": "no report yet"}
 
     @app.get("/public/snapshot")
-    def public_snapshot_ep():
+    def public_snapshot_ep(asset: str = Query("XAU")):
+        a = asset.upper()
+        if a != "XAU":
+            from . import crypto_engine as CE
+            if a not in CE.ASSETS:
+                raise HTTPException(422, "asset must be XAU, BTC, ETH or SOL")
+            d = crypto_decision(a)
+            feed = crypto_state["feed"]
+            snap = public_snapshot(d, with_bars=False)
+            bars = {}
+            for tf, n in (("H1", 120), ("1d", 45)):
+                try:
+                    b = feed.bars(CE.ASSETS[a], tf, d.analyzed_at_utc).tail(n)
+                except Exception:  # noqa: BLE001
+                    b = None
+                bars["D1" if tf == "1d" else tf] = [] if b is None else [
+                    [t.isoformat(), round(float(r.open), 4), round(float(r.high), 4), round(float(r.low), 4),
+                     round(float(r.close), 4)] for t, r in b.iterrows()]
+            from .planner import ASSET_COST
+            snap.update(asset=a, symbol=CE.ASSETS[a], bars=bars,
+                        cost=round(float(d.quote or 0) * ASSET_COST.get(CE.ASSETS[a], 0.0022), 4))
+            return snap
         if live_provider is None:
             raise HTTPException(503, "no live data source")
-        return public_snapshot(refresh_live())
+        return dict(public_snapshot(refresh_live()), asset="XAU")
 
     @app.get("/history", dependencies=[Depends(auth)])
     def history_ep(limit: int = Query(50, ge=1, le=500)):

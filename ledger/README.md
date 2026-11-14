@@ -1,7 +1,7 @@
 # AI QUANT — public trust ledger
 
 This repository is the **public, append-only record** of every recommendation the AI QUANT app publishes for
-XAU/USD, written **before** its outcome is known, and of every result — **losses included**.
+gold (XAU/USD) and crypto (BTC, ETH, SOL — each with its own record in `stats.json` → `assets`), written **before** its outcome is known, and of every result — **losses included**.
 
 ## How it works
 - Every hour, `.github/workflows/record.yml` fetches the app server's public snapshot and runs `ledger.py`.

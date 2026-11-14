@@ -250,8 +250,7 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
                 Row(Modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(gap)) {
                     ProbTile(card, Modifier.weight(1f).fillMaxHeight()) { sheet = Sheet.Probabilities }
                     Tile(stringResource(R.string.trust_short),
-                        if (s.asset != "XAU") stringResource(R.string.trust_gold_only)
-                        else s.trust?.let { stringResource(R.string.trust_tile, it.all.completed) } ?: "…",
+                        s.trust?.let { stringResource(R.string.trust_tile, it.all.completed) } ?: "…",
                         WaitGold, Modifier.weight(1f).fillMaxHeight()) { sheet = Sheet.TrustSheet }
                     Tile(stringResource(R.string.details), stringResource(R.string.why_title), WaitGold,
                         Modifier.weight(1f).fillMaxHeight()) { sheet = Sheet.Details }

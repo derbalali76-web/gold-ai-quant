@@ -33,6 +33,16 @@ class TrustParseTest {
         assertNull(t.all.winRate)
     }
 
+    @Test fun perAssetRecords() {
+        val body = """{"chain_head":"abc","recommendations":{"completed":1},"analysis":{},
+          "assets":{"XAU":{"recommendations":{"completed":1},"analysis":{}},
+                    "BTC":{"recommendations":{"completed":0},"analysis":{"scored":3,"accuracy":0.67}}}}"""
+        val all = TrustParser.parseAll(body)
+        assertEquals(setOf("XAU", "BTC"), all.keys)
+        assertEquals(3, all["BTC"]!!.analysisScored)
+        assertEquals("abc", all["BTC"]!!.head)
+    }
+
     @Test fun garbageIsNull() {
         assertNull(TrustParser.parse("<html>rate limited</html>"))
         assertNull(TrustParser.parse(null))

@@ -134,3 +134,26 @@ def test_crypto_engine_analysis_only(monkeypatch):
     assert all(not o.validated and o.action.value == "WAIT" for o in d.outlooks)
     assert all(o.plan is None or not o.plan.recommendation for o in d.outlooks)
     assert next(c for c in d.outlooks[0].checklist if c.code == "session").ok is True
+
+
+def test_public_snapshot_for_crypto(tmp_path, monkeypatch):
+    from fastapi.testclient import TestClient
+    from goldquant.api import create_app, Settings
+    from goldquant import crypto_engine as CE
+    monkeypatch.setenv("GOLDQUANT_BG_REFRESH", "0")
+    rng = np.random.default_rng(9)
+
+    class Feed:
+        def bars(self, sym, tf, as_of, limit=1000):
+            m = {"M15": 15, "M30": 30, "H1": 60, "H4": 240, "1d": 1440}[tf]
+            idx = pd.date_range(end=pd.Timestamp(as_of).floor(f"{m}min") - pd.Timedelta(minutes=m), periods=600,
+                                freq=f"{m}min", tz="UTC")
+            c = 3000 * np.exp(np.cumsum(rng.normal(0, 0.002, len(idx))))
+            o = np.r_[c[0], c[:-1]]
+            return pd.DataFrame({"open": o, "high": np.maximum(o, c) * 1.001, "low": np.minimum(o, c) * 0.999,
+                                 "close": c, "volume": 1.0, "tick_volume": 1.0, "taker_buy_volume": 0.5}, index=idx)
+    monkeypatch.setattr(CE, "CryptoFeed", Feed)
+    c = TestClient(create_app(str(tmp_path / "g.db"), settings=Settings.from_env(str(tmp_path))))
+    s = c.get("/public/snapshot?asset=ETH").json()
+    assert s["asset"] == "ETH" and s["recommendations"] == [] and len(s["bars"]["H1"]) == 120 and s["cost"] > 0
+    assert c.get("/public/snapshot?asset=DOGE").status_code == 422

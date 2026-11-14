@@ -23,9 +23,11 @@ data class UiState(
     val selectedHorizon: String = "HOURS",
     val notify: Boolean = false,
     val track: List<TrackItem> = emptyList(),
-    val trust: Trust? = null,
+    val trustAll: Map<String, Trust> = emptyMap(),
     val asset: String = "XAU",  // XAU | BTC | ETH | SOL
-)
+) {
+    val trust: Trust? get() = trustAll[asset]
+}
 
 class MainViewModel(app: Application) : AndroidViewModel(app) {
     private val prefs = app.getSharedPreferences("gold_ai_quant", Context.MODE_PRIVATE)
@@ -63,7 +65,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                 selectedHorizon = HorizonModel.resolve(prefs.getString("horizon", null), cached),
                 decisionFromCache = cached != null,
                 receivedAt = prefs.getLong("last_received", 0L).takeIf { v -> v > 0 }?.let(Instant::ofEpochMilli),
-                trust = TrustParser.parse(prefs.getString("trust", null)),
+                trustAll = TrustParser.parseAll(prefs.getString("trust", null)),
                 asset = asset0,
             )
         }
@@ -115,13 +117,13 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     /** Public ledger stats: works in every mode (no server, no token); refreshed at most every 20 minutes. */
     fun loadTrust() {
         val now = System.currentTimeMillis()
-        if (now - trustAt < 20 * 60_000L && _state.value.trust != null) return
+        if (now - trustAt < 20 * 60_000L && _state.value.trustAll.isNotEmpty()) return
         trustAt = now
         viewModelScope.launch {
             val body = TrustLedger.fetch() ?: return@launch
-            val t = TrustParser.parse(body) ?: return@launch
+            val t = TrustParser.parseAll(body).takeIf { it.isNotEmpty() } ?: return@launch
             prefs.edit().putString("trust", body).apply()
-            _state.update { it.copy(trust = t) }
+            _state.update { it.copy(trustAll = t) }
         }
     }
 

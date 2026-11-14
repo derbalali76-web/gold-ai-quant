@@ -18,10 +18,16 @@ object TrustParser {
         o?.optInt("completed", 0) ?: 0, o?.optInt("wins", 0) ?: 0, o?.dOrNull("win_rate"), o?.dOrNull("avg_r"),
         o?.dOrNull("baseline_avg_r"))
 
+    /** Every asset's record (gold at the top level, the others under "assets"). */
+    fun parseAll(body: String?): Map<String, Trust> =
+        listOf("XAU", "BTC", "ETH", "SOL").mapNotNull { a -> parse(body, a)?.let { a to it } }.toMap()
+
     /** Null when the body is not a ledger stats file (never a reason to fail the screen). */
-    fun parse(body: String?): Trust? {
-        val o = try { JSONObject(body ?: return null) } catch (e: Exception) { return null }
-        if (!o.has("chain_head") || !o.has("recommendations")) return null
+    fun parse(body: String?, asset: String = "XAU"): Trust? {
+        val root = try { JSONObject(body ?: return null) } catch (e: Exception) { return null }
+        if (!root.has("chain_head")) return null
+        val o = if (asset == "XAU") root else root.optJSONObject("assets")?.optJSONObject(asset) ?: return null
+        if (!o.has("recommendations")) return null
         val rec = o.optJSONObject("recommendations")
         val an = o.optJSONObject("analysis")
         val bm = o.optJSONObject("by_model")
@@ -35,6 +41,6 @@ object TrustParser {
         return Trust(block(rec), rec?.optInt("published", 0) ?: 0, rec?.optInt("open", 0) ?: 0,
             o.optInt("days_tracked", 0), o.optString("tracking_since").takeIf { it.isNotBlank() && it != "null" },
             an?.optInt("scored", 0) ?: 0, an?.dOrNull("accuracy"), an?.dOrNull("baseline_accuracy"),
-            models, recent, o.optString("chain_head"))
+            models, recent, root.optString("chain_head"))
     }
 }

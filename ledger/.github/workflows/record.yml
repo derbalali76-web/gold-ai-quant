@@ -12,20 +12,22 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v5
-      - name: fetch snapshot (the free server may need a minute to wake up)
+      - name: fetch snapshots (gold + crypto; the free server may need a minute to wake up)
         env:
           URL: ${{ vars.SNAPSHOT_URL || 'https://gold-ai-quant.onrender.com/public/snapshot' }}
         run: |
-          for i in 1 2 3 4; do
-            curl -fsS --max-time 120 "$URL" -o snapshot.json && break
-            rm -f snapshot.json; sleep 45
+          for a in XAU BTC ETH SOL; do
+            for i in 1 2 3 4; do
+              curl -fsS --max-time 120 "$URL?asset=$a" -o "snap_$a.json" && break
+              rm -f "snap_$a.json"; sleep 30
+            done
+            [ -s "snap_$a.json" ] || echo '{}' > "snap_$a.json"
           done
-          [ -s snapshot.json ] || echo '{}' > snapshot.json
-      - run: python3 ledger.py update snapshot.json
+      - run: python3 ledger.py update snap_XAU.json snap_BTC.json snap_ETH.json snap_SOL.json
       - run: python3 ledger.py verify
       - name: commit
         run: |
-          rm -f snapshot.json
+          rm -f snapshot.json snap_*.json
           git config user.name ai-quant-ledger
           git config user.email ledger@users.noreply.github.com
           git add -A

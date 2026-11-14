@@ -127,7 +127,7 @@ def test_weekend_prints_are_not_bars(tmp_path):
     sat = datetime(2026, 11, 14, 12, tzinfo=timezone.utc)
     bars = h1(datetime(2026, 11, 13, 19, tzinfo=timezone.utc), [[2000, 2001, 1999, 2000]] * 10)
     led.ingest(snap(sat, bars={"H1": bars, "D1": []}, closed=True), sat)
-    kept = sorted(led.bars["H1"])
+    kept = sorted(led.bars[("XAU", "H1")])
     # November = New York winter time: the week closes Friday 22:00 UTC
     assert kept == ["2026-11-13T19:00:00Z", "2026-11-13T20:00:00Z", "2026-11-13T21:00:00Z"]
 
@@ -156,3 +156,21 @@ def test_weekend_without_quote_uses_last_session_close():
     d = eng.decide(NoWeekendQuote(), Mode.DEMO, sat)
     assert d.market_closed and d.quote is not None
     assert d.quote_timestamp_utc is not None and d.quote_timestamp_utc <= sat  # the last real bar, never "now"
+
+
+def test_crypto_has_its_own_record_and_trades_on_sunday(tmp_path):
+    led = L.Ledger(tmp_path)
+    sun = datetime(2026, 11, 15, 10, tzinfo=timezone.utc)
+    b = {"date": "2026-11-15", "bias": "DOWN", "price": 90000.0, "scenarios": []}
+    s = snap(sun, brief=b, price=90000.0)
+    s["asset"] = "BTC"
+    s["bars"] = {"H1": h1(datetime(2026, 11, 15, 6, tzinfo=timezone.utc), [[90100, 90200, 89900, 90000]] * 3), "D1": []}
+    led.ingest(s, sun)
+    assert [e["data"]["asset"] for e in led.entries] == ["BTC"]
+    assert len(led.bars[("BTC", "H1")]) == 3  # weekend bars are real for crypto
+    nxt = datetime(2026, 11, 16, 1, tzinfo=timezone.utc)
+    s2 = dict(s, as_of=L.iso(nxt), brief=None, bars={"H1": [], "D1": [[L.iso(datetime(2026, 11, 15, tzinfo=timezone.utc)), 90500, 90600, 89000, 89500]]})
+    led.ingest(s2, nxt)
+    st = L.stats(led.entries, nxt)
+    assert st["assets"]["BTC"]["analysis"]["correct"] == 1 and st["analysis"]["scored"] == 0  # gold untouched
+    assert L.Ledger(tmp_path).verify() == []

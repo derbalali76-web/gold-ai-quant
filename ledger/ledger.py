@@ -58,6 +58,13 @@ def weekend(t: datetime) -> bool:
     return d == 5 or (d == 4 and h >= 17) or (d == 6 and h < 18)
 
 
+ASSETS = ("XAU", "BTC", "ETH", "SOL")
+
+
+def asset_of(e: dict) -> str:
+    return e["data"].get("asset") or "XAU"  # lines written before multi-asset support are gold
+
+
 def canon(obj) -> str:
     return json.dumps(obj, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
 
@@ -76,16 +83,19 @@ class Ledger:
             for raw in self.path.read_text(encoding="utf-8").splitlines():
                 if raw.strip():
                     self.entries.append(json.loads(raw))
-        self.bars = {tf: self._load_bars(tf) for tf in TF_MIN}
+        self.bars = {}  # (asset, tf) -> {iso: row}
+        for a in ASSETS:
+            for tf in TF_MIN:
+                self.bars[(a, tf)] = self._load_bars(a, tf)
 
     # -------- storage
-    def _bars_path(self, tf):
-        return self.root / f"bars_{tf}.json"
+    def _bars_path(self, asset, tf):
+        return self.root / (f"bars_{tf}.json" if asset == "XAU" else f"bars_{asset}_{tf}.json")
 
-    def _load_bars(self, tf) -> dict:
-        p = self._bars_path(tf)
+    def _load_bars(self, asset, tf) -> dict:
+        p = self._bars_path(asset, tf)
         rows = json.loads(p.read_text(encoding="utf-8")) if p.exists() else []
-        return {r[0]: r for r in rows if not weekend(ts(r[0]))}
+        return {r[0]: r for r in rows if not (asset == "XAU" and weekend(ts(r[0])))}
 
     def head(self) -> str:
         return self.entries[-1]["hash"] if self.entries else GENESIS
@@ -99,10 +109,12 @@ class Ledger:
         return e
 
     def save_bars(self):
-        for tf, rows in self.bars.items():
+        for (a, tf), rows in self.bars.items():
+            if not rows and not self._bars_path(a, tf).exists():
+                continue
             keep = [rows[k] for k in sorted(rows)][-KEEP[tf]:]
-            self.bars[tf] = {r[0]: r for r in keep}
-            self._bars_path(tf).write_text(json.dumps(keep, separators=(",", ":")), encoding="utf-8")
+            self.bars[(a, tf)] = {r[0]: r for r in keep}
+            self._bars_path(a, tf).write_text(json.dumps(keep, separators=(",", ":")), encoding="utf-8")
 
     # -------- verification
     def verify(self) -> list[str]:
@@ -130,31 +142,35 @@ class Ledger:
         done = {e["data"]["ref"] for e in self.entries if e["kind"] in ("RESULT", "BRIEF_RESULT")}
         return [e for e in self.entries if e["kind"] == kind and e["seq"] not in done]
 
-    def sorted_bars(self, tf: str) -> list[tuple[datetime, float, float, float, float]]:
-        return [(ts(r[0]), *map(float, r[1:5])) for _, r in sorted(self.bars[tf].items())]
+    def sorted_bars(self, tf: str, asset: str = "XAU") -> list[tuple[datetime, float, float, float, float]]:
+        return [(ts(r[0]), *map(float, r[1:5])) for _, r in sorted(self.bars[(asset, tf)].items())]
 
     # -------- update
     def ingest(self, snap: dict, now: datetime) -> list[dict]:
         """Merge closed bars, record new RECs / BRIEF, then resolve what can be resolved. Returns new lines."""
         before = len(self.entries)
+        asset = snap.get("asset") or "XAU"
+        if asset not in ASSETS:
+            return []
         as_of = ts(snap["as_of"])
         for tf in TF_MIN:
             step = timedelta(minutes=TF_MIN[tf])
             for r in (snap.get("bars") or {}).get(tf, []):
                 t = ts(r[0])
                 o, h, l, c = map(float, r[1:5])
-                if t + step <= min(as_of, now) and not weekend(t) and l <= min(o, c) and h >= max(o, c) and l > 0:
-                    self.bars[tf][iso(t)] = [iso(t), o, h, l, c]
+                if t + step <= min(as_of, now) and not (asset == "XAU" and weekend(t)) and l <= min(o, c) \
+                        and h >= max(o, c) and l > 0:
+                    self.bars[(asset, tf)][iso(t)] = [iso(t), o, h, l, c]
         fresh = timedelta(0) <= now - as_of <= MAX_SNAPSHOT_AGE and snap.get("price") is not None
         if fresh:
-            self._record_recs(snap, now)
-            self._record_brief(snap, now)
+            self._record_recs(snap, now, asset)
+            self._record_brief(snap, now, asset)
         self._resolve(now)
         self.save_bars()
         return self.entries[before:]
 
-    def _record_recs(self, snap, now):
-        open_h = {e["data"]["horizon"] for e in self.open_items("REC")}
+    def _record_recs(self, snap, now, asset="XAU"):
+        open_h = {e["data"]["horizon"] for e in self.open_items("REC") if asset_of(e) == asset}
         for r in snap.get("recommendations") or []:
             hz, side = r.get("horizon"), r.get("side")
             stop, target = r.get("stop"), r.get("target")
@@ -168,7 +184,7 @@ class Ledger:
                 if r.get("order", "MARKET") == "MARKET":
                     continue  # already past the stop or the target: not a valid market entry
             self.append("REC", {
-                "horizon": hz, "side": side, "order": r.get("order") or "MARKET",
+                "asset": asset, "horizon": hz, "side": side, "order": r.get("order") or "MARKET",
                 "price_at_record": price, "entry_low": r.get("entry_low"), "entry_high": r.get("entry_high"),
                 "stop": float(stop), "target": float(target), "expires": iso(expires),
                 "cost": float(snap.get("cost") or 0.0), "method": r.get("method"),
@@ -176,32 +192,33 @@ class Ledger:
                 "symbol": snap.get("symbol", "XAUUSD"), "source_as_of": snap["as_of"]}, now)
             open_h.add(hz)
 
-    def _record_brief(self, snap, now):
+    def _record_brief(self, snap, now, asset="XAU"):
         b = snap.get("brief")
         if not b or snap.get("market_closed") or b.get("bias") not in ("UP", "DOWN", "SIDEWAYS", "UNKNOWN"):
             return
         day = b.get("date")
         if day != now.date().isoformat():
             return  # only today's brief, recorded before today's close (no look-ahead)
-        if any(e["kind"] == "BRIEF" and e["data"]["date"] == day for e in self.entries):
+        if any(e["kind"] == "BRIEF" and e["data"]["date"] == day and asset_of(e) == asset for e in self.entries):
             return
-        self.append("BRIEF", {"date": day, "bias": b["bias"], "price_at_record": float(snap["price"]),
+        self.append("BRIEF", {"asset": asset, "date": day, "bias": b["bias"], "price_at_record": float(snap["price"]),
                               "scenarios": b.get("scenarios") or [],
                               "model_version": snap.get("model_version"), "source_as_of": snap["as_of"]}, now)
 
     def _resolve(self, now):
         for e in self.open_items("REC"):
-            out = simulate(e["data"], ts(e["recorded_at"]), self.sorted_bars(RES_TF[e["data"]["horizon"]]), now)
+            a = asset_of(e)
+            out = simulate(e["data"], ts(e["recorded_at"]), self.sorted_bars(RES_TF[e["data"]["horizon"]], a), now)
             if out is None:
                 continue
             base = simulate(baseline_of(e["data"]), ts(e["recorded_at"]),
-                            self.sorted_bars(RES_TF[e["data"]["horizon"]]), now)
+                            self.sorted_bars(RES_TF[e["data"]["horizon"]], a), now)
             out["ref"] = e["seq"]
             out["baseline_r"] = None if base is None else base.get("r")
             self.append("RESULT", out, now)
-        d1 = {b[0].date().isoformat(): b for b in self.sorted_bars("D1")}
+        d1s = {a: {b[0].date().isoformat(): b for b in self.sorted_bars("D1", a)} for a in ASSETS}
         for e in self.open_items("BRIEF"):
-            bar = d1.get(e["data"]["date"])
+            bar = d1s[asset_of(e)].get(e["data"]["date"])
             if bar is None:
                 if now - ts(e["recorded_at"]) > timedelta(days=5):
                     self.append("BRIEF_RESULT", {"ref": e["seq"], "outcome": "NO_DATA"}, now)
@@ -283,10 +300,21 @@ def _res(outcome, entry, exit_, d, risk, cost, when):
 
 # ---------------------------------------------------------------- stats
 def stats(entries: list[dict], now: datetime) -> dict:
-    recs = {e["seq"]: e for e in entries if e["kind"] == "REC"}
-    briefs = {e["seq"]: e for e in entries if e["kind"] == "BRIEF"}
-    res = [e for e in entries if e["kind"] == "RESULT"]
-    bres = [e for e in entries if e["kind"] == "BRIEF_RESULT"]
+    """Gold at the top level (unchanged layout), every asset under "assets"."""
+    out = _stats(entries, now, "XAU")
+    out["assets"] = {a: _stats(entries, now, a) for a in ASSETS}
+    for v in out["assets"].values():
+        for k in ("chain_head", "lines", "schema", "updated_at"):
+            v.pop(k, None)
+    return out
+
+
+def _stats(entries: list[dict], now: datetime, asset: str) -> dict:
+    mine = {e["seq"] for e in entries if e["kind"] in ("REC", "BRIEF") and asset_of(e) == asset}
+    recs = {e["seq"]: e for e in entries if e["kind"] == "REC" and e["seq"] in mine}
+    briefs = {e["seq"]: e for e in entries if e["kind"] == "BRIEF" and e["seq"] in mine}
+    res = [e for e in entries if e["kind"] == "RESULT" and e["data"].get("ref") in mine]
+    bres = [e for e in entries if e["kind"] == "BRIEF_RESULT" and e["data"].get("ref") in mine]
 
     def block(rows):
         scored = [x for x in rows if x["data"].get("r") is not None]
@@ -316,7 +344,8 @@ def stats(entries: list[dict], now: datetime) -> dict:
     for x in res:
         by_hz.setdefault(recs[x["data"]["ref"]]["data"]["horizon"], []).append(x)
     scored_b = [x for x in bres if x["data"]["outcome"] in ("CORRECT", "WRONG")]
-    first = entries[0]["recorded_at"] if entries else None
+    own = [e for e in entries if e["seq"] in mine]
+    first = own[0]["recorded_at"] if own else None
     done_refs = {x["data"]["ref"] for x in res}
     recent = []
     for x in res[-30:][::-1]:
@@ -361,20 +390,25 @@ def main(argv):
                 errs.append(f"stats.json '{k}' does not match the ledger")
         print("\n".join(errs) if errs else f"OK — {len(led.entries)} lines, head {led.head()[:16]}…")
         return 1 if errs else 0
-    if argv[:1] == ["update"] and len(argv) == 2:
+    if argv[:1] == ["update"] and len(argv) >= 2:
         if errs:
             print("refusing to append to a broken chain:\n" + "\n".join(errs))
             return 1
-        snap = None
-        try:
-            snap = json.loads(Path(argv[1]).read_text(encoding="utf-8"))
-        except Exception as exc:  # noqa: BLE001 — server asleep/unreachable: still resolve on stored bars
-            print(f"no snapshot ({exc}); resolving on stored bars only")
-        new = led.ingest(snap, now) if snap and snap.get("as_of") else (led._resolve(now) or [])
+        n = 0
+        for f in argv[1:]:  # one snapshot per asset
+            snap = None
+            try:
+                snap = json.loads(Path(f).read_text(encoding="utf-8"))
+            except Exception as exc:  # noqa: BLE001 — server asleep/unreachable: still resolve on stored bars
+                print(f"{f}: no snapshot ({exc})")
+            if snap and snap.get("as_of"):
+                n += len(led.ingest(snap, now))
+        led._resolve(now)
+        led.save_bars()
         write_stats(led, now)
-        print(f"{len(new) if isinstance(new, list) else 0} new lines; head {led.head()[:16]}…")
+        print(f"{n} new lines; head {led.head()[:16]}…")
         return 0
-    print("usage: ledger.py update SNAPSHOT.json | ledger.py verify")
+    print("usage: ledger.py update SNAPSHOT.json [SNAPSHOT2.json ...] | ledger.py verify")
     return 2
 
 
