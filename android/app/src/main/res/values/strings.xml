@@ -335,6 +335,15 @@
     <string name="news_4">Automatic data-health checks before every decision</string>
     <string name="news_5">One screen, no scrolling; levels listed with their strength</string>
     <string name="news_6">Automatic monitoring, crash reports and model switch-off</string>
+    <string name="scen_title">Strategy scenarios for my position</string>
+    <string name="scen_note">Experimental: hypothetical fixed rules registered with each daily analysis before the outcome, after costs. Not live recommendations.</string>
+    <string name="scen_buy_dip">Cash: limit buy at S1 (target R1, stop S2) vs buying now / staying in cash</string>
+    <string name="scen_wait_lower">Cash: wait to buy at S2 vs buying now</string>
+    <string name="scen_sell_rebuy">Holder: sell on a close below S1, buy back at S2 vs simply holding</string>
+    <string name="scen_none">No completed scenario yet</string>
+    <string name="scen_counts">%1$d scenarios · %2$d triggered · %3$d not triggered · %4$d won · %5$d lost</string>
+    <string name="scen_perf">Average %1$s after costs · max drawdown %2$s · beat the reference %3$d%%</string>
+    <string name="scen_r">Average %1$s per triggered trade</string>
     <string name="r_w_up" formatted="false">up</string>
     <string name="r_w_down" formatted="false">down</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

@@ -334,6 +334,15 @@
     <string name="news_4">Contrôles automatiques de santé des données avant chaque décision</string>
     <string name="news_5">Un seul écran sans défilement ; niveaux avec leur force</string>
     <string name="news_6">Surveillance automatique, rapports de plantage et coupure des modèles</string>
+    <string name="scen_title">Scénarios de stratégie pour ma position</string>
+    <string name="scen_note">Expérimental : règles fixes hypothétiques enregistrées avec chaque analyse avant le résultat, après coûts. Pas des recommandations.</string>
+    <string name="scen_buy_dip">Liquidités : achat limite à S1 (objectif R1, stop S2) vs achat immédiat / rester liquide</string>
+    <string name="scen_wait_lower">Liquidités : attendre d\'acheter à S2 vs acheter maintenant</string>
+    <string name="scen_sell_rebuy">Détenteur : vendre sous S1, racheter à S2 vs simplement conserver</string>
+    <string name="scen_none">Aucun scénario terminé</string>
+    <string name="scen_counts">%1$d scénarios · %2$d déclenchés · %3$d non déclenchés · %4$d gagnés · %5$d perdus</string>
+    <string name="scen_perf">Moyenne %1$s après coûts · baisse max %2$s · bat la référence %3$d%%</string>
+    <string name="scen_r">Moyenne %1$s par trade déclenché</string>
     <string name="r_w_up" formatted="false">haussière</string>
     <string name="r_w_down" formatted="false">baissière</string>
     <string name="r_w_neutral" formatted="false">neutre</string>

@@ -334,6 +334,15 @@
     <string name="news_4">فحص تلقائي لصحة البيانات قبل كل قرار</string>
     <string name="news_5">شاشة واحدة بلا تمرير؛ المستويات مع قوتها</string>
     <string name="news_6">مراقبة تلقائية، وتقارير أعطال، وإيقاف تلقائي للنماذج</string>
+    <string name="scen_title">سيناريوهات استراتيجية «وضعي»</string>
+    <string name="scen_note">تجريبي: قواعد افتراضية ثابتة تُسجَّل مع كل تحليل يومي قبل النتيجة، بعد التكاليف. ليست توصيات حية.</string>
+    <string name="scen_buy_dip">سيولة: شراء محدد عند S1 (الهدف R1، الوقف S2) مقابل الشراء فوراً / البقاء نقداً</string>
+    <string name="scen_wait_lower">سيولة: انتظار الشراء عند S2 مقابل الشراء فوراً</string>
+    <string name="scen_sell_rebuy">مالك: بيع عند إغلاق تحت S1 وإعادة الشراء عند S2 مقابل الاحتفاظ</string>
+    <string name="scen_none">لا سيناريوهات مكتملة بعد</string>
+    <string name="scen_counts">%1$d سيناريو · %2$d تفعّل · %3$d لم يتفعّل · %4$d ربح · %5$d خسارة</string>
+    <string name="scen_perf">المتوسط %1$s بعد التكاليف · أقصى تراجع %2$s · تفوّق على المرجع %3$d%%</string>
+    <string name="scen_r">متوسط %1$s لكل صفقة متفعّلة</string>
     <string name="r_w_up" formatted="false">صاعد</string>
     <string name="r_w_down" formatted="false">هابط</string>
     <string name="r_w_neutral" formatted="false">محايد</string>

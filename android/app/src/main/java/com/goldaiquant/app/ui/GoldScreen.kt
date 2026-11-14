@@ -277,7 +277,7 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
         Sheet.TrendSheet -> if (card != null) TrendDialog(card) { sheet = null }
         Sheet.Details -> if (card != null && d != null) DetailsDialog(card, d) { sheet = null }
         Sheet.Assets -> AssetDialog(s, { a -> sheet = null; onAssetPick(a) }) { sheet = null }
-        Sheet.TrustSheet -> TrustDialog(s.trust) { sheet = null }
+        Sheet.TrustSheet -> TrustDialog(s.trust, s.position) { sheet = null }
         Sheet.Settings -> SettingsDialog(s, lang, onNextDemo, onSave, onLive, onLanguage, onNotify,
             onHow = { sheet = Sheet.HowSheet }, onNews = { sheet = Sheet.NewsSheet }) { sheet = null }
         Sheet.HowSheet -> HowDialog { sheet = null }
@@ -1079,7 +1079,7 @@ private fun rFmt(v: Double?): String = v?.let { String.format(Locale.US, "%+.2fR
 private fun pct(v: Double?): Int = Math.round((v ?: 0.0) * 100).toInt()
 
 @Composable
-private fun TrustDialog(t: Trust?, onClose: () -> Unit) {
+private fun TrustDialog(t: Trust?, position: String = "CASH", onClose: () -> Unit) {
     val uri = LocalUriHandler.current
     DialogFrame(stringResource(R.string.trust_title), onClose) {
         Body(stringResource(R.string.trust_how))
@@ -1112,6 +1112,7 @@ private fun TrustDialog(t: Trust?, onClose: () -> Unit) {
                         if ((r.r ?: 0.0) > 0) BuyGreen else SellRed, 11.sp)
                 }
             }
+            ScenarioSection(t, position)
             Body(ltr("SHA-256 " + t.head.take(16) + "…"), TextDim, 10.sp)
         }
         TextButton(onClick = { uri.openUri(TrustLedger.REPO_URL) }) {
@@ -1206,5 +1207,25 @@ private fun NewsDialog(onClose: () -> Unit) {
         listOf(R.string.news_1, R.string.news_2, R.string.news_3, R.string.news_4, R.string.news_5, R.string.news_6).forEach {
             Body("• " + stringResource(it), TextMain, 12.sp)
         }
+    }
+}
+
+// ---------------------------------------------------------------- experimental strategy scenarios for "my position"
+@Composable
+private fun ScenarioSection(t: Trust, position: String) {
+    val names = if (position == "HOLD") listOf("HOLD_SELL_REBUY") else listOf("CASH_BUY_DIP", "CASH_WAIT_LOWER")
+    Section(stringResource(R.string.scen_title))
+    Body(stringResource(R.string.scen_note), WaitGold, 11.sp)
+    names.forEach { n ->
+        Body(stringResource(when (n) {
+            "CASH_BUY_DIP" -> R.string.scen_buy_dip; "CASH_WAIT_LOWER" -> R.string.scen_wait_lower; else -> R.string.scen_sell_rebuy
+        }), Gold, 12.sp)
+        val b = t.scenarios[n]
+        if (b == null || b.scenarios == 0) { Body(stringResource(R.string.scen_none), TextDim, 11.sp); return@forEach }
+        Body(stringResource(R.string.scen_counts, b.scenarios, b.triggered, b.notTriggered, b.wins, b.losses), TextMain, 11.sp)
+        val pct = { v: Double? -> v?.let { String.format(java.util.Locale.US, "%+.2f%%", it) } ?: "—" }
+        Body(stringResource(R.string.scen_perf, ltr(pct(b.avgReturnPct)), ltr(pct(b.maxDrawdownPct?.let { -kotlin.math.abs(it) })),
+            Math.round((b.beatRefShare ?: 0.0) * 100).toInt()), TextMain, 11.sp)
+        b.avgR?.let { Body(stringResource(R.string.scen_r, ltr(String.format(java.util.Locale.US, "%+.2fR", it))), TextMain, 11.sp) }
     }
 }

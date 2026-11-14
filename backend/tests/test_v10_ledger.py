@@ -208,3 +208,69 @@ def test_crash_reports_are_counted_in_the_public_snapshot(tmp_path, monkeypatch)
     assert c.post("/crash", json={"trace": "java.lang.X at y", "app": "0.3.0 (150)", "android": 34}, headers=h).status_code == 200
     assert c.get("/public/snapshot").json()["app_crashes_7d"] == 1
     assert c.get("/crashes", headers=h).json()[0]["app"] == "0.3.0 (150)"
+
+
+# ---------------- strategy scenarios (CASH / HOLDING), experimental layer
+def _brief_snap(now, price=2000.0, asset="XAU"):
+    b = {"date": now.date().isoformat(), "bias": "DOWN", "price": price,
+         "scenarios": [{"kind": "BEAR", "trigger": 1990.0, "trigger_level": "S1", "target": 1980.0, "target_level": "S2"},
+                       {"kind": "BULL", "trigger": 2010.0, "trigger_level": "R1", "target": 2020.0, "target_level": "R2"}]}
+    s = snap(now, brief=b, price=price)
+    s["asset"], s["cost"] = asset, 0.5
+    return s
+
+
+def _scen(led, name):
+    sc = next(e for e in led.entries if e["kind"] == "SCENARIO" and e["data"]["strategy"] == name)
+    return sc, next((e for e in led.entries if e["kind"] == "SCENARIO_RESULT" and e["data"]["ref"] == sc["seq"]), None)
+
+
+def test_scenarios_registered_with_the_forecast_and_ids_linked(tmp_path):
+    led = L.Ledger(tmp_path)
+    led.ingest(_brief_snap(T0), T0)
+    br = next(e for e in led.entries if e["kind"] == "BRIEF")
+    scs = [e for e in led.entries if e["kind"] == "SCENARIO"]
+    assert {e["data"]["strategy"] for e in scs} == set(L.STRATEGIES)
+    assert all(e["recorded_at"] == br["recorded_at"] and e["data"]["fid"] == br["data"]["fid"] for e in scs)
+    assert all(e["data"]["sid"].startswith(br["data"]["fid"] + ":") and e["data"]["experimental"] for e in scs)
+    assert led.verify() == []
+
+
+def test_sell_rebuy_needs_a_cheaper_buyback_not_just_a_falling_price(tmp_path):
+    led = L.Ledger(tmp_path)
+    led.ingest(_brief_snap(T0), T0)
+    # closes below S1 at 1989 (sell), price never reaches S2 1980 and ends at 1988.8: falling price, but the
+    # forced buy-back is only 0.2 cheaper -> after 0.5 cost the strategy LOSES vs holding
+    rows = [[1995, 1996, 1992, 1993], [1993, 1993, 1988, 1989]] + [[1989, 1990, 1988.5, 1988.8]] * 30
+    t = T0 + timedelta(hours=40)
+    led.ingest(dict(snap(t), asset="XAU", bars={"H1": h1(datetime(2026, 11, 16, 10, tzinfo=timezone.utc), rows), "D1": []}), t)
+    _, res = _scen(led, "HOLD_SELL_REBUY")
+    assert res["data"]["outcome"] == "TRIGGERED" and res["data"]["rebuy_how"] == "FORCED_AT_EXPIRY"
+    assert res["data"]["return_pct"] < 0 and res["data"]["win"] is False
+
+
+def test_not_triggered_is_recorded_and_cash_compared_with_buying_now(tmp_path):
+    led = L.Ledger(tmp_path)
+    led.ingest(_brief_snap(T0), T0)
+    rows = [[2000, 2004, 1996, 2003]] * 30  # never touches S1: nothing triggers; price rose
+    t = T0 + timedelta(hours=40)
+    led.ingest(dict(snap(t), asset="XAU", bars={"H1": h1(datetime(2026, 11, 16, 10, tzinfo=timezone.utc), rows), "D1": []}), t)
+    _, dip = _scen(led, "CASH_BUY_DIP")
+    _, hold = _scen(led, "HOLD_SELL_REBUY")
+    _, wait = _scen(led, "CASH_WAIT_LOWER")
+    assert dip["data"]["outcome"] == "NOT_TRIGGERED" and dip["data"]["ref_buy_now_pct"] > 0 and not dip["data"]["beat_ref"]
+    assert hold["data"]["outcome"] == "NOT_TRIGGERED" and hold["data"]["beat_ref"] is False
+    assert wait["data"]["outcome"] == "NOT_TRIGGERED" and wait["data"]["advantage_pct"] < 0  # waiting missed the rise
+    st = L.stats(led.entries, t)["scenarios"]
+    assert st["experimental"] and st["assets"]["XAU"]["CASH_BUY_DIP"]["all"]["not_triggered"] == 1
+    assert L.Ledger(tmp_path).verify() == []
+
+
+def test_old_ledger_still_verifies_byte_for_byte(tmp_path):
+    led = L.Ledger(tmp_path)
+    led.ingest(snap(T0, [BUY]), T0)
+    before = (tmp_path / "ledger.jsonl").read_text()
+    led2 = L.Ledger(tmp_path)
+    led2.ingest(_brief_snap(T0 + timedelta(minutes=30)), T0 + timedelta(minutes=30))
+    assert (tmp_path / "ledger.jsonl").read_text().startswith(before)  # append-only: old lines untouched
+    assert L.Ledger(tmp_path).verify() == []

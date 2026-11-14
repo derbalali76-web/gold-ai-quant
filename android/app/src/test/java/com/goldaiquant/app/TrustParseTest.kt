@@ -43,6 +43,14 @@ class TrustParseTest {
         assertEquals("abc", all["BTC"]!!.head)
     }
 
+    @Test fun scenarioBlocks() {
+        val body = """{"chain_head":"abc","recommendations":{"completed":0},"analysis":{},
+          "scenarios":{"experimental":true,"assets":{"XAU":{"HOLD_SELL_REBUY":{"all":{"scenarios":5,"triggered":2,
+          "not_triggered":3,"wins":1,"losses":1,"avg_return_pct":0.01,"max_drawdown_pct":0.3,"beat_reference_share":0.2}}}}}}"""
+        val t = TrustParser.parse(body)!!
+        assertEquals(3, t.scenarios["HOLD_SELL_REBUY"]!!.notTriggered)
+    }
+
     @Test fun garbageIsNull() {
         assertNull(TrustParser.parse("<html>rate limited</html>"))
         assertNull(TrustParser.parse(null))

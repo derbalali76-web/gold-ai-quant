@@ -4,11 +4,16 @@ import org.json.JSONObject
 
 /** Parsed stats.json of the public trust ledger. */
 data class TrustBlock(val completed: Int, val wins: Int, val winRate: Double?, val avgR: Double?, val baselineAvgR: Double?)
+/** Experimental strategy scenario statistics (hypothetical, fixed rules — never live recommendations). */
+data class ScenarioBlock(val scenarios: Int, val triggered: Int, val notTriggered: Int, val wins: Int, val losses: Int,
+                         val avgR: Double?, val avgReturnPct: Double?, val maxDrawdownPct: Double?, val beatRefShare: Double?)
+
 data class TrustRow(val date: String, val horizon: String, val side: String, val outcome: String, val r: Double?)
 data class Trust(
     val all: TrustBlock, val published: Int, val open: Int, val daysTracked: Int, val since: String?,
     val analysisScored: Int, val accuracy: Double?, val baselineAccuracy: Double?,
     val byModel: Map<String, TrustBlock>, val recent: List<TrustRow>, val head: String,
+    val scenarios: Map<String, ScenarioBlock> = emptyMap(),
 )
 
 object TrustParser {
@@ -38,9 +43,16 @@ object TrustParser {
             TrustRow(e.optString("recorded_at").take(10), e.optString("horizon"), e.optString("side"),
                 e.optString("outcome"), e.dOrNull("r"))
         }
+        val sc = root.optJSONObject("scenarios")?.optJSONObject("assets")?.optJSONObject(asset)
+        val scen = sc?.keys()?.asSequence()?.mapNotNull { k ->
+            val b = sc.optJSONObject(k)?.optJSONObject("all") ?: return@mapNotNull null
+            k to ScenarioBlock(b.optInt("scenarios"), b.optInt("triggered"), b.optInt("not_triggered"), b.optInt("wins"),
+                b.optInt("losses"), b.dOrNull("avg_r"), b.dOrNull("avg_return_pct"), b.dOrNull("max_drawdown_pct"),
+                b.dOrNull("beat_reference_share"))
+        }?.toMap() ?: emptyMap()
         return Trust(block(rec), rec?.optInt("published", 0) ?: 0, rec?.optInt("open", 0) ?: 0,
             o.optInt("days_tracked", 0), o.optString("tracking_since").takeIf { it.isNotBlank() && it != "null" },
             an?.optInt("scored", 0) ?: 0, an?.dOrNull("accuracy"), an?.dOrNull("baseline_accuracy"),
-            models, recent, root.optString("chain_head"))
+            models, recent, root.optString("chain_head"), scen)
     }
 }
