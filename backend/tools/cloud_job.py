@@ -214,8 +214,35 @@ def training_bars(hs: HistoryStore):
     return td, "LIVE HISTORY (TwelveData)"
 
 
+def data_quality_report(hs: HistoryStore) -> dict:
+    """Full-history + last-7-days quality of every stored series -> models/data_quality.json (app + weekly report)."""
+    from goldquant import data_quality as DQ
+    from goldquant.providers.base import closed_bars
+    now = datetime.now(timezone.utc)
+    td = {tf: closed_bars(hs.load_bars("TwelveData", "XAU/USD", tf), tf, now) for tf in ("M15", "H1")}
+    out = {"generated_at": now.isoformat(), "series": {}}
+    for sym in DUKA:
+        for tf in ("M15", "H1"):
+            b = hs.load_bars("Dukascopy", sym, tf, limit=10_000_000)
+            if not len(b):
+                continue
+            other = td[tf] if sym == "XAUUSD" else None
+            out["series"][f"Dukascopy:{sym}:{tf}"] = {"history": DQ.check_bars(b, tf, now, None, other=other),
+                                                      "last_7_days": DQ.check_bars(b, tf, now, 7.0, other=other)}
+    for tf, b in td.items():
+        if len(b):
+            out["series"][f"TwelveData:XAU/USD:{tf}"] = {"last_7_days": DQ.check_bars(b, tf, now, 7.0)}
+    (MODELS / "data_quality.json").write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    print("data quality:", {k: (v.get("history") or v["last_7_days"])["status"] for k, v in out["series"].items()})
+    return out
+
+
 def train(hs: HistoryStore) -> None:
     from goldquant.engine import PathService
+    try:
+        data_quality_report(hs)
+    except Exception as exc:  # noqa: BLE001 — reporting must not stop training
+        print("data quality report failed:", exc)
     bars, label = training_bars(hs)
     if len(bars["M15"]) < 4000:
         print("not enough history to train:", len(bars["M15"]))

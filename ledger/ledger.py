@@ -28,6 +28,9 @@ import json
 import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from zoneinfo import ZoneInfo
+
+NY = ZoneInfo("America/New_York")
 
 GENESIS = "0" * 64
 TF_MIN = {"H1": 60, "D1": 1440}
@@ -48,9 +51,11 @@ def iso(d: datetime) -> str:
 
 
 def weekend(t: datetime) -> bool:
-    """Bar opening inside the weekly close (Fri 21:00 -> Sun 22:00 UTC): some feeds print flat weekend quotes."""
-    d, h = t.weekday(), t.hour
-    return d == 5 or (d == 4 and h >= 21) or (d == 6 and h < 22)
+    """Bar opening inside the weekly close (Fri 17:00 -> Sun 18:00 New York time, DST-aware): some feeds print flat
+    weekend quotes that are not market prices."""
+    n = t.astimezone(NY)
+    d, h = n.weekday(), n.hour
+    return d == 5 or (d == 4 and h >= 17) or (d == 6 and h < 18)
 
 
 def canon(obj) -> str:

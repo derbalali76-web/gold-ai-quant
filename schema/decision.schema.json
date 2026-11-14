@@ -78,6 +78,50 @@
       "title": "CourtJudgement",
       "type": "object"
     },
+    "DQCheck": {
+      "additionalProperties": false,
+      "description": "One automatic data-quality check (v1.8). status: OK | WARN | FAIL.",
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "status": {
+          "title": "Status",
+          "type": "string"
+        },
+        "tf": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tf"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        }
+      },
+      "required": [
+        "code",
+        "status"
+      ],
+      "title": "DQCheck",
+      "type": "object"
+    },
     "DailyBrief": {
       "additionalProperties": false,
       "description": "Every day, even when no trade is validated: today's bias and the two levels that would change the picture.",
@@ -151,6 +195,27 @@
         "is_fresh"
       ],
       "title": "DataFreshness",
+      "type": "object"
+    },
+    "DataHealth": {
+      "additionalProperties": false,
+      "properties": {
+        "checks": {
+          "items": {
+            "$ref": "#/$defs/DQCheck"
+          },
+          "title": "Checks",
+          "type": "array"
+        },
+        "status": {
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "DataHealth",
       "type": "object"
     },
     "Evidence": {
@@ -1457,6 +1522,17 @@
     "data_freshness": {
       "$ref": "#/$defs/DataFreshness"
     },
+    "data_health": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DataHealth"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
     "data_quality": {
       "title": "Data Quality",
       "type": "string"
@@ -1787,7 +1863,7 @@
       "title": "Reward Risk"
     },
     "schema_version": {
-      "default": "1.7.0",
+      "default": "1.8.0",
       "title": "Schema Version",
       "type": "string"
     },

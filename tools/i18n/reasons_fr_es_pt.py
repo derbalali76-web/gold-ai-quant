@@ -35,6 +35,7 @@ T = {
                    "Nenhum provedor de dados ao vivo foi configurado. Use o modo demonstração ou adicione uma chave gratuita."),
 "un.corrupt": ("Données du fournisseur corrompues ou incohérentes — rejetées", "Datos del proveedor corruptos o incoherentes — rechazados", "Dados do provedor corrompidos ou inconsistentes — rejeitados"),
 "un.no_quote": ("Aucun prix disponible chez le fournisseur", "No hay precio disponible del proveedor", "Nenhum preço disponível do provedor"),
+"un.dq_fail": ("Contrôle qualité des données échoué ({0}) — aucune décision sur des données défectueuses", "Control de calidad de datos fallido ({0}) — ninguna decisión con datos defectuosos", "Verificação de qualidade dos dados falhou ({0}) — nenhuma decisão com dados defeituosos"),
 "un.closed": ("Le marché de l'or au comptant est fermé (week-end)", "El mercado del oro al contado está cerrado (fin de semana)", "O mercado de ouro à vista está fechado (fim de semana)"),
 "un.stale": ("Prix périmé ({0} s) — non utilisé", "Precio obsoleto ({0} s) — no se usa", "Preço desatualizado ({0} s) — não utilizado"),
 "un.firewall": ("Pare-feu qualité des données : {0}", "Cortafuegos de calidad de datos: {0}", "Firewall de qualidade dos dados: {0}"),

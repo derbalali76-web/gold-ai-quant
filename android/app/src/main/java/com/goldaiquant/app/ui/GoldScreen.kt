@@ -89,6 +89,7 @@ import com.goldaiquant.app.ReasonStrings
 import com.goldaiquant.app.ReasonText
 import com.goldaiquant.app.Trend
 import com.goldaiquant.app.Trust
+import com.goldaiquant.app.DataHealth
 import com.goldaiquant.app.TrustLedger
 import com.goldaiquant.app.UiState
 import java.time.Instant
@@ -182,6 +183,7 @@ private fun health(s: UiState): Health {
         s.decisionFromCache -> Health.SAVED
         d.isDemo -> Health.DEMO
         d.action == Action.UNAVAILABLE && d.quote == null -> Health.NONE
+        d.dataHealth?.status == "FAIL" -> Health.NONE
         !d.isFresh -> Health.STALE
         else -> Health.LIVE
     }
@@ -331,6 +333,7 @@ private fun AssetDialog(s: UiState, onClose: () -> Unit) {
             Spacer(Modifier.width(6.dp))
             Body(stringResource(R.string.asset_status, stringResource(h.label)), TextDim, 12.sp)
         }
+        s.decision?.dataHealth?.let { DataHealthSection(it) }
         listOf(Triple(R.string.asset_gold, "XAU/USD", true), Triple(R.string.asset_btc, "BTC/USD", false),
             Triple(R.string.asset_eth, "ETH/USD", false), Triple(R.string.asset_sol, "SOL/USD", false)).forEach { (name, sym, on) ->
             Row(Modifier.fillMaxWidth().border(1.dp, if (on) Gold else Track, RoundedCornerShape(12.dp))
@@ -1096,4 +1099,26 @@ private fun TrustDialog(t: Trust?, onClose: () -> Unit) {
             Text(stringResource(R.string.trust_verify), color = Gold, fontWeight = FontWeight.Bold)
         }
     }
+}
+
+// ---------------------------------------------------------------- data health (automatic checks, shown in the asset sheet)
+@Composable
+private fun dqName(code: String): String = stringResource(when (code) {
+    "freshness" -> R.string.dq_freshness; "coverage" -> R.string.dq_coverage; "gaps" -> R.string.dq_gaps
+    "outliers" -> R.string.dq_outliers; "flat" -> R.string.dq_flat; "weekend" -> R.string.dq_weekend
+    "ohlc" -> R.string.dq_ohlc; "cross_source" -> R.string.dq_cross; else -> R.string.dq_other
+})
+
+@Composable
+private fun DataHealthSection(h: DataHealth) {
+    Section(stringResource(R.string.dq_title))
+    val (word, col) = when (h.status) {
+        "OK" -> R.string.dq_ok to BuyGreen; "FAIL" -> R.string.dq_fail to SellRed; else -> R.string.dq_warn to WaitGold
+    }
+    Body(stringResource(word), col, 12.sp)
+    h.checks.forEach { c ->
+        val (mark, cc) = when (c.status) { "OK" -> "✓" to BuyGreen; "FAIL" -> "✗" to SellRed; else -> "!" to WaitGold }
+        Body("$mark  ${dqName(c.code)}" + (c.value?.let { " · " + ltr(it) } ?: ""), cc, 11.sp)
+    }
+    Body(stringResource(R.string.dq_note), TextDim, 10.sp)
 }

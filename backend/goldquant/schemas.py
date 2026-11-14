@@ -7,7 +7,7 @@ from typing import Any, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-SCHEMA_VERSION = "1.7.0"
+SCHEMA_VERSION = "1.8.0"
 
 
 class Action(str, Enum):
@@ -317,6 +317,21 @@ class HorizonOutlook(BaseModel):
         return self
 
 
+class DQCheck(BaseModel):
+    """One automatic data-quality check (v1.8). status: OK | WARN | FAIL."""
+    model_config = ConfigDict(extra="forbid")
+    code: str  # freshness | coverage | gaps | outliers | flat | weekend | ohlc | cross_source
+    status: str
+    value: Optional[str] = None
+    tf: Optional[str] = None
+
+
+class DataHealth(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    status: str  # OK | WARN | FAIL — FAIL blocks the decision
+    checks: list[DQCheck] = Field(default_factory=list)
+
+
 class Decision(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -371,6 +386,7 @@ class Decision(BaseModel):
     # v1.7: the market is closed (weekend / daily break); trend and levels are those of the LAST session, for planning
     market_closed: bool = False
     daily_brief: Optional[DailyBrief] = None
+    data_health: Optional[DataHealth] = None  # v1.8
     audit_hash: Optional[str] = None
 
     supporting_evidence: list[Evidence] = Field(default_factory=list)

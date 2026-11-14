@@ -290,6 +290,20 @@
     <string name="out_target">target</string>
     <string name="out_stop">stop</string>
     <string name="out_timeout">time limit</string>
+    <string name="dq_title">Data health (automatic checks)</string>
+    <string name="dq_ok">All checks passed</string>
+    <string name="dq_warn">Usable, with warnings</string>
+    <string name="dq_fail">Faulty data: no decision is made</string>
+    <string name="dq_freshness">Freshness (bars behind)</string>
+    <string name="dq_coverage">Coverage of trading hours</string>
+    <string name="dq_gaps">Longest gap</string>
+    <string name="dq_outliers">Abnormal jumps</string>
+    <string name="dq_flat">Frozen price (repeated bars)</string>
+    <string name="dq_weekend">Prints while the market is closed</string>
+    <string name="dq_ohlc">Bar consistency</string>
+    <string name="dq_cross">Agreement with a second source</string>
+    <string name="dq_other">Other check</string>
+    <string name="dq_note">Run on the bars behind every decision. A failed check blocks the decision.</string>
     <string name="r_w_up" formatted="false">up</string>
     <string name="r_w_down" formatted="false">down</string>
     <string name="r_w_neutral" formatted="false">neutral</string>
@@ -328,6 +342,7 @@
     <string name="r_un_corrupt" formatted="false">Provider data is corrupt or inconsistent — rejected</string>
     <string name="r_un_no_quote" formatted="false">No price is available from the provider</string>
     <string name="r_un_closed" formatted="false">The spot gold market is closed (weekend)</string>
+    <string name="r_un_dq_fail" formatted="false">Data quality check failed ({0}) — no decision on faulty data</string>
     <string name="r_un_stale" formatted="false">Price is stale ({0} s) — not relied upon</string>
     <string name="r_un_firewall" formatted="false">Data-quality firewall: {0}</string>
     <string name="r_un_insufficient" formatted="false">Not enough historical data for analysis</string>

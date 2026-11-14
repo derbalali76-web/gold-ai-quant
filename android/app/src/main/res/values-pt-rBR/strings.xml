@@ -289,6 +289,20 @@
     <string name="out_target">alvo</string>
     <string name="out_stop">stop</string>
     <string name="out_timeout">prazo</string>
+    <string name="dq_title">Saúde dos dados (verificações automáticas)</string>
+    <string name="dq_ok">Todas as verificações aprovadas</string>
+    <string name="dq_warn">Utilizáveis, com avisos</string>
+    <string name="dq_fail">Dados defeituosos: nenhuma decisão é tomada</string>
+    <string name="dq_freshness">Atualidade (barras de atraso)</string>
+    <string name="dq_coverage">Cobertura do horário de mercado</string>
+    <string name="dq_gaps">Maior lacuna</string>
+    <string name="dq_outliers">Saltos anormais</string>
+    <string name="dq_flat">Preço congelado (barras repetidas)</string>
+    <string name="dq_weekend">Cotações com mercado fechado</string>
+    <string name="dq_ohlc">Consistência das barras</string>
+    <string name="dq_cross">Concordância com uma segunda fonte</string>
+    <string name="dq_other">Outra verificação</string>
+    <string name="dq_note">Executadas nas barras de cada decisão. Uma falha bloqueia a decisão.</string>
     <string name="r_w_up" formatted="false">de alta</string>
     <string name="r_w_down" formatted="false">de baixa</string>
     <string name="r_w_neutral" formatted="false">neutra</string>
@@ -323,6 +337,7 @@
     <string name="r_un_corrupt" formatted="false">Dados do provedor corrompidos ou inconsistentes — rejeitados</string>
     <string name="r_un_no_quote" formatted="false">Nenhum preço disponível do provedor</string>
     <string name="r_un_closed" formatted="false">O mercado de ouro à vista está fechado (fim de semana)</string>
+    <string name="r_un_dq_fail" formatted="false">Verificação de qualidade dos dados falhou ({0}) — nenhuma decisão com dados defeituosos</string>
     <string name="r_un_stale" formatted="false">Preço desatualizado ({0} s) — não utilizado</string>
     <string name="r_un_firewall" formatted="false">Firewall de qualidade dos dados: {0}</string>
     <string name="r_un_insufficient" formatted="false">Dados históricos insuficientes para a análise</string>

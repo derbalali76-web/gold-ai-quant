@@ -83,10 +83,12 @@ def utcnow() -> datetime:
 
 
 def market_closed_mask(index: pd.DatetimeIndex) -> "pd.Series | object":
-    """True for bar OPEN times inside the weekly close (Fri 21:00 → Sun 22:00 UTC, as features.session_of).
+    """True for bar OPEN times inside the weekly close: Friday 17:00 -> Sunday 18:00 New York time (DST-aware,
+    i.e. Fri 21:00 -> Sun 22:00 UTC in summer, Fri 22:00 -> Sun 23:00 UTC in winter).
     Some feeds keep printing flat quotes over the weekend; those are not market prices."""
-    dow, hour = index.day_of_week, index.hour
-    return (dow == 5) | ((dow == 4) & (hour >= 21)) | ((dow == 6) & (hour < 22))
+    n = index.tz_convert("America/New_York")
+    dow, hour = n.day_of_week, n.hour
+    return (dow == 5) | ((dow == 4) & (hour >= 17)) | ((dow == 6) & (hour < 18))
 
 
 def closed_bars(df: pd.DataFrame, timeframe: str, as_of: datetime) -> pd.DataFrame:

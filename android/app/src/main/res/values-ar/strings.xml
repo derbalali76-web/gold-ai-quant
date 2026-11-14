@@ -289,6 +289,20 @@
     <string name="out_target">الهدف</string>
     <string name="out_stop">الوقف</string>
     <string name="out_timeout">انتهاء المدة</string>
+    <string name="dq_title">صحة البيانات (فحص تلقائي)</string>
+    <string name="dq_ok">كل الفحوص سليمة</string>
+    <string name="dq_warn">صالحة مع تنبيهات</string>
+    <string name="dq_fail">بيانات معيبة: لا يُتخذ أي قرار</string>
+    <string name="dq_freshness">الحداثة (شموع متأخرة)</string>
+    <string name="dq_coverage">تغطية ساعات التداول</string>
+    <string name="dq_gaps">أطول فجوة</string>
+    <string name="dq_outliers">قفزات غير طبيعية</string>
+    <string name="dq_flat">سعر متجمد (شموع مكررة)</string>
+    <string name="dq_weekend">أسعار أثناء إغلاق السوق</string>
+    <string name="dq_ohlc">اتساق الشموع</string>
+    <string name="dq_cross">التطابق مع مصدر ثانٍ</string>
+    <string name="dq_other">فحص آخر</string>
+    <string name="dq_note">تُجرى على الشموع خلف كل قرار. أي فحص فاشل يوقف القرار.</string>
     <string name="r_w_up" formatted="false">صاعد</string>
     <string name="r_w_down" formatted="false">هابط</string>
     <string name="r_w_neutral" formatted="false">محايد</string>
@@ -327,6 +341,7 @@
     <string name="r_un_corrupt" formatted="false">بيانات المزوّد تالفة أو غير متسقة — رُفضت</string>
     <string name="r_un_no_quote" formatted="false">لا يوجد سعر متاح من المزوّد</string>
     <string name="r_un_closed" formatted="false">سوق الذهب الفوري مغلق حالياً (عطلة نهاية الأسبوع)</string>
+    <string name="r_un_dq_fail" formatted="false">فحص جودة البيانات فشل ({0}) — لا قرار على بيانات معيبة</string>
     <string name="r_un_stale" formatted="false">السعر قديم ({0} ثانية) — لا يُعتمد عليه</string>
     <string name="r_un_firewall" formatted="false">جدار جودة البيانات: {0}</string>
     <string name="r_un_insufficient" formatted="false">بيانات تاريخية غير كافية للتحليل</string>

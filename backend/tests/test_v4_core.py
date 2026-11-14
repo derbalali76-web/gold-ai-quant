@@ -174,7 +174,8 @@ def test_spike_in_feed_makes_engine_unavailable(demo):
                 b = Bars(tf, df, b.provider, b.fetched_at)
             return b
     d = DecisionEngine(Store()).decide(Spiky(), Mode.DEMO, (pd.Timestamp(demo.default_as_of()) - pd.Timedelta(hours=3)).to_pydatetime())
-    assert d.action == Action.UNAVAILABLE and "جدار" in d.warning_ar
+    # caught by the data-quality gate (v1.8) or, if it gets that far, by the firewall
+    assert d.action == Action.UNAVAILABLE and ("جدار" in d.warning_ar or "جودة البيانات" in d.warning_ar)
 
 
 # ---------------- Audit chain

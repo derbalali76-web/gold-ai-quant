@@ -45,6 +45,10 @@ data class Check(val code: String, val ok: Boolean?, val args: List<String>)
 data class Scenario(val kind: String, val trigger: Double, val triggerLevel: String, val target: Double?, val targetLevel: String?)
 data class Brief(val date: String, val bias: String, val scenarios: List<Scenario>)
 
+/** v1.8 automatic data-quality check (status OK / WARN / FAIL; FAIL blocks the decision on the server). */
+data class DqCheck(val code: String, val status: String, val value: String?, val tf: String?)
+data class DataHealth(val status: String, val checks: List<DqCheck>)
+
 /** v1.7 trade plan of one horizon. A watch plan (WAIT_TO_*) never carries a stop or a target. */
 data class Plan(
     val setup: String, val recommendation: Boolean, val side: String?, val entryLow: Double?, val entryHigh: Double?,
@@ -130,6 +134,7 @@ data class Decision(
     val reevaluateRefs: List<Reason> = emptyList(),
     val marketClosed: Boolean = false,
     val brief: Brief? = null,
+    val dataHealth: DataHealth? = null,
 ) {
     val isDemo: Boolean get() = mode == "DEMO"
 
@@ -214,6 +219,7 @@ object DecisionParser {
             outlooks = o.outlooks("outlooks"),
             marketClosed = o.optBoolean("market_closed", false),
             brief = o.optJSONObject("daily_brief")?.let { parseBrief(it) },
+            dataHealth = o.optJSONObject("data_health")?.let { parseHealth(it) },
             reasonShort = o.reason("reason_short_ref"), waitFor = o.reason("wait_for_ref"), warning = o.reason("warning_ref"),
             invalidationRefs = o.reasons("invalidation_refs"), missingRefs = o.reasons("missing_refs"),
             alternativeEntryNote = o.reason("alternative_entry_note_ref"),
@@ -350,6 +356,17 @@ object DecisionParser {
             Check(e.optString("code"), if (e.isNull("ok") || !e.has("ok")) null else e.optBoolean("ok"),
                 if (args == null) emptyList() else (0 until args.length()).map { args.optString(it) })
         }
+    }
+
+    private fun parseHealth(h: JSONObject): DataHealth {
+        val a = h.optJSONArray("checks")
+        val checks = (0 until (a?.length() ?: 0)).mapNotNull { i ->
+            val e = a!!.optJSONObject(i) ?: return@mapNotNull null
+            DqCheck(e.optString("code"), e.optString("status", "WARN"),
+                e.optString("value").takeIf { e.has("value") && !e.isNull("value") },
+                e.optString("tf").takeIf { e.has("tf") && !e.isNull("tf") })
+        }
+        return DataHealth(h.optString("status", "WARN"), checks)
     }
 
     private fun parseBrief(b: JSONObject): Brief? {

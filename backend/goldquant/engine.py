@@ -38,11 +38,13 @@ from .msg import M as Mg, cut_short, ref_dict as _ref_dict
 from .levels import LevelService, compute_levels as compute_sr
 from .trend import market_trend
 from .features import frame_features, session_of
+from . import data_quality as DQ
 from .providers.base import MarketDataProvider, Quote
 from .regime import VOL_REGIME_AR, classify, volatility_regime
 from .risk import compute_levels, estimated_cost, stop_inside_structure
 from .schemas import (Action, CourtJudgement, DataFreshness, Decision, Evidence, HorizonOutlook, HorizonProbability, Mode,
-                      LevelsBlock, MarketTrend, PriceLevel, ReasonRef, SCHEMA_VERSION, SpotOrProxy, Uncertainty)
+                      LevelsBlock, MarketTrend, PriceLevel, ReasonRef, SCHEMA_VERSION, SpotOrProxy, Uncertainty,
+                      DataHealth, DQCheck)
 from .store import Store
 
 MIN_BARS = {"M15": 600, "M30": 300, "H1": 200, "H4": 100}
@@ -262,7 +264,7 @@ class DecisionEngine:
 
     def decide(self, provider: Optional[MarketDataProvider], mode: Mode, as_of: datetime, *args, **kwargs) -> Decision:
         """The decision plus one trade plan per horizon (plans only re-express the decision; see plans.py)."""
-        self._daily, self._ctx = None, None
+        self._daily, self._ctx, self._dq = None, None, None
         return self._decide(provider, mode, as_of, *args, **kwargs)
 
     def _decide(self, provider: Optional[MarketDataProvider], mode: Mode, as_of: datetime,
@@ -313,6 +315,10 @@ class DecisionEngine:
         self.store.save_snapshot(snap_hash, as_of.isoformat(), snap)
         spot = SpotOrProxy(provider.meta.spot_or_proxy)
         session = session_of(pd.Timestamp(as_of))
+        try:  # automatic data-quality gate on the bars this decision would use
+            self._dq = DQ.decision_gate(bars, as_of, session not in ("CLOSED", "DAILY_BREAK"))
+        except Exception:  # noqa: BLE001 — a failing check must never crash the engine; report it as unknown
+            self._dq = {"status": "WARN", "checks": []}
 
         pit = PITLedger(as_of)
         if quote is not None:
@@ -335,6 +341,9 @@ class DecisionEngine:
             return u(Mg("un.no_quote"))
         if session == "CLOSED":
             return u(Mg("un.closed"), closed=True)
+        if self._dq.get("status") == "FAIL":
+            bad = ", ".join(sorted({c["code"] for c in self._dq["checks"] if c["status"] == "FAIL"}))
+            return u(Mg("un.dq_fail", bad))
         if not fresh:
             return u(Mg("un.stale", f"{age:.0f}"))
         short = [tf for tf, n in MIN_BARS.items() if counts.get(tf, 0) < n]
@@ -664,6 +673,9 @@ class DecisionEngine:
 
     def _finish(self, d: Decision, audit: dict | None = None) -> Decision:
         from . import plans as PL
+        dq = getattr(self, "_dq", None)
+        if dq and d.data_health is None:
+            d.data_health = DataHealth(status=dq["status"], checks=[DQCheck(**c) for c in dq["checks"]])
         ctx = getattr(self, "_ctx", None)
         PL.attach(d, getattr(self, "planners", None), getattr(self, "_daily", None),
                   getattr(ctx, "macro_frames", None) or None)  # plans are part of the audit

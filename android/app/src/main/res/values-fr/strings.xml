@@ -289,6 +289,20 @@
     <string name="out_target">objectif</string>
     <string name="out_stop">stop</string>
     <string name="out_timeout">délai</string>
+    <string name="dq_title">Santé des données (contrôles automatiques)</string>
+    <string name="dq_ok">Tous les contrôles sont réussis</string>
+    <string name="dq_warn">Utilisables, avec avertissements</string>
+    <string name="dq_fail">Données défectueuses : aucune décision</string>
+    <string name="dq_freshness">Fraîcheur (barres de retard)</string>
+    <string name="dq_coverage">Couverture des heures de marché</string>
+    <string name="dq_gaps">Plus long trou</string>
+    <string name="dq_outliers">Sauts anormaux</string>
+    <string name="dq_flat">Prix figé (barres répétées)</string>
+    <string name="dq_weekend">Cotations marché fermé</string>
+    <string name="dq_ohlc">Cohérence des barres</string>
+    <string name="dq_cross">Accord avec une seconde source</string>
+    <string name="dq_other">Autre contrôle</string>
+    <string name="dq_note">Exécutés sur les barres derrière chaque décision. Un échec bloque la décision.</string>
     <string name="r_w_up" formatted="false">haussière</string>
     <string name="r_w_down" formatted="false">baissière</string>
     <string name="r_w_neutral" formatted="false">neutre</string>
@@ -323,6 +337,7 @@
     <string name="r_un_corrupt" formatted="false">Données du fournisseur corrompues ou incohérentes — rejetées</string>
     <string name="r_un_no_quote" formatted="false">Aucun prix disponible chez le fournisseur</string>
     <string name="r_un_closed" formatted="false">Le marché de l\'or au comptant est fermé (week-end)</string>
+    <string name="r_un_dq_fail" formatted="false">Contrôle qualité des données échoué ({0}) — aucune décision sur des données défectueuses</string>
     <string name="r_un_stale" formatted="false">Prix périmé ({0} s) — non utilisé</string>
     <string name="r_un_firewall" formatted="false">Pare-feu qualité des données : {0}</string>
     <string name="r_un_insufficient" formatted="false">Données historiques insuffisantes pour l\'analyse</string>

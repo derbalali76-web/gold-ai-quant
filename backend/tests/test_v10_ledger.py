@@ -128,7 +128,8 @@ def test_weekend_prints_are_not_bars(tmp_path):
     bars = h1(datetime(2026, 11, 13, 19, tzinfo=timezone.utc), [[2000, 2001, 1999, 2000]] * 10)
     led.ingest(snap(sat, bars={"H1": bars, "D1": []}, closed=True), sat)
     kept = sorted(led.bars["H1"])
-    assert kept == ["2026-11-13T19:00:00Z", "2026-11-13T20:00:00Z"]
+    # November = New York winter time: the week closes Friday 22:00 UTC
+    assert kept == ["2026-11-13T19:00:00Z", "2026-11-13T20:00:00Z", "2026-11-13T21:00:00Z"]
 
 
 def test_provider_drops_weekend_bars():
@@ -138,7 +139,7 @@ def test_provider_drops_weekend_bars():
         pd.date_range("2026-11-15 21:00", periods=3, freq="h", tz="UTC"))
     df = pd.DataFrame({"open": 1.0, "high": 1.0, "low": 1.0, "close": 1.0}, index=i)
     out = closed_bars(df, "H1", pd.Timestamp("2026-11-16", tz="UTC"))
-    assert [t.hour for t in out.index] == [19, 20, 22, 23]
+    assert [t.hour for t in out.index] == [19, 20, 21, 23]  # winter: Fri close 22:00 UTC, Sun open 23:00 UTC
 
 
 def test_weekend_without_quote_uses_last_session_close():

@@ -1,6 +1,6 @@
 {
-  "schema_version": "1.7.0",
-  "decision_id": "d70527df8006c085",
+  "schema_version": "1.8.0",
+  "decision_id": "fab4e9027eed9445",
   "mode": "DEMO",
   "action": "SELL",
   "instrument": "XAU/USD",
@@ -11,10 +11,10 @@
   "analyzed_at_utc": "2025-12-15T04:00:00Z",
   "entry_min": 2043.36,
   "entry_max": 2043.98,
-  "stop_loss": 2047.75,
-  "tp1": 2039.59,
-  "tp2": 2036.32,
-  "tp3": 2032.23,
+  "stop_loss": 2047.84,
+  "tp1": 2039.5,
+  "tp2": 2036.16,
+  "tp3": 2031.99,
   "horizon_minutes": 240,
   "valid_until_utc": "2025-12-15T04:15:00Z",
   "probability_target_before_stop": null,
@@ -29,7 +29,7 @@
   "expected_net_return": null,
   "estimated_cost": 0.45,
   "reward_risk": 1.0,
-  "market_regime": "M15: تذبذب عرضي / تقلب حاد | H4: انتقالي / تقلب منخفض",
+  "market_regime": "M15: تذبذب عرضي / تقلب حاد | H4: تذبذب عرضي / تقلب منخفض",
   "vol_regime": "EXCEPTIONAL",
   "uncertainty": {
     "data": "HIGH",
@@ -40,17 +40,17 @@
       "نقص مصادر بيانات أساسية",
       "تقلب السوق أعلى من المعتاد أو تغيّر هيكلي حديث"
     ],
-    "budget_used": 1.282,
+    "budget_used": 1.272,
     "budget_limit": 1.6,
     "budget_components": {
       "data": 0.25,
       "model": 0.6,
-      "market": 0.54,
+      "market": 0.528,
       "disagreement": 0.0
     }
   },
   "reason_short_ar": "اتجاه H4 محايد والاتجاه العام هابط، والسعر تحت المقاومة 2063.19. العائد المتوقع بعد التكاليف موجب، واجتازت الإشارة محكمة القرار.",
-  "alternative_entry_price": 2044.69,
+  "alternative_entry_price": 2044.71,
   "alternative_entry_note_ar": "مستوى ارتداد هيكلي أفضل للدخول",
   "engines_used": [
     "data_quality",
@@ -93,7 +93,7 @@
   ],
   "market_trend": {
     "direction": "DOWN",
-    "strength": 12,
+    "strength": 11,
     "label_ar": "هابط",
     "agreement": 1.0,
     "per_timeframe": {
@@ -119,7 +119,7 @@
         ],
         "role_flip": true,
         "broken_recently": false,
-        "distance_atr": -5.33,
+        "distance_atr": -5.2,
         "last_test_utc": "2025-11-26T19:00:00Z"
       },
       {
@@ -136,7 +136,7 @@
         ],
         "role_flip": true,
         "broken_recently": false,
-        "distance_atr": -6.8,
+        "distance_atr": -6.62,
         "last_test_utc": "2025-11-26T12:00:00Z"
       },
       {
@@ -153,7 +153,7 @@
         ],
         "role_flip": true,
         "broken_recently": false,
-        "distance_atr": -7.77,
+        "distance_atr": -7.57,
         "last_test_utc": "2025-11-26T10:00:00Z"
       }
     ],
@@ -173,7 +173,7 @@
         ],
         "role_flip": true,
         "broken_recently": false,
-        "distance_atr": 5.23,
+        "distance_atr": 5.09,
         "last_test_utc": "2025-12-10T06:00:00Z"
       },
       {
@@ -190,7 +190,7 @@
         ],
         "role_flip": false,
         "broken_recently": false,
-        "distance_atr": 6.33,
+        "distance_atr": 6.16,
         "last_test_utc": null
       },
       {
@@ -207,12 +207,12 @@
         ],
         "role_flip": false,
         "broken_recently": false,
-        "distance_atr": 7.87,
+        "distance_atr": 7.67,
         "last_test_utc": "2025-12-01T18:00:00Z"
       }
     ],
     "validated": false,
-    "atr_h1": 3.734,
+    "atr_h1": 3.834,
     "validation_ar": "الأوزان لم تثبت تفوقاً خارج العينة — تُعرض تصنيفات تقديرية فقط",
     "method_note_ar": "القوة = ترتيب مئيني مقارنة بالمستويات التاريخية، وليست احتمال ارتداد. الحجم غير مستخدم لأن الذهب الفوري لا يملك حجماً موحداً حقيقياً."
   },
@@ -362,8 +362,8 @@
         "entry_low": 2043.36,
         "entry_high": 2043.98,
         "watch_price": null,
-        "stop_loss": 2047.75,
-        "target": 2039.59,
+        "stop_loss": 2047.84,
+        "target": 2039.5,
         "reward_risk": 1.0,
         "expected_minutes": 240,
         "expected_days": null,
@@ -377,9 +377,9 @@
                 "args": [],
                 "text_ar": "فوق"
               },
-              "2047.75"
+              "2047.84"
             ],
-            "text_ar": "إغلاق شمعة M15 فوق 2047.75"
+            "text_ar": "إغلاق شمعة M15 فوق 2047.84"
           },
           {
             "code": "iv.slope",
@@ -422,15 +422,15 @@
       "stance_ar": "انتظار",
       "reason_ar": "الاتجاه الكبير صاعد لكن لا يوجد تراجع كافٍ بعد؛ الشراء الآن مطاردة للسعر.",
       "validated": false,
-      "validation_ar": "التفوق على المعدل الأساسي غير دال إحصائياً (p=0.854) (بيانات اصطناعية)؛ 142 إشارة غير متداخلة 2014-01-23 → 2025-11-30",
+      "validation_ar": "التفوق على المعدل الأساسي غير دال إحصائياً (p=0.857) (بيانات اصطناعية)؛ 138 إشارة غير متداخلة 2014-01-23 → 2025-10-17",
       "hit_rate": null,
       "base_rate": null,
-      "samples": 142,
+      "samples": 138,
       "horizon_days": 5,
       "entry_price": null,
       "stop_loss": null,
       "target": null,
-      "wait_for_price": 2034.9,
+      "wait_for_price": 2024.09,
       "method_ar": "outlook-1.0: شراء التراجع داخل اتجاه صاعد (السعر فوق متوسط 200 يوم وزخم 6 أشهر موجب، مع إغلاق تحت متوسط 20 يوماً و RSI14 أقل من 45)، والعكس للبيع؛ تقييم غير متداخل بعد تكلفة 0.03%",
       "warnings_ar": [],
       "stance_ref": {
@@ -455,9 +455,9 @@
           {
             "code": "va.pvalue",
             "args": [
-              "0.854"
+              "0.857"
             ],
-            "text_ar": "التفوق على المعدل الأساسي غير دال إحصائياً (p=0.854)"
+            "text_ar": "التفوق على المعدل الأساسي غير دال إحصائياً (p=0.857)"
           },
           {
             "code": "w.synthetic",
@@ -467,13 +467,13 @@
           {
             "code": "va.samples",
             "args": [
-              "142",
-              "2014-01-23 → 2025-11-30"
+              "138",
+              "2014-01-23 → 2025-10-17"
             ],
-            "text_ar": "؛ 142 إشارة غير متداخلة 2014-01-23 → 2025-11-30"
+            "text_ar": "؛ 138 إشارة غير متداخلة 2014-01-23 → 2025-10-17"
           }
         ],
-        "text_ar": "التفوق على المعدل الأساسي غير دال إحصائياً (p=0.854) (بيانات اصطناعية)؛ 142 إشارة غير متداخلة 2014-01-23 → 2025-11-30"
+        "text_ar": "التفوق على المعدل الأساسي غير دال إحصائياً (p=0.857) (بيانات اصطناعية)؛ 138 إشارة غير متداخلة 2014-01-23 → 2025-10-17"
       },
       "method_ref": {
         "code": "mt.daily",
@@ -498,24 +498,24 @@
               "args": [],
               "text_ar": "فوق"
             },
-            "1992.03",
-            "2.8"
+            "1982.98",
+            "3.2"
           ],
-          "text_ar": "السعر فوق متوسط 200 يوم (1992.03) بفارق 2.8%"
+          "text_ar": "السعر فوق متوسط 200 يوم (1982.98) بفارق 3.2%"
         },
         {
           "code": "fa.sma20",
           "args": [
-            "2034.90"
+            "2024.09"
           ],
-          "text_ar": "متوسط 20 يوماً = 2034.90"
+          "text_ar": "متوسط 20 يوماً = 2024.09"
         },
         {
           "code": "fa.rsi",
           "args": [
-            "63"
+            "62"
           ],
-          "text_ar": "RSI 14 اليومي = 63"
+          "text_ar": "RSI 14 اليومي = 62"
         },
         {
           "code": "fa.mom",
@@ -525,25 +525,25 @@
               "args": [],
               "text_ar": "6 أشهر"
             },
-            "+3.7"
+            "+4.6"
           ],
-          "text_ar": "زخم 6 أشهر: +3.7%"
+          "text_ar": "زخم 6 أشهر: +4.6%"
         },
         {
           "code": "fa.atr",
           "args": [
-            "16.26"
+            "19.56"
           ],
-          "text_ar": "متوسط المدى اليومي (ATR20) = 16.26"
+          "text_ar": "متوسط المدى اليومي (ATR20) = 19.56"
         }
       ],
       "levels": {
         "supports": [
           {
             "name": "S1",
-            "price": 2036.16,
-            "zone_low": 2031.26,
-            "zone_high": 2043.04,
+            "price": 2037.39,
+            "zone_low": 2031.24,
+            "zone_high": 2043.53,
             "strength": null,
             "strength_label_ar": "قوي",
             "tests": 7,
@@ -552,48 +552,48 @@
             ],
             "role_flip": false,
             "broken_recently": false,
-            "distance_atr": -0.78,
+            "distance_atr": -0.42,
             "last_test_utc": "2025-12-09T00:00:00Z"
           },
           {
             "name": "S2",
-            "price": 2025.27,
-            "zone_low": 2022.83,
-            "zone_high": 2027.71,
+            "price": 2000.55,
+            "zone_low": 1984.08,
+            "zone_high": 2014.09,
             "strength": null,
             "strength_label_ar": "قوي",
-            "tests": 6,
+            "tests": 10,
             "timeframes": [
               "D1"
             ],
             "role_flip": false,
             "broken_recently": false,
-            "distance_atr": -1.45,
-            "last_test_utc": "2025-11-27T00:00:00Z"
+            "distance_atr": -2.3,
+            "last_test_utc": "2025-11-26T00:00:00Z"
           },
           {
             "name": "S3",
-            "price": 2004.5,
-            "zone_low": 1989.64,
-            "zone_high": 2018.16,
+            "price": 1974.94,
+            "zone_low": 1971.7,
+            "zone_high": 1978.18,
             "strength": null,
             "strength_label_ar": "قوي",
-            "tests": 11,
+            "tests": 10,
             "timeframes": [
               "D1"
             ],
             "role_flip": false,
             "broken_recently": false,
-            "distance_atr": -2.72,
-            "last_test_utc": "2025-11-26T00:00:00Z"
+            "distance_atr": -3.61,
+            "last_test_utc": "2025-11-25T00:00:00Z"
           }
         ],
         "resistances": [
           {
             "name": "R1",
             "price": 2059.08,
-            "zone_low": 2053.5,
-            "zone_high": 2064.67,
+            "zone_low": 2053.0,
+            "zone_high": 2065.17,
             "strength": null,
             "strength_label_ar": "قوي",
             "tests": 5,
@@ -602,14 +602,14 @@
             ],
             "role_flip": false,
             "broken_recently": false,
-            "distance_atr": 0.63,
+            "distance_atr": 0.69,
             "last_test_utc": "2025-12-12T00:00:00Z"
           },
           {
             "name": "R2",
             "price": 2078.39,
-            "zone_low": 2073.58,
-            "zone_high": 2083.2,
+            "zone_low": 2073.08,
+            "zone_high": 2083.7,
             "strength": null,
             "strength_label_ar": "ضعيف",
             "tests": 2,
@@ -618,7 +618,7 @@
             ],
             "role_flip": false,
             "broken_recently": false,
-            "distance_atr": 1.82,
+            "distance_atr": 1.68,
             "last_test_utc": "2025-12-01T00:00:00Z"
           }
         ],
@@ -660,10 +660,10 @@
         },
         {
           "code": "level",
-          "ok": false,
+          "ok": true,
           "args": [
             "S1",
-            "7.51"
+            "6.28"
           ]
         },
         {
@@ -702,41 +702,32 @@
       "horizon": "MONTH",
       "label_ar": "شهر",
       "action": "WAIT",
-      "tilt": 1,
-      "stance_ar": "ميل للشراء (غير محقَّق)",
-      "reason_ar": "الزخم متفق (3 أشهر +2.1%، 6 أشهر +3.7%، 12 شهراً +9.0%) والسعر فوق متوسط 200 يوم (1992.03).",
+      "tilt": 0,
+      "stance_ar": "انتظار",
+      "reason_ar": "الزخم غير متفق (3 أشهر −0.0%، 6 أشهر +4.6%، 12 شهراً +7.6%) — لا اتجاه شهري واضح.",
       "validated": false,
-      "validation_ar": "التفوق على المعدل الأساسي غير دال إحصائياً (p=0.828) (بيانات اصطناعية)؛ 98 إشارة غير متداخلة 2014-01-23 → 2025-10-07",
+      "validation_ar": "التفوق على المعدل الأساسي غير دال إحصائياً (p=0.844) (بيانات اصطناعية)؛ 98 إشارة غير متداخلة 2014-01-23 → 2025-10-22",
       "hit_rate": null,
       "base_rate": null,
       "samples": 98,
       "horizon_days": 21,
-      "entry_price": 2048.78,
-      "stop_loss": 2008.14,
-      "target": 2121.93,
+      "entry_price": null,
+      "stop_loss": null,
+      "target": null,
       "wait_for_price": null,
       "method_ar": "outlook-1.0: اتفاق زخم 3 و6 و12 شهراً في الاتجاه نفسه مع موقع السعر من متوسط 200 يوم؛ تقييم غير متداخل بعد تكلفة 0.03%",
-      "warnings_ar": [
-        "القاعدة لم تجتز التحقق الإحصائي بعد — للاستئناس فقط وليست إشارة",
-        "الوقف والهدف تقريبيان بمقياس ATR اليومي (16.26) ولم يُختبرا تاريخياً"
-      ],
+      "warnings_ar": [],
       "stance_ref": {
-        "code": "st.lean_buy",
+        "code": "st.wait",
         "args": [],
-        "text_ar": "ميل للشراء (غير محقَّق)"
+        "text_ar": "انتظار"
       },
       "reason_ref": {
-        "code": "om.agree",
+        "code": "om.disagree",
         "args": [
-          "3 أشهر +2.1%، 6 أشهر +3.7%، 12 شهراً +9.0%",
-          {
-            "code": "w.above",
-            "args": [],
-            "text_ar": "فوق"
-          },
-          "1992.03"
+          "3 أشهر −0.0%، 6 أشهر +4.6%، 12 شهراً +7.6%"
         ],
-        "text_ar": "الزخم متفق (3 أشهر +2.1%، 6 أشهر +3.7%، 12 شهراً +9.0%) والسعر فوق متوسط 200 يوم (1992.03)."
+        "text_ar": "الزخم غير متفق (3 أشهر −0.0%، 6 أشهر +4.6%، 12 شهراً +7.6%) — لا اتجاه شهري واضح."
       },
       "validation_ref": {
         "code": "va.full",
@@ -744,9 +735,9 @@
           {
             "code": "va.pvalue",
             "args": [
-              "0.828"
+              "0.844"
             ],
-            "text_ar": "التفوق على المعدل الأساسي غير دال إحصائياً (p=0.828)"
+            "text_ar": "التفوق على المعدل الأساسي غير دال إحصائياً (p=0.844)"
           },
           {
             "code": "w.synthetic",
@@ -757,12 +748,12 @@
             "code": "va.samples",
             "args": [
               "98",
-              "2014-01-23 → 2025-10-07"
+              "2014-01-23 → 2025-10-22"
             ],
-            "text_ar": "؛ 98 إشارة غير متداخلة 2014-01-23 → 2025-10-07"
+            "text_ar": "؛ 98 إشارة غير متداخلة 2014-01-23 → 2025-10-22"
           }
         ],
-        "text_ar": "التفوق على المعدل الأساسي غير دال إحصائياً (p=0.828) (بيانات اصطناعية)؛ 98 إشارة غير متداخلة 2014-01-23 → 2025-10-07"
+        "text_ar": "التفوق على المعدل الأساسي غير دال إحصائياً (p=0.844) (بيانات اصطناعية)؛ 98 إشارة غير متداخلة 2014-01-23 → 2025-10-22"
       },
       "method_ref": {
         "code": "mt.daily",
@@ -777,20 +768,7 @@
         ],
         "text_ar": "outlook-1.0: اتفاق زخم 3 و6 و12 شهراً في الاتجاه نفسه مع موقع السعر من متوسط 200 يوم؛ تقييم غير متداخل بعد تكلفة 0.03%"
       },
-      "warnings_ref": [
-        {
-          "code": "wa.unvalidated",
-          "args": [],
-          "text_ar": "القاعدة لم تجتز التحقق الإحصائي بعد — للاستئناس فقط وليست إشارة"
-        },
-        {
-          "code": "wa.atr_levels",
-          "args": [
-            "16.26"
-          ],
-          "text_ar": "الوقف والهدف تقريبيان بمقياس ATR اليومي (16.26) ولم يُختبرا تاريخياً"
-        }
-      ],
+      "warnings_ref": [],
       "facts_ref": [
         {
           "code": "fa.price_sma",
@@ -800,24 +778,24 @@
               "args": [],
               "text_ar": "فوق"
             },
-            "1992.03",
-            "2.8"
+            "1982.98",
+            "3.2"
           ],
-          "text_ar": "السعر فوق متوسط 200 يوم (1992.03) بفارق 2.8%"
+          "text_ar": "السعر فوق متوسط 200 يوم (1982.98) بفارق 3.2%"
         },
         {
           "code": "fa.sma20",
           "args": [
-            "2034.90"
+            "2024.09"
           ],
-          "text_ar": "متوسط 20 يوماً = 2034.90"
+          "text_ar": "متوسط 20 يوماً = 2024.09"
         },
         {
           "code": "fa.rsi",
           "args": [
-            "63"
+            "62"
           ],
-          "text_ar": "RSI 14 اليومي = 63"
+          "text_ar": "RSI 14 اليومي = 62"
         },
         {
           "code": "fa.mom",
@@ -827,25 +805,25 @@
               "args": [],
               "text_ar": "6 أشهر"
             },
-            "+3.7"
+            "+4.6"
           ],
-          "text_ar": "زخم 6 أشهر: +3.7%"
+          "text_ar": "زخم 6 أشهر: +4.6%"
         },
         {
           "code": "fa.atr",
           "args": [
-            "16.26"
+            "19.56"
           ],
-          "text_ar": "متوسط المدى اليومي (ATR20) = 16.26"
+          "text_ar": "متوسط المدى اليومي (ATR20) = 19.56"
         }
       ],
       "levels": {
         "supports": [
           {
             "name": "S1",
-            "price": 2036.16,
-            "zone_low": 2031.26,
-            "zone_high": 2043.04,
+            "price": 2037.39,
+            "zone_low": 2031.24,
+            "zone_high": 2043.53,
             "strength": null,
             "strength_label_ar": "قوي",
             "tests": 7,
@@ -854,48 +832,48 @@
             ],
             "role_flip": false,
             "broken_recently": false,
-            "distance_atr": -0.78,
+            "distance_atr": -0.42,
             "last_test_utc": "2025-12-09T00:00:00Z"
           },
           {
             "name": "S2",
-            "price": 2025.27,
-            "zone_low": 2022.83,
-            "zone_high": 2027.71,
+            "price": 2000.55,
+            "zone_low": 1984.08,
+            "zone_high": 2014.09,
             "strength": null,
             "strength_label_ar": "قوي",
-            "tests": 6,
+            "tests": 10,
             "timeframes": [
               "D1"
             ],
             "role_flip": false,
             "broken_recently": false,
-            "distance_atr": -1.45,
-            "last_test_utc": "2025-11-27T00:00:00Z"
+            "distance_atr": -2.3,
+            "last_test_utc": "2025-11-26T00:00:00Z"
           },
           {
             "name": "S3",
-            "price": 2004.5,
-            "zone_low": 1989.64,
-            "zone_high": 2018.16,
+            "price": 1974.94,
+            "zone_low": 1971.7,
+            "zone_high": 1978.18,
             "strength": null,
             "strength_label_ar": "قوي",
-            "tests": 11,
+            "tests": 10,
             "timeframes": [
               "D1"
             ],
             "role_flip": false,
             "broken_recently": false,
-            "distance_atr": -2.72,
-            "last_test_utc": "2025-11-26T00:00:00Z"
+            "distance_atr": -3.61,
+            "last_test_utc": "2025-11-25T00:00:00Z"
           }
         ],
         "resistances": [
           {
             "name": "R1",
             "price": 2059.08,
-            "zone_low": 2053.5,
-            "zone_high": 2064.67,
+            "zone_low": 2053.0,
+            "zone_high": 2065.17,
             "strength": null,
             "strength_label_ar": "قوي",
             "tests": 5,
@@ -904,14 +882,14 @@
             ],
             "role_flip": false,
             "broken_recently": false,
-            "distance_atr": 0.63,
+            "distance_atr": 0.69,
             "last_test_utc": "2025-12-12T00:00:00Z"
           },
           {
             "name": "R2",
             "price": 2078.39,
-            "zone_low": 2073.58,
-            "zone_high": 2083.2,
+            "zone_low": 2073.08,
+            "zone_high": 2083.7,
             "strength": null,
             "strength_label_ar": "ضعيف",
             "tests": 2,
@@ -920,7 +898,7 @@
             ],
             "role_flip": false,
             "broken_recently": false,
-            "distance_atr": 1.82,
+            "distance_atr": 1.68,
             "last_test_utc": "2025-12-01T00:00:00Z"
           }
         ],
@@ -930,13 +908,13 @@
         "method_note_ar": "مستويات يومية من قمم وقيعان مؤكدة؛ لا تُعرض قوة رقمية لأنها لم تُختبر إحصائياً، والتصنيف تقديري حسب عدد الاختبارات."
       },
       "trend": {
-        "direction": "UP",
-        "strength": 100,
-        "label_ar": "صاعد",
-        "agreement": 1.0,
+        "direction": "SIDEWAYS",
+        "strength": 38,
+        "label_ar": "عرضي",
+        "agreement": 0.75,
         "per_timeframe": {
           "SMA200": "UP",
-          "MOM3M": "UP",
+          "MOM3M": "DOWN",
           "MOM6M": "UP",
           "MOM12M": "UP"
         },
@@ -958,15 +936,15 @@
         },
         {
           "code": "trend",
-          "ok": true,
+          "ok": false,
           "args": []
         },
         {
           "code": "level",
-          "ok": false,
+          "ok": true,
           "args": [
             "S1",
-            "7.51"
+            "6.28"
           ]
         },
         {
@@ -1027,11 +1005,58 @@
     ],
     "source": "H1_LEVELS"
   },
-  "audit_hash": "fe3b11dbf7a88b41fc415171955fa120f085c3a9bac1045165a55042db89cbea",
+  "data_health": {
+    "status": "WARN",
+    "checks": [
+      {
+        "code": "freshness",
+        "status": "OK",
+        "value": "0",
+        "tf": "M15"
+      },
+      {
+        "code": "coverage",
+        "status": "WARN",
+        "value": "95.7%",
+        "tf": "M15"
+      },
+      {
+        "code": "gaps",
+        "status": "OK",
+        "value": "1.0h",
+        "tf": "M15"
+      },
+      {
+        "code": "ohlc",
+        "status": "OK",
+        "value": "0",
+        "tf": "M15"
+      },
+      {
+        "code": "weekend",
+        "status": "OK",
+        "value": "0",
+        "tf": "M15"
+      },
+      {
+        "code": "outliers",
+        "status": "OK",
+        "value": "0",
+        "tf": "M15"
+      },
+      {
+        "code": "flat",
+        "status": "OK",
+        "value": "0",
+        "tf": "M15"
+      }
+    ]
+  },
+  "audit_hash": "3912698f9ef92ab7a13548f85dc5cfd04c3f668f5dd7abd70937f6878af208c0",
   "supporting_evidence": [
     {
       "engine": "mtf_bias",
-      "text_ar": "ميل متوسط 50 على H1 هابط (كفاءة الاتجاه 0.26)",
+      "text_ar": "ميل متوسط 50 على H1 هابط (كفاءة الاتجاه 0.20)",
       "weight": 0.5,
       "text_ref": {
         "code": "ev.mtf_slope",
@@ -1042,15 +1067,15 @@
             "args": [],
             "text_ar": "هابط"
           },
-          "0.26"
+          "0.20"
         ],
-        "text_ar": "ميل متوسط 50 على H1 هابط (كفاءة الاتجاه 0.26)"
+        "text_ar": "ميل متوسط 50 على H1 هابط (كفاءة الاتجاه 0.20)"
       }
     }
   ],
   "contrary_evidence": [],
   "invalidation_ar": [
-    "إغلاق شمعة M15 فوق 2047.75",
+    "إغلاق شمعة M15 فوق 2047.84",
     "انقلاب ميل H1 ضد البيع",
     "صدور خبر اقتصادي عالي التأثير قبل الدخول",
     "انتهاء صلاحية الإشارة دون دخول ضمن النطاق"
@@ -1069,17 +1094,17 @@
     "max_allowed_seconds": 180.0,
     "is_fresh": true,
     "bars_available": {
-      "M15": 9336,
-      "M30": 4668,
-      "H1": 2334,
-      "H4": 630
+      "M15": 9308,
+      "M30": 4654,
+      "H1": 2327,
+      "H4": 609
     }
   },
   "data_quality": "DEGRADED",
   "warning_ar": "إشارة بحثية للتداول الورقي فقط — ليست نصيحة استثمارية ولا تُنفَّذ تلقائياً",
   "wait_for_ar": null,
   "wait_for_price": null,
-  "snapshot_hash": "6e4cbdc8250f1ec4981817be33b7a907e819d03384beef0fbb9db8a062d44cd1",
+  "snapshot_hash": "e587f227ddf8a0e47524f783517ca02d6636edc1c031828328246a2a27e6a60f",
   "reason_short_ref": {
     "code": "rs.short",
     "args": [
@@ -1134,9 +1159,9 @@
           "args": [],
           "text_ar": "فوق"
         },
-        "2047.75"
+        "2047.84"
       ],
-      "text_ar": "إغلاق شمعة M15 فوق 2047.75"
+      "text_ar": "إغلاق شمعة M15 فوق 2047.84"
     },
     {
       "code": "iv.slope",

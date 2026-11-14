@@ -342,6 +342,16 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
                 "model_version": d.model_version, "recommendations": recs if d.mode == Mode.LIVE else [],
                 "brief": d.daily_brief.model_dump(mode="json") if d.daily_brief else None, "bars": bars}
 
+    @app.get("/data-quality", dependencies=[Depends(auth)])
+    def data_quality_ep():
+        """Full-history and last-7-days quality of every stored series (written daily by the CI train job)."""
+        import json as _json
+        for base in (repo_dir / "models", st.data_dir):
+            p = base / "data_quality.json"
+            if p.exists():
+                return _json.loads(p.read_text(encoding="utf-8"))
+        return {"series": {}, "note": "no report yet"}
+
     @app.get("/public/snapshot")
     def public_snapshot_ep():
         if live_provider is None:

@@ -289,6 +289,20 @@
     <string name="out_target">objetivo</string>
     <string name="out_stop">stop</string>
     <string name="out_timeout">tiempo</string>
+    <string name="dq_title">Salud de los datos (controles automáticos)</string>
+    <string name="dq_ok">Todos los controles superados</string>
+    <string name="dq_warn">Utilizables, con advertencias</string>
+    <string name="dq_fail">Datos defectuosos: no se toma ninguna decisión</string>
+    <string name="dq_freshness">Actualidad (velas de retraso)</string>
+    <string name="dq_coverage">Cobertura del horario de mercado</string>
+    <string name="dq_gaps">Hueco más largo</string>
+    <string name="dq_outliers">Saltos anómalos</string>
+    <string name="dq_flat">Precio congelado (velas repetidas)</string>
+    <string name="dq_weekend">Cotizaciones con mercado cerrado</string>
+    <string name="dq_ohlc">Coherencia de las velas</string>
+    <string name="dq_cross">Acuerdo con una segunda fuente</string>
+    <string name="dq_other">Otro control</string>
+    <string name="dq_note">Se ejecutan sobre las velas de cada decisión. Un fallo bloquea la decisión.</string>
     <string name="r_w_up" formatted="false">alcista</string>
     <string name="r_w_down" formatted="false">bajista</string>
     <string name="r_w_neutral" formatted="false">neutral</string>
@@ -323,6 +337,7 @@
     <string name="r_un_corrupt" formatted="false">Datos del proveedor corruptos o incoherentes — rechazados</string>
     <string name="r_un_no_quote" formatted="false">No hay precio disponible del proveedor</string>
     <string name="r_un_closed" formatted="false">El mercado del oro al contado está cerrado (fin de semana)</string>
+    <string name="r_un_dq_fail" formatted="false">Control de calidad de datos fallido ({0}) — ninguna decisión con datos defectuosos</string>
     <string name="r_un_stale" formatted="false">Precio obsoleto ({0} s) — no se usa</string>
     <string name="r_un_firewall" formatted="false">Cortafuegos de calidad de datos: {0}</string>
     <string name="r_un_insufficient" formatted="false">Datos históricos insuficientes para el análisis</string>
