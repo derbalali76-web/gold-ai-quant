@@ -361,7 +361,14 @@ private fun PriceCard(d: Decision?, s: UiState, modifier: Modifier) {
                     color = if (up) BuyGreen else SellRed, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
             }
             val t = d?.quoteTime ?: s.receivedAt
-            Text(stringResource(R.string.updated_at, ltr(t?.hms() ?: "—")), color = TextDim, fontSize = 10.sp, maxLines = 1)
+            val today = t != null && t.atZone(ZoneId.systemDefault()).toLocalDate() == java.time.LocalDate.now()
+            val shown = when {
+                t == null -> "—"
+                today -> t.hms()
+                else -> t.atZone(ZoneId.systemDefault()).format(java.time.format.DateTimeFormatter.ofPattern("EEE HH:mm", Locale.getDefault()))
+            }
+            Text(stringResource(if (d?.marketClosed == true) R.string.closed_price_at else R.string.updated_at, ltr(shown)),
+                color = if (d?.marketClosed == true) WaitGold else TextDim, fontSize = 10.sp, maxLines = 1)
         }
     }
 }

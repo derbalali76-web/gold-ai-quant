@@ -148,6 +148,7 @@
     <string name="save">Guardar</string>
     <string name="cancel">Cancelar</string>
     <string name="close">Cerrar</string>
+    <string name="closed_price_at">Último cierre %1$s</string>
     <string name="updated_at">Actualizado %1$s</string>
     <string name="err_invalid_url">Dirección de servidor no válida</string>
     <string name="err_http_not_local">El HTTP sin cifrar solo se permite en direcciones de red local</string>

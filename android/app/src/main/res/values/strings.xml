@@ -149,6 +149,7 @@
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
     <string name="close">Close</string>
+    <string name="closed_price_at">Last close %1$s</string>
     <string name="updated_at">Updated %1$s</string>
     <string name="err_invalid_url">Invalid server address</string>
     <string name="err_http_not_local">Unencrypted HTTP is allowed only for local network addresses</string>

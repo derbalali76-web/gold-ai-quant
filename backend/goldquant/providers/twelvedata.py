@@ -16,7 +16,7 @@ from typing import Optional
 
 import pandas as pd
 
-from .base import Bars, MarketDataProvider, ProviderMeta, Quote, closed_bars, utcnow
+from .base import Bars, MarketDataProvider, ProviderMeta, Quote, closed_bars, market_closed_mask, utcnow
 from .history import HistoryStore
 from .http import HttpClient, HttpError, RateLimiter
 
@@ -92,9 +92,15 @@ class TwelveDataProvider(MarketDataProvider):
             df = self._series("M1", 3)
         except (HttpError, ProviderError):
             return None
-        df = df[df.index + pd.Timedelta(minutes=1) <= pd.Timestamp(as_of)]
+        df = df[(df.index + pd.Timedelta(minutes=1) <= pd.Timestamp(as_of)) & ~market_closed_mask(df.index)]
         if df.empty:
-            return None
+            # weekend: the feed's prints are not market prices; report the last session's close at its real time
+            h = closed_bars(self.history.load_bars(self.meta.name, SYMBOL, "M15"), "M15", as_of)
+            if h.empty:
+                return None
+            t = (h.index[-1] + pd.Timedelta(minutes=15)).to_pydatetime()
+            return Quote(price=round(float(h["close"].iloc[-1]), 2), observed_at=t, fetched_at=self.clock(),
+                         provider=self.meta.name)
         t = (df.index[-1] + pd.Timedelta(minutes=1)).to_pydatetime()
         return Quote(price=round(float(df["close"].iloc[-1]), 2), observed_at=t, fetched_at=self.clock(),
                      provider=self.meta.name)

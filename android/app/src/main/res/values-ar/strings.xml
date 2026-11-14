@@ -148,6 +148,7 @@
     <string name="save">حفظ</string>
     <string name="cancel">إلغاء</string>
     <string name="close">إغلاق</string>
+    <string name="closed_price_at">آخر إغلاق %1$s</string>
     <string name="updated_at">آخر تحديث %1$s</string>
     <string name="err_invalid_url">عنوان غير صالح</string>
     <string name="err_http_not_local">HTTP غير المشفر مسموح فقط لعناوين الشبكة المحلية</string>

@@ -177,6 +177,7 @@ UI = {
 "save": ("Save", "حفظ", "Enregistrer", "Guardar", "Salvar"),
 "cancel": ("Cancel", "إلغاء", "Annuler", "Cancelar", "Cancelar"),
 "close": ("Close", "إغلاق", "Fermer", "Cerrar", "Fechar"),
+"closed_price_at": ("Last close %1$s", "آخر إغلاق %1$s", "Dernière clôture %1$s", "Último cierre %1$s", "Último fechamento %1$s"),
 "updated_at": ("Updated %1$s", "آخر تحديث %1$s", "Mis à jour %1$s", "Actualizado %1$s", "Atualizado %1$s"),
 "err_invalid_url": ("Invalid server address", "عنوان غير صالح", "Adresse de serveur invalide", "Dirección de servidor no válida", "Endereço de servidor inválido"),
 "err_http_not_local": ("Unencrypted HTTP is allowed only for local network addresses", "HTTP غير المشفر مسموح فقط لعناوين الشبكة المحلية",

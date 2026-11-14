@@ -47,6 +47,12 @@ def iso(d: datetime) -> str:
     return d.astimezone(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
 
 
+def weekend(t: datetime) -> bool:
+    """Bar opening inside the weekly close (Fri 21:00 -> Sun 22:00 UTC): some feeds print flat weekend quotes."""
+    d, h = t.weekday(), t.hour
+    return d == 5 or (d == 4 and h >= 21) or (d == 6 and h < 22)
+
+
 def canon(obj) -> str:
     return json.dumps(obj, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
 
@@ -73,7 +79,8 @@ class Ledger:
 
     def _load_bars(self, tf) -> dict:
         p = self._bars_path(tf)
-        return {r[0]: r for r in json.loads(p.read_text(encoding="utf-8"))} if p.exists() else {}
+        rows = json.loads(p.read_text(encoding="utf-8")) if p.exists() else []
+        return {r[0]: r for r in rows if not weekend(ts(r[0]))}
 
     def head(self) -> str:
         return self.entries[-1]["hash"] if self.entries else GENESIS
@@ -131,7 +138,7 @@ class Ledger:
             for r in (snap.get("bars") or {}).get(tf, []):
                 t = ts(r[0])
                 o, h, l, c = map(float, r[1:5])
-                if t + step <= min(as_of, now) and l <= min(o, c) and h >= max(o, c) and l > 0:
+                if t + step <= min(as_of, now) and not weekend(t) and l <= min(o, c) and h >= max(o, c) and l > 0:
                     self.bars[tf][iso(t)] = [iso(t), o, h, l, c]
         fresh = timedelta(0) <= now - as_of <= MAX_SNAPSHOT_AGE and snap.get("price") is not None
         if fresh:

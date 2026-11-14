@@ -82,7 +82,18 @@ def utcnow() -> datetime:
     return datetime.now(timezone.utc)
 
 
+def market_closed_mask(index: pd.DatetimeIndex) -> "pd.Series | object":
+    """True for bar OPEN times inside the weekly close (Fri 21:00 → Sun 22:00 UTC, as features.session_of).
+    Some feeds keep printing flat quotes over the weekend; those are not market prices."""
+    dow, hour = index.day_of_week, index.hour
+    return (dow == 5) | ((dow == 4) & (hour >= 21)) | ((dow == 6) & (hour < 22))
+
+
 def closed_bars(df: pd.DataFrame, timeframe: str, as_of: datetime) -> pd.DataFrame:
+    """Bars that are complete at as_of, without weekend prints."""
     minutes = TIMEFRAMES[timeframe]
     close_time = df.index + pd.Timedelta(minutes=minutes)
-    return df[close_time <= pd.Timestamp(as_of)]
+    keep = close_time <= pd.Timestamp(as_of)
+    if len(df):
+        keep = keep & ~market_closed_mask(df.index)
+    return df[keep]

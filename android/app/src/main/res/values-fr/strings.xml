@@ -148,6 +148,7 @@
     <string name="save">Enregistrer</string>
     <string name="cancel">Annuler</string>
     <string name="close">Fermer</string>
+    <string name="closed_price_at">Dernière clôture %1$s</string>
     <string name="updated_at">Mis à jour %1$s</string>
     <string name="err_invalid_url">Adresse de serveur invalide</string>
     <string name="err_http_not_local">Le HTTP non chiffré n\'est autorisé que pour les adresses du réseau local</string>
