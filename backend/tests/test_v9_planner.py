@@ -80,3 +80,25 @@ def test_planner_plan_only_live_and_qualified():
     assert planner_plan(demo, o2, Fake(), daily) is None
     Fake.qualified = False
     assert planner_plan(live, o2, Fake(), daily) is None
+
+
+def test_macro_features_are_point_in_time():
+    import pandas as pd
+    from goldquant import planner as P
+    idx = pd.date_range("2024-01-01", periods=40, freq="D", tz="UTC")
+    obs = pd.DataFrame({"observed_at": idx, "published_at": idx + pd.Timedelta(days=1, hours=22),
+                        "value": range(40)})
+    m = P.macro_features(idx, {"DFII10": obs, "DTWEXBGS": obs.assign(value=obs["value"] + 100.0), "GVZCLS": obs})
+    # bar of day t closes at t+1 00:00; the value observed on day t is published at t+1 22:00 -> not yet usable
+    # the latest usable observation for bar t is the one observed at t-1 (published t 22:00 < t+1 00:00)
+    assert m["ry5"].iloc[10] == 5.0  # value(t-1) - value(t-6) = 5 with a linear series
+    last_obs_used = m.index[10] - pd.Timedelta(days=1)
+    assert (obs.set_index("observed_at").loc[last_obs_used, "published_at"]) <= m.index[10] + pd.Timedelta(days=1)
+    assert m["ry5"].iloc[:6].isna().all()
+
+
+def test_macro_model_never_plans_without_macro():
+    import numpy as np
+    from goldquant import planner as P
+    pm = P.PlannerModel("WEEK", {}, {"qualified": True}, "2026-01-01", cols=P.FEATURES + P.MACRO)
+    assert pm.best_plan(_walk(400)) is None

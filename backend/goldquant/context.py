@@ -35,6 +35,7 @@ class MarketContext:
     footprint: Optional[dict] = None
     etf_flows: Optional[dict] = None
     macro: dict = field(default_factory=dict)  # series -> {value, change_5d, observed_at, published_at}
+    macro_frames: dict = field(default_factory=dict)  # series -> point-in-time observations (planner features)
     missing: list = field(default_factory=list)
     sources_status: dict = field(default_factory=dict)
 
@@ -106,6 +107,7 @@ class ContextService:
             if df.empty:
                 ctx.missing.append(M("md.fred", s))
                 continue
+            ctx.macro_frames[s] = df
             last = df.iloc[-1]
             prev = df.iloc[-6] if len(df) > 5 else df.iloc[0]
             ctx.macro[s] = {"value": float(last["value"]), "change_5obs": float(last["value"] - prev["value"]),

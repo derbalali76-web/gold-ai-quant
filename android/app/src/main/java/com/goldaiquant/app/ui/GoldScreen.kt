@@ -551,8 +551,9 @@ private fun DecisionCard(c: HorizonCard, s: UiState, d: Decision, compact: Boole
             Divider()
             val lv = c.levels
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                LevelPair(stringResource(R.string.lv_supports), BuyGreen, lv?.supports.orEmpty(), Modifier.weight(1f)) { onLevel(it, true) }
-                LevelPair(stringResource(R.string.lv_resistances), SellRed, lv?.resistances.orEmpty(), Modifier.weight(1f)) { onLevel(it, false) }
+                val rows = if (compact) 2 else 3
+                LevelPair(stringResource(R.string.lv_supports), BuyGreen, lv?.supports.orEmpty(), rows, Modifier.weight(1f)) { onLevel(it, true) }
+                LevelPair(stringResource(R.string.lv_resistances), SellRed, lv?.resistances.orEmpty(), rows, Modifier.weight(1f)) { onLevel(it, false) }
             }
         }
     }
@@ -562,14 +563,21 @@ private fun DecisionCard(c: HorizonCard, s: UiState, d: Decision, compact: Boole
 private fun Divider() = Box(Modifier.fillMaxWidth().height(1.dp).background(Color(0xFF262118)))
 
 @Composable
-private fun LevelPair(title: String, color: Color, items: List<Level>, modifier: Modifier, onOpen: (Level) -> Unit) {
+private fun LevelPair(title: String, color: Color, items: List<Level>, rows: Int, modifier: Modifier, onOpen: (Level) -> Unit) {
     Column(modifier) {
-        Text(title, color = color, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+        Text(title, color = color, fontSize = 13.sp, fontWeight = FontWeight.Bold)
         if (items.isEmpty()) Text(stringResource(R.string.lv_none), color = TextDim, fontSize = 11.sp)
-        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-            items.take(2).forEach { l ->
+        items.take(rows).forEach { l ->
+            // one level per row: name, price, strength (tap = details)
+            Row(Modifier.fillMaxWidth().heightIn(min = 34.dp).clickable(role = Role.Button) { onOpen(l) },
+                verticalAlignment = Alignment.CenterVertically) {
+                Text(l.name, color = color, fontSize = 11.sp, fontWeight = FontWeight.Bold, modifier = Modifier.width(22.dp))
                 Text(ltr(l.price.p2()), color = TextMain, fontSize = 13.sp, fontWeight = FontWeight.Bold, maxLines = 1,
-                    modifier = Modifier.heightIn(min = 32.dp).clickable(role = Role.Button) { onOpen(l) }.padding(vertical = 6.dp))
+                    modifier = Modifier.weight(1f))
+                Column(horizontalAlignment = Alignment.End) {
+                    Text(l.strength?.let { "$it" } ?: stringResource(strengthWord(l)), color = TextDim, fontSize = 9.sp, maxLines = 1)
+                    Segments(labelFill(l), color)
+                }
             }
         }
     }

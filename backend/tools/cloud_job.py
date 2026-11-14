@@ -249,6 +249,38 @@ def outlook_report(daily: pd.DataFrame, label: str) -> dict:
             "note_ar": "القواعد ثابتة مسبقاً (بلا بحث عن معاملات)؛ النسبة تكرار تاريخي غير متداخل بعد التكاليف"}
 
 
+def planner_macro(hs: HistoryStore) -> dict:
+    """FRED series for the planner, extended back to 2006 once (fredgraph.csv, no key) so the A/B covers the same
+    long period as the daily bars. Point in time: rows carry a conservative published_at (sources/fred.py)."""
+    from goldquant import planner as PLN
+    from goldquant.sources.fred import FredSource
+    far = datetime(2100, 1, 1, tzinfo=timezone.utc)
+    out, extended = {}, False
+    for s_ in PLN.MACRO_SERIES:
+        df = hs.load_observations_as_of("FRED", s_, far)
+        if df.empty or str(df["observed_at"].iloc[0]) > "2008":
+            try:
+                hs.upsert_observations("FRED", s_, FredSource().fetch(s_, start="2006-01-01"))
+                df = hs.load_observations_as_of("FRED", s_, far)
+                extended = True
+            except Exception as exc:  # noqa: BLE001
+                print("FRED history", s_, "failed:", exc)
+        out[s_] = df
+    if extended:
+        for s_ in MACRO_SERIES:
+            cloud.export_observations(hs, MD, "FRED", s_)
+        print("FRED history from", {k: str(v["observed_at"].iloc[0])[:10] for k, v in out.items() if len(v)})
+    return out
+
+
+def _macro_since(macro: dict):
+    firsts = [str(v["observed_at"].iloc[0])[:10] for v in macro.values() if len(v)]
+    if len(firsts) < 3:
+        return None
+    y, m, d_ = max(firsts).split("-")
+    return f"{int(y) + 1}-{m}-{d_}"  # one year of warm-up for 20-obs changes and the 252-obs GVZ z-score
+
+
 def research(hs: HistoryStore) -> None:
     from goldquant import setups
     from goldquant.precision import promotion as PR
@@ -281,18 +313,31 @@ def research(hs: HistoryStore) -> None:
     except Exception as exc:  # noqa: BLE001
         print("backtest failed:", exc)
     daily = hs.load_bars("TwelveData", "XAU/USD", "D1", limit=10_000)
+    macro = planner_macro(hs)
     try:  # trade-plan engine for WEEK / MONTH: walk-forward report + production model (used only if qualified)
         import pickle
         from dataclasses import asdict
         from goldquant import planner as PLN
-        reps = {}
+        reps, cmp_ = {}, {}
+        since = _macro_since(macro)
         for hz in PLN.HORIZONS:
             r = PLN.walk_forward(daily, hz)
-            reps[hz] = asdict(r)
-            (MODELS / f"planner_{hz}.pkl").write_bytes(pickle.dumps(PLN.train_production(daily, hz, r)))
-            print("planner", hz, r.reason, {k: reps[hz][k] for k in ("trades", "expectancy_pct", "baseline_expectancy_pct")})
+            chosen, chosen_macro = r, None
+            if since is not None:  # same period, with vs without FRED macro features (honest A/B, both reported)
+                rb = PLN.walk_forward(daily, hz, since=since)
+                rm = PLN.walk_forward(daily, hz, macro=macro, cols=PLN.FEATURES + PLN.MACRO, since=since)
+                cmp_[hz] = {"since": since, "base": asdict(rb), "macro": asdict(rm)}
+                print("planner", hz, "A/B since", since, "| base", rb.expectancy_pct, rb.direction_accuracy, rb.reason,
+                      "| macro", rm.expectancy_pct, rm.direction_accuracy, rm.reason)
+                if rm.qualified and not r.qualified:
+                    chosen, chosen_macro = rm, macro  # macro variant is used only if IT qualified on its own
+            reps[hz] = asdict(chosen)
+            (MODELS / f"planner_{hz}.pkl").write_bytes(pickle.dumps(PLN.train_production(daily, hz, chosen, chosen_macro)))
+            print("planner", hz, chosen.reason, {k: reps[hz][k] for k in ("trades", "expectancy_pct", "baseline_expectancy_pct")})
         (MODELS / "planner_report.json").write_text(json.dumps(reps, ensure_ascii=False, indent=1, default=str),
                                                     encoding="utf-8")
+        (MODELS / "planner_macro_ab.json").write_text(json.dumps(cmp_, ensure_ascii=False, indent=1, default=str),
+                                                      encoding="utf-8")
     except Exception as exc:  # noqa: BLE001
         print("planner failed:", exc)
     (MODELS / "outlook_report.json").write_text(json.dumps(outlook_report(daily, "TwelveData D1"), ensure_ascii=False,

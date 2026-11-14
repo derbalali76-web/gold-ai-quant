@@ -657,7 +657,9 @@ class DecisionEngine:
 
     def _finish(self, d: Decision, audit: dict | None = None) -> Decision:
         from . import plans as PL
-        PL.attach(d, getattr(self, "planners", None), getattr(self, "_daily", None))  # plans are part of the audit
+        ctx = getattr(self, "_ctx", None)
+        PL.attach(d, getattr(self, "planners", None), getattr(self, "_daily", None),
+                  getattr(ctx, "macro_frames", None) or None)  # plans are part of the audit
         from . import brief as BR
         from . import checklist as CK
         try:

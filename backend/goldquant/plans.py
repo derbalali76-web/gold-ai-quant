@@ -55,13 +55,13 @@ def daily_plan(d: Decision, o: HorizonOutlook) -> TradePlan:
     return _wait_plan(o.tilt, o.wait_for_price)
 
 
-def planner_plan(d: Decision, o: HorizonOutlook, pm, daily) -> TradePlan | None:
+def planner_plan(d: Decision, o: HorizonOutlook, pm, daily, macro: dict | None = None) -> TradePlan | None:
     """Qualified planner (v1.7.1): its best plan becomes the horizon's recommendation (LIVE only).
     Returns None when the planner is absent / not qualified, so the rule-based plan is used instead."""
     if pm is None or not pm.qualified or daily is None or d.mode != Mode.LIVE or o.action == Action.UNAVAILABLE:
         return None
     closed = daily[daily.index + timedelta(days=1) <= d.analyzed_at_utc]
-    bp = pm.best_plan(closed) if len(closed) else None
+    bp = (pm.best_plan(closed, macro) if macro else pm.best_plan(closed)) if len(closed) else None
     if bp is None:
         return TradePlan(setup=Setup.WAIT, method="PLANNER")
     buy = bp["direction"] > 0
@@ -82,12 +82,12 @@ def planner_plan(d: Decision, o: HorizonOutlook, pm, daily) -> TradePlan | None:
         p_timeout=bp["p_timeout"] if cal else None, p_fill=(bp["p_fill"] if not market else None) if cal else None)
 
 
-def attach(d: Decision, planners: dict | None = None, daily=None) -> Decision:
+def attach(d: Decision, planners: dict | None = None, daily=None, macro: dict | None = None) -> Decision:
     for o in d.outlooks:
         if o.horizon == "HOURS":
             o.plan = hours_plan(d, o)
         else:
-            o.plan = planner_plan(d, o, (planners or {}).get(o.horizon), daily) or daily_plan(d, o)
+            o.plan = planner_plan(d, o, (planners or {}).get(o.horizon), daily, macro) or daily_plan(d, o)
             if o.plan.method is None:
                 o.plan.method = "RULE"
     return d

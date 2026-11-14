@@ -60,10 +60,45 @@ def candidates(horizon: str) -> list[Candidate]:
 
 # ------------------------------------------------------------------ features (row t uses bars up to t only)
 FEATURES = ["dist20", "dist50", "dist200", "mom63", "mom126", "mom252", "ret5", "ret20", "rsi", "rangepos", "atr_pct"]
-SIGNED = ["dist20", "dist50", "dist200", "mom63", "mom126", "mom252", "ret5", "ret20", "rsi", "rangepos"]
+# macro (FRED, point in time): real-yield and dollar changes act on gold with a sign -> flipped for shorts;
+# expected gold volatility (GVZ) is unsigned
+MACRO = ["ry5", "ry20", "usd5", "usd20", "gvz_z", "gvz5"]
+MACRO_SERIES = ("DFII10", "DTWEXBGS", "GVZCLS")
+SIGNED = ["dist20", "dist50", "dist200", "mom63", "mom126", "mom252", "ret5", "ret20", "rsi", "rangepos",
+          "ry5", "ry20", "usd5", "usd20"]
 
 
-def features(d: pd.DataFrame) -> pd.DataFrame:
+def macro_features(index: pd.DatetimeIndex, macro: dict) -> pd.DataFrame:
+    """Macro columns for daily bars `index` (bar OPEN times). A value is used only once PUBLISHED before the bar
+    closed (published_at <= open + 1 day): FRED rows carry a conservative publication lag (sources/fred.py)."""
+    out = pd.DataFrame(index=index)
+    close_t = pd.DataFrame({"t": index + pd.Timedelta(days=1)}, index=index)
+
+    def series(name, fn):
+        df = macro.get(name)
+        if df is None or len(df) == 0:
+            return None
+        df = df.copy()
+        df["published_at"] = pd.to_datetime(df["published_at"], utc=True)
+        df["value"] = pd.to_numeric(df["value"], errors="coerce")
+        df = df.dropna(subset=["value"]).sort_values("published_at").reset_index(drop=True)
+        vals = fn(df["value"])
+        m = pd.merge_asof(close_t.sort_values("t"), pd.DataFrame({"t": df["published_at"], **vals}),
+                          on="t", direction="backward")
+        m.index = index
+        return m
+
+    ry = series("DFII10", lambda v: {"ry5": v.diff(5), "ry20": v.diff(20)})
+    usd = series("DTWEXBGS", lambda v: {"usd5": np.log(v).diff(5), "usd20": np.log(v).diff(20)})
+    gvz = series("GVZCLS", lambda v: {"gvz_z": (v - v.rolling(252).mean()) / v.rolling(252).std(),
+                                      "gvz5": np.log(v).diff(5)})
+    for m, cols in ((ry, ("ry5", "ry20")), (usd, ("usd5", "usd20")), (gvz, ("gvz_z", "gvz5"))):
+        for c in cols:
+            out[c] = m[c] if m is not None else np.nan
+    return out
+
+
+def features(d: pd.DataFrame, macro: Optional[dict] = None) -> pd.DataFrame:
     f = OL.daily_features(d)
     a = f["atr20"]
     out = pd.DataFrame(index=d.index)
@@ -79,12 +114,15 @@ def features(d: pd.DataFrame) -> pd.DataFrame:
     out["rangepos"] = (d["close"] - lo) / (hi - lo) - 0.5
     out["atr_pct"] = a / d["close"]
     out["atr"] = a
+    if macro is not None:
+        out = out.join(macro_features(d.index, macro))
     return out
 
 
-def signed(x: np.ndarray, direction: int) -> np.ndarray:
+def signed(x: np.ndarray, direction: int, cols: Optional[list] = None) -> np.ndarray:
+    cols = cols or FEATURES
     y = x.copy()
-    idx = [FEATURES.index(c) for c in SIGNED]
+    idx = [i for i, c in enumerate(cols) if c in SIGNED]
     y[:, idx] *= direction
     return y
 
@@ -156,16 +194,17 @@ class CandModel:
     sl_ret: float = 0.0
     base_tp: float = 0.0
     median_days_tp: Optional[float] = None
+    cols: Optional[list] = None
 
 
-def fit_models(X: np.ndarray, labels: dict, train_idx: np.ndarray, horizon: str) -> dict:
+def fit_models(X: np.ndarray, labels: dict, train_idx: np.ndarray, horizon: str, cols: Optional[list] = None) -> dict:
     models = {}
     for cand in candidates(horizon):
         lab = labels[cand.key][train_idx]
-        xs = signed(X[train_idx], cand.direction)
+        xs = signed(X[train_idx], cand.direction, cols)
         ok = np.isfinite(xs).all(axis=1)
         filled = ok & np.isfinite(lab[:, 0])
-        cm = CandModel(cand)
+        cm = CandModel(cand, cols=cols)
         if filled.sum() < 100 or len(np.unique(lab[filled, 0])) < 2:
             models[cand.key] = cm
             continue
@@ -188,7 +227,7 @@ def expected(cm: CandModel, x_row: np.ndarray, atr_pct: float) -> tuple:
     """(EV after costs, p_tp, p_sl, p_to, p_fill) for one candidate at one decision time."""
     if cm.outcome is None or not np.isfinite(x_row).all():
         return -np.inf, None, None, None, None
-    xs = signed(x_row[None, :], cm.cand.direction)
+    xs = signed(x_row[None, :], cm.cand.direction, getattr(cm, "cols", None))
     p = _proba(cm.outcome, xs, [1, -1, 0])[0]
     pf = 1.0
     if cm.cand.entry == "LIMIT":
@@ -234,6 +273,7 @@ class PlannerReport:
     probabilities_calibrated: bool = False  # only then may probabilities be shown as numbers
     reason: str = ""
     checks: dict = field(default_factory=dict)
+    features: list = field(default_factory=lambda: list(FEATURES))
 
 
 def _purged_train(n_upto: int, H: int, F: int) -> np.ndarray:
@@ -242,16 +282,27 @@ def _purged_train(n_upto: int, H: int, F: int) -> np.ndarray:
     return np.arange(0, max(last, 0))
 
 
-def walk_forward(d: pd.DataFrame, horizon: str, seed: int = 7) -> PlannerReport:
+def walk_forward(d: pd.DataFrame, horizon: str, seed: int = 7, macro: Optional[dict] = None,
+                 cols: Optional[list] = None, since=None) -> PlannerReport:
+    """cols: feature columns (default FEATURES; FEATURES + MACRO needs `macro`). since: evaluate only from this
+    date (features and labels still use the earlier bars), so two feature sets can be compared on one period."""
     d = d.dropna(subset=["open", "high", "low", "close"])
+    cols = cols or FEATURES
     H, F = HORIZONS[horizon], FILL_WINDOW[horizon]
-    feats = features(d)
-    X = feats[FEATURES].to_numpy(dtype=float)
-    atr_pct = feats["atr_pct"].to_numpy(dtype=float)
+    feats = features(d, macro if any(c in MACRO for c in cols) else None)
     labels = label_all(d, horizon)
+    if since is not None:
+        ts_ = pd.Timestamp(since)
+        if d.index.tz is not None and ts_.tzinfo is None:
+            ts_ = ts_.tz_localize("UTC")
+        keep = d.index >= ts_
+        d, feats = d[keep], feats[keep]
+        labels = {k: v[keep] for k, v in labels.items()}
+    X = feats[cols].to_numpy(dtype=float)
+    atr_pct = feats["atr_pct"].to_numpy(dtype=float)
     c = d["close"].to_numpy(dtype=float)
     n = len(c)
-    rep = PlannerReport(horizon)
+    rep = PlannerReport(horizon, features=list(cols))
     if n < MIN_TRAIN + TEST_BLOCK:
         rep.reason = f"insufficient daily history ({n} bars)"
         return rep
@@ -265,7 +316,7 @@ def walk_forward(d: pd.DataFrame, horizon: str, seed: int = 7) -> PlannerReport:
         block = (i - MIN_TRAIN) // TEST_BLOCK
         if block != model_block:
             tr = _purged_train(MIN_TRAIN + block * TEST_BLOCK, H, F)
-            models = fit_models(X, labels, tr, horizon)
+            models = fit_models(X, labels, tr, horizon, cols)
             # direction model (sign of the H-day return)
             fwd = np.full(n, np.nan)
             fwd[:-H] = np.log(c[H:] / c[:-H])
@@ -386,15 +437,21 @@ class PlannerModel:
     report: dict
     trained_until: str
     version: str = PLANNER_VERSION
+    cols: Optional[list] = None
 
     @property
     def qualified(self) -> bool:
         return bool(self.report.get("qualified"))
 
-    def best_plan(self, d: pd.DataFrame) -> Optional[dict]:
-        """Best plan for the last CLOSED daily bar of d, or None when no candidate clears the edge."""
-        feats = features(d)
-        x = feats[FEATURES].to_numpy(dtype=float)[-1]
+    def best_plan(self, d: pd.DataFrame, macro: Optional[dict] = None) -> Optional[dict]:
+        """Best plan for the last CLOSED daily bar of d, or None when no candidate clears the edge (or when the
+        model needs macro data that is not available: never a plan from incomplete inputs)."""
+        cols = getattr(self, "cols", None) or FEATURES
+        needs_macro = any(c in MACRO for c in cols)
+        if needs_macro and not macro:
+            return None
+        feats = features(d, macro if needs_macro else None)
+        x = feats[cols].to_numpy(dtype=float)[-1]
         a, ap, close = float(feats["atr"].iloc[-1]), float(feats["atr_pct"].iloc[-1]), float(d["close"].iloc[-1])
         best, cand = (-np.inf,), None
         for cm in self.models.values():
@@ -413,9 +470,11 @@ class PlannerModel:
                 "fill_days": FILL_WINDOW[self.horizon] if k.entry == "LIMIT" else 0}
 
 
-def train_production(d: pd.DataFrame, horizon: str, report: PlannerReport) -> PlannerModel:
+def train_production(d: pd.DataFrame, horizon: str, report: PlannerReport, macro: Optional[dict] = None) -> PlannerModel:
     d = d.dropna(subset=["open", "high", "low", "close"])
-    X = features(d)[FEATURES].to_numpy(dtype=float)
+    cols = list(report.features or FEATURES)
+    X = features(d, macro if any(c in MACRO for c in cols) else None)[cols].to_numpy(dtype=float)
     labels = label_all(d, horizon)
     tr = _purged_train(len(d), HORIZONS[horizon], FILL_WINDOW[horizon])
-    return PlannerModel(horizon, fit_models(X, labels, tr, horizon), asdict(report), str(d.index[-1].date()))
+    return PlannerModel(horizon, fit_models(X, labels, tr, horizon, cols), asdict(report), str(d.index[-1].date()),
+                        cols=cols)
