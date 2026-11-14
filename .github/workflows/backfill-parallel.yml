@@ -35,7 +35,7 @@ jobs:
           import sys, subprocess
           a, b = sys.argv[1][:7], sys.argv[2][:7]
           syms = [x for x in sys.argv[3].split(",") if x]
-          out = subprocess.run(["git", "status", "--porcelain", "market_data/bars/Dukascopy"], capture_output=True, text=True).stdout
+          out = subprocess.run(["git", "status", "--porcelain", "-uall", "market_data/bars/Dukascopy"], capture_output=True, text=True).stdout
           for line in out.splitlines():
               p = line[3:].strip()
               m = p.rsplit("/", 1)[-1][:7]
