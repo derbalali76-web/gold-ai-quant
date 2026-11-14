@@ -311,10 +311,10 @@
     <string name="pos_buy_rec_hold">Conservez — renfort possible selon le plan</string>
     <string name="pos_sell_rec_cash">N\'achetez pas maintenant — la vue validée est baissière</string>
     <string name="pos_reduce_now">Allégez maintenant à %1$s · objectif %2$s · stop %3$s</string>
-    <string name="pos_up_cash">Surveillez une zone d\'achat vers %1$s</string>
-    <string name="pos_up_hold">Conservez — stop de protection sous %1$s</string>
-    <string name="pos_down_cash">Attendez, pas d\'achat — surveillez %1$s</string>
-    <string name="pos_down_hold">Surveillez : une clôture sous %1$s signifie réduire le risque</string>
+    <string name="pos_up_cash">Zone d\'achat vers %1$s · objectif suivant vers %2$s</string>
+    <string name="pos_up_hold">Ne vendez pas encore — objectif suivant vers %2$s · stop sous %1$s</string>
+    <string name="pos_down_cash">Attendez un meilleur creux — surveillez %1$s puis %2$s</string>
+    <string name="pos_down_hold">Clôture sous %1$s : vendez, et visez un rachat vers %2$s</string>
     <string name="pos_side_cash">Attendez — surveillez %1$s et %2$s</string>
     <string name="pos_side_hold">Conservez et surveillez %1$s et %2$s</string>
     <string name="pos_watch_note">À surveiller — pas une recommandation</string>

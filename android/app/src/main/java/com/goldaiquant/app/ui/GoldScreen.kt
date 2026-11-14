@@ -1158,13 +1158,14 @@ private fun PositionLine(c: HorizonCard, d: Decision, pos: String, rec: Boolean)
     val lv = c.levels
     val s1 = lv?.supports?.firstOrNull()?.let { ltr(it.price.p2()) } ?: "—"
     val r1 = lv?.resistances?.firstOrNull()?.let { ltr(it.price.p2()) } ?: "—"
+    val s2 = lv?.supports?.getOrNull(1)?.let { ltr(it.price.p2()) } ?: s1
     val bias = when {
         c.tilt > 0 -> 1; c.tilt < 0 -> -1
         d.brief?.bias == "UP" -> 1; d.brief?.bias == "DOWN" -> -1; else -> 0
     }
     val txt = when (bias) {
-        1 -> stringResource(if (hold) R.string.pos_up_hold else R.string.pos_up_cash, s1)
-        -1 -> stringResource(if (hold) R.string.pos_down_hold else R.string.pos_down_cash, s1)
+        1 -> stringResource(if (hold) R.string.pos_up_hold else R.string.pos_up_cash, s1, r1)
+        -1 -> stringResource(if (hold) R.string.pos_down_hold else R.string.pos_down_cash, s1, s2)
         else -> stringResource(if (hold) R.string.pos_side_hold else R.string.pos_side_cash, s1, r1)
     }
     Text(txt, color = TextMain, fontSize = 13.sp, fontWeight = FontWeight.SemiBold, lineHeight = 17.sp)
