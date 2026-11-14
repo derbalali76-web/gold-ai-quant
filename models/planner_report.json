@@ -68,7 +68,8 @@
    "rsi",
    "rangepos",
    "atr_pct"
-  ]
+  ],
+  "regime": null
  },
  "MONTH": {
   "horizon": "MONTH",
@@ -139,6 +140,81 @@
    "rsi",
    "rangepos",
    "atr_pct"
-  ]
+  ],
+  "regime": null
+ },
+ "HOURS": {
+  "horizon": "HOURS",
+  "version": "planner-daily-1.0.0",
+  "period": "2016-07-07 → 2026-11-13",
+  "decision_days": 52734,
+  "direction_accuracy": 0.5099,
+  "direction_baseline": 0.5163,
+  "trades": 334,
+  "not_filled": 26,
+  "tp_first_rate": 0.3533,
+  "timeout_rate": 0.2335,
+  "avg_win_pct": 0.739,
+  "avg_loss_pct": -0.683,
+  "expectancy_pct": 0.011,
+  "expectancy_ci95": [
+   -0.078,
+   0.105
+  ],
+  "expectancy_halves": [
+   -0.045,
+   0.067
+  ],
+  "holdout_expectancy_pct": 0.069,
+  "holdout_trades": 136,
+  "max_drawdown_pct": 10.466,
+  "profit_factor": 1.031,
+  "median_days_to_target": 3.0,
+  "brier_tp": 0.2268,
+  "brier_climatology": 0.2257,
+  "reliability_gap": 0.1813,
+  "plans_used": {
+   "S_MARKET_2.0_1.5": 116,
+   "S_MARKET_1.0_1.0": 74,
+   "L_MARKET_2.0_1.5": 49,
+   "L_MARKET_1.0_1.0": 29,
+   "S_LIMIT_1.0_1.0": 20,
+   "S_MARKET_1.5_1.0": 11
+  },
+  "baseline_plan": "S_MARKET_2.0_1.5",
+  "baseline_expectancy_pct": -0.036,
+  "baseline_trades": 8544,
+  "edge_over_baseline_ci95": [
+   -0.044,
+   0.135
+  ],
+  "qualified": false,
+  "probabilities_calibrated": false,
+  "reason": "failed: expectancy CI above zero; both halves positive; beats the no-model baseline (CI)",
+  "checks": {
+   "enough trades (>=30)": true,
+   "expectancy CI above zero": false,
+   "both halves positive": false,
+   "final holdout positive": true,
+   "beats the no-model baseline (CI)": false,
+   "Brier better than climatology": false,
+   "reliability gap <= 0.10": false
+  },
+  "features": [
+   "dist20",
+   "dist50",
+   "dist200",
+   "mom63",
+   "mom126",
+   "mom252",
+   "ret5",
+   "ret20",
+   "rsi",
+   "rangepos",
+   "atr_pct",
+   "hsin",
+   "hcos"
+  ],
+  "regime": null
  }
 }

@@ -4,25 +4,25 @@
  "variants": {
   "production": {
    "n_oos": 19416,
-   "brier": 0.550234566351341,
+   "brier": 0.5502345663516887,
    "climatology": 0.6658693005111705,
-   "max_reliability_gap": 0.07611010292943876,
+   "max_reliability_gap": 0.07611010292171927,
    "delta_vs_production": 0.0,
    "promotable": false
   },
   "plus_time": {
    "n_oos": 19416,
-   "brier": 0.5462014152489655,
+   "brier": 0.5462014152486393,
    "climatology": 0.6658693005111705,
-   "max_reliability_gap": 0.09203149095443486,
+   "max_reliability_gap": 0.09203149095325636,
    "delta_vs_production": -0.00403,
    "promotable": true
   },
   "plus_time_cross": {
    "n_oos": 19416,
-   "brier": 0.5434296051401928,
+   "brier": 0.5434296051411018,
    "climatology": 0.6658693005111705,
-   "max_reliability_gap": 0.0519061458047515,
+   "max_reliability_gap": 0.051906145797526615,
    "delta_vs_production": -0.0068,
    "promotable": true
   }
