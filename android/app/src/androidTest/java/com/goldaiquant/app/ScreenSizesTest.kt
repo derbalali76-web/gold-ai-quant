@@ -14,6 +14,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.unit.LayoutDirection
@@ -87,6 +88,12 @@ class ScreenSizesTest {
     @Test fun languageSpanish() = language(Lang.ES)
     @Test fun languagePortuguese() = language(Lang.PT)
 
+    @Test fun everythingFitsOnASmallScreenWithoutScrolling() {
+        show("wait_demo.json", 360, 640)
+        rule.onNodeWithText(str(Lang.EN, R.string.details)).assertIsDisplayed()
+        rule.onNodeWithText(str(Lang.EN, R.string.ask)).assertIsDisplayed()
+    }
+
     @Test fun probabilitiesOnlyWhenCalibrated() {
         show("live_qualified_stub.json", 393, 851)
         assertTrue(shown("58%"))
@@ -110,7 +117,8 @@ class ScreenSizesTest {
         rule.waitForIdle()
         assertTrue(rule.onAllNodes(hasContentDescription(str(Lang.EN, R.string.cd_horizon_selected).format(str(Lang.EN, R.string.h_week))))
             .fetchSemanticsNodes().isNotEmpty())
-        assertTrue(shown(str(Lang.EN, R.string.prob_horizon))) // WEEK has no calibrated probabilities
+        assertTrue(!shown("58%")) // WEEK has no calibrated probabilities
+        assertTrue(shown(str(Lang.EN, R.string.prob_na)))
     }
 
     @Test fun probabilityCardOpensItsExplanation() {
@@ -129,9 +137,7 @@ class ScreenSizesTest {
 
     @Test fun detailsButtonOpensExpandedAnalysis() {
         show("wait_demo.json", 393, 851)
-        val btn = rule.onNodeWithText(str(Lang.EN, R.string.details) + " ⌄")
-        runCatching { btn.performScrollTo() } // the reason card can sit below the visible part of the screen
-        btn.performClick()
+        rule.onNodeWithText(str(Lang.EN, R.string.details)).performClick() // one screen: no scrolling needed
         rule.waitForIdle()
         assertTrue(rule.onAllNodesWithText(str(Lang.EN, R.string.details_dialog), substring = true)
             .fetchSemanticsNodes().isNotEmpty())

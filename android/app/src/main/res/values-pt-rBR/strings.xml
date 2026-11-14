@@ -245,6 +245,9 @@
     <string name="notif_brief_title">Plano de hoje — XAU/USD</string>
     <string name="ck_title">Condições de entrada</string>
     <string name="ck_count">Condições de entrada: %1$d de %2$d atendidas</string>
+    <string name="ck_chip">Condições %1$d/%2$d</string>
+    <string name="trust_short">Registro</string>
+    <string name="trust_tile">%1$d recomendações</string>
     <string name="why_title">Por que não agora?</string>
     <string name="ck_session_ok">Mercado aberto</string>
     <string name="ck_session_no">Mercado fechado</string>

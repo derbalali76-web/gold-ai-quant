@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -222,48 +223,45 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
         // Compact layout on short screens: secondary details are dropped instead of shrinking the text.
         val compact = maxHeight < 700.dp
         val gap = if (compact) 6.dp else 8.dp
+        // One screen, no scrolling: everything secondary opens from the three tiles at the bottom.
         Column(
-            Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 12.dp, vertical = 6.dp),
+            Modifier.fillMaxSize().padding(horizontal = 12.dp, vertical = 6.dp),
             verticalArrangement = Arrangement.spacedBy(gap),
         ) {
             TopBar(s, compact, onAsset = { sheet = Sheet.Assets }) { sheet = Sheet.Settings }
             val card = d?.let { HorizonModel.card(it, selected) }
-            Row(horizontalArrangement = Arrangement.spacedBy(gap)) {
-                PriceCard(d, s, Modifier.weight(1.1f))
-                Crossfade(targetState = card?.trend, animationSpec = tween(220), modifier = Modifier.weight(1f),
-                    label = "trend") { t -> TrendCard(t) { sheet = Sheet.TrendSheet } }
+            Row(Modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(gap)) {
+                PriceCard(d, s, Modifier.weight(1.1f).fillMaxHeight())
+                Box(Modifier.weight(1f).fillMaxHeight()) { TrendCard(card?.trend) { sheet = Sheet.TrendSheet } }
             }
             if (d?.isDemo == true) Text(stringResource(R.string.demo_banner),
                 color = Color.Black, fontSize = 12.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth().background(WaitGold, RoundedCornerShape(8.dp)).padding(vertical = 4.dp))
             AskButton(s.loading, compact, onAsk)
             s.error?.let { ErrorStrip(it, onAsk) }
-            if (d?.marketClosed == true) Text(stringResource(R.string.closed_last_session), color = WaitGold, fontSize = 12.sp,
-                textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
             if (d != null && card != null) {
-                HorizonsRow(d, selected, s.loading, gap, onHorizon)
-                Crossfade(targetState = card, animationSpec = tween(240), label = "horizon") { c ->
-                    Column(verticalArrangement = Arrangement.spacedBy(gap)) {
-                        Row(horizontalArrangement = Arrangement.spacedBy(gap)) {
-                            DecisionCard(c, s, d, compact, Modifier.weight(1.45f))
-                            ProbabilityCard(c, d, Modifier.weight(1f)) { sheet = Sheet.Probabilities }
-                        }
-                        val lv = c.levels
-                        Row(horizontalArrangement = Arrangement.spacedBy(gap)) {
-                            LevelsCard(stringResource(R.string.lv_supports), BuyGreen, lv?.supports.orEmpty(),
-                                lv?.validated == true, if (compact) 2 else 3, Modifier.weight(1f)) { sheet = Sheet.LevelSheet(it, true) }
-                            LevelsCard(stringResource(R.string.lv_resistances), SellRed, lv?.resistances.orEmpty(),
-                                lv?.validated == true, if (compact) 2 else 3, Modifier.weight(1f)) { sheet = Sheet.LevelSheet(it, false) }
-                        }
-                        ReasonCard(c) { sheet = Sheet.Details }
-                    }
+                HorizonTabs(d, selected, s.loading, onHorizon)
+                Crossfade(targetState = card, animationSpec = tween(240), label = "horizon",
+                    modifier = Modifier.weight(1f).fillMaxWidth()) { c ->
+                    DecisionCard(c, s, d, compact, Modifier.fillMaxSize()) { l, sup -> sheet = Sheet.LevelSheet(l, sup) }
                 }
-            } else if (s.error == null) {
-                Text(stringResource(R.string.prompt_ask), color = TextDim, fontSize = 14.sp,
+                Row(Modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(gap)) {
+                    ProbTile(card, Modifier.weight(1f).fillMaxHeight()) { sheet = Sheet.Probabilities }
+                    Tile(stringResource(R.string.trust_short),
+                        s.trust?.let { stringResource(R.string.trust_tile, it.all.completed) } ?: "…",
+                        WaitGold, Modifier.weight(1f).fillMaxHeight()) { sheet = Sheet.TrustSheet }
+                    Tile(stringResource(R.string.details), stringResource(R.string.why_title), WaitGold,
+                        Modifier.weight(1f).fillMaxHeight()) { sheet = Sheet.Details }
+                }
+            } else {
+                if (s.error == null) Text(stringResource(R.string.prompt_ask), color = TextDim, fontSize = 14.sp,
                     textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth().padding(16.dp))
+                Spacer(Modifier.weight(1f))
+                Tile(stringResource(R.string.trust_short),
+                    s.trust?.let { stringResource(R.string.trust_tile, it.all.completed) } ?: "…",
+                    WaitGold, Modifier.fillMaxWidth()) { sheet = Sheet.TrustSheet }
             }
-            TrustCard(s.trust) { sheet = Sheet.TrustSheet }
-            Text(stringResource(R.string.footer_disclaimer), color = TextDim, fontSize = 10.sp,
+            Text(stringResource(R.string.footer_disclaimer), color = TextDim, fontSize = 9.sp, lineHeight = 11.sp,
                 textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
         }
     }
@@ -385,7 +383,7 @@ private fun trendColor(dir: String?): Color = when (dir) {
 @Composable
 private fun TrendCard(t: Trend?, onClick: () -> Unit) {
     val color = trendColor(t?.direction)
-    Panel(Modifier.fillMaxWidth(), onClick = onClick) {
+    Panel(Modifier.fillMaxSize(), onClick = onClick) {
         Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(3.dp)) {
             Text(stringResource(R.string.tr_title), color = TextMain, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
             Text(if (t == null) "—" else trendLabel(t.direction), color = color, fontSize = 22.sp,
@@ -449,41 +447,54 @@ private fun KV(k: String, v: String, size: TextUnit = 13.sp) {
 
 // ---------------------------------------------------------------- horizons (tap = the whole screen switches)
 @Composable
-private fun HorizonsRow(d: Decision, current: String, loading: Boolean, gap: Dp, onSelect: (String) -> Unit) {
-    Row(horizontalArrangement = Arrangement.spacedBy(gap)) {
+private fun HorizonTabs(d: Decision, current: String, loading: Boolean, onSelect: (String) -> Unit) {
+    val outer = RoundedCornerShape(14.dp)
+    Row(Modifier.fillMaxWidth().background(Card, outer).border(1.dp, CardEdge, outer).padding(3.dp),
+        horizontalArrangement = Arrangement.spacedBy(3.dp)) {
         HorizonModel.ORDER.forEach { h ->
             val o = d.outlooks.firstOrNull { it.horizon == h }
             val action = o?.action ?: Action.UNAVAILABLE
             val isSel = h == current
             val c = actionColor(action, o?.tilt ?: 0)
-            val edge by animateColorAsState(if (isSel) Gold else c.copy(alpha = 0.45f), tween(220), label = "edge")
-            val glow by animateDpAsState(if (isSel) 10.dp else 0.dp, tween(220), label = "glow")
-            val shape = RoundedCornerShape(14.dp)
+            val bg by animateColorAsState(if (isSel) Color(0xFF1D1A12) else Color.Transparent, tween(200), label = "tab")
+            val shape = RoundedCornerShape(11.dp)
             val name = horizonName(h)
             val cd = if (isSel) stringResource(R.string.cd_horizon_selected, name) else stringResource(R.string.cd_horizon, name)
-            Box(Modifier.weight(1f).heightIn(min = 64.dp)
-                .shadow(glow, shape, ambientColor = Gold, spotColor = Gold)
-                .background(Card, shape).border(if (isSel) 2.dp else 1.dp, edge, shape)
+            Column(Modifier.weight(1f).heightIn(min = 48.dp).background(bg, shape)
+                .border(1.dp, if (isSel) Gold else Color.Transparent, shape)
                 .clickable(role = Role.Tab) { onSelect(h) }
-                .semantics { contentDescription = cd; selected = isSel }
-                .padding(horizontal = 6.dp, vertical = 6.dp), contentAlignment = Alignment.Center) {
-                Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                    Text(name, color = if (isSel) Gold else TextDim, fontSize = 11.sp,
-                        fontWeight = if (isSel) FontWeight.Bold else FontWeight.Normal)
-                    Text(if (o == null) stringResource(R.string.a_unavailable) else actionTitle(action), color = c, fontSize = 15.sp,
-                        fontWeight = FontWeight.ExtraBold, maxLines = 1, textAlign = TextAlign.Center)
-                    val hr = o?.hitRate
-                    val status = when {
-                        loading -> stringResource(R.string.hz_updating)
-                        o != null && hr != null -> ltr("${Math.round(hr * 100)}% / ${o.samples}")
-                        o?.validated == true -> stringResource(R.string.hz_validated)
-                        o == null || action == Action.UNAVAILABLE -> stringResource(R.string.hz_no_data)
-                        else -> stringResource(R.string.hz_not_validated)
-                    }
-                    Text(status, color = if (o?.validated == true && !loading) BuyGreen else TextDim, fontSize = 10.sp, maxLines = 1)
-                }
+                .semantics { contentDescription = cd; selected = isSel }.padding(vertical = 4.dp),
+                horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+                Text(name, color = if (isSel) Gold else TextMain, fontSize = 13.sp, fontWeight = FontWeight.Bold, maxLines = 1)
+                Text(when {
+                    loading -> stringResource(R.string.hz_updating)
+                    o == null -> stringResource(R.string.a_unavailable)
+                    else -> actionTitle(action)
+                }, color = c, fontSize = 11.sp, maxLines = 1)
             }
+        }
+    }
+}
+
+@Composable
+private fun Tile(title: String, value: String, valueColor: Color, modifier: Modifier, onClick: () -> Unit) {
+    Panel(modifier, onClick = onClick) {
+        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(title, color = TextMain, fontSize = 12.sp, fontWeight = FontWeight.Bold, maxLines = 1)
+            Text(value, color = valueColor, fontSize = 11.sp, maxLines = 2, textAlign = TextAlign.Center, lineHeight = 14.sp)
+        }
+    }
+}
+
+@Composable
+private fun ProbTile(c: HorizonCard, modifier: Modifier, onClick: () -> Unit) {
+    val o = c.outcomes
+    Panel(modifier, onClick = onClick) {
+        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(stringResource(R.string.prob_title), color = TextMain, fontSize = 12.sp, fontWeight = FontWeight.Bold, maxLines = 1)
+            if (c.probState == ProbState.AVAILABLE && o != null) {
+                Text("${Math.round(o.target * 100)}%", color = BuyGreen, fontSize = 15.sp, fontWeight = FontWeight.Bold)
+            } else Text(stringResource(R.string.prob_na), color = WaitGold, fontSize = 11.sp, maxLines = 1)
         }
     }
 }
@@ -502,47 +513,63 @@ private fun durationText(c: HorizonCard): String {
 }
 
 @Composable
-private fun DecisionCard(c: HorizonCard, s: UiState, d: Decision, compact: Boolean, modifier: Modifier) {
+private fun DecisionCard(c: HorizonCard, s: UiState, d: Decision, compact: Boolean, modifier: Modifier,
+                         onLevel: (Level, Boolean) -> Unit) {
     val expired = d.isExpired(Instant.now())
     val color = actionColor(c.action, c.tilt)
-    val sub = when (c.action) {
-        Action.BUY, Action.SELL -> stringResource(if (c.horizon == "HOURS") R.string.sub_court else R.string.sub_validated_rule)
-        Action.WAIT -> if (c.stance != null && c.tilt != 0) rt(c.stance) else stringResource(R.string.sub_wait)
-        Action.UNAVAILABLE -> stringResource(R.string.sub_unavailable)
+    val why = when {
+        d.marketClosed -> stringResource(R.string.closed_last_session)
+        c.action == Action.BUY || c.action == Action.SELL ->
+            stringResource(if (c.horizon == "HOURS") R.string.sub_court else R.string.sub_validated_rule)
+        c.action == Action.WAIT -> if (c.stance != null && c.tilt != 0) rt(c.stance) else rt(c.reason ?: c.warnings.firstOrNull())
+        else -> rt(c.warnings.firstOrNull() ?: c.reason)
     }
-    Panel(modifier, edge = color) {
-        Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(3.dp)) {
+    Panel(modifier, edge = color.copy(alpha = 0.7f)) {
+        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(actionTitle(c.action), color = color, fontSize = if (c.action == Action.UNAVAILABLE) 22.sp else 30.sp,
-                    fontWeight = FontWeight.Black, maxLines = 1)
-                Spacer(Modifier.width(8.dp))
-                Text(sub, color = TextDim, fontSize = 11.sp, maxLines = 2)
+                Text(actionTitle(c.action), color = color, fontSize = if (c.action == Action.UNAVAILABLE) 26.sp else 30.sp,
+                    fontWeight = FontWeight.Black, maxLines = 1, modifier = Modifier.weight(1f))
+                val known = c.checklist.filter { it.ok != null }
+                if (c.plan?.recommendation != true && known.isNotEmpty()) Text(
+                    stringResource(R.string.ck_chip, known.count { it.ok == true }, known.size), color = WaitGold, fontSize = 11.sp,
+                    maxLines = 1, modifier = Modifier.border(1.dp, Color(0xFF5A4A1C), RoundedCornerShape(10.dp))
+                        .padding(horizontal = 8.dp, vertical = 2.dp))
             }
-            Text(horizonName(c.horizon), color = Gold, fontSize = 11.sp)
-            c.plan?.let { PlanLine(it, d) }
-            if (c.plan?.recommendation != true) {
-                CheckSummary(c.checklist)
-                d.brief?.let { BriefLines(it) }
-            }
+            if (why.isNotBlank()) Text(why, color = TextMain, fontSize = 12.sp, lineHeight = 16.sp, maxLines = 2,
+                overflow = TextOverflow.Ellipsis)
             if (s.decisionFromCache || expired) Text(stringResource(R.string.saved_decision), color = WaitGold, fontSize = 11.sp)
-            when (c.action) {
-                Action.BUY, Action.SELL -> {
-                    if (c.plan?.isNow != true) { // the plan line above already states entry, target and stop
-                        val approx = if (c.horizon == "HOURS") "" else " ${stringResource(R.string.approx)}"
-                        if (c.horizon == "HOURS") KV(stringResource(R.string.l_entry), ltr("${c.entryLow!!.p2()} – ${c.entryHigh!!.p2()}"))
-                        else KV(stringResource(R.string.l_ref_price), c.entryLow!!.p2())
-                        KV(stringResource(R.string.l_stop) + approx, c.stop!!.p2())
-                        KV(stringResource(R.string.l_target) + approx, c.target!!.p2())
-                    }
-                    KV(stringResource(R.string.l_duration), durationText(c))
-                }
-                Action.WAIT -> {
-                    if (c.plan?.watchPrice == null) c.waitForPrice?.let { KV(stringResource(R.string.l_reeval), it.p2()) }
-                    if (c.horizon == "HOURS") d.reevaluateRefs.take(if (compact) 1 else 2).forEach {
-                        Text("• ${rt(it)}", color = TextMain, fontSize = 11.sp, maxLines = 2, overflow = TextOverflow.Ellipsis)
-                    }
-                }
-                Action.UNAVAILABLE -> Text(rt(c.warnings.firstOrNull() ?: c.reason), color = TextMain, fontSize = 12.sp, maxLines = 3)
+            Divider()
+            val rec = c.plan?.recommendation == true
+            if (rec) {
+                PlanLine(c.plan!!, d)
+                KV(stringResource(R.string.l_duration), durationText(c), 12.sp)
+            } else {
+                c.plan?.takeIf { it.watchPrice != null }?.let { PlanLine(it, d) }
+                d.brief?.let { BriefLines(it) }
+                if (d.brief == null && c.action == Action.WAIT) c.waitForPrice?.let { KV(stringResource(R.string.l_reeval), it.p2(), 12.sp) }
+            }
+            Divider()
+            val lv = c.levels
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                LevelPair(stringResource(R.string.lv_supports), BuyGreen, lv?.supports.orEmpty(), Modifier.weight(1f)) { onLevel(it, true) }
+                LevelPair(stringResource(R.string.lv_resistances), SellRed, lv?.resistances.orEmpty(), Modifier.weight(1f)) { onLevel(it, false) }
+            }
+        }
+    }
+}
+
+@Composable
+private fun Divider() = Box(Modifier.fillMaxWidth().height(1.dp).background(Color(0xFF262118)))
+
+@Composable
+private fun LevelPair(title: String, color: Color, items: List<Level>, modifier: Modifier, onOpen: (Level) -> Unit) {
+    Column(modifier) {
+        Text(title, color = color, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+        if (items.isEmpty()) Text(stringResource(R.string.lv_none), color = TextDim, fontSize = 11.sp)
+        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            items.take(2).forEach { l ->
+                Text(ltr(l.price.p2()), color = TextMain, fontSize = 13.sp, fontWeight = FontWeight.Bold, maxLines = 1,
+                    modifier = Modifier.heightIn(min = 32.dp).clickable(role = Role.Button) { onOpen(l) }.padding(vertical = 6.dp))
             }
         }
     }
@@ -605,20 +632,6 @@ private fun checkText(k: Check): String {
 }
 
 @Composable
-private fun CheckSummary(list: List<Check>) {
-    val known = list.filter { it.ok != null }
-    if (known.isEmpty()) return
-    Spacer(Modifier.height(6.dp))
-    Text(stringResource(R.string.ck_count, known.count { it.ok == true }, known.size), color = Gold, fontSize = 11.sp,
-        fontWeight = FontWeight.SemiBold)
-    val failing = known.filter { it.ok == false }
-    if (failing.isNotEmpty()) {
-        Text(stringResource(R.string.why_title), color = TextDim, fontSize = 11.sp)
-        failing.take(2).forEach { Text("✗ " + checkText(it), color = TextMain, fontSize = 12.sp, lineHeight = 16.sp) }
-    }
-}
-
-@Composable
 private fun CheckSection(list: List<Check>) {
     if (list.isEmpty()) return
     Section(stringResource(R.string.ck_title))
@@ -630,7 +643,6 @@ private fun CheckSection(list: List<Check>) {
 
 @Composable
 private fun BriefLines(b: Brief) {
-    Spacer(Modifier.height(6.dp))
     Text(stringResource(R.string.brief_title), color = Gold, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
     Text(stringResource(when (b.bias) { "UP" -> R.string.brief_bias_up; "DOWN" -> R.string.brief_bias_down; else -> R.string.brief_bias_side }),
         color = TextDim, fontSize = 11.sp)
@@ -719,26 +731,6 @@ private fun probNote(c: HorizonCard): String = stringResource(when (c.probState)
 })
 
 @Composable
-private fun ProbabilityCard(c: HorizonCard, d: Decision, modifier: Modifier, onClick: () -> Unit) {
-    Panel(modifier, onClick = onClick) {
-        Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(stringResource(R.string.prob_title), color = TextMain, fontSize = 13.sp, fontWeight = FontWeight.Bold)
-            val o = c.outcomes
-            if (c.probState != ProbState.AVAILABLE || o == null) {
-                Text(stringResource(R.string.prob_na), color = WaitGold, fontSize = 15.sp, fontWeight = FontWeight.Bold)
-                Text(probNote(c), color = TextDim, fontSize = 11.sp)
-            } else {
-                ProbRow(stringResource(R.string.prob_target), o.target, BuyGreen)
-                ProbRow(stringResource(R.string.prob_stop), o.stop, SellRed)
-                ProbRow(stringResource(R.string.prob_neither), o.neither, Color(0xFFB8BCC4))
-                Text(stringResource(R.string.prob_samples, o.samples), color = TextDim, fontSize = 9.sp)
-            }
-            Text(liveLine(c), color = TextDim, fontSize = 10.sp)
-        }
-    }
-}
-
-@Composable
 private fun liveLine(c: HorizonCard): String =
     if (c.liveResolved > 0) stringResource(R.string.live_record, c.liveHits, c.liveResolved)
     else stringResource(R.string.live_none)
@@ -759,32 +751,6 @@ private fun labelFill(l: Level): Float = l.strength?.let { it / 100f } ?: when {
     l.tests >= 5 -> 0.85f; l.tests >= 3 -> 0.55f; l.tests >= 1 -> 0.25f; else -> 0f
 }
 
-@Composable
-private fun LevelsCard(title: String, color: Color, items: List<Level>, validated: Boolean, rows: Int, modifier: Modifier,
-                       onOpen: (Level) -> Unit) {
-    Panel(modifier, edge = color.copy(alpha = 0.6f)) {
-        Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(title, color = color, fontSize = 15.sp, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
-                if (!validated) Text(stringResource(R.string.lv_estimated), color = TextDim, fontSize = 9.sp)
-            }
-            if (items.isEmpty()) Text(stringResource(R.string.lv_none), color = TextDim, fontSize = 11.sp)
-            items.take(rows).forEach { l ->
-                Row(Modifier.fillMaxWidth().heightIn(min = 40.dp).clickable(role = Role.Button) { onOpen(l) },
-                    verticalAlignment = Alignment.CenterVertically) {
-                    Text(l.name, color = color, fontSize = 12.sp, fontWeight = FontWeight.Bold, modifier = Modifier.width(26.dp))
-                    Text(l.price.p2(), color = TextMain, fontSize = 13.sp, fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier.weight(1f))
-                    Column(horizontalAlignment = Alignment.End, modifier = Modifier.width(54.dp)) {
-                        Text(l.strength?.let { "$it" } ?: stringResource(strengthWord(l)), color = TextDim, fontSize = 10.sp, maxLines = 1)
-                        Segments(labelFill(l), color)
-                    }
-                }
-            }
-        }
-    }
-}
-
 private fun strengthWord(l: Level): Int = when {
     l.tests >= 5 -> R.string.lv_word_strong; l.tests >= 3 -> R.string.lv_word_medium; else -> R.string.lv_word_weak
 }
@@ -799,25 +765,6 @@ private fun Segments(fill: Float, color: Color) {
 }
 
 // ---------------------------------------------------------------- reason card
-@Composable
-private fun ReasonCard(c: HorizonCard, onDetails: () -> Unit) {
-    Panel(Modifier.fillMaxWidth()) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Column(Modifier.weight(1f)) {
-                Text(stringResource(R.string.reason_title), color = Gold, fontSize = 14.sp, fontWeight = FontWeight.Bold)
-                Text(rt(c.reason ?: c.warnings.firstOrNull()), color = TextMain, fontSize = 13.sp, lineHeight = 18.sp,
-                    maxLines = 3, overflow = TextOverflow.Ellipsis)
-            }
-            Spacer(Modifier.width(8.dp))
-            Box(Modifier.heightIn(min = 44.dp).border(1.dp, Gold, RoundedCornerShape(20.dp))
-                .clickable(role = Role.Button, onClick = onDetails).padding(horizontal = 12.dp, vertical = 8.dp),
-                contentAlignment = Alignment.Center) {
-                Text(stringResource(R.string.details) + " ⌄", color = TextMain, fontSize = 13.sp)
-            }
-        }
-    }
-}
-
 // ---------------------------------------------------------------- dialogs (in-screen, no extra pages)
 @Composable
 private fun DialogFrame(title: String, onClose: () -> Unit, content: @Composable () -> Unit) {
@@ -1100,27 +1047,6 @@ private fun SettingsDialog(s: UiState, lang: Lang, onNextDemo: () -> Unit, onSav
 // ---------------------------------------------------------------- public trust ledger
 private fun rFmt(v: Double?): String = v?.let { String.format(Locale.US, "%+.2fR", it) } ?: "—"
 private fun pct(v: Double?): Int = Math.round((v ?: 0.0) * 100).toInt()
-
-@Composable
-private fun TrustCard(t: Trust?, onClick: () -> Unit) {
-    Panel(Modifier.fillMaxWidth(), onClick = onClick) {
-        Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(3.dp)) {
-            if (t == null) {
-                Text(stringResource(R.string.trust_loading), color = TextDim, fontSize = 12.sp)
-                return@Column
-            }
-            Text(stringResource(R.string.trust_title), color = Gold, fontSize = 13.sp, fontWeight = FontWeight.Bold)
-            Text(stringResource(R.string.trust_summary, t.all.completed, t.daysTracked), color = TextMain, fontSize = 12.sp)
-            if (t.all.completed > 0) {
-                Text(stringResource(R.string.trust_win, pct(t.all.winRate), ltr(rFmt(t.all.avgR))),
-                    color = if ((t.all.avgR ?: 0.0) > 0) BuyGreen else SellRed, fontSize = 12.sp)
-            } else Text(stringResource(R.string.trust_empty), color = TextDim, fontSize = 11.sp)
-            if (t.analysisScored > 0) Text(stringResource(R.string.trust_analysis, pct(t.accuracy), t.analysisScored,
-                pct(t.baselineAccuracy)), color = TextMain, fontSize = 11.sp)
-            else Text(stringResource(R.string.trust_analysis_none), color = TextDim, fontSize = 11.sp)
-        }
-    }
-}
 
 @Composable
 private fun TrustDialog(t: Trust?, onClose: () -> Unit) {
