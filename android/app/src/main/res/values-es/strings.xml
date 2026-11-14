@@ -305,6 +305,19 @@
     <string name="dq_cross">Acuerdo con una segunda fuente</string>
     <string name="dq_other">Otro control</string>
     <string name="dq_note">Se ejecutan sobre las velas de cada decisión. Un fallo bloquea la decisión.</string>
+    <string name="pos_label">Mi posición: %1$s ▾</string>
+    <string name="pos_cash">Tengo liquidez</string>
+    <string name="pos_hold">Lo tengo</string>
+    <string name="pos_buy_rec_hold">Mantén — puedes aumentar según el plan</string>
+    <string name="pos_sell_rec_cash">No compres ahora — la visión validada es bajista</string>
+    <string name="pos_reduce_now">Reduce ahora en %1$s · objetivo %2$s · stop %3$s</string>
+    <string name="pos_up_cash">Vigila una zona de compra cerca de %1$s</string>
+    <string name="pos_up_hold">Mantén — stop de protección bajo %1$s</string>
+    <string name="pos_down_cash">Espera, no compres ahora — vigila %1$s</string>
+    <string name="pos_down_hold">Vigila: un cierre bajo %1$s significa reducir riesgo</string>
+    <string name="pos_side_cash">Espera — vigila %1$s y %2$s</string>
+    <string name="pos_side_hold">Mantén y vigila %1$s y %2$s</string>
+    <string name="pos_watch_note">Para vigilar — no es una recomendación</string>
     <string name="r_w_up" formatted="false">alcista</string>
     <string name="r_w_down" formatted="false">bajista</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

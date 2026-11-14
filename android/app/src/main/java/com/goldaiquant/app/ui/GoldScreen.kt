@@ -200,7 +200,8 @@ fun GoldScreen(vm: MainViewModel, lang: Lang, onLanguage: (Lang) -> Unit) {
     val s by vm.state.collectAsStateWithLifecycle()
     GoldContent(s, lang, onAsk = vm::ask, onNextDemo = vm::nextDemoMoment,
         onSave = { u, t -> vm.setServerUrl(u); vm.setToken(t) }, onLive = vm::setLiveMode,
-        onHorizon = vm::selectHorizon, onLanguage = onLanguage, onNotify = vm::setNotify, onAssetPick = vm::setAsset)
+        onHorizon = vm::selectHorizon, onLanguage = onLanguage, onNotify = vm::setNotify, onAssetPick = vm::setAsset,
+        onPosition = vm::setPosition)
 }
 
 private sealed interface Sheet {
@@ -217,7 +218,7 @@ private sealed interface Sheet {
 @Composable
 fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Unit, onSave: (String, String) -> Unit,
                 onLive: (Boolean) -> Unit, onHorizon: (String) -> Unit, onLanguage: (Lang) -> Unit,
-                onNotify: (Boolean) -> Unit = {}, onAssetPick: (String) -> Unit = {}) {
+                onNotify: (Boolean) -> Unit = {}, onAssetPick: (String) -> Unit = {}, onPosition: (String) -> Unit = {}) {
     var sheet by remember { mutableStateOf<Sheet?>(null) }
     val d = s.decision
     val selected = HorizonModel.resolve(s.selectedHorizon, d)
@@ -245,7 +246,7 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
                 HorizonTabs(d, selected, s.loading, onHorizon)
                 Crossfade(targetState = card, animationSpec = tween(240), label = "horizon",
                     modifier = Modifier.weight(1f).fillMaxWidth()) { c ->
-                    DecisionCard(c, s, d, compact, Modifier.fillMaxSize()) { l, sup -> sheet = Sheet.LevelSheet(l, sup) }
+                    DecisionCard(c, s, d, compact, Modifier.fillMaxSize(), onPosition) { l, sup -> sheet = Sheet.LevelSheet(l, sup) }
                 }
                 Row(Modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(gap)) {
                     ProbTile(card, Modifier.weight(1f).fillMaxHeight()) { sheet = Sheet.Probabilities }
@@ -522,7 +523,7 @@ private fun durationText(c: HorizonCard): String {
 
 @Composable
 private fun DecisionCard(c: HorizonCard, s: UiState, d: Decision, compact: Boolean, modifier: Modifier,
-                         onLevel: (Level, Boolean) -> Unit) {
+                         onPosition: (String) -> Unit = {}, onLevel: (Level, Boolean) -> Unit) {
     val expired = d.isExpired(Instant.now())
     val color = actionColor(c.action, c.tilt)
     val why = when {
@@ -546,10 +547,12 @@ private fun DecisionCard(c: HorizonCard, s: UiState, d: Decision, compact: Boole
             if (why.isNotBlank()) Text(why, color = TextMain, fontSize = 12.sp, lineHeight = 16.sp, maxLines = 2,
                 overflow = TextOverflow.Ellipsis)
             if (s.decisionFromCache || expired) Text(stringResource(R.string.saved_decision), color = WaitGold, fontSize = 11.sp)
+            if (c.action != Action.UNAVAILABLE) PositionChip(s.position) { onPosition(if (s.position == "HOLD") "CASH" else "HOLD") }
             Divider()
-            val rec = c.plan?.recommendation == true
+            val rec = c.plan?.recommendation == true && !d.isDemo
+            if (c.action != Action.UNAVAILABLE) PositionLine(c, d, s.position, rec)
             if (rec) {
-                PlanLine(c.plan!!, d)
+                if (!(c.plan!!.side == "SELL")) PlanLine(c.plan, d)  // a SELL plan is phrased by the position line
                 KV(stringResource(R.string.l_duration), durationText(c), 12.sp)
             } else {
                 c.plan?.takeIf { it.watchPrice != null }?.let { PlanLine(it, d) }
@@ -1126,4 +1129,44 @@ private fun DataHealthSection(h: DataHealth) {
         Body("$mark  ${dqName(c.code)}" + (c.value?.let { " · " + ltr(it) } ?: ""), cc, 11.sp)
     }
     Body(stringResource(R.string.dq_note), TextDim, 10.sp)
+}
+
+// ---------------------------------------------------------------- position (cash / holder): same analysis, phrased for the user
+@Composable
+private fun PositionChip(pos: String, onToggle: () -> Unit) {
+    Text(stringResource(R.string.pos_label, stringResource(if (pos == "HOLD") R.string.pos_hold else R.string.pos_cash)),
+        color = Gold, fontSize = 11.sp, maxLines = 1,
+        modifier = Modifier.border(1.dp, CardEdge, RoundedCornerShape(10.dp)).clickable(role = Role.Button, onClick = onToggle)
+            .padding(horizontal = 8.dp, vertical = 3.dp))
+}
+
+@Composable
+private fun PositionLine(c: HorizonCard, d: Decision, pos: String, rec: Boolean) {
+    val hold = pos == "HOLD"
+    val p = c.plan
+    if (rec && p != null) {
+        val txt = when {
+            p.side == "BUY" && hold -> stringResource(R.string.pos_buy_rec_hold)
+            p.side == "SELL" && !hold -> stringResource(R.string.pos_sell_rec_cash)
+            p.side == "SELL" -> stringResource(R.string.pos_reduce_now,
+                ltr(p.entryLow?.p2() ?: d.quote?.p2() ?: "—"), ltr(p.target?.p2() ?: "—"), ltr(p.stop?.p2() ?: "—"))
+            else -> null
+        }
+        txt?.let { Text(it, color = if (p.side == "SELL") SellRed else BuyGreen, fontSize = 13.sp, fontWeight = FontWeight.Bold) }
+        return
+    }
+    val lv = c.levels
+    val s1 = lv?.supports?.firstOrNull()?.let { ltr(it.price.p2()) } ?: "—"
+    val r1 = lv?.resistances?.firstOrNull()?.let { ltr(it.price.p2()) } ?: "—"
+    val bias = when {
+        c.tilt > 0 -> 1; c.tilt < 0 -> -1
+        d.brief?.bias == "UP" -> 1; d.brief?.bias == "DOWN" -> -1; else -> 0
+    }
+    val txt = when (bias) {
+        1 -> stringResource(if (hold) R.string.pos_up_hold else R.string.pos_up_cash, s1)
+        -1 -> stringResource(if (hold) R.string.pos_down_hold else R.string.pos_down_cash, s1)
+        else -> stringResource(if (hold) R.string.pos_side_hold else R.string.pos_side_cash, s1, r1)
+    }
+    Text(txt, color = TextMain, fontSize = 13.sp, fontWeight = FontWeight.SemiBold, lineHeight = 17.sp)
+    Text(stringResource(R.string.pos_watch_note), color = TextDim, fontSize = 10.sp)
 }

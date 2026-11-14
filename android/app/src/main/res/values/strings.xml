@@ -306,6 +306,19 @@
     <string name="dq_cross">Agreement with a second source</string>
     <string name="dq_other">Other check</string>
     <string name="dq_note">Run on the bars behind every decision. A failed check blocks the decision.</string>
+    <string name="pos_label">My position: %1$s ▾</string>
+    <string name="pos_cash">I have cash</string>
+    <string name="pos_hold">I hold it</string>
+    <string name="pos_buy_rec_hold">Hold — you may add per the plan</string>
+    <string name="pos_sell_rec_cash">Do not buy now — the validated view is bearish</string>
+    <string name="pos_reduce_now">Reduce now at %1$s · target %2$s · stop %3$s</string>
+    <string name="pos_up_cash">Watch for a buying zone near %1$s</string>
+    <string name="pos_up_hold">Hold — protective stop below %1$s</string>
+    <string name="pos_down_cash">Wait, no buying now — watch %1$s</string>
+    <string name="pos_down_hold">Watch: a close below %1$s means lowering risk</string>
+    <string name="pos_side_cash">Wait — watch %1$s and %2$s</string>
+    <string name="pos_side_hold">Hold and watch %1$s and %2$s</string>
+    <string name="pos_watch_note">To watch — not a recommendation</string>
     <string name="r_w_up" formatted="false">up</string>
     <string name="r_w_down" formatted="false">down</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

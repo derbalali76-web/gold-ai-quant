@@ -305,6 +305,19 @@
     <string name="dq_cross">التطابق مع مصدر ثانٍ</string>
     <string name="dq_other">فحص آخر</string>
     <string name="dq_note">تُجرى على الشموع خلف كل قرار. أي فحص فاشل يوقف القرار.</string>
+    <string name="pos_label">وضعي: %1$s ▾</string>
+    <string name="pos_cash">لدي سيولة</string>
+    <string name="pos_hold">أملك الأصل</string>
+    <string name="pos_buy_rec_hold">احتفظ — ويمكن الزيادة وفق الخطة</string>
+    <string name="pos_sell_rec_cash">لا تشترِ الآن — التحليل المعتمد هابط</string>
+    <string name="pos_reduce_now">قلّل الكمية الآن عند %1$s · الهدف %2$s · الوقف %3$s</string>
+    <string name="pos_up_cash">راقب منطقة شراء قرب %1$s</string>
+    <string name="pos_up_hold">احتفظ — وقف الحماية تحت %1$s</string>
+    <string name="pos_down_cash">انتظر، لا شراء الآن — راقب %1$s</string>
+    <string name="pos_down_hold">راقب: إغلاق تحت %1$s يعني تقليل المخاطرة</string>
+    <string name="pos_side_cash">انتظر — راقب %1$s و %2$s</string>
+    <string name="pos_side_hold">احتفظ وراقب %1$s و %2$s</string>
+    <string name="pos_watch_note">للمراقبة — ليست توصية</string>
     <string name="r_w_up" formatted="false">صاعد</string>
     <string name="r_w_down" formatted="false">هابط</string>
     <string name="r_w_neutral" formatted="false">محايد</string>

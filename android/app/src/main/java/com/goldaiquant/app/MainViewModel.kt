@@ -25,8 +25,10 @@ data class UiState(
     val track: List<TrackItem> = emptyList(),
     val trustAll: Map<String, Trust> = emptyMap(),
     val asset: String = "XAU",  // XAU | BTC | ETH | SOL
+    val positions: Map<String, String> = emptyMap(),  // asset -> CASH | HOLD (stored on the phone only)
 ) {
     val trust: Trust? get() = trustAll[asset]
+    val position: String get() = positions[asset] ?: "CASH"
 }
 
 class MainViewModel(app: Application) : AndroidViewModel(app) {
@@ -50,6 +52,13 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         ask()
     }
 
+    /** How the analysis is phrased for this asset: the user has cash, or already holds it. Display only. */
+    fun setPosition(p: String) {
+        val a = _state.value.asset
+        prefs.edit().putString("position_$a", p).apply()
+        _state.update { it.copy(positions = it.positions + (a to p)) }
+    }
+
     init {
         val asset0 = prefs.getString("asset", "XAU") ?: "XAU"
         val cached = prefs.getString(if (asset0 == "XAU") "last_decision" else "last_decision_$asset0", null)?.let {
@@ -67,6 +76,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                 receivedAt = prefs.getLong("last_received", 0L).takeIf { v -> v > 0 }?.let(Instant::ofEpochMilli),
                 trustAll = TrustParser.parseAll(prefs.getString("trust", null)),
                 asset = asset0,
+                positions = listOf("XAU", "BTC", "ETH", "SOL").associateWith { a -> prefs.getString("position_$a", "CASH") ?: "CASH" },
             )
         }
         startPrefetchLoop()
