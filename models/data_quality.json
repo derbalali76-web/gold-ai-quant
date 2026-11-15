@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-14T22:57:59.498127+00:00",
+ "generated_at": "2026-11-15T12:11:23.664094+00:00",
  "series": {
   "Dukascopy:XAUUSD:M15": {
    "history": {
@@ -209,12 +209,12 @@
      {
       "code": "coverage",
       "status": "FAIL",
-      "value": "32.9%"
+      "value": "41.5%"
      },
      {
       "code": "gaps",
       "status": "FAIL",
-      "value": "6165.0h"
+      "value": "4694.0h"
      },
      {
       "code": "ohlc",
@@ -229,7 +229,7 @@
      {
       "code": "outliers",
       "status": "WARN",
-      "value": "5"
+      "value": "7"
      },
      {
       "code": "flat",
@@ -237,12 +237,12 @@
       "value": "2"
      }
     ],
-    "bars": 22004,
+    "bars": 27786,
     "first": "2024-02-01 00:00:00+00:00",
     "last": "2026-11-13 21:45:00+00:00"
    },
    "last_7_days": {
-    "status": "FAIL",
+    "status": "OK",
     "checks": [
      {
       "code": "freshness",
@@ -251,13 +251,13 @@
      },
      {
       "code": "coverage",
-      "status": "FAIL",
-      "value": "39.1%"
+      "status": "OK",
+      "value": "100.0%"
      },
      {
       "code": "gaps",
-      "status": "FAIL",
-      "value": "70.0h"
+      "status": "OK",
+      "value": "0.0h"
      },
      {
       "code": "ohlc",
@@ -280,7 +280,7 @@
       "value": "0"
      }
     ],
-    "bars": 180,
+    "bars": 460,
     "first": "2024-02-01 00:00:00+00:00",
     "last": "2026-11-13 21:45:00+00:00"
    }
@@ -297,12 +297,12 @@
      {
       "code": "coverage",
       "status": "FAIL",
-      "value": "32.9%"
+      "value": "41.6%"
      },
      {
       "code": "gaps",
       "status": "FAIL",
-      "value": "6165.0h"
+      "value": "4694.0h"
      },
      {
       "code": "ohlc",
@@ -325,12 +325,12 @@
       "value": "0"
      }
     ],
-    "bars": 5505,
+    "bars": 6951,
     "first": "2024-02-01 00:00:00+00:00",
     "last": "2026-11-13 21:00:00+00:00"
    },
    "last_7_days": {
-    "status": "FAIL",
+    "status": "OK",
     "checks": [
      {
       "code": "freshness",
@@ -339,13 +339,13 @@
      },
      {
       "code": "coverage",
-      "status": "FAIL",
-      "value": "39.1%"
+      "status": "OK",
+      "value": "100.0%"
      },
      {
       "code": "gaps",
-      "status": "FAIL",
-      "value": "70.0h"
+      "status": "OK",
+      "value": "0.0h"
      },
      {
       "code": "ohlc",
@@ -358,12 +358,17 @@
       "value": "0"
      },
      {
+      "code": "outliers",
+      "status": "OK",
+      "value": "0"
+     },
+     {
       "code": "flat",
       "status": "OK",
       "value": "0"
      }
     ],
-    "bars": 45,
+    "bars": 115,
     "first": "2024-02-01 00:00:00+00:00",
     "last": "2026-11-13 21:00:00+00:00"
    }
@@ -702,7 +707,7 @@
   },
   "Dukascopy:DOLLARIDXUSD:M15": {
    "history": {
-    "status": "OK",
+    "status": "FAIL",
     "checks": [
      {
       "code": "freshness",
@@ -711,13 +716,13 @@
      },
      {
       "code": "coverage",
-      "status": "OK",
-      "value": "100.0%"
+      "status": "WARN",
+      "value": "89.1%"
      },
      {
       "code": "gaps",
-      "status": "OK",
-      "value": "0.0h"
+      "status": "FAIL",
+      "value": "28.8h"
      },
      {
       "code": "ohlc",
@@ -731,21 +736,21 @@
      },
      {
       "code": "outliers",
-      "status": "OK",
-      "value": "0"
+      "status": "WARN",
+      "value": "52"
      },
      {
       "code": "flat",
       "status": "OK",
-      "value": "0"
+      "value": "1"
      }
     ],
-    "bars": 84,
-    "first": "2026-11-13 01:00:00+00:00",
+    "bars": 168223,
+    "first": "2019-01-02 01:00:00+00:00",
     "last": "2026-11-13 21:45:00+00:00"
    },
    "last_7_days": {
-    "status": "OK",
+    "status": "WARN",
     "checks": [
      {
       "code": "freshness",
@@ -754,13 +759,13 @@
      },
      {
       "code": "coverage",
-      "status": "OK",
-      "value": "100.0%"
+      "status": "WARN",
+      "value": "91.3%"
      },
      {
       "code": "gaps",
       "status": "OK",
-      "value": "0.0h"
+      "value": "2.0h"
      },
      {
       "code": "ohlc",
@@ -783,14 +788,14 @@
       "value": "0"
      }
     ],
-    "bars": 84,
-    "first": "2026-11-13 01:00:00+00:00",
+    "bars": 420,
+    "first": "2019-01-02 01:00:00+00:00",
     "last": "2026-11-13 21:45:00+00:00"
    }
   },
   "Dukascopy:DOLLARIDXUSD:H1": {
    "history": {
-    "status": "OK",
+    "status": "FAIL",
     "checks": [
      {
       "code": "freshness",
@@ -799,13 +804,13 @@
      },
      {
       "code": "coverage",
-      "status": "OK",
-      "value": "100.0%"
+      "status": "WARN",
+      "value": "89.1%"
      },
      {
       "code": "gaps",
-      "status": "OK",
-      "value": "0.0h"
+      "status": "FAIL",
+      "value": "28.0h"
      },
      {
       "code": "ohlc",
@@ -818,17 +823,22 @@
       "value": "0"
      },
      {
+      "code": "outliers",
+      "status": "WARN",
+      "value": "11"
+     },
+     {
       "code": "flat",
       "status": "OK",
       "value": "0"
      }
     ],
-    "bars": 21,
-    "first": "2026-11-13 01:00:00+00:00",
+    "bars": 42090,
+    "first": "2019-01-02 01:00:00+00:00",
     "last": "2026-11-13 21:00:00+00:00"
    },
    "last_7_days": {
-    "status": "OK",
+    "status": "WARN",
     "checks": [
      {
       "code": "freshness",
@@ -837,13 +847,13 @@
      },
      {
       "code": "coverage",
-      "status": "OK",
-      "value": "100.0%"
+      "status": "WARN",
+      "value": "91.3%"
      },
      {
       "code": "gaps",
       "status": "OK",
-      "value": "0.0h"
+      "value": "2.0h"
      },
      {
       "code": "ohlc",
@@ -856,19 +866,24 @@
       "value": "0"
      },
      {
+      "code": "outliers",
+      "status": "OK",
+      "value": "0"
+     },
+     {
       "code": "flat",
       "status": "OK",
       "value": "0"
      }
     ],
-    "bars": 21,
-    "first": "2026-11-13 01:00:00+00:00",
+    "bars": 105,
+    "first": "2019-01-02 01:00:00+00:00",
     "last": "2026-11-13 21:00:00+00:00"
    }
   },
   "Dukascopy:USA500IDXUSD:M15": {
    "history": {
-    "status": "WARN",
+    "status": "FAIL",
     "checks": [
      {
       "code": "freshness",
@@ -877,13 +892,13 @@
      },
      {
       "code": "coverage",
-      "status": "OK",
-      "value": "100.0%"
+      "status": "WARN",
+      "value": "94.6%"
      },
      {
       "code": "gaps",
-      "status": "OK",
-      "value": "0.0h"
+      "status": "FAIL",
+      "value": "26.8h"
      },
      {
       "code": "ohlc",
@@ -898,16 +913,16 @@
      {
       "code": "outliers",
       "status": "WARN",
-      "value": "2"
+      "value": "58"
      },
      {
       "code": "flat",
       "status": "OK",
-      "value": "0"
+      "value": "1"
      }
     ],
-    "bars": 85,
-    "first": "2026-11-13 00:00:00+00:00",
+    "bars": 178680,
+    "first": "2019-01-01 23:00:00+00:00",
     "last": "2026-11-13 21:00:00+00:00"
    },
    "last_7_days": {
@@ -921,12 +936,12 @@
      {
       "code": "coverage",
       "status": "OK",
-      "value": "100.0%"
+      "value": "97.4%"
      },
      {
       "code": "gaps",
       "status": "OK",
-      "value": "0.0h"
+      "value": "0.8h"
      },
      {
       "code": "ohlc",
@@ -941,7 +956,7 @@
      {
       "code": "outliers",
       "status": "WARN",
-      "value": "2"
+      "value": "1"
      },
      {
       "code": "flat",
@@ -949,14 +964,14 @@
       "value": "0"
      }
     ],
-    "bars": 85,
-    "first": "2026-11-13 00:00:00+00:00",
+    "bars": 445,
+    "first": "2019-01-01 23:00:00+00:00",
     "last": "2026-11-13 21:00:00+00:00"
    }
   },
   "Dukascopy:USA500IDXUSD:H1": {
    "history": {
-    "status": "OK",
+    "status": "FAIL",
     "checks": [
      {
       "code": "freshness",
@@ -966,12 +981,12 @@
      {
       "code": "coverage",
       "status": "OK",
-      "value": "100.0%"
+      "value": "97.8%"
      },
      {
       "code": "gaps",
-      "status": "OK",
-      "value": "0.0h"
+      "status": "FAIL",
+      "value": "26.0h"
      },
      {
       "code": "ohlc",
@@ -984,13 +999,18 @@
       "value": "0"
      },
      {
+      "code": "outliers",
+      "status": "WARN",
+      "value": "16"
+     },
+     {
       "code": "flat",
       "status": "OK",
-      "value": "0"
+      "value": "1"
      }
     ],
-    "bars": 22,
-    "first": "2026-11-13 00:00:00+00:00",
+    "bars": 46171,
+    "first": "2019-01-01 23:00:00+00:00",
     "last": "2026-11-13 21:00:00+00:00"
    },
    "last_7_days": {
@@ -1022,19 +1042,24 @@
       "value": "0"
      },
      {
+      "code": "outliers",
+      "status": "OK",
+      "value": "0"
+     },
+     {
       "code": "flat",
       "status": "OK",
       "value": "0"
      }
     ],
-    "bars": 22,
-    "first": "2026-11-13 00:00:00+00:00",
+    "bars": 115,
+    "first": "2019-01-01 23:00:00+00:00",
     "last": "2026-11-13 21:00:00+00:00"
    }
   },
   "Dukascopy:USTBONDTRUSD:M15": {
    "history": {
-    "status": "OK",
+    "status": "FAIL",
     "checks": [
      {
       "code": "freshness",
@@ -1043,13 +1068,13 @@
      },
      {
       "code": "coverage",
-      "status": "OK",
-      "value": "100.0%"
+      "status": "WARN",
+      "value": "95.1%"
      },
      {
       "code": "gaps",
-      "status": "OK",
-      "value": "0.0h"
+      "status": "FAIL",
+      "value": "234.0h"
      },
      {
       "code": "ohlc",
@@ -1058,22 +1083,22 @@
      },
      {
       "code": "weekend",
-      "status": "OK",
-      "value": "0"
+      "status": "WARN",
+      "value": "76"
      },
      {
       "code": "outliers",
-      "status": "OK",
-      "value": "0"
+      "status": "WARN",
+      "value": "60"
      },
      {
       "code": "flat",
       "status": "OK",
-      "value": "0"
+      "value": "2"
      }
     ],
-    "bars": 88,
-    "first": "2026-11-13 00:00:00+00:00",
+    "bars": 178770,
+    "first": "2019-01-21 00:00:00+00:00",
     "last": "2026-11-13 21:45:00+00:00"
    },
    "last_7_days": {
@@ -1087,12 +1112,12 @@
      {
       "code": "coverage",
       "status": "OK",
-      "value": "100.0%"
+      "value": "99.8%"
      },
      {
       "code": "gaps",
       "status": "OK",
-      "value": "0.0h"
+      "value": "0.2h"
      },
      {
       "code": "ohlc",
@@ -1115,14 +1140,14 @@
       "value": "0"
      }
     ],
-    "bars": 88,
-    "first": "2026-11-13 00:00:00+00:00",
+    "bars": 459,
+    "first": "2019-01-21 00:00:00+00:00",
     "last": "2026-11-13 21:45:00+00:00"
    }
   },
   "Dukascopy:USTBONDTRUSD:H1": {
    "history": {
-    "status": "OK",
+    "status": "FAIL",
     "checks": [
      {
       "code": "freshness",
@@ -1131,13 +1156,13 @@
      },
      {
       "code": "coverage",
-      "status": "OK",
-      "value": "100.0%"
+      "status": "WARN",
+      "value": "96.2%"
      },
      {
       "code": "gaps",
-      "status": "OK",
-      "value": "0.0h"
+      "status": "FAIL",
+      "value": "234.0h"
      },
      {
       "code": "ohlc",
@@ -1146,8 +1171,13 @@
      },
      {
       "code": "weekend",
-      "status": "OK",
-      "value": "0"
+      "status": "WARN",
+      "value": "51"
+     },
+     {
+      "code": "outliers",
+      "status": "WARN",
+      "value": "4"
      },
      {
       "code": "flat",
@@ -1155,8 +1185,8 @@
       "value": "0"
      }
     ],
-    "bars": 22,
-    "first": "2026-11-13 00:00:00+00:00",
+    "bars": 45258,
+    "first": "2019-01-21 00:00:00+00:00",
     "last": "2026-11-13 21:00:00+00:00"
    },
    "last_7_days": {
@@ -1188,13 +1218,18 @@
       "value": "0"
      },
      {
+      "code": "outliers",
+      "status": "OK",
+      "value": "0"
+     },
+     {
       "code": "flat",
       "status": "OK",
       "value": "0"
      }
     ],
-    "bars": 22,
-    "first": "2026-11-13 00:00:00+00:00",
+    "bars": 115,
+    "first": "2019-01-21 00:00:00+00:00",
     "last": "2026-11-13 21:00:00+00:00"
    }
   },
