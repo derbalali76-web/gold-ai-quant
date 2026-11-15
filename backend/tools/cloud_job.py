@@ -324,7 +324,14 @@ def crypto_research() -> dict:
     for sym in CRYPTO_START:  # scalping lab on 15-min bars: user's Binance cost (0.075 % per side with BNB)
         m15 = CS.load_bars(MD, sym, "15m")
         if len(m15) > 20000 and sym in out["assets"]:
-            out["assets"][sym]["scalp"] = {"cost": 0.0015, "results": SC.run_all(m15, 0.0015)}
+            fund = CS.load_funding(MD, sym)
+            if len(fund):
+                mm = pd.merge_asof(pd.DataFrame({"t": m15.index + pd.Timedelta(minutes=15)}),
+                                   pd.DataFrame({"t": fund.index, "funding": fund["funding"].to_numpy()}),
+                                   on="t", direction="backward")
+                m15 = m15.assign(funding=mm["funding"].to_numpy())
+            out["assets"][sym]["scalp"] = {"cost": 0.0015, "results": SC.run_all(m15, 0.0015) + SC.run_all(
+                m15, 0.0015, rules=SC.CRYPTO_RULES2, ci_level=SC.CI_ROUND2)}
             for r in out["assets"][sym]["scalp"]["results"]:
                 print(sym, "scalp", r["rule"], r["stop"], r["trades"], r["avg_net_pct"], r["reason"], flush=True)
     (MODELS / "crypto_report.json").write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str),
@@ -521,7 +528,8 @@ def research(hs: HistoryStore) -> None:
         if len(m15) > 20000:  # scalping lab on gold: no trade whose 4-hour window reaches the weekly close
             trad = ~np.asarray(market_closed_mask(m15.index)) & ~np.asarray(market_closed_mask(m15.index + pd.Timedelta(hours=4.5)))
             (MODELS / "scalp_report.json").write_text(json.dumps(
-                {"XAUUSD": {"cost": 0.0003, "results": SC.run_all(m15, 0.0003, trad)}}, ensure_ascii=False, indent=1,
+                {"XAUUSD": {"cost": 0.0003, "results": SC.run_all(m15, 0.0003, trad) + SC.run_all(
+                    m15, 0.0003, trad, rules=SC.GOLD_RULES2, ci_level=SC.CI_ROUND2)}}, ensure_ascii=False, indent=1,
                 default=str), encoding="utf-8")
     except Exception as exc:  # noqa: BLE001
         print("planner failed:", exc)

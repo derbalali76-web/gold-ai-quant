@@ -29,3 +29,15 @@ def test_random_walk_does_not_qualify():
     rows = S.run_all(frame(), 0.0015)
     assert len(rows) == 6 and not any(r["qualified"] for r in rows)
     assert all(r["trades"] == r["targets"] + r["stops"] + r["timeouts"] for r in rows if r["trades"])
+
+
+def test_round2_rules_run_on_random_data_and_do_not_qualify():
+    d = frame(8000)
+    rng = np.random.default_rng(1)
+    d["volume"] = rng.lognormal(2, 0.5, len(d))
+    d["taker_buy_volume"] = d["volume"] * rng.uniform(0.3, 0.7, len(d))
+    d["funding"] = rng.normal(0, 0.0003, len(d))
+    rows = S.run_all(d, 0.0015, rules=S.CRYPTO_RULES2, ci_level=S.CI_ROUND2)
+    assert len(rows) == 8 and not any(r["qualified"] for r in rows)
+    g = S.run_all(frame(8000), 0.0003, rules=S.GOLD_RULES2, ci_level=S.CI_ROUND2)
+    assert len(g) == 8
