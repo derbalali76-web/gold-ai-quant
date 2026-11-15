@@ -85,7 +85,7 @@
     <string name="rel_no_trade">No se recomienda ninguna operación; este nivel es informativo.</string>
     <string name="lv_method">La fuerza, cuando se muestra, es un percentil frente a niveles históricos — no una probabilidad de rebote.</string>
     <string name="tr_title">Tendencia del mercado</string>
-    <string name="tr_strength">Fuerza de la tendencia</string>
+    <string name="tr_strength">Puntuación de tendencia (descriptiva)</string>
     <string name="tr_up">Alcista</string>
     <string name="tr_down">Bajista</string>
     <string name="tr_sideways">Lateral</string>
@@ -311,12 +311,12 @@
     <string name="pos_buy_rec_hold">Mantén — puedes aumentar según el plan</string>
     <string name="pos_sell_rec_cash">No compres ahora — la visión validada es bajista</string>
     <string name="pos_reduce_now">Reduce ahora en %1$s · objetivo %2$s · stop %3$s</string>
-    <string name="pos_up_cash">Zona de compra cerca de %1$s · siguiente objetivo cerca de %2$s</string>
-    <string name="pos_up_hold">No vendas aún — siguiente objetivo cerca de %2$s · stop bajo %1$s</string>
-    <string name="pos_down_cash">Espera un mejor mínimo — vigila %1$s y luego %2$s</string>
-    <string name="pos_down_hold">Cierre bajo %1$s: vende y busca recomprar cerca de %2$s</string>
+    <string name="pos_up_cash">Inclinación alcista — soporte más cercano %1$s · resistencia %2$s</string>
+    <string name="pos_up_hold">Inclinación alcista — resistencia %2$s · soporte a vigilar %1$s</string>
+    <string name="pos_down_cash">Inclinación bajista — vigila %1$s y luego %2$s</string>
+    <string name="pos_down_hold">Inclinación bajista — vigila un cierre bajo %1$s; siguiente soporte %2$s</string>
     <string name="pos_side_cash">Espera — vigila %1$s y %2$s</string>
-    <string name="pos_side_hold">Mantén y vigila %1$s y %2$s</string>
+    <string name="pos_side_hold">Lateral — vigila %1$s y %2$s</string>
     <string name="pos_watch_note">Para vigilar — no es una recomendación</string>
     <string name="how_title">Cómo funciona</string>
     <string name="how_1">Cada análisis usa solo los datos disponibles en ese momento: los modelos se prueban en periodos que nunca vieron.</string>
@@ -369,7 +369,7 @@
     <string name="ck_news_stale">Calendario de noticias desactualizado (actualizado %1$s)</string>
     <string name="ck_news_unconf">Calendario de noticias no configurado</string>
     <string name="hl_watch">Vigila %1$s</string>
-    <string name="hl_hold_watch">Mantén — vigila %1$s</string>
+    <string name="hl_hold_watch">Tu posición: vigila %1$s</string>
     <string name="hl_sub">Sin operación validada — esto cambiaría el panorama:</string>
     <string name="bell_off">🔔 Avísame</string>
     <string name="bell_on">🔔 Activado</string>

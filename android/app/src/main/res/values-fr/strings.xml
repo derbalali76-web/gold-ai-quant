@@ -85,7 +85,7 @@
     <string name="rel_no_trade">Aucune opération n\'est recommandée ; ce niveau est donc informatif.</string>
     <string name="lv_method">La force, lorsqu\'elle est affichée, est un rang centile par rapport aux niveaux historiques — pas une probabilité de rebond.</string>
     <string name="tr_title">Tendance du marché</string>
-    <string name="tr_strength">Force de la tendance</string>
+    <string name="tr_strength">Score de tendance (descriptif)</string>
     <string name="tr_up">Haussière</string>
     <string name="tr_down">Baissière</string>
     <string name="tr_sideways">Latérale</string>
@@ -311,12 +311,12 @@
     <string name="pos_buy_rec_hold">Conservez — renfort possible selon le plan</string>
     <string name="pos_sell_rec_cash">N\'achetez pas maintenant — la vue validée est baissière</string>
     <string name="pos_reduce_now">Allégez maintenant à %1$s · objectif %2$s · stop %3$s</string>
-    <string name="pos_up_cash">Zone d\'achat vers %1$s · objectif suivant vers %2$s</string>
-    <string name="pos_up_hold">Ne vendez pas encore — objectif suivant vers %2$s · stop sous %1$s</string>
-    <string name="pos_down_cash">Attendez un meilleur creux — surveillez %1$s puis %2$s</string>
-    <string name="pos_down_hold">Clôture sous %1$s : vendez, et visez un rachat vers %2$s</string>
+    <string name="pos_up_cash">Penchant haussier — support le plus proche %1$s · résistance %2$s</string>
+    <string name="pos_up_hold">Penchant haussier — résistance %2$s · support à surveiller %1$s</string>
+    <string name="pos_down_cash">Penchant baissier — surveillez %1$s puis %2$s</string>
+    <string name="pos_down_hold">Penchant baissier — surveillez une clôture sous %1$s ; support suivant %2$s</string>
     <string name="pos_side_cash">Attendez — surveillez %1$s et %2$s</string>
-    <string name="pos_side_hold">Conservez et surveillez %1$s et %2$s</string>
+    <string name="pos_side_hold">Latéral — surveillez %1$s et %2$s</string>
     <string name="pos_watch_note">À surveiller — pas une recommandation</string>
     <string name="how_title">Comment ça marche</string>
     <string name="how_1">Chaque analyse n\'utilise que les données disponibles à cet instant : les modèles sont testés sur des périodes jamais vues.</string>
@@ -369,7 +369,7 @@
     <string name="ck_news_stale">Calendrier des annonces obsolète (mise à jour %1$s)</string>
     <string name="ck_news_unconf">Calendrier des annonces non configuré</string>
     <string name="hl_watch">Surveiller %1$s</string>
-    <string name="hl_hold_watch">Conserver — surveiller %1$s</string>
+    <string name="hl_hold_watch">Votre position : surveillez %1$s</string>
     <string name="hl_sub">Aucune opération validée — ceci changerait la donne :</string>
     <string name="bell_off">🔔 M\'alerter</string>
     <string name="bell_on">🔔 Activé</string>

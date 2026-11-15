@@ -38,7 +38,7 @@ TF_MIN = {"H1": 60, "D1": 1440}
 KEEP = {"H1": 3000, "D1": 600}
 DEFAULT_LIFE = {"HOURS": timedelta(hours=8), "WEEK": timedelta(days=7), "MONTH": timedelta(days=31)}
 RES_TF = {"HOURS": "H1", "WEEK": "D1", "MONTH": "D1"}
-MAX_SNAPSHOT_AGE = timedelta(hours=2)
+MAX_SNAPSHOT_AGE = timedelta(minutes=20)  # rule 2 (2026-11-15); was 2 h: entry must be tradable at recording
 
 
 # ---------------------------------------------------------------- helpers

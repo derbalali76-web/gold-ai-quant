@@ -86,7 +86,7 @@
     <string name="rel_no_trade">No trade is recommended, so this level is informational.</string>
     <string name="lv_method">Strength, when shown, is a percentile rank against historical levels — not a bounce probability.</string>
     <string name="tr_title">Market trend</string>
-    <string name="tr_strength">Trend strength</string>
+    <string name="tr_strength">Trend score (descriptive)</string>
     <string name="tr_up">Up</string>
     <string name="tr_down">Down</string>
     <string name="tr_sideways">Sideways</string>
@@ -312,12 +312,12 @@
     <string name="pos_buy_rec_hold">Hold — you may add per the plan</string>
     <string name="pos_sell_rec_cash">Do not buy now — the validated view is bearish</string>
     <string name="pos_reduce_now">Reduce now at %1$s · target %2$s · stop %3$s</string>
-    <string name="pos_up_cash">Buy zone near %1$s · next target near %2$s</string>
-    <string name="pos_up_hold">Don\'t sell yet — next target near %2$s · protective stop below %1$s</string>
-    <string name="pos_down_cash">Wait for a better low — watch %1$s, then %2$s</string>
-    <string name="pos_down_hold">A close below %1$s: sell, and look to buy back near %2$s</string>
+    <string name="pos_up_cash">Leaning up — nearest support %1$s · resistance %2$s</string>
+    <string name="pos_up_hold">Leaning up — resistance %2$s · support to watch %1$s</string>
+    <string name="pos_down_cash">Leaning down — watch %1$s, then %2$s</string>
+    <string name="pos_down_hold">Leaning down — watch a close below %1$s; next support %2$s</string>
     <string name="pos_side_cash">Wait — watch %1$s and %2$s</string>
-    <string name="pos_side_hold">Hold and watch %1$s and %2$s</string>
+    <string name="pos_side_hold">Sideways — watch %1$s and %2$s</string>
     <string name="pos_watch_note">To watch — not a recommendation</string>
     <string name="how_title">How it works</string>
     <string name="how_1">Every analysis uses only data available at that moment: models are tested on periods they never saw.</string>
@@ -370,7 +370,7 @@
     <string name="ck_news_stale">News calendar out of date (last update %1$s)</string>
     <string name="ck_news_unconf">News calendar not set up</string>
     <string name="hl_watch">Watch %1$s</string>
-    <string name="hl_hold_watch">Hold — watch %1$s</string>
+    <string name="hl_hold_watch">Your position: watch %1$s</string>
     <string name="hl_sub">No validated trade now — this would change the picture:</string>
     <string name="bell_off">🔔 Alert me</string>
     <string name="bell_on">🔔 On</string>

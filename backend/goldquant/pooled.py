@@ -68,6 +68,32 @@ FEATURES = BASE_FEATURES + COT_FEATURES
 
 
 # ---------------------------------------------------------------- COT parsing (Socrata JSON)
+# Reports delayed by US government shutdowns (audit 2026-11-15). The normal "report date + 6 days" rule would use
+# them weeks before anyone could see them. 2025: the CFTC's accelerated catch-up schedule (report date -> actual
+# publication). 2013 and 2018-19: per-report dates not kept, so conservatively the whole backlog counts as published
+# on the day the CFTC said it was current again (8 Nov 2013; 8 Mar 2019).
+COT_LATE_2025 = {"2025-09-30": "2025-11-19", "2025-10-07": "2025-11-21", "2025-10-14": "2025-11-25",
+                 "2025-10-21": "2025-12-02", "2025-10-28": "2025-12-05", "2025-11-04": "2025-12-09",
+                 "2025-11-10": "2025-12-10", "2025-11-18": "2025-12-12", "2025-11-25": "2025-12-15",
+                 "2025-12-02": "2025-12-17", "2025-12-09": "2025-12-19", "2025-12-16": "2025-12-23"}
+COT_LATE_WINDOWS = (("2013-10-01", "2013-11-05", "2013-11-08"), ("2018-12-24", "2019-03-05", "2019-03-08"))
+
+
+def cot_delayed_usable(report: pd.Timestamp) -> pd.Timestamp:
+    """Earliest close at which a late report is usable (Monday after publication); report+6 days when on time."""
+    key = report.strftime("%Y-%m-%d")
+    pub = COT_LATE_2025.get(key)
+    if pub is None:
+        for a, b, p in COT_LATE_WINDOWS:
+            if a <= key <= b:
+                pub = p
+                break
+    if pub is None:
+        return report + pd.Timedelta(days=6)
+    pub_t = pd.Timestamp(pub, tz="UTC")
+    return pub_t + pd.Timedelta(days=(7 - pub_t.dayofweek) % 7 or 7)  # next Monday
+
+
 def parse_cot_rows(rows: list) -> pd.DataFrame:
     """Speculators' net position as a share of open interest, with the conservative 'usable from' time."""
     out = []
@@ -86,8 +112,9 @@ def parse_cot_rows(rows: list) -> pd.DataFrame:
         if oi <= 0:
             continue
         d = d.tz_localize("UTC") if d.tzinfo is None else d.tz_convert("UTC")
-        # as of Tuesday, released Friday 15:30 New York -> used from the next Monday's close onwards
-        out.append({"report": d, "usable": d + pd.Timedelta(days=6), "net": (lo - sh) / oi})
+        # as of Tuesday, released Friday 15:30 New York -> used from the next Monday's close onwards; reports held
+        # back by a US government shutdown only from the Monday after their real (late) publication
+        out.append({"report": d, "usable": max(d + pd.Timedelta(days=6), cot_delayed_usable(d)), "net": (lo - sh) / oi})
     if not out:
         return pd.DataFrame(columns=["report", "usable", "net"])
     return pd.DataFrame(out).drop_duplicates("report").sort_values("report").reset_index(drop=True)
@@ -100,6 +127,7 @@ def cot_features(index: pd.DatetimeIndex, cot: Optional[pd.DataFrame]) -> pd.Dat
     c = cot.copy()
     c["z"] = (c["net"] - c["net"].rolling(156, min_periods=52).mean()) / c["net"].rolling(156, min_periods=52).std()
     c["chg4"] = c["net"].diff(4)
+    c = c.sort_values(["usable", "report"], kind="stable")  # late reports: usable order, latest report wins
     m = pd.merge_asof(pd.DataFrame({"t": index}), c[["usable", "net", "z", "chg4"]].rename(columns={"usable": "t"}),
                       on="t", direction="backward")
     ok = m["net"].notna().to_numpy() & m["z"].notna().to_numpy()

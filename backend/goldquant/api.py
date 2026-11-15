@@ -295,15 +295,16 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
             o.performance = perf
         return d
 
-    guard = {"t": 0.0, "off": {}}  # horizon -> completed trades, for models whose LIVE public record turned negative
+    guard: dict = {}  # asset -> {"t": last fetch, "off": {horizon: completed trades}} (models losing in the LIVE record)
     LEDGER_STATS = os.getenv("GOLDQUANT_LEDGER_STATS",
                              "https://raw.githubusercontent.com/derbalali76-web/ai-quant-ledger/main/stats.json")
 
     def live_guard(d: Decision, asset: str = "XAU") -> Decision:
         """Automatic switch-off: a horizon whose recommendations are losing in the public ledger (>= 20 completed and
         average R < 0, or >= 40 and worse than the always-buy baseline) issues no recommendation until revalidated."""
-        if time.time() - guard["t"] > 3600:
-            guard["t"] = time.time()
+        g = guard.setdefault(asset, {"t": 0.0, "off": {}})  # per asset: one coin's record never switches another
+        if time.time() - g["t"] > 3600:
+            g["t"] = time.time()
             try:
                 import json as _json
                 from .providers.http import HttpClient
@@ -314,13 +315,13 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
                     n, r, base = b.get("completed") or 0, b.get("avg_r"), b.get("baseline_avg_r")
                     if r is not None and ((n >= 20 and r < 0) or (n >= 40 and base is not None and r < base)):
                         off[hz] = n
-                guard["off"] = off
+                g["off"] = off
             except Exception:  # noqa: BLE001 — unreachable ledger: keep the last known state
                 pass
         from .engine import _ref
         from .schemas import Setup, TradePlan
         for o in d.outlooks:
-            n = guard["off"].get(o.horizon)
+            n = g["off"].get(o.horizon)
             if n is None:
                 continue
             msg = Mg("va.live_disabled", n)
@@ -397,7 +398,12 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
             if activity_state["mtime"] != mt:
                 import json as _json
                 raw = _json.loads(p.read_text(encoding="utf-8"))
-                activity_state["params"] = {a: v.get("model") for a, v in raw.get("assets", {}).items()}
+                activity_state["params"] = {}
+                for a, v in raw.get("assets", {}).items():
+                    prm_ = v.get("model")
+                    if prm_ and prm_.get("calibrated_bins") is None:  # files exported before the display rule
+                        prm_["calibrated_bins"] = ACT.calibrated_bins(v.get("report") or {})
+                    activity_state["params"][a] = prm_
                 activity_state["mtime"] = mt
             prm = activity_state["params"].get(asset)
             if not prm or not prm.get("qualified"):

@@ -231,11 +231,30 @@ def export(df: pd.DataFrame, report: dict) -> dict:
             "usual": {str(int(k)): round(float(v), 4) for k, v in clim.items()}, "base_rate": round(float(y[keep].mean()), 4),
             "fitted_until": str(df.index[-1]), "target_pct": TARGET * 100, "hours": HORIZON / 4,
             "skill": report.get("skill"), "holdout_skill": report.get("holdout_skill"),
-            "skill_ci99": report.get("skill_ci99"), "period": report.get("period"), "qualified": report.get("qualified")}
+            "skill_ci99": report.get("skill_ci99"), "period": report.get("period"), "qualified": report.get("qualified"),
+            "calibrated_bins": calibrated_bins(report)}
+
+
+def calibrated_bins(report: dict) -> Optional[list]:
+    """Probability ranges where the out-of-sample check actually tested calibration (>= 300 predictions, within 5
+    points). Approval rule 3 ignores sparse bins by design; a number falling in one of them was never shown to be
+    reliable, so it is not displayed. Display rule only: the approval rules are unchanged. None = no table."""
+    if not report.get("calibration"):
+        return None
+    out = []
+    for c in report.get("calibration") or []:
+        try:
+            lo, hi = (float(x) / 100 for x in c["bin"].rstrip("%").split("-"))
+        except (KeyError, ValueError):
+            continue
+        if c.get("n", 0) >= 300 and abs(c["predicted"] - c["actual"]) <= 0.05:
+            out.append([lo, 1.01 if hi >= 1.0 else hi])
+    return out
 
 
 def predict(params: dict, recent: pd.DataFrame) -> Optional[dict]:
-    """P(move >= TARGET either way within 4 h) for the last closed bar, from exported parameters."""
+    """P(move >= TARGET either way within 4 h) for the last closed bar, from exported parameters.
+    None when the model is not qualified, data are short, or the probability falls outside the calibrated ranges."""
     if not params or not params.get("qualified") or len(recent) < 400:
         return None
     f = features(recent).iloc[-1][params["features"]].to_numpy(float)
@@ -245,6 +264,9 @@ def predict(params: dict, recent: pd.DataFrame) -> Optional[dict]:
     p = 1 / (1 + np.exp(-(float(z @ np.asarray(params["coef"])) + params["intercept"])))
     if params.get("iso_x"):
         p = float(np.interp(p, params["iso_x"], params["iso_y"]))
+    bins = params.get("calibrated_bins")
+    if bins is not None and not any(lo <= p < hi for lo, hi in bins):
+        return None
     usual = params["usual"].get(str(int(_how(recent.index[-1:])[0])), params["base_rate"])
     return {"probability": round(float(p), 3), "usual": round(float(usual), 3)}
 

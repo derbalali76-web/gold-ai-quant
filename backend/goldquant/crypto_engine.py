@@ -57,16 +57,28 @@ class CryptoFeed:
 
     def bars(self, symbol: str, tf: str, as_of: datetime, limit: int = 1000) -> pd.DataFrame:
         key = (symbol, tf)
+        step = pd.Timedelta(minutes={"M15": 15, "M30": 30, "H1": 60, "H4": 240, "1d": 1440}[tf])
         with self._lock:
             hit = self._cache.get(key)
-            if hit and time.time() - hit[0] < TTL_S:
-                df = hit[1]
+            # a cached copy is reused only if no bar has closed since it was fetched: otherwise the bar that was
+            # still forming at fetch time would be served as if it had closed (its last minutes missing)
+            if hit and time.time() - hit[0] < TTL_S and self._no_close_since(hit[0], as_of, step):
+                fetched, df = hit
             else:
                 r = self.http.get(LIVE, {"symbol": symbol, "interval": tf if tf in ("1d",) else TFS[tf], "limit": limit})
                 df = parse_klines(json.loads(r.text))
-                self._cache[key] = (time.time(), df)
-        step = pd.Timedelta(minutes={"M15": 15, "M30": 30, "H1": 60, "H4": 240, "1d": 1440}[tf])
-        return df[df.index + step <= pd.Timestamp(as_of)]
+                fetched = time.time()
+                self._cache[key] = (fetched, df)
+        # closed = its close time had passed both at the analysis time AND when the data was downloaded
+        cutoff = min(pd.Timestamp(as_of), pd.Timestamp(fetched, unit="s", tz="UTC"))
+        return df[df.index + step <= cutoff]
+
+    @staticmethod
+    def _no_close_since(fetched: float, as_of: datetime, step: pd.Timedelta) -> bool:
+        f = pd.Timestamp(fetched, unit="s", tz="UTC")
+        a = pd.Timestamp(as_of)
+        a = a.tz_localize("UTC") if a.tzinfo is None else a
+        return a.floor(step) <= f
 
 
 def _cards(daily: Optional[pd.DataFrame], as_of: datetime) -> list[HorizonOutlook]:

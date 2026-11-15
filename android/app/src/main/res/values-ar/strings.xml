@@ -85,7 +85,7 @@
     <string name="rel_no_trade">لا توجد صفقة موصى بها، فالمستوى للاطلاع فقط.</string>
     <string name="lv_method">القوة، حين تُعرض، ترتيب مئيني مقارنة بالمستويات التاريخية — وليست احتمال ارتداد.</string>
     <string name="tr_title">اتجاه السوق</string>
-    <string name="tr_strength">قوة الاتجاه</string>
+    <string name="tr_strength">درجة الاتجاه (وصفية)</string>
     <string name="tr_up">صاعد</string>
     <string name="tr_down">هابط</string>
     <string name="tr_sideways">عرضي</string>
@@ -311,12 +311,12 @@
     <string name="pos_buy_rec_hold">احتفظ — ويمكن الزيادة وفق الخطة</string>
     <string name="pos_sell_rec_cash">لا تشترِ الآن — التحليل المعتمد هابط</string>
     <string name="pos_reduce_now">قلّل الكمية الآن عند %1$s · الهدف %2$s · الوقف %3$s</string>
-    <string name="pos_up_cash">منطقة الشراء قرب %1$s · الهدف التالي قرب %2$s</string>
-    <string name="pos_up_hold">لا تبع الآن — الهدف التالي قرب %2$s · وقف الحماية تحت %1$s</string>
-    <string name="pos_down_cash">انتظر قاعاً أفضل — راقب %1$s ثم %2$s</string>
-    <string name="pos_down_hold">إغلاق تحت %1$s: بِع، وانتظر إعادة الشراء قرب %2$s</string>
+    <string name="pos_up_cash">ميل صاعد — أقرب دعم %1$s · مقاومة %2$s</string>
+    <string name="pos_up_hold">ميل صاعد — مقاومة %2$s · دعم للمراقبة %1$s</string>
+    <string name="pos_down_cash">ميل هابط — راقب %1$s ثم %2$s</string>
+    <string name="pos_down_hold">ميل هابط — راقب أي إغلاق تحت %1$s؛ الدعم التالي %2$s</string>
     <string name="pos_side_cash">انتظر — راقب %1$s و %2$s</string>
-    <string name="pos_side_hold">احتفظ وراقب %1$s و %2$s</string>
+    <string name="pos_side_hold">عرضي — راقب %1$s و %2$s</string>
     <string name="pos_watch_note">للمراقبة — ليست توصية</string>
     <string name="how_title">كيف يعمل</string>
     <string name="how_1">كل تحليل يستخدم فقط البيانات المتاحة في تلك اللحظة: النماذج تُختبر على فترات لم ترها.</string>
@@ -369,7 +369,7 @@
     <string name="ck_news_stale">تقويم الأخبار قديم (آخر تحديث %1$s)</string>
     <string name="ck_news_unconf">تقويم الأخبار غير مهيأ</string>
     <string name="hl_watch">راقب %1$s</string>
-    <string name="hl_hold_watch">احتفظ — راقب %1$s</string>
+    <string name="hl_hold_watch">مركزك: راقب %1$s</string>
     <string name="hl_sub">لا صفقة معتمدة الآن — هذا ما يغيّر الصورة:</string>
     <string name="bell_off">🔔 نبّهني</string>
     <string name="bell_on">🔔 مفعّل</string>
