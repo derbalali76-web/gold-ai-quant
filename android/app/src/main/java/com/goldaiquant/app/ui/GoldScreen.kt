@@ -207,11 +207,17 @@ private fun actionColor(a: Action, tilt: Int): Color = when (a) {
 fun GoldScreen(vm: MainViewModel, lang: Lang, onLanguage: (Lang) -> Unit) {
     val s by vm.state.collectAsStateWithLifecycle()
     val ctx = LocalContext.current
+    val askNotify = androidx.activity.compose.rememberLauncherForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.RequestPermission()) { granted -> vm.setNotify(granted) }
     val code = remember { InstallCode.get(ctx) }
     CompositionLocalProvider(LocalWatermark provides code) { GoldContent(s, lang, onAsk = vm::ask, onNextDemo = vm::nextDemoMoment,
         onSave = { u, t -> vm.setServerUrl(u); vm.setToken(t) }, onLive = vm::setLiveMode,
         onHorizon = vm::selectHorizon, onLanguage = onLanguage, onNotify = vm::setNotify, onAssetPick = vm::setAsset,
-        onPosition = vm::setPosition, onAlertAsset = vm::toggleAlertAsset, onPriceAlert = vm::togglePriceAlert) }
+        onPosition = vm::setPosition, onAlertAsset = vm::toggleAlertAsset, onPriceAlert = vm::togglePriceAlert,
+        onNeedNotify = {
+            if (android.os.Build.VERSION.SDK_INT >= 33) askNotify.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+            else vm.setNotify(true)
+        }) }
 }
 
 private sealed interface Sheet {
@@ -232,17 +238,13 @@ private sealed interface Sheet {
 fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Unit, onSave: (String, String) -> Unit,
                 onLive: (Boolean) -> Unit, onHorizon: (String) -> Unit, onLanguage: (Lang) -> Unit,
                 onNotify: (Boolean) -> Unit = {}, onAssetPick: (String) -> Unit = {}, onPosition: (String) -> Unit = {},
-                onAlertAsset: (String) -> Unit = {}, onPriceAlert: (PriceAlert) -> Unit = {}) {
+                onAlertAsset: (String) -> Unit = {}, onPriceAlert: (PriceAlert) -> Unit = {},
+                onNeedNotify: () -> Unit = {}) {
     var sheet by remember { mutableStateOf<Sheet?>(null) }
-    val askNotify = androidx.activity.compose.rememberLauncherForActivityResult(
-        androidx.activity.result.contract.ActivityResultContracts.RequestPermission()) { granted -> onNotify(granted) }
     val onBell: (PriceAlert) -> Unit = { a ->
         val adding = !PriceAlerts.isOn(s.priceAlerts, a.asset, a.price)
         onPriceAlert(a)
-        if (adding && !s.notify) {  // an alert needs notifications: ask once, here
-            if (android.os.Build.VERSION.SDK_INT >= 33) askNotify.launch(android.Manifest.permission.POST_NOTIFICATIONS)
-            else onNotify(true)
-        }
+        if (adding && !s.notify) onNeedNotify()  // an alert needs notifications: the activity asks for permission
     }
     val d = s.decision
     val selected = HorizonModel.resolve(s.selectedHorizon, d)
