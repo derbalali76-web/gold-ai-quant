@@ -352,7 +352,7 @@
     <string name="scalp_tile_act">النشاط %1$d%%</string>
     <string name="scalp_engine_off">المحرك غير معتمد</string>
     <string name="scalp_engine_status">محرك السكالبينغ: غير معتمد، لذلك لا توجد إشارات شراء أو بيع. يُعاد اختباره كل أسبوع على شموع الدقيقة بعد الرسوم، ولا تظهر الإشارات إلا إذا اجتازت استراتيجية الاختبار.</string>
-    <string name="scalp_activity_head">نشاط السوق — الساعات %1$s القادمة</string>
+    <string name="scalp_activity_head">نشاط السوق — خلال %1$s ساعات</string>
     <string name="scalp_activity_prob">احتمال حركة ±%1$s%%: ‏%2$d%% (المعتاد لهذه الساعة: %3$d%%)</string>
     <string name="scalp_level_high">يتحرك أكثر من المعتاد</string>
     <string name="scalp_level_normal">نشاط معتاد</string>

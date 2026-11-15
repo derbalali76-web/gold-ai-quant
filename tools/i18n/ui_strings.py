@@ -392,7 +392,7 @@ UI = {
     "Moteur de scalping : non validé, donc aucun signal d'achat ou de vente. Il est retesté chaque semaine sur des données 1 minute après frais ; les signaux n'apparaissent que si une stratégie réussit.",
     "Motor de scalping: no validado, por lo que no hay señales de compra o venta. Se vuelve a probar cada semana con datos de 1 minuto tras comisiones; las señales solo aparecen si una estrategia aprueba.",
     "Motor de scalping: não validado, portanto sem sinais de compra ou venda. É retestado toda semana com dados de 1 minuto após taxas; os sinais só aparecem se uma estratégia for aprovada."),
-"scalp_activity_head": ("Market activity — next %1$s h", "نشاط السوق — الساعات %1$s القادمة", "Activité du marché — %1$s prochaines h", "Actividad del mercado — próximas %1$s h", "Atividade do mercado — próximas %1$s h"),
+"scalp_activity_head": ("Market activity — next %1$s h", "نشاط السوق — خلال %1$s ساعات", "Activité du marché — %1$s prochaines h", "Actividad del mercado — próximas %1$s h", "Atividade do mercado — próximas %1$s h"),
 "scalp_activity_prob": ("Chance of a ±%1$s%% move: %2$d%% (usual for this hour: %3$d%%)", "احتمال حركة ±%1$s%%: ‏%2$d%% (المعتاد لهذه الساعة: %3$d%%)",
     "Probabilité d'un mouvement de ±%1$s%% : %2$d%% (habituel à cette heure : %3$d%%)", "Probabilidad de un movimiento de ±%1$s%%: %2$d%% (habitual a esta hora: %3$d%%)",
     "Chance de um movimento de ±%1$s%%: %2$d%% (habitual nesta hora: %3$d%%)"),
