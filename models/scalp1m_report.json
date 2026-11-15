@@ -1,7 +1,7 @@
 {
  "schema": 1,
  "version": "scalp1m-1",
- "updated_at": "2026-11-15T10:20:20.065556+00:00",
+ "updated_at": "2026-11-15T11:00:53.661190+00:00",
  "data_complete": true,
  "assets": {
   "BTC": [
@@ -2421,5 +2421,2791 @@
     "baseline_avg_pct": -0.1092
    }
   ]
+ },
+ "round4": {
+  "doc": "Round 4 (pre-registered before any result):\n  +ACT      the round-1 setup, kept only when the market-activity forecast is HIGH: probability >= usual + 10 points.\n            The forecast is the OUT-OF-SAMPLE walk-forward prediction (expanding window by calendar year, 2022 ->),\n            made hourly from closed 15-min bars, so 2021 is not traded in round 4.\n  DIP_FADE  1-hour trend up (last closed 1-h close > EMA50) and the last three 5-min bars fell 0.50 % or more in total\n            -> buy limit 0.20 % below the last close, valid 15 min (provide liquidity into the drop).\n  Exits, fills, costs, baseline and qualification rules: identical to round 1, at 99.9 % confidence.",
+  "assets": {
+   "BTC": {
+    "activity_forecast": {
+     "skill": 0.2538,
+     "skill_ci99": [
+      0.225,
+      0.281
+     ],
+     "holdout_skill": 0.1513,
+     "qualified": true,
+     "reason": "qualified"
+    },
+    "gate_share": 0.0897,
+    "results": [
+     {
+      "asset": "BTC",
+      "setup": "BREAKOUT_RETEST+ACT",
+      "stop": "FIXED",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0001,
+       "slippage": 0.0002
+      },
+      "period": "2022-01-01 -> 2026-11-14",
+      "orders": 672,
+      "filled": 522,
+      "unfilled": 150,
+      "targets": 126,
+      "stops": 194,
+      "timeouts": 202,
+      "win_rate": 0.3391,
+      "avg_net_pct": -0.2007,
+      "avg_net_ci": [
+       -0.2576,
+       -0.1315
+      ],
+      "total_net_pct": -104.77,
+      "max_drawdown_pct": 104.77,
+      "trades_per_week": 2.06,
+      "years": {
+       "2022": {
+        "trades": 13,
+        "avg_net_pct": -0.4086
+       },
+       "2023": {
+        "trades": 21,
+        "avg_net_pct": -0.1316
+       },
+       "2024": {
+        "trades": 197,
+        "avg_net_pct": -0.2071
+       },
+       "2025": {
+        "trades": 181,
+        "avg_net_pct": -0.1698
+       },
+       "2026": {
+        "trades": 110,
+        "avg_net_pct": -0.2287
+       }
+      },
+      "holdout_trades": 146,
+      "holdout_avg_pct": -0.2065,
+      "baseline_avg_pct": -0.1884,
+      "baseline_holdout_avg_pct": -0.2104,
+      "edge_ci": [
+       -0.0822,
+       0.0596
+      ],
+      "gross_avg_pct": -0.0406,
+      "qualified": false,
+      "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": true,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "BTC",
+      "setup": "BREAKOUT_RETEST+ACT",
+      "stop": "ATR",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0001,
+       "slippage": 0.0002
+      },
+      "period": "2022-01-01 -> 2026-11-14",
+      "orders": 713,
+      "filled": 553,
+      "unfilled": 160,
+      "targets": 111,
+      "stops": 332,
+      "timeouts": 110,
+      "win_rate": 0.2749,
+      "avg_net_pct": -0.2149,
+      "avg_net_ci": [
+       -0.2586,
+       -0.1584
+      ],
+      "total_net_pct": -118.84,
+      "max_drawdown_pct": 118.84,
+      "trades_per_week": 2.18,
+      "years": {
+       "2022": {
+        "trades": 13,
+        "avg_net_pct": -0.4584
+       },
+       "2023": {
+        "trades": 23,
+        "avg_net_pct": -0.1349
+       },
+       "2024": {
+        "trades": 211,
+        "avg_net_pct": -0.209
+       },
+       "2025": {
+        "trades": 190,
+        "avg_net_pct": -0.1952
+       },
+       "2026": {
+        "trades": 116,
+        "avg_net_pct": -0.2464
+       }
+      },
+      "holdout_trades": 155,
+      "holdout_avg_pct": -0.2263,
+      "baseline_avg_pct": -0.1967,
+      "baseline_holdout_avg_pct": -0.2019,
+      "edge_ci": [
+       -0.0781,
+       0.0423
+      ],
+      "gross_avg_pct": -0.0547,
+      "qualified": false,
+      "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": true,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "BTC",
+      "setup": "BREAKOUT_RETEST+ACT",
+      "stop": "TRAIL",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0001,
+       "slippage": 0.0002
+      },
+      "period": "2022-01-01 -> 2026-11-14",
+      "orders": 748,
+      "filled": 582,
+      "unfilled": 166,
+      "targets": 47,
+      "stops": 480,
+      "timeouts": 55,
+      "win_rate": 0.3316,
+      "avg_net_pct": -0.2077,
+      "avg_net_ci": [
+       -0.2523,
+       -0.1627
+      ],
+      "total_net_pct": -120.87,
+      "max_drawdown_pct": 120.87,
+      "trades_per_week": 2.29,
+      "years": {
+       "2022": {
+        "trades": 13,
+        "avg_net_pct": -0.3253
+       },
+       "2023": {
+        "trades": 26,
+        "avg_net_pct": -0.1545
+       },
+       "2024": {
+        "trades": 224,
+        "avg_net_pct": -0.2104
+       },
+       "2025": {
+        "trades": 200,
+        "avg_net_pct": -0.1973
+       },
+       "2026": {
+        "trades": 119,
+        "avg_net_pct": -0.2187
+       }
+      },
+      "holdout_trades": 162,
+      "holdout_avg_pct": -0.2011,
+      "baseline_avg_pct": -0.198,
+      "baseline_holdout_avg_pct": -0.1975,
+      "edge_ci": [
+       -0.0613,
+       0.0369
+      ],
+      "gross_avg_pct": -0.0475,
+      "qualified": false,
+      "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": true,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "BTC",
+      "setup": "LEVEL_BOUNCE+ACT",
+      "stop": "FIXED",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0001,
+       "slippage": 0.0002
+      },
+      "period": "2022-01-01 -> 2026-11-14",
+      "orders": 679,
+      "filled": 305,
+      "unfilled": 374,
+      "targets": 55,
+      "stops": 138,
+      "timeouts": 112,
+      "win_rate": 0.3049,
+      "avg_net_pct": -0.2546,
+      "avg_net_ci": [
+       -0.3396,
+       -0.1726
+      ],
+      "total_net_pct": -77.65,
+      "max_drawdown_pct": 78.14,
+      "trades_per_week": 1.2,
+      "years": {
+       "2022": {
+        "trades": 6,
+        "avg_net_pct": -0.0093
+       },
+       "2023": {
+        "trades": 17,
+        "avg_net_pct": -0.3244
+       },
+       "2024": {
+        "trades": 103,
+        "avg_net_pct": -0.2671
+       },
+       "2025": {
+        "trades": 96,
+        "avg_net_pct": -0.2169
+       },
+       "2026": {
+        "trades": 83,
+        "avg_net_pct": -0.2861
+       }
+      },
+      "holdout_trades": 96,
+      "holdout_avg_pct": -0.2954,
+      "baseline_avg_pct": -0.2168,
+      "baseline_holdout_avg_pct": -0.291,
+      "edge_ci": [
+       -0.1311,
+       0.0561
+      ],
+      "gross_avg_pct": -0.0945,
+      "qualified": false,
+      "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": true,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "BTC",
+      "setup": "LEVEL_BOUNCE+ACT",
+      "stop": "ATR",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0001,
+       "slippage": 0.0002
+      },
+      "period": "2022-01-01 -> 2026-11-14",
+      "orders": 741,
+      "filled": 355,
+      "unfilled": 386,
+      "targets": 59,
+      "stops": 226,
+      "timeouts": 70,
+      "win_rate": 0.2535,
+      "avg_net_pct": -0.2333,
+      "avg_net_ci": [
+       -0.3008,
+       -0.1671
+      ],
+      "total_net_pct": -82.82,
+      "max_drawdown_pct": 82.82,
+      "trades_per_week": 1.4,
+      "years": {
+       "2022": {
+        "trades": 6,
+        "avg_net_pct": -0.1812
+       },
+       "2023": {
+        "trades": 20,
+        "avg_net_pct": -0.2182
+       },
+       "2024": {
+        "trades": 122,
+        "avg_net_pct": -0.225
+       },
+       "2025": {
+        "trades": 110,
+        "avg_net_pct": -0.2186
+       },
+       "2026": {
+        "trades": 97,
+        "avg_net_pct": -0.2667
+       }
+      },
+      "holdout_trades": 112,
+      "holdout_avg_pct": -0.2709,
+      "baseline_avg_pct": -0.1807,
+      "baseline_holdout_avg_pct": -0.192,
+      "edge_ci": [
+       -0.1253,
+       0.0392
+      ],
+      "gross_avg_pct": -0.073,
+      "qualified": false,
+      "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": true,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "BTC",
+      "setup": "LEVEL_BOUNCE+ACT",
+      "stop": "TRAIL",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0001,
+       "slippage": 0.0002
+      },
+      "period": "2022-01-01 -> 2026-11-14",
+      "orders": 781,
+      "filled": 366,
+      "unfilled": 415,
+      "targets": 25,
+      "stops": 313,
+      "timeouts": 28,
+      "win_rate": 0.3115,
+      "avg_net_pct": -0.2363,
+      "avg_net_ci": [
+       -0.2895,
+       -0.1748
+      ],
+      "total_net_pct": -86.47,
+      "max_drawdown_pct": 86.47,
+      "trades_per_week": 1.44,
+      "years": {
+       "2022": {
+        "trades": 6,
+        "avg_net_pct": -0.1936
+       },
+       "2023": {
+        "trades": 20,
+        "avg_net_pct": -0.3146
+       },
+       "2024": {
+        "trades": 126,
+        "avg_net_pct": -0.2314
+       },
+       "2025": {
+        "trades": 113,
+        "avg_net_pct": -0.2222
+       },
+       "2026": {
+        "trades": 101,
+        "avg_net_pct": -0.245
+       }
+      },
+      "holdout_trades": 117,
+      "holdout_avg_pct": -0.2445,
+      "baseline_avg_pct": -0.1931,
+      "baseline_holdout_avg_pct": -0.2258,
+      "edge_ci": [
+       -0.1,
+       0.0151
+      ],
+      "gross_avg_pct": -0.0759,
+      "qualified": false,
+      "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": true,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "BTC",
+      "setup": "MOMENTUM_CONT+ACT",
+      "stop": "FIXED",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0001,
+       "slippage": 0.0002
+      },
+      "period": "2022-01-01 -> 2026-11-14",
+      "orders": 329,
+      "filled": 244,
+      "unfilled": 85,
+      "targets": 83,
+      "stops": 113,
+      "timeouts": 48,
+      "win_rate": 0.3975,
+      "avg_net_pct": -0.1771,
+      "avg_net_ci": [
+       -0.2966,
+       -0.072
+      ],
+      "total_net_pct": -43.21,
+      "max_drawdown_pct": 43.21,
+      "trades_per_week": 0.96,
+      "years": {
+       "2022": {
+        "trades": 8,
+        "avg_net_pct": -0.2412
+       },
+       "2023": {
+        "trades": 15,
+        "avg_net_pct": -0.2443
+       },
+       "2024": {
+        "trades": 102,
+        "avg_net_pct": -0.1639
+       },
+       "2025": {
+        "trades": 73,
+        "avg_net_pct": -0.2048
+       },
+       "2026": {
+        "trades": 46,
+        "avg_net_pct": -0.1294
+       }
+      },
+      "holdout_trades": 67,
+      "holdout_avg_pct": -0.1337,
+      "baseline_avg_pct": -0.2355,
+      "baseline_holdout_avg_pct": -0.2492,
+      "edge_ci": [
+       -0.0647,
+       0.1786
+      ],
+      "gross_avg_pct": -0.017,
+      "qualified": false,
+      "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": true,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "BTC",
+      "setup": "MOMENTUM_CONT+ACT",
+      "stop": "ATR",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0001,
+       "slippage": 0.0002
+      },
+      "period": "2022-01-01 -> 2026-11-14",
+      "orders": 338,
+      "filled": 251,
+      "unfilled": 87,
+      "targets": 81,
+      "stops": 145,
+      "timeouts": 25,
+      "win_rate": 0.3625,
+      "avg_net_pct": -0.1752,
+      "avg_net_ci": [
+       -0.2616,
+       -0.0765
+      ],
+      "total_net_pct": -43.98,
+      "max_drawdown_pct": 43.98,
+      "trades_per_week": 0.99,
+      "years": {
+       "2022": {
+        "trades": 8,
+        "avg_net_pct": -0.2601
+       },
+       "2023": {
+        "trades": 16,
+        "avg_net_pct": -0.219
+       },
+       "2024": {
+        "trades": 104,
+        "avg_net_pct": -0.1593
+       },
+       "2025": {
+        "trades": 77,
+        "avg_net_pct": -0.1896
+       },
+       "2026": {
+        "trades": 46,
+        "avg_net_pct": -0.157
+       }
+      },
+      "holdout_trades": 68,
+      "holdout_avg_pct": -0.1459,
+      "baseline_avg_pct": -0.1727,
+      "baseline_holdout_avg_pct": -0.18,
+      "edge_ci": [
+       -0.1035,
+       0.1206
+      ],
+      "gross_avg_pct": -0.0151,
+      "qualified": false,
+      "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": true,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "BTC",
+      "setup": "MOMENTUM_CONT+ACT",
+      "stop": "TRAIL",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0001,
+       "slippage": 0.0002
+      },
+      "period": "2022-01-01 -> 2026-11-14",
+      "orders": 345,
+      "filled": 253,
+      "unfilled": 92,
+      "targets": 37,
+      "stops": 210,
+      "timeouts": 6,
+      "win_rate": 0.3123,
+      "avg_net_pct": -0.1922,
+      "avg_net_ci": [
+       -0.2749,
+       -0.1124
+      ],
+      "total_net_pct": -48.63,
+      "max_drawdown_pct": 48.63,
+      "trades_per_week": 1.0,
+      "years": {
+       "2022": {
+        "trades": 8,
+        "avg_net_pct": -0.4282
+       },
+       "2023": {
+        "trades": 16,
+        "avg_net_pct": -0.1952
+       },
+       "2024": {
+        "trades": 104,
+        "avg_net_pct": -0.1734
+       },
+       "2025": {
+        "trades": 77,
+        "avg_net_pct": -0.1976
+       },
+       "2026": {
+        "trades": 48,
+        "avg_net_pct": -0.1841
+       }
+      },
+      "holdout_trades": 69,
+      "holdout_avg_pct": -0.1831,
+      "baseline_avg_pct": -0.2032,
+      "baseline_holdout_avg_pct": -0.1975,
+      "edge_ci": [
+       -0.0785,
+       0.1082
+      ],
+      "gross_avg_pct": -0.0321,
+      "qualified": false,
+      "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": true,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "BTC",
+      "setup": "DIP_FADE",
+      "stop": "FIXED",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0001,
+       "slippage": 0.0002
+      },
+      "period": "2022-01-01 -> 2026-11-14",
+      "orders": 3532,
+      "filled": 1973,
+      "unfilled": 1559,
+      "targets": 714,
+      "stops": 1080,
+      "timeouts": 179,
+      "win_rate": 0.406,
+      "avg_net_pct": -0.1987,
+      "avg_net_ci": [
+       -0.2409,
+       -0.1605
+      ],
+      "total_net_pct": -392.11,
+      "max_drawdown_pct": 393.58,
+      "trades_per_week": 7.77,
+      "years": {
+       "2022": {
+        "trades": 635,
+        "avg_net_pct": -0.2347
+       },
+       "2023": {
+        "trades": 334,
+        "avg_net_pct": -0.1714
+       },
+       "2024": {
+        "trades": 537,
+        "avg_net_pct": -0.2004
+       },
+       "2025": {
+        "trades": 266,
+        "avg_net_pct": -0.1782
+       },
+       "2026": {
+        "trades": 201,
+        "avg_net_pct": -0.1531
+       }
+      },
+      "holdout_trades": 243,
+      "holdout_avg_pct": -0.1689,
+      "baseline_avg_pct": -0.1881,
+      "baseline_holdout_avg_pct": -0.1988,
+      "edge_ci": [
+       -0.0516,
+       0.0373
+      ],
+      "gross_avg_pct": -0.0381,
+      "qualified": false,
+      "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": true,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "BTC",
+      "setup": "DIP_FADE",
+      "stop": "ATR",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0001,
+       "slippage": 0.0002
+      },
+      "period": "2022-01-01 -> 2026-11-14",
+      "orders": 3476,
+      "filled": 1923,
+      "unfilled": 1553,
+      "targets": 746,
+      "stops": 1047,
+      "timeouts": 130,
+      "win_rate": 0.4238,
+      "avg_net_pct": -0.1904,
+      "avg_net_ci": [
+       -0.2356,
+       -0.149
+      ],
+      "total_net_pct": -366.16,
+      "max_drawdown_pct": 367.63,
+      "trades_per_week": 7.57,
+      "years": {
+       "2022": {
+        "trades": 604,
+        "avg_net_pct": -0.2294
+       },
+       "2023": {
+        "trades": 327,
+        "avg_net_pct": -0.1562
+       },
+       "2024": {
+        "trades": 522,
+        "avg_net_pct": -0.175
+       },
+       "2025": {
+        "trades": 265,
+        "avg_net_pct": -0.2059
+       },
+       "2026": {
+        "trades": 205,
+        "avg_net_pct": -0.1491
+       }
+      },
+      "holdout_trades": 247,
+      "holdout_avg_pct": -0.1728,
+      "baseline_avg_pct": -0.185,
+      "baseline_holdout_avg_pct": -0.1871,
+      "edge_ci": [
+       -0.0448,
+       0.0383
+      ],
+      "gross_avg_pct": -0.0297,
+      "qualified": false,
+      "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": true,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "BTC",
+      "setup": "DIP_FADE",
+      "stop": "TRAIL",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0001,
+       "slippage": 0.0002
+      },
+      "period": "2022-01-01 -> 2026-11-14",
+      "orders": 3625,
+      "filled": 2017,
+      "unfilled": 1608,
+      "targets": 404,
+      "stops": 1589,
+      "timeouts": 24,
+      "win_rate": 0.3228,
+      "avg_net_pct": -0.194,
+      "avg_net_ci": [
+       -0.2283,
+       -0.1607
+      ],
+      "total_net_pct": -391.29,
+      "max_drawdown_pct": 391.62,
+      "trades_per_week": 7.94,
+      "years": {
+       "2022": {
+        "trades": 638,
+        "avg_net_pct": -0.221
+       },
+       "2023": {
+        "trades": 342,
+        "avg_net_pct": -0.1775
+       },
+       "2024": {
+        "trades": 552,
+        "avg_net_pct": -0.1831
+       },
+       "2025": {
+        "trades": 273,
+        "avg_net_pct": -0.2141
+       },
+       "2026": {
+        "trades": 212,
+        "avg_net_pct": -0.1418
+       }
+      },
+      "holdout_trades": 254,
+      "holdout_avg_pct": -0.164,
+      "baseline_avg_pct": -0.1883,
+      "baseline_holdout_avg_pct": -0.2036,
+      "edge_ci": [
+       -0.041,
+       0.0334
+      ],
+      "gross_avg_pct": -0.0333,
+      "qualified": false,
+      "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": true,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "BTC",
+      "setup": "DIP_FADE+ACT",
+      "stop": "FIXED",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0001,
+       "slippage": 0.0002
+      },
+      "period": "2022-01-01 -> 2026-11-14",
+      "orders": 339,
+      "filled": 184,
+      "unfilled": 155,
+      "targets": 66,
+      "stops": 99,
+      "timeouts": 19,
+      "win_rate": 0.413,
+      "avg_net_pct": -0.1957,
+      "avg_net_ci": [
+       -0.3225,
+       -0.0679
+      ],
+      "total_net_pct": -36.0,
+      "max_drawdown_pct": 36.24,
+      "trades_per_week": 0.72,
+      "years": {
+       "2022": {
+        "trades": 8,
+        "avg_net_pct": -0.5337
+       },
+       "2023": {
+        "trades": 9,
+        "avg_net_pct": 0.0144
+       },
+       "2024": {
+        "trades": 72,
+        "avg_net_pct": -0.1928
+       },
+       "2025": {
+        "trades": 52,
+        "avg_net_pct": -0.1663
+       },
+       "2026": {
+        "trades": 43,
+        "avg_net_pct": -0.2171
+       }
+      },
+      "holdout_trades": 54,
+      "holdout_avg_pct": -0.1456,
+      "baseline_avg_pct": -0.1966,
+      "baseline_holdout_avg_pct": -0.1943,
+      "edge_ci": [
+       -0.1321,
+       0.1534
+      ],
+      "gross_avg_pct": -0.0353,
+      "qualified": false,
+      "reason": "failed: at least 200 filled trades; average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": false,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "BTC",
+      "setup": "DIP_FADE+ACT",
+      "stop": "ATR",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0001,
+       "slippage": 0.0002
+      },
+      "period": "2022-01-01 -> 2026-11-14",
+      "orders": 345,
+      "filled": 188,
+      "unfilled": 157,
+      "targets": 64,
+      "stops": 114,
+      "timeouts": 10,
+      "win_rate": 0.367,
+      "avg_net_pct": -0.2168,
+      "avg_net_ci": [
+       -0.3404,
+       -0.0774
+      ],
+      "total_net_pct": -40.77,
+      "max_drawdown_pct": 40.77,
+      "trades_per_week": 0.74,
+      "years": {
+       "2022": {
+        "trades": 6,
+        "avg_net_pct": -0.5563
+       },
+       "2023": {
+        "trades": 9,
+        "avg_net_pct": -0.1527
+       },
+       "2024": {
+        "trades": 72,
+        "avg_net_pct": -0.2279
+       },
+       "2025": {
+        "trades": 57,
+        "avg_net_pct": -0.1774
+       },
+       "2026": {
+        "trades": 44,
+        "avg_net_pct": -0.2167
+       }
+      },
+      "holdout_trades": 56,
+      "holdout_avg_pct": -0.1991,
+      "baseline_avg_pct": -0.1685,
+      "baseline_holdout_avg_pct": -0.2092,
+      "edge_ci": [
+       -0.1738,
+       0.081
+      ],
+      "gross_avg_pct": -0.0562,
+      "qualified": false,
+      "reason": "failed: at least 200 filled trades; average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": false,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "BTC",
+      "setup": "DIP_FADE+ACT",
+      "stop": "TRAIL",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0001,
+       "slippage": 0.0002
+      },
+      "period": "2022-01-01 -> 2026-11-14",
+      "orders": 359,
+      "filled": 197,
+      "unfilled": 162,
+      "targets": 31,
+      "stops": 164,
+      "timeouts": 2,
+      "win_rate": 0.3198,
+      "avg_net_pct": -0.2132,
+      "avg_net_ci": [
+       -0.3121,
+       -0.1046
+      ],
+      "total_net_pct": -41.99,
+      "max_drawdown_pct": 41.99,
+      "trades_per_week": 0.78,
+      "years": {
+       "2022": {
+        "trades": 7,
+        "avg_net_pct": -0.3591
+       },
+       "2023": {
+        "trades": 9,
+        "avg_net_pct": -0.2931
+       },
+       "2024": {
+        "trades": 75,
+        "avg_net_pct": -0.2393
+       },
+       "2025": {
+        "trades": 60,
+        "avg_net_pct": -0.1589
+       },
+       "2026": {
+        "trades": 46,
+        "avg_net_pct": -0.2035
+       }
+      },
+      "holdout_trades": 58,
+      "holdout_avg_pct": -0.1829,
+      "baseline_avg_pct": -0.1995,
+      "baseline_holdout_avg_pct": -0.2174,
+      "edge_ci": [
+       -0.1232,
+       0.1073
+      ],
+      "gross_avg_pct": -0.0525,
+      "qualified": false,
+      "reason": "failed: at least 200 filled trades; average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": false,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     }
+    ]
+   },
+   "ETH": {
+    "activity_forecast": {
+     "skill": 0.2506,
+     "skill_ci99": [
+      0.2193,
+      0.2829
+     ],
+     "holdout_skill": 0.1293,
+     "qualified": false,
+     "reason": "failed: calibrated (5 points)"
+    },
+    "gate_share": 0.1459,
+    "results": [
+     {
+      "asset": "ETH",
+      "setup": "BREAKOUT_RETEST+ACT",
+      "stop": "FIXED",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0001,
+       "slippage": 0.0002
+      },
+      "period": "2023-01-01 -> 2026-11-14",
+      "orders": 933,
+      "filled": 693,
+      "unfilled": 240,
+      "targets": 241,
+      "stops": 324,
+      "timeouts": 128,
+      "win_rate": 0.4084,
+      "avg_net_pct": -0.1708,
+      "avg_net_ci": [
+       -0.2361,
+       -0.0988
+      ],
+      "total_net_pct": -118.35,
+      "max_drawdown_pct": 118.35,
+      "trades_per_week": 3.43,
+      "years": {
+       "2023": {
+        "trades": 4,
+        "avg_net_pct": -0.5695
+       },
+       "2024": {
+        "trades": 188,
+        "avg_net_pct": -0.1519
+       },
+       "2025": {
+        "trades": 400,
+        "avg_net_pct": -0.1731
+       },
+       "2026": {
+        "trades": 101,
+        "avg_net_pct": -0.181
+       }
+      },
+      "holdout_trades": 101,
+      "holdout_avg_pct": -0.181,
+      "baseline_avg_pct": -0.2115,
+      "baseline_holdout_avg_pct": -0.2347,
+      "edge_ci": [
+       -0.0318,
+       0.1085
+      ],
+      "gross_avg_pct": -0.0107,
+      "qualified": false,
+      "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": true,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "ETH",
+      "setup": "BREAKOUT_RETEST+ACT",
+      "stop": "ATR",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0001,
+       "slippage": 0.0002
+      },
+      "period": "2023-01-01 -> 2026-11-14",
+      "orders": 964,
+      "filled": 720,
+      "unfilled": 244,
+      "targets": 232,
+      "stops": 403,
+      "timeouts": 85,
+      "win_rate": 0.3694,
+      "avg_net_pct": -0.1675,
+      "avg_net_ci": [
+       -0.2242,
+       -0.1076
+      ],
+      "total_net_pct": -120.59,
+      "max_drawdown_pct": 120.59,
+      "trades_per_week": 3.57,
+      "years": {
+       "2023": {
+        "trades": 4,
+        "avg_net_pct": -0.6219
+       },
+       "2024": {
+        "trades": 200,
+        "avg_net_pct": -0.1437
+       },
+       "2025": {
+        "trades": 412,
+        "avg_net_pct": -0.1736
+       },
+       "2026": {
+        "trades": 104,
+        "avg_net_pct": -0.1713
+       }
+      },
+      "holdout_trades": 104,
+      "holdout_avg_pct": -0.1713,
+      "baseline_avg_pct": -0.1881,
+      "baseline_holdout_avg_pct": -0.1771,
+      "edge_ci": [
+       -0.0412,
+       0.093
+      ],
+      "gross_avg_pct": -0.0074,
+      "qualified": false,
+      "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": true,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "ETH",
+      "setup": "BREAKOUT_RETEST+ACT",
+      "stop": "TRAIL",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0001,
+       "slippage": 0.0002
+      },
+      "period": "2023-01-01 -> 2026-11-14",
+      "orders": 1013,
+      "filled": 766,
+      "unfilled": 247,
+      "targets": 105,
+      "stops": 637,
+      "timeouts": 24,
+      "win_rate": 0.3564,
+      "avg_net_pct": -0.1768,
+      "avg_net_ci": [
+       -0.2176,
+       -0.1292
+      ],
+      "total_net_pct": -135.46,
+      "max_drawdown_pct": 135.46,
+      "trades_per_week": 3.79,
+      "years": {
+       "2023": {
+        "trades": 4,
+        "avg_net_pct": -0.5164
+       },
+       "2024": {
+        "trades": 215,
+        "avg_net_pct": -0.1416
+       },
+       "2025": {
+        "trades": 434,
+        "avg_net_pct": -0.1807
+       },
+       "2026": {
+        "trades": 113,
+        "avg_net_pct": -0.2169
+       }
+      },
+      "holdout_trades": 113,
+      "holdout_avg_pct": -0.2169,
+      "baseline_avg_pct": -0.1875,
+      "baseline_holdout_avg_pct": -0.179,
+      "edge_ci": [
+       -0.0452,
+       0.0607
+      ],
+      "gross_avg_pct": -0.0168,
+      "qualified": false,
+      "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": true,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "ETH",
+      "setup": "LEVEL_BOUNCE+ACT",
+      "stop": "FIXED",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0001,
+       "slippage": 0.0002
+      },
+      "period": "2023-01-01 -> 2026-11-14",
+      "orders": 630,
+      "filled": 399,
+      "unfilled": 231,
+      "targets": 123,
+      "stops": 214,
+      "timeouts": 62,
+      "win_rate": 0.3659,
+      "avg_net_pct": -0.2205,
+      "avg_net_ci": [
+       -0.3152,
+       -0.1338
+      ],
+      "total_net_pct": -87.99,
+      "max_drawdown_pct": 87.99,
+      "trades_per_week": 1.98,
+      "years": {
+       "2023": {
+        "trades": 5,
+        "avg_net_pct": -0.0362
+       },
+       "2024": {
+        "trades": 106,
+        "avg_net_pct": -0.3081
+       },
+       "2025": {
+        "trades": 229,
+        "avg_net_pct": -0.1656
+       },
+       "2026": {
+        "trades": 59,
+        "avg_net_pct": -0.292
+       }
+      },
+      "holdout_trades": 57,
+      "holdout_avg_pct": -0.2783,
+      "baseline_avg_pct": -0.1784,
+      "baseline_holdout_avg_pct": -0.1797,
+      "edge_ci": [
+       -0.1403,
+       0.0419
+      ],
+      "gross_avg_pct": -0.0603,
+      "qualified": false,
+      "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": true,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "ETH",
+      "setup": "LEVEL_BOUNCE+ACT",
+      "stop": "ATR",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0001,
+       "slippage": 0.0002
+      },
+      "period": "2023-01-01 -> 2026-11-14",
+      "orders": 688,
+      "filled": 452,
+      "unfilled": 236,
+      "targets": 120,
+      "stops": 292,
+      "timeouts": 40,
+      "win_rate": 0.3075,
+      "avg_net_pct": -0.2181,
+      "avg_net_ci": [
+       -0.2957,
+       -0.144
+      ],
+      "total_net_pct": -98.57,
+      "max_drawdown_pct": 98.57,
+      "trades_per_week": 2.24,
+      "years": {
+       "2023": {
+        "trades": 6,
+        "avg_net_pct": -0.0723
+       },
+       "2024": {
+        "trades": 125,
+        "avg_net_pct": -0.286
+       },
+       "2025": {
+        "trades": 261,
+        "avg_net_pct": -0.1749
+       },
+       "2026": {
+        "trades": 60,
+        "avg_net_pct": -0.2788
+       }
+      },
+      "holdout_trades": 58,
+      "holdout_avg_pct": -0.2736,
+      "baseline_avg_pct": -0.1973,
+      "baseline_holdout_avg_pct": -0.1759,
+      "edge_ci": [
+       -0.1015,
+       0.0582
+      ],
+      "gross_avg_pct": -0.0577,
+      "qualified": false,
+      "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": true,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "ETH",
+      "setup": "LEVEL_BOUNCE+ACT",
+      "stop": "TRAIL",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0001,
+       "slippage": 0.0002
+      },
+      "period": "2023-01-01 -> 2026-11-14",
+      "orders": 758,
+      "filled": 490,
+      "unfilled": 268,
+      "targets": 59,
+      "stops": 417,
+      "timeouts": 14,
+      "win_rate": 0.3,
+      "avg_net_pct": -0.2203,
+      "avg_net_ci": [
+       -0.272,
+       -0.1651
+      ],
+      "total_net_pct": -107.94,
+      "max_drawdown_pct": 107.94,
+      "trades_per_week": 2.43,
+      "years": {
+       "2023": {
+        "trades": 6,
+        "avg_net_pct": -0.1618
+       },
+       "2024": {
+        "trades": 136,
+        "avg_net_pct": -0.2635
+       },
+       "2025": {
+        "trades": 283,
+        "avg_net_pct": -0.1884
+       },
+       "2026": {
+        "trades": 65,
+        "avg_net_pct": -0.2741
+       }
+      },
+      "holdout_trades": 63,
+      "holdout_avg_pct": -0.2692,
+      "baseline_avg_pct": -0.1972,
+      "baseline_holdout_avg_pct": -0.192,
+      "edge_ci": [
+       -0.0804,
+       0.0391
+      ],
+      "gross_avg_pct": -0.0599,
+      "qualified": false,
+      "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": true,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "ETH",
+      "setup": "MOMENTUM_CONT+ACT",
+      "stop": "FIXED",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0001,
+       "slippage": 0.0002
+      },
+      "period": "2023-01-01 -> 2026-11-14",
+      "orders": 628,
+      "filled": 467,
+      "unfilled": 161,
+      "targets": 171,
+      "stops": 247,
+      "timeouts": 49,
+      "win_rate": 0.3897,
+      "avg_net_pct": -0.1989,
+      "avg_net_ci": [
+       -0.2766,
+       -0.114
+      ],
+      "total_net_pct": -92.89,
+      "max_drawdown_pct": 93.19,
+      "trades_per_week": 2.31,
+      "years": {
+       "2023": {
+        "trades": 3,
+        "avg_net_pct": -0.5867
+       },
+       "2024": {
+        "trades": 136,
+        "avg_net_pct": -0.1601
+       },
+       "2025": {
+        "trades": 249,
+        "avg_net_pct": -0.2281
+       },
+       "2026": {
+        "trades": 79,
+        "avg_net_pct": -0.1589
+       }
+      },
+      "holdout_trades": 79,
+      "holdout_avg_pct": -0.1589,
+      "baseline_avg_pct": -0.1956,
+      "baseline_holdout_avg_pct": -0.2364,
+      "edge_ci": [
+       -0.0985,
+       0.0866
+      ],
+      "gross_avg_pct": -0.0389,
+      "qualified": false,
+      "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": true,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "ETH",
+      "setup": "MOMENTUM_CONT+ACT",
+      "stop": "ATR",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0001,
+       "slippage": 0.0002
+      },
+      "period": "2023-01-01 -> 2026-11-14",
+      "orders": 636,
+      "filled": 470,
+      "unfilled": 166,
+      "targets": 165,
+      "stops": 282,
+      "timeouts": 23,
+      "win_rate": 0.3617,
+      "avg_net_pct": -0.2165,
+      "avg_net_ci": [
+       -0.2984,
+       -0.1284
+      ],
+      "total_net_pct": -101.76,
+      "max_drawdown_pct": 101.94,
+      "trades_per_week": 2.33,
+      "years": {
+       "2023": {
+        "trades": 3,
+        "avg_net_pct": -0.5568
+       },
+       "2024": {
+        "trades": 137,
+        "avg_net_pct": -0.2087
+       },
+       "2025": {
+        "trades": 252,
+        "avg_net_pct": -0.2303
+       },
+       "2026": {
+        "trades": 78,
+        "avg_net_pct": -0.1725
+       }
+      },
+      "holdout_trades": 78,
+      "holdout_avg_pct": -0.1725,
+      "baseline_avg_pct": -0.2025,
+      "baseline_holdout_avg_pct": -0.2054,
+      "edge_ci": [
+       -0.1009,
+       0.0713
+      ],
+      "gross_avg_pct": -0.0565,
+      "qualified": false,
+      "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": true,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "ETH",
+      "setup": "MOMENTUM_CONT+ACT",
+      "stop": "TRAIL",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0001,
+       "slippage": 0.0002
+      },
+      "period": "2023-01-01 -> 2026-11-14",
+      "orders": 655,
+      "filled": 487,
+      "unfilled": 168,
+      "targets": 79,
+      "stops": 400,
+      "timeouts": 8,
+      "win_rate": 0.271,
+      "avg_net_pct": -0.222,
+      "avg_net_ci": [
+       -0.2905,
+       -0.1565
+      ],
+      "total_net_pct": -108.11,
+      "max_drawdown_pct": 108.11,
+      "trades_per_week": 2.41,
+      "years": {
+       "2023": {
+        "trades": 3,
+        "avg_net_pct": -0.43
+       },
+       "2024": {
+        "trades": 140,
+        "avg_net_pct": -0.2161
+       },
+       "2025": {
+        "trades": 262,
+        "avg_net_pct": -0.2391
+       },
+       "2026": {
+        "trades": 82,
+        "avg_net_pct": -0.1699
+       }
+      },
+      "holdout_trades": 82,
+      "holdout_avg_pct": -0.1699,
+      "baseline_avg_pct": -0.1933,
+      "baseline_holdout_avg_pct": -0.1687,
+      "edge_ci": [
+       -0.1036,
+       0.0403
+      ],
+      "gross_avg_pct": -0.062,
+      "qualified": false,
+      "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": true,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "ETH",
+      "setup": "DIP_FADE",
+      "stop": "FIXED",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0001,
+       "slippage": 0.0002
+      },
+      "period": "2023-01-01 -> 2026-11-14",
+      "orders": 4163,
+      "filled": 2407,
+      "unfilled": 1756,
+      "targets": 908,
+      "stops": 1330,
+      "timeouts": 169,
+      "win_rate": 0.4067,
+      "avg_net_pct": -0.1952,
+      "avg_net_ci": [
+       -0.2308,
+       -0.1632
+      ],
+      "total_net_pct": -469.87,
+      "max_drawdown_pct": 469.87,
+      "trades_per_week": 11.92,
+      "years": {
+       "2023": {
+        "trades": 375,
+        "avg_net_pct": -0.1881
+       },
+       "2024": {
+        "trades": 720,
+        "avg_net_pct": -0.1989
+       },
+       "2025": {
+        "trades": 889,
+        "avg_net_pct": -0.1895
+       },
+       "2026": {
+        "trades": 423,
+        "avg_net_pct": -0.2073
+       }
+      },
+      "holdout_trades": 395,
+      "holdout_avg_pct": -0.2069,
+      "baseline_avg_pct": -0.1948,
+      "baseline_holdout_avg_pct": -0.1905,
+      "edge_ci": [
+       -0.0395,
+       0.0426
+      ],
+      "gross_avg_pct": -0.0345,
+      "qualified": false,
+      "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": true,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "ETH",
+      "setup": "DIP_FADE",
+      "stop": "ATR",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0001,
+       "slippage": 0.0002
+      },
+      "period": "2023-01-01 -> 2026-11-14",
+      "orders": 4059,
+      "filled": 2323,
+      "unfilled": 1736,
+      "targets": 912,
+      "stops": 1267,
+      "timeouts": 144,
+      "win_rate": 0.4197,
+      "avg_net_pct": -0.1967,
+      "avg_net_ci": [
+       -0.2377,
+       -0.1592
+      ],
+      "total_net_pct": -456.91,
+      "max_drawdown_pct": 456.91,
+      "trades_per_week": 11.51,
+      "years": {
+       "2023": {
+        "trades": 364,
+        "avg_net_pct": -0.1941
+       },
+       "2024": {
+        "trades": 696,
+        "avg_net_pct": -0.1856
+       },
+       "2025": {
+        "trades": 839,
+        "avg_net_pct": -0.2071
+       },
+       "2026": {
+        "trades": 424,
+        "avg_net_pct": -0.1967
+       }
+      },
+      "holdout_trades": 397,
+      "holdout_avg_pct": -0.1962,
+      "baseline_avg_pct": -0.1982,
+      "baseline_holdout_avg_pct": -0.2037,
+      "edge_ci": [
+       -0.0457,
+       0.0419
+      ],
+      "gross_avg_pct": -0.0362,
+      "qualified": false,
+      "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": true,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "ETH",
+      "setup": "DIP_FADE",
+      "stop": "TRAIL",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0001,
+       "slippage": 0.0002
+      },
+      "period": "2023-01-01 -> 2026-11-14",
+      "orders": 4234,
+      "filled": 2436,
+      "unfilled": 1798,
+      "targets": 510,
+      "stops": 1901,
+      "timeouts": 25,
+      "win_rate": 0.3231,
+      "avg_net_pct": -0.1943,
+      "avg_net_ci": [
+       -0.2253,
+       -0.1596
+      ],
+      "total_net_pct": -473.25,
+      "max_drawdown_pct": 473.63,
+      "trades_per_week": 12.07,
+      "years": {
+       "2023": {
+        "trades": 380,
+        "avg_net_pct": -0.2002
+       },
+       "2024": {
+        "trades": 737,
+        "avg_net_pct": -0.198
+       },
+       "2025": {
+        "trades": 884,
+        "avg_net_pct": -0.1834
+       },
+       "2026": {
+        "trades": 435,
+        "avg_net_pct": -0.2049
+       }
+      },
+      "holdout_trades": 407,
+      "holdout_avg_pct": -0.2106,
+      "baseline_avg_pct": -0.1937,
+      "baseline_holdout_avg_pct": -0.1905,
+      "edge_ci": [
+       -0.033,
+       0.0367
+      ],
+      "gross_avg_pct": -0.0338,
+      "qualified": false,
+      "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": true,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "ETH",
+      "setup": "DIP_FADE+ACT",
+      "stop": "FIXED",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0001,
+       "slippage": 0.0002
+      },
+      "period": "2023-01-01 -> 2026-11-14",
+      "orders": 840,
+      "filled": 497,
+      "unfilled": 343,
+      "targets": 180,
+      "stops": 290,
+      "timeouts": 27,
+      "win_rate": 0.3823,
+      "avg_net_pct": -0.223,
+      "avg_net_ci": [
+       -0.3098,
+       -0.14
+      ],
+      "total_net_pct": -110.84,
+      "max_drawdown_pct": 110.99,
+      "trades_per_week": 2.46,
+      "years": {
+       "2024": {
+        "trades": 124,
+        "avg_net_pct": -0.2356
+       },
+       "2025": {
+        "trades": 290,
+        "avg_net_pct": -0.2116
+       },
+       "2026": {
+        "trades": 83,
+        "avg_net_pct": -0.244
+       }
+      },
+      "holdout_trades": 83,
+      "holdout_avg_pct": -0.244,
+      "baseline_avg_pct": -0.1882,
+      "baseline_holdout_avg_pct": -0.1601,
+      "edge_ci": [
+       -0.1269,
+       0.043
+      ],
+      "gross_avg_pct": -0.0625,
+      "qualified": false,
+      "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": true,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "ETH",
+      "setup": "DIP_FADE+ACT",
+      "stop": "ATR",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0001,
+       "slippage": 0.0002
+      },
+      "period": "2023-01-01 -> 2026-11-14",
+      "orders": 817,
+      "filled": 474,
+      "unfilled": 343,
+      "targets": 178,
+      "stops": 274,
+      "timeouts": 22,
+      "win_rate": 0.3945,
+      "avg_net_pct": -0.2415,
+      "avg_net_ci": [
+       -0.3338,
+       -0.143
+      ],
+      "total_net_pct": -114.47,
+      "max_drawdown_pct": 116.67,
+      "trades_per_week": 2.35,
+      "years": {
+       "2024": {
+        "trades": 120,
+        "avg_net_pct": -0.2033
+       },
+       "2025": {
+        "trades": 273,
+        "avg_net_pct": -0.2577
+       },
+       "2026": {
+        "trades": 81,
+        "avg_net_pct": -0.2435
+       }
+      },
+      "holdout_trades": 81,
+      "holdout_avg_pct": -0.2435,
+      "baseline_avg_pct": -0.2034,
+      "baseline_holdout_avg_pct": -0.1981,
+      "edge_ci": [
+       -0.1304,
+       0.0583
+      ],
+      "gross_avg_pct": -0.0811,
+      "qualified": false,
+      "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": true,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "ETH",
+      "setup": "DIP_FADE+ACT",
+      "stop": "TRAIL",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0001,
+       "slippage": 0.0002
+      },
+      "period": "2023-01-01 -> 2026-11-14",
+      "orders": 850,
+      "filled": 498,
+      "unfilled": 352,
+      "targets": 98,
+      "stops": 398,
+      "timeouts": 2,
+      "win_rate": 0.2871,
+      "avg_net_pct": -0.2181,
+      "avg_net_ci": [
+       -0.2889,
+       -0.1399
+      ],
+      "total_net_pct": -108.62,
+      "max_drawdown_pct": 109.18,
+      "trades_per_week": 2.47,
+      "years": {
+       "2024": {
+        "trades": 129,
+        "avg_net_pct": -0.1976
+       },
+       "2025": {
+        "trades": 287,
+        "avg_net_pct": -0.2229
+       },
+       "2026": {
+        "trades": 82,
+        "avg_net_pct": -0.2336
+       }
+      },
+      "holdout_trades": 82,
+      "holdout_avg_pct": -0.2336,
+      "baseline_avg_pct": -0.1874,
+      "baseline_holdout_avg_pct": -0.2223,
+      "edge_ci": [
+       -0.0992,
+       0.052
+      ],
+      "gross_avg_pct": -0.0577,
+      "qualified": false,
+      "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": true,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     }
+    ]
+   },
+   "SOL": {
+    "activity_forecast": {
+     "skill": 0.1507,
+     "skill_ci99": [
+      0.1188,
+      0.1906
+     ],
+     "holdout_skill": 0.2145,
+     "qualified": true,
+     "reason": "qualified"
+    },
+    "gate_share": 0.0026,
+    "results": [
+     {
+      "asset": "SOL",
+      "setup": "BREAKOUT_RETEST+ACT",
+      "stop": "FIXED",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0002,
+       "slippage": 0.0002
+      },
+      "period": "2024-01-01 -> 2026-11-14",
+      "orders": 6,
+      "filled": 4,
+      "unfilled": 2,
+      "targets": 1,
+      "stops": 3,
+      "timeouts": 0,
+      "win_rate": 0.25,
+      "avg_net_pct": -0.3974,
+      "avg_net_ci": null,
+      "total_net_pct": -1.59,
+      "max_drawdown_pct": 2.07,
+      "trades_per_week": 0.03,
+      "years": {
+       "2024": {
+        "trades": 3,
+        "avg_net_pct": -0.6899
+       },
+       "2025": {
+        "trades": 1,
+        "avg_net_pct": 0.48
+       }
+      },
+      "holdout_trades": 0,
+      "holdout_avg_pct": null,
+      "baseline_avg_pct": -0.2024,
+      "baseline_holdout_avg_pct": -0.6899,
+      "edge_ci": [
+       -0.9749,
+       0.8775
+      ],
+      "gross_avg_pct": -0.2274,
+      "qualified": false,
+      "reason": "failed: at least 200 filled trades; average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": false,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "SOL",
+      "setup": "BREAKOUT_RETEST+ACT",
+      "stop": "ATR",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0002,
+       "slippage": 0.0002
+      },
+      "period": "2024-01-01 -> 2026-11-14",
+      "orders": 6,
+      "filled": 4,
+      "unfilled": 2,
+      "targets": 1,
+      "stops": 3,
+      "timeouts": 0,
+      "win_rate": 0.25,
+      "avg_net_pct": -0.5072,
+      "avg_net_ci": null,
+      "total_net_pct": -2.03,
+      "max_drawdown_pct": 2.51,
+      "trades_per_week": 0.03,
+      "years": {
+       "2024": {
+        "trades": 3,
+        "avg_net_pct": -0.8362
+       },
+       "2025": {
+        "trades": 1,
+        "avg_net_pct": 0.48
+       }
+      },
+      "holdout_trades": 0,
+      "holdout_avg_pct": null,
+      "baseline_avg_pct": -0.1776,
+      "baseline_holdout_avg_pct": -0.4582,
+      "edge_ci": [
+       -1.1501,
+       0.8055
+      ],
+      "gross_avg_pct": -0.3372,
+      "qualified": false,
+      "reason": "failed: at least 200 filled trades; average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": false,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "SOL",
+      "setup": "BREAKOUT_RETEST+ACT",
+      "stop": "TRAIL",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0002,
+       "slippage": 0.0002
+      },
+      "period": "2024-01-01 -> 2026-11-14",
+      "orders": 6,
+      "filled": 4,
+      "unfilled": 2,
+      "targets": 0,
+      "stops": 4,
+      "timeouts": 0,
+      "win_rate": 0.25,
+      "avg_net_pct": -0.0061,
+      "avg_net_ci": null,
+      "total_net_pct": -0.02,
+      "max_drawdown_pct": 0.04,
+      "trades_per_week": 0.03,
+      "years": {
+       "2024": {
+        "trades": 3,
+        "avg_net_pct": -0.0015
+       },
+       "2025": {
+        "trades": 1,
+        "avg_net_pct": -0.02
+       }
+      },
+      "holdout_trades": 0,
+      "holdout_avg_pct": null,
+      "baseline_avg_pct": -0.2322,
+      "baseline_holdout_avg_pct": -0.2899,
+      "edge_ci": [
+       -0.1507,
+       0.7023
+      ],
+      "gross_avg_pct": 0.1639,
+      "qualified": false,
+      "reason": "failed: at least 200 filled trades; average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": false,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "SOL",
+      "setup": "LEVEL_BOUNCE+ACT",
+      "stop": "FIXED",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0002,
+       "slippage": 0.0002
+      },
+      "period": "2024-01-01 -> 2026-11-14",
+      "orders": 4,
+      "filled": 2,
+      "unfilled": 2,
+      "targets": 1,
+      "stops": 1,
+      "timeouts": 0,
+      "win_rate": 0.5,
+      "avg_net_pct": -0.1049,
+      "avg_net_ci": null,
+      "total_net_pct": -0.21,
+      "max_drawdown_pct": 0.69,
+      "trades_per_week": 0.01,
+      "years": {
+       "2025": {
+        "trades": 2,
+        "avg_net_pct": -0.1049
+       }
+      },
+      "holdout_trades": 0,
+      "holdout_avg_pct": null,
+      "baseline_avg_pct": -0.1734,
+      "baseline_holdout_avg_pct": -0.6899,
+      "edge_ci": [
+       -0.975,
+       1.1699
+      ],
+      "gross_avg_pct": 0.0651,
+      "qualified": false,
+      "reason": "failed: at least 200 filled trades; average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": false,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "SOL",
+      "setup": "LEVEL_BOUNCE+ACT",
+      "stop": "ATR",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0002,
+       "slippage": 0.0002
+      },
+      "period": "2024-01-01 -> 2026-11-14",
+      "orders": 4,
+      "filled": 2,
+      "unfilled": 2,
+      "targets": 1,
+      "stops": 1,
+      "timeouts": 0,
+      "win_rate": 0.5,
+      "avg_net_pct": -0.0387,
+      "avg_net_ci": null,
+      "total_net_pct": -0.08,
+      "max_drawdown_pct": 0.56,
+      "trades_per_week": 0.01,
+      "years": {
+       "2025": {
+        "trades": 2,
+        "avg_net_pct": -0.0387
+       }
+      },
+      "holdout_trades": 0,
+      "holdout_avg_pct": null,
+      "baseline_avg_pct": 0.0136,
+      "baseline_holdout_avg_pct": -0.4899,
+      "edge_ci": [
+       -1.0375,
+       1.1754
+      ],
+      "gross_avg_pct": 0.1313,
+      "qualified": false,
+      "reason": "failed: at least 200 filled trades; average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": false,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "SOL",
+      "setup": "LEVEL_BOUNCE+ACT",
+      "stop": "TRAIL",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0002,
+       "slippage": 0.0002
+      },
+      "period": "2024-01-01 -> 2026-11-14",
+      "orders": 4,
+      "filled": 2,
+      "unfilled": 2,
+      "targets": 0,
+      "stops": 2,
+      "timeouts": 0,
+      "win_rate": 0.0,
+      "avg_net_pct": -0.2888,
+      "avg_net_ci": null,
+      "total_net_pct": -0.58,
+      "max_drawdown_pct": 0.58,
+      "trades_per_week": 0.01,
+      "years": {
+       "2025": {
+        "trades": 2,
+        "avg_net_pct": -0.2888
+       }
+      },
+      "holdout_trades": 0,
+      "holdout_avg_pct": null,
+      "baseline_avg_pct": -0.018,
+      "baseline_holdout_avg_pct": 0.0149,
+      "edge_ci": [
+       -0.966,
+       0.5942
+      ],
+      "gross_avg_pct": -0.1188,
+      "qualified": false,
+      "reason": "failed: at least 200 filled trades; average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": false,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "SOL",
+      "setup": "MOMENTUM_CONT+ACT",
+      "stop": "FIXED",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0002,
+       "slippage": 0.0002
+      },
+      "period": "2024-01-01 -> 2026-11-14",
+      "orders": 9,
+      "filled": 6,
+      "unfilled": 3,
+      "targets": 2,
+      "stops": 4,
+      "timeouts": 0,
+      "win_rate": 0.3333,
+      "avg_net_pct": -0.2999,
+      "avg_net_ci": null,
+      "total_net_pct": -1.8,
+      "max_drawdown_pct": 2.76,
+      "trades_per_week": 0.04,
+      "years": {
+       "2024": {
+        "trades": 4,
+        "avg_net_pct": -0.3974
+       },
+       "2025": {
+        "trades": 2,
+        "avg_net_pct": -0.1049
+       }
+      },
+      "holdout_trades": 0,
+      "holdout_avg_pct": null,
+      "baseline_avg_pct": -0.3363,
+      "baseline_holdout_avg_pct": -0.3974,
+      "edge_ci": [
+       -0.65,
+       0.8858
+      ],
+      "gross_avg_pct": -0.1299,
+      "qualified": false,
+      "reason": "failed: at least 200 filled trades; average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": false,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "SOL",
+      "setup": "MOMENTUM_CONT+ACT",
+      "stop": "ATR",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0002,
+       "slippage": 0.0002
+      },
+      "period": "2024-01-01 -> 2026-11-14",
+      "orders": 9,
+      "filled": 6,
+      "unfilled": 3,
+      "targets": 2,
+      "stops": 3,
+      "timeouts": 1,
+      "win_rate": 0.3333,
+      "avg_net_pct": -0.3765,
+      "avg_net_ci": null,
+      "total_net_pct": -2.26,
+      "max_drawdown_pct": 3.22,
+      "trades_per_week": 0.04,
+      "years": {
+       "2024": {
+        "trades": 4,
+        "avg_net_pct": -0.4148
+       },
+       "2025": {
+        "trades": 2,
+        "avg_net_pct": -0.2999
+       }
+      },
+      "holdout_trades": 0,
+      "holdout_avg_pct": null,
+      "baseline_avg_pct": -0.3476,
+      "baseline_holdout_avg_pct": -0.2833,
+      "edge_ci": [
+       -0.8723,
+       0.8893
+      ],
+      "gross_avg_pct": -0.2065,
+      "qualified": false,
+      "reason": "failed: at least 200 filled trades; average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": false,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "SOL",
+      "setup": "MOMENTUM_CONT+ACT",
+      "stop": "TRAIL",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0002,
+       "slippage": 0.0002
+      },
+      "period": "2024-01-01 -> 2026-11-14",
+      "orders": 11,
+      "filled": 7,
+      "unfilled": 4,
+      "targets": 0,
+      "stops": 7,
+      "timeouts": 0,
+      "win_rate": 0.0,
+      "avg_net_pct": -0.3763,
+      "avg_net_ci": null,
+      "total_net_pct": -2.63,
+      "max_drawdown_pct": 2.63,
+      "trades_per_week": 0.05,
+      "years": {
+       "2024": {
+        "trades": 5,
+        "avg_net_pct": -0.3069
+       },
+       "2025": {
+        "trades": 2,
+        "avg_net_pct": -0.5499
+       }
+      },
+      "holdout_trades": 0,
+      "holdout_avg_pct": null,
+      "baseline_avg_pct": -0.3129,
+      "baseline_holdout_avg_pct": -0.1474,
+      "edge_ci": [
+       -0.6804,
+       0.4687
+      ],
+      "gross_avg_pct": -0.2063,
+      "qualified": false,
+      "reason": "failed: at least 200 filled trades; average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": false,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "SOL",
+      "setup": "DIP_FADE",
+      "stop": "FIXED",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0002,
+       "slippage": 0.0002
+      },
+      "period": "2024-01-01 -> 2026-11-14",
+      "orders": 6536,
+      "filled": 4237,
+      "unfilled": 2299,
+      "targets": 1679,
+      "stops": 2426,
+      "timeouts": 132,
+      "win_rate": 0.4093,
+      "avg_net_pct": -0.2072,
+      "avg_net_ci": [
+       -0.2336,
+       -0.1813
+      ],
+      "total_net_pct": -878.11,
+      "max_drawdown_pct": 880.03,
+      "trades_per_week": 28.3,
+      "years": {
+       "2024": {
+        "trades": 2079,
+        "avg_net_pct": -0.2031
+       },
+       "2025": {
+        "trades": 1486,
+        "avg_net_pct": -0.218
+       },
+       "2026": {
+        "trades": 672,
+        "avg_net_pct": -0.1962
+       }
+      },
+      "holdout_trades": 372,
+      "holdout_avg_pct": -0.2281,
+      "baseline_avg_pct": -0.2103,
+      "baseline_holdout_avg_pct": -0.2121,
+      "edge_ci": [
+       -0.0309,
+       0.0355
+      ],
+      "gross_avg_pct": -0.0366,
+      "qualified": false,
+      "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": true,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "SOL",
+      "setup": "DIP_FADE",
+      "stop": "ATR",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0002,
+       "slippage": 0.0002
+      },
+      "period": "2024-01-01 -> 2026-11-14",
+      "orders": 6014,
+      "filled": 3862,
+      "unfilled": 2152,
+      "targets": 1780,
+      "stops": 1942,
+      "timeouts": 140,
+      "win_rate": 0.4751,
+      "avg_net_pct": -0.2033,
+      "avg_net_ci": [
+       -0.2381,
+       -0.1743
+      ],
+      "total_net_pct": -785.14,
+      "max_drawdown_pct": 789.25,
+      "trades_per_week": 25.8,
+      "years": {
+       "2024": {
+        "trades": 1858,
+        "avg_net_pct": -0.1926
+       },
+       "2025": {
+        "trades": 1358,
+        "avg_net_pct": -0.2245
+       },
+       "2026": {
+        "trades": 646,
+        "avg_net_pct": -0.1895
+       }
+      },
+      "holdout_trades": 363,
+      "holdout_avg_pct": -0.2113,
+      "baseline_avg_pct": -0.2175,
+      "baseline_holdout_avg_pct": -0.2056,
+      "edge_ci": [
+       -0.0254,
+       0.0609
+      ],
+      "gross_avg_pct": -0.0331,
+      "qualified": false,
+      "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": true,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "SOL",
+      "setup": "DIP_FADE",
+      "stop": "TRAIL",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0002,
+       "slippage": 0.0002
+      },
+      "period": "2024-01-01 -> 2026-11-14",
+      "orders": 6439,
+      "filled": 4137,
+      "unfilled": 2302,
+      "targets": 1015,
+      "stops": 3098,
+      "timeouts": 24,
+      "win_rate": 0.3036,
+      "avg_net_pct": -0.1986,
+      "avg_net_ci": [
+       -0.2249,
+       -0.1716
+      ],
+      "total_net_pct": -821.79,
+      "max_drawdown_pct": 822.02,
+      "trades_per_week": 27.63,
+      "years": {
+       "2024": {
+        "trades": 2017,
+        "avg_net_pct": -0.1843
+       },
+       "2025": {
+        "trades": 1441,
+        "avg_net_pct": -0.2194
+       },
+       "2026": {
+        "trades": 679,
+        "avg_net_pct": -0.197
+       }
+      },
+      "holdout_trades": 378,
+      "holdout_avg_pct": -0.2056,
+      "baseline_avg_pct": -0.2045,
+      "baseline_holdout_avg_pct": -0.2034,
+      "edge_ci": [
+       -0.0261,
+       0.0335
+      ],
+      "gross_avg_pct": -0.0284,
+      "qualified": false,
+      "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": true,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "SOL",
+      "setup": "DIP_FADE+ACT",
+      "stop": "FIXED",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0002,
+       "slippage": 0.0002
+      },
+      "period": "2024-01-01 -> 2026-11-14",
+      "orders": 26,
+      "filled": 16,
+      "unfilled": 10,
+      "targets": 5,
+      "stops": 11,
+      "timeouts": 0,
+      "win_rate": 0.3125,
+      "avg_net_pct": -0.3243,
+      "avg_net_ci": [
+       -0.6899,
+       0.0413
+      ],
+      "total_net_pct": -5.19,
+      "max_drawdown_pct": 5.67,
+      "trades_per_week": 0.11,
+      "years": {
+       "2024": {
+        "trades": 8,
+        "avg_net_pct": -0.2512
+       },
+       "2025": {
+        "trades": 8,
+        "avg_net_pct": -0.3974
+       }
+      },
+      "holdout_trades": 0,
+      "holdout_avg_pct": null,
+      "baseline_avg_pct": -0.2733,
+      "baseline_holdout_avg_pct": -0.0485,
+      "edge_ci": [
+       -0.4871,
+       0.4437
+      ],
+      "gross_avg_pct": -0.1531,
+      "qualified": false,
+      "reason": "failed: at least 200 filled trades; average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": false,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "SOL",
+      "setup": "DIP_FADE+ACT",
+      "stop": "ATR",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0002,
+       "slippage": 0.0002
+      },
+      "period": "2024-01-01 -> 2026-11-14",
+      "orders": 25,
+      "filled": 15,
+      "unfilled": 10,
+      "targets": 4,
+      "stops": 11,
+      "timeouts": 0,
+      "win_rate": 0.2667,
+      "avg_net_pct": -0.5478,
+      "avg_net_ci": [
+       -1.0233,
+       -0.0114
+      ],
+      "total_net_pct": -8.22,
+      "max_drawdown_pct": 8.7,
+      "trades_per_week": 0.1,
+      "years": {
+       "2024": {
+        "trades": 8,
+        "avg_net_pct": -0.4279
+       },
+       "2025": {
+        "trades": 7,
+        "avg_net_pct": -0.6848
+       }
+      },
+      "holdout_trades": 0,
+      "holdout_avg_pct": null,
+      "baseline_avg_pct": -0.2545,
+      "baseline_holdout_avg_pct": -0.4759,
+      "edge_ci": [
+       -0.809,
+       0.2745
+      ],
+      "gross_avg_pct": -0.3765,
+      "qualified": false,
+      "reason": "failed: at least 200 filled trades; average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": false,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     },
+     {
+      "asset": "SOL",
+      "setup": "DIP_FADE+ACT",
+      "stop": "TRAIL",
+      "version": "scalp1m-r4",
+      "costs": {
+       "fees": 0.0015,
+       "spread": 0.0002,
+       "slippage": 0.0002
+      },
+      "period": "2024-01-01 -> 2026-11-14",
+      "orders": 26,
+      "filled": 16,
+      "unfilled": 10,
+      "targets": 5,
+      "stops": 11,
+      "timeouts": 0,
+      "win_rate": 0.3125,
+      "avg_net_pct": -0.2251,
+      "avg_net_ci": [
+       -0.7146,
+       0.2585
+      ],
+      "total_net_pct": -3.6,
+      "max_drawdown_pct": 4.08,
+      "trades_per_week": 0.11,
+      "years": {
+       "2024": {
+        "trades": 8,
+        "avg_net_pct": -0.2817
+       },
+       "2025": {
+        "trades": 8,
+        "avg_net_pct": -0.1685
+       }
+      },
+      "holdout_trades": 0,
+      "holdout_avg_pct": null,
+      "baseline_avg_pct": -0.2705,
+      "baseline_holdout_avg_pct": -0.1168,
+      "edge_ci": [
+       -0.4428,
+       0.5894
+      ],
+      "gross_avg_pct": -0.0538,
+      "qualified": false,
+      "reason": "failed: at least 200 filled trades; average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
+      "checks": {
+       "at least 200 filled trades": false,
+       "average net CI above zero": false,
+       "every year positive": false,
+       "final holdout positive": false,
+       "beats baseline (CI)": false
+      }
+     }
+    ]
+   }
+  }
  }
 }
