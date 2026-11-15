@@ -227,8 +227,9 @@ def crypto(budget_min: float | None = None) -> None:
     today = date.today()
     last_full = (today.replace(day=1) - timedelta(days=1))
     for sym, (y0, m0) in CRYPTO_START.items():
-        for tf, rows in (("1h", 600), ("1d", 25)):
-            for y, m in months(date(y0, m0, 1), last_full):
+        for tf, rows in (("1h", 600), ("1d", 25), ("15m", 2600)):
+            first = date(y0, m0, 1) if tf != "15m" else max(date(y0, m0, 1), date(2021, 1, 1))  # scalping lab
+            for y, m in months(first, last_full):
                 if budget_min and time.monotonic() - t0 > budget_min * 60:
                     print("crypto: time budget reached")
                     return
@@ -319,6 +320,13 @@ def crypto_research() -> dict:
                 print(sym, hz, "spot", r.expectancy_pct, r.baseline_expectancy_pct, r.reason, "| perp", rq.expectancy_pct,
                       rq.baseline_expectancy_pct, rq.reason, flush=True)
         out["assets"][sym] = a
+    from goldquant import scalp as SC
+    for sym in CRYPTO_START:  # scalping lab on 15-min bars: user's Binance cost (0.075 % per side with BNB)
+        m15 = CS.load_bars(MD, sym, "15m")
+        if len(m15) > 20000 and sym in out["assets"]:
+            out["assets"][sym]["scalp"] = {"cost": 0.0015, "results": SC.run_all(m15, 0.0015)}
+            for r in out["assets"][sym]["scalp"]["results"]:
+                print(sym, "scalp", r["rule"], r["stop"], r["trades"], r["avg_net_pct"], r["reason"], flush=True)
     (MODELS / "crypto_report.json").write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str),
                                                encoding="utf-8")
     return out
@@ -506,6 +514,15 @@ def research(hs: HistoryStore) -> None:
                                                     encoding="utf-8")
         (MODELS / "planner_macro_ab.json").write_text(json.dumps(cmp_, ensure_ascii=False, indent=1, default=str),
                                                       encoding="utf-8")
+        from goldquant import scalp as SC
+        from goldquant.providers.base import market_closed_mask
+        import numpy as np
+        m15 = hs.load_bars("Dukascopy", "XAUUSD", "M15", limit=10_000_000)
+        if len(m15) > 20000:  # scalping lab on gold: no trade whose 4-hour window reaches the weekly close
+            trad = ~np.asarray(market_closed_mask(m15.index)) & ~np.asarray(market_closed_mask(m15.index + pd.Timedelta(hours=4.5)))
+            (MODELS / "scalp_report.json").write_text(json.dumps(
+                {"XAUUSD": {"cost": 0.0003, "results": SC.run_all(m15, 0.0003, trad)}}, ensure_ascii=False, indent=1,
+                default=str), encoding="utf-8")
     except Exception as exc:  # noqa: BLE001
         print("planner failed:", exc)
     (MODELS / "outlook_report.json").write_text(json.dumps(outlook_report(daily, "TwelveData D1"), ensure_ascii=False,
