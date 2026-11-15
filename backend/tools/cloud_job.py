@@ -334,9 +334,29 @@ def crypto_research() -> dict:
                 m15, 0.0015, rules=SC.CRYPTO_RULES2 + SC.CRYPTO_RULES3, ci_level=SC.CI_ROUND2)}
             for r in out["assets"][sym]["scalp"]["results"]:
                 print(sym, "scalp", r["rule"], r["stop"], r["trades"], r["avg_net_pct"], r["reason"], flush=True)
+    out["activity"] = activity_models()
     (MODELS / "crypto_report.json").write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str),
                                                encoding="utf-8")
     return out
+
+
+def activity_models() -> dict:
+    """Weekly: re-validate the scalper activity forecast per coin (pre-registered rules in goldquant/activity.py) and
+    export the model ONLY for coins that pass this week. A coin that stops passing disappears from the app."""
+    from goldquant import activity as ACT, crypto_store as CS
+    out = {"schema": 1, "updated_at": datetime.now(timezone.utc).isoformat(), "assets": {}}
+    summary = {}
+    for sym, a in (("BTCUSDT", "BTC"), ("ETHUSDT", "ETH"), ("SOLUSDT", "SOL")):
+        d = CS.load_bars(MD, sym, "15m")
+        if len(d) < 20000:
+            continue
+        r = ACT.evaluate(d)
+        out["assets"][a] = {"report": r, "model": ACT.export(d, r) if r["qualified"] else None}
+        summary[a] = {k: r.get(k) for k in ("skill", "skill_ci99", "holdout_skill", "qualified", "reason")}
+        print(a, "activity", summary[a], flush=True)
+    (MODELS / "activity_models.json").write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str),
+                                                 encoding="utf-8")
+    return summary
 
 
 def data_quality_report(hs: HistoryStore) -> dict:
