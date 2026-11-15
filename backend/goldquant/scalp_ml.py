@@ -274,3 +274,108 @@ def _judge(asset, kind, impl, w, stop, thr, dec, t_dec, years, p, base, y, net, 
     rep["qualified"] = all(ck.values())
     rep["reason"] = "qualified" if rep["qualified"] else "failed: " + "; ".join(k for k, v in ck.items() if not v)
     return rep
+
+
+# ---------------------------------------------------------------- EXPERIMENT 3: order book (pre-registered 2026-11-15)
+BOOK_DOC = """Experiment 3 — does order-book depth add information? (pre-registered before any result)
+  data      Binance USD-M futures bookDepth snapshots (cumulative notional within +-1/2/5 % of the price), from the
+            first available day; a snapshot is used only from its own timestamp, and only if it is <= 5 minutes old
+  features  imbalance (bid - ask)/(bid + ask) at 1, 2 and 5 %; its change over 5 and 15 minutes; total depth within
+            5 % vs its 1-day average
+  labels    (30 min, stop 0.40 %) and (60 min, stop 0.65 %), target +0.65 %, same execution and costs as experiment 2
+  models    LOGIT and LGBM, each WITHOUT and WITH the book features (same rows, same folds) -> 4 candidates
+  folds     re-fitted at the start of every calendar quarter once 2 quarters of data exist; last 20 % of time = holdout
+  judging   same checks as experiment 2; 4 candidates x 2 labels x 3 coins = 24 tests -> 99.8 % confidence
+  value     'book adds information' only if the paired out-of-sample Brier improvement has a 95 % day-block CI > 0"""
+BOOK_FEATURES = ["imb1", "imb2", "imb5", "dimb1_5", "dimb1_15", "depth_z"]
+BOOK_LABELS = ((30, 0.0040), (60, 0.0065))
+
+
+def book_features(index: pd.DatetimeIndex, book: pd.DataFrame) -> pd.DataFrame:
+    b = book.sort_index()
+    b = b[~b.index.duplicated(keep="last")]
+    b.index = b.index.as_unit(index.unit)
+    f = pd.DataFrame(index=b.index)
+    for lvl in (1, 2, 5):
+        s = b[f"bid{lvl}"] + b[f"ask{lvl}"]
+        f[f"imb{lvl}"] = (b[f"bid{lvl}"] - b[f"ask{lvl}"]) / s.replace(0, np.nan)
+    f["depth"] = np.log(b["bid5"] + b["ask5"] + 1.0)
+    f["snap_t"] = b.index
+    close_t = index + pd.Timedelta(minutes=1)
+    m = f.reindex(close_t, method="ffill")
+    fresh = (close_t - pd.DatetimeIndex(m["snap_t"])) <= pd.Timedelta(minutes=5)
+    out = pd.DataFrame(index=index)
+    for k in ("imb1", "imb2", "imb5"):
+        out[k] = np.where(fresh, m[k].to_numpy(), np.nan)
+    i1 = pd.Series(out["imb1"].to_numpy(), index=index)
+    out["dimb1_5"] = (i1 - i1.shift(5)).to_numpy()
+    out["dimb1_15"] = (i1 - i1.shift(15)).to_numpy()
+    dep = pd.Series(np.where(fresh, m["depth"].to_numpy(), np.nan), index=index)
+    out["depth_z"] = (dep - dep.rolling(1440, min_periods=500).mean()).to_numpy()
+    return out.astype(np.float32)
+
+
+def run_book(m1: pd.DataFrame, asset: str, book: pd.DataFrame, funding: Optional[pd.DataFrame] = None,
+             activity_high: Optional[np.ndarray] = None) -> dict:
+    m1 = m1.dropna(subset=["open", "high", "low", "close"])
+    m1 = m1[m1.index >= book.index.min() - pd.Timedelta(days=2)]
+    F = features(m1, funding).join(book_features(m1.index, book))
+    idx = m1.index
+    dec = np.flatnonzero(((idx + pd.Timedelta(minutes=1)).minute % 5) == 0)
+    dec = dec[(dec > 1500) & (dec < len(m1) - max(w for w, _ in BOOK_LABELS) - 2)]
+    cols_all = FEATURES + BOOK_FEATURES
+    X = F[cols_all].to_numpy()[dec]
+    ok = np.isfinite(X).all(axis=1)
+    dec, X = dec[ok], X[ok]
+    t_dec = idx[dec] + pd.Timedelta(minutes=1)
+    years = t_dec.year.to_numpy()
+    quarters = (t_dec.year * 4 + (t_dec.month - 1) // 3).to_numpy()
+    cut = idx[int(len(idx) * (1 - HOLDOUT_FRAC))]
+    nb = len(FEATURES)
+    res = {"asset": asset, "book_from": str(book.index.min()), "decisions_with_book": int(len(dec)),
+           "results": [], "book_value": {}}
+    for w, stop in BOOK_LABELS:
+        lab, net, xi = outcomes(m1, dec, w, stop, asset)
+        y = (lab == 1).astype(int)
+        known = idx[np.minimum(xi, len(idx) - 1)] + pd.Timedelta(days=1)
+        thr = breakeven_p(stop, asset) + MARGIN
+        preds = {}
+        for kind in ("LOGIT", "LOGIT+BOOK", "LGBM", "LGBM+BOOK"):
+            cols = slice(None) if kind.endswith("+BOOK") else slice(0, nb)
+            p = np.full(len(dec), np.nan)
+            base = np.full(len(dec), np.nan)
+            impl = None
+            qs = sorted(set(quarters))
+            for q in qs[2:]:
+                start = pd.Timestamp(year=q // 4, month=(q % 4) * 3 + 1, day=1, tz="UTC")
+                tr = np.flatnonzero(known < start)
+                te = np.flatnonzero(quarters == q)
+                if len(tr) < 15000 or not len(te):
+                    continue
+                tr = tr[::3]
+                m, impl = _model(kind.split("+")[0])
+                m.fit(X[tr][:, cols], y[tr])
+                p[te] = m.predict_proba(X[te][:, cols])[:, 1]
+                base[te] = y[tr].mean()
+            preds[kind] = p
+            rep = _judge(asset, kind, impl, w, stop, thr, dec, t_dec, years, p, base, y, net, xi, cut,
+                         activity_high, len(m1))
+            rep["version"] = "scalp-book-1"
+            res["results"].append(rep)
+        for m_ in ("LOGIT", "LGBM"):
+            a, b = preds[m_], preds[m_ + "+BOOK"]
+            okk = np.isfinite(a) & np.isfinite(b)
+            if okk.sum() < 1000:
+                continue
+            dif = (a[okk] - y[okk]) ** 2 - (b[okk] - y[okk]) ** 2  # > 0: book helps
+            day = t_dec[okk].floor("D").asi8
+            u, inv = np.unique(day, return_inverse=True)
+            sm, cn = np.bincount(inv, dif, len(u)), np.bincount(inv, None, len(u))
+            rng = np.random.default_rng(5)
+            boots = [sm[k].sum() / cn[k].sum() for k in (rng.integers(0, len(u), len(u)) for _ in range(2000))]
+            ci = [float(np.percentile(boots, 2.5)), float(np.percentile(boots, 97.5))]
+            res["book_value"][f"{w}m/{stop * 100:.2f}%/{m_}"] = {
+                "n": int(okk.sum()), "brier_without": round(float(((a[okk] - y[okk]) ** 2).mean()), 6),
+                "brier_with": round(float(((b[okk] - y[okk]) ** 2).mean()), 6),
+                "improvement_ci95": [round(ci[0], 7), round(ci[1], 7)], "adds_information": bool(ci[0] > 0)}
+    return res

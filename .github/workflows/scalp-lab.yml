@@ -7,14 +7,14 @@ on:
   workflow_dispatch:
     inputs:
       job:
-        description: "scalp1m | scalp_feasibility | scalp_ml"
+        description: "scalp1m | scalp_feasibility | scalp_ml | scalp_book"
         default: "scalp1m"
 concurrency: { group: scalp-lab, cancel-in-progress: false }
 permissions: { contents: write }
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 150
+    timeout-minutes: 300
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-python@v6
@@ -32,7 +32,7 @@ jobs:
         env:
           GOLDQUANT_REPO_ROOT: ${{ github.workspace }}
           SCALP_DATA: ${{ github.workspace }}/cache_1m
-        run: timeout 130m python backend/tools/cloud_job.py ${{ inputs.job || 'scalp1m' }} --budget-min 120
+        run: timeout 280m python backend/tools/cloud_job.py ${{ inputs.job || 'scalp1m' }} --budget-min ${{ inputs.job == 'scalp_book' && '260' || '120' }}
       - name: save 1-minute data
         if: ${{ always() }}
         uses: actions/cache/save@v4
@@ -44,6 +44,6 @@ jobs:
         run: |
           git config user.name "gold-ai-quant-bot"
           git config user.email "actions@users.noreply.github.com"
-          for f in models/scalp1m_report.json models/scalp_feasibility.json models/scalp_ml_report.json; do [ -e "$f" ] && git add "$f"; done
+          for f in models/scalp1m_report.json models/scalp_feasibility.json models/scalp_ml_report.json models/scalp_book_report.json; do [ -e "$f" ] && git add "$f"; done
           git diff --cached --quiet || git commit -m "research: 1-minute scalping engine $(date -u +%FT%TZ)"
           git push || (git pull --rebase && git push)

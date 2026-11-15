@@ -422,6 +422,69 @@ def scalp_ml(budget_min: float = 75) -> dict:
     return out
 
 
+def ensure_book(root: Path, syms: dict, budget_min: float) -> dict:
+    """Futures order-book depth snapshots, one monthly csv.gz per coin in the CI cache (never in git)."""
+    import calendar
+    import time
+    from goldquant.providers.binance_archive import BinanceArchive, months
+    t0, arc = time.monotonic(), BinanceArchive()
+    today = date.today()
+    books = {}
+    for a, sym in syms.items():
+        folder = root / "crypto" / sym / "book"
+        folder.mkdir(parents=True, exist_ok=True)
+        for y, m in months(date(2022, 1, 1), today):
+            f = folder / f"{y:04d}-{m:02d}.csv.gz"
+            current = (y, m) == (today.year, today.month)
+            if (f.exists() and not current) or (folder / f"{y:04d}-{m:02d}.none").exists():
+                continue
+            if time.monotonic() - t0 > budget_min * 60:
+                print("book: time budget reached", flush=True)
+                break
+            last = (today - timedelta(days=1)).day if current else calendar.monthrange(y, m)[1]
+            parts = [arc.book_depth_day(sym, date(y, m, dd)) for dd in range(1, last + 1)]
+            parts = [p_ for p_ in parts if len(p_)]
+            if not parts:
+                if not current:
+                    (folder / f"{y:04d}-{m:02d}.none").write_text("not published")
+                continue
+            pd.concat(parts).to_csv(f, compression="gzip")
+            print(a, "book", f"{y}-{m:02d}", sum(len(p_) for p_ in parts), flush=True)
+        files = sorted(folder.glob("*.csv.gz"))
+        if files:
+            b = pd.concat([pd.read_csv(x, index_col=0) for x in files])
+            b.index = pd.to_datetime(b.index, utc=True)
+            books[a] = b.sort_index()
+    print("book archive errors:", len(arc.errors), arc.errors[-3:], flush=True)
+    return books
+
+
+def scalp_book(budget_min: float = 120) -> dict:
+    """Scalping experiment 3: does order-book depth add information? (goldquant/scalp_ml.py, pre-registered)."""
+    from goldquant import crypto_store as CS, scalp1m as S1, scalp_ml as SM
+    root, complete, syms = ensure_1m(budget_min * 0.15)
+    books = ensure_book(root, syms, budget_min * 0.45)
+    out = {"doc": SM.BOOK_DOC, "updated_at": datetime.now(timezone.utc).isoformat(), "assets": {}}
+    for a, sym in syms.items():
+        if a not in books or len(books[a]) < 10000:
+            print(a, "no usable book data", flush=True)
+            continue
+        d = CS.load_bars(root, sym, "1m")
+        gate, _ = S1.activity_gate(d)
+        fund = CS.load_funding(MD, sym)
+        print(a, "book rows", len(books[a]), books[a].index[0], books[a].index[-1], flush=True)
+        r = SM.run_book(d, a, books[a], fund if len(fund) else None, gate.astype(int))
+        out["assets"][a] = r
+        for x in r["results"]:
+            print(a, "book", x["model"], x["window_min"], x["stop_pct"], "maxp", x.get("max_p"), "trades", x.get("trades"),
+                  "avg", x.get("avg_net_pct"), x.get("avg_net_ci"), "ho", x.get("holdout_avg_pct"), x["reason"][:80],
+                  flush=True)
+        print(a, "book value", r["book_value"], flush=True)
+        (MODELS / "scalp_book_report.json").write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str),
+                                                       encoding="utf-8")
+    return out
+
+
 def scalp1m(budget_min: float = 75) -> dict:
     """1-minute scalping engine (goldquant/scalp1m.py, pre-registered). 1-min data is large, so it lives in a CI
     cache folder (SCALP_DATA), never in git; only the report is committed."""
@@ -798,16 +861,17 @@ if __name__ == "__main__":
     sys.stdout.reconfigure(line_buffering=True)  # show progress live in the Actions log
     ap = argparse.ArgumentParser()
     ap.add_argument("cmd", choices=["collect", "train", "research", "backfill", "report", "crypto", "crypto_research",
-                                    "crypto_weekly", "scalp1m", "pooled", "scalp_feasibility", "scalp_ml"])
+                                    "crypto_weekly", "scalp1m", "pooled", "scalp_feasibility", "scalp_ml", "scalp_book"])
     ap.add_argument("--years", type=float, default=3.0)
     ap.add_argument("--first", type=date.fromisoformat, default=None, help="backfill range start (YYYY-MM-DD)")
     ap.add_argument("--last", type=date.fromisoformat, default=None, help="backfill range end (YYYY-MM-DD)")
     ap.add_argument("--budget-min", type=float, default=None)
     ap.add_argument("--symbols", default="", help="comma-separated Dukascopy symbols (backfill); default: all")
     a = ap.parse_args()
-    if a.cmd in ("scalp1m", "scalp_feasibility", "scalp_ml"):
+    if a.cmd in ("scalp1m", "scalp_feasibility", "scalp_ml", "scalp_book"):
         MODELS.mkdir(parents=True, exist_ok=True)
-        {"scalp1m": scalp1m, "scalp_feasibility": scalp_feasibility, "scalp_ml": scalp_ml}[a.cmd](a.budget_min or 75)
+        {"scalp1m": scalp1m, "scalp_feasibility": scalp_feasibility, "scalp_ml": scalp_ml,
+         "scalp_book": scalp_book}[a.cmd](a.budget_min or 75)
         raise SystemExit(0)
     if a.cmd.startswith("crypto"):  # crypto lives in its own files; no HistoryStore import needed
         MODELS.mkdir(parents=True, exist_ok=True)

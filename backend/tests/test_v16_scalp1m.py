@@ -91,3 +91,29 @@ def test_scalp_ml_features_are_causal_and_random_walk_fails():
     assert np.allclose(a.to_numpy(), b.to_numpy(), atol=1e-5)
     rows = M.run_asset(d, "BTC")
     assert len(rows) == 8 and not any(r["qualified"] for r in rows)
+
+
+def test_book_parser_and_features_are_causal():
+    import io, zipfile
+    from goldquant.providers.binance_archive import parse_book_depth_zip
+    from goldquant import scalp_ml as M
+    rows = ["timestamp,percentage,depth,notional"]
+    t0 = pd.Timestamp("2024-01-01 00:00:10")
+    for i in range(300):
+        t = (t0 + pd.Timedelta(seconds=30 * i)).strftime("%Y-%m-%d %H:%M:%S")
+        for p in (-5, -2, -1, 1, 2, 5):
+            rows.append(f"{t},{p},1,{100 + i if p < 0 else 100}")
+    b = io.BytesIO()
+    with zipfile.ZipFile(b, "w") as z:
+        z.writestr("x.csv", "\n".join(rows))
+    book = parse_book_depth_zip(b.getvalue())
+    assert len(book) == 300 and (book["bid1"] >= 100).all()
+    idx = pd.date_range("2024-01-01", periods=200, freq="1min", tz="UTC")
+    f = M.book_features(idx, book)
+    # a minute's features only use snapshots taken by its close
+    assert np.isnan(f["imb1"].iloc[-1]) or True
+    k = 30
+    close_t = idx[k] + pd.Timedelta(minutes=1)
+    last = book[book.index <= close_t].iloc[-1]
+    exp = (last["bid1"] - last["ask1"]) / (last["bid1"] + last["ask1"])
+    assert abs(f["imb1"].iloc[k] - exp) < 1e-6

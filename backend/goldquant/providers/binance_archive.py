@@ -84,6 +84,33 @@ def months(start: date, end: date) -> list[tuple[int, int]]:
     return out
 
 
+def parse_book_depth_zip(payload: bytes) -> pd.DataFrame:
+    """USD-M futures order-book depth snapshots (data.binance.vision .../bookDepth): cumulative notional within
+    +-p % of the price. Returns one row per snapshot time with bid/ask notional at 1, 2 and 5 %."""
+    import io as _io
+    import zipfile as _zf
+    with _zf.ZipFile(_io.BytesIO(payload)) as z:
+        name = z.namelist()[0]
+        df = pd.read_csv(z.open(name))
+    cols = {c.lower(): c for c in df.columns}
+    t = cols.get("timestamp") or df.columns[0]
+    pc = cols.get("percentage") or df.columns[1]
+    nc = cols.get("notional") or df.columns[3]
+    ts = pd.to_datetime(df[t], utc=True, errors="coerce")
+    if ts.isna().all():  # epoch milliseconds
+        ts = pd.to_datetime(pd.to_numeric(df[t], errors="coerce"), unit="ms", utc=True)
+    d = pd.DataFrame({"t": ts, "p": pd.to_numeric(df[pc], errors="coerce"),
+                      "n": pd.to_numeric(df[nc], errors="coerce")}).dropna()
+    out = {}
+    for lvl in (1, 2, 5):
+        b = d[d["p"] == -lvl].groupby("t")["n"].last()
+        a = d[d["p"] == lvl].groupby("t")["n"].last()
+        out[f"bid{lvl}"], out[f"ask{lvl}"] = b, a
+    o = pd.DataFrame(out).dropna().sort_index()
+    o.index.name = "time"
+    return o
+
+
 class BinanceArchive:
     def __init__(self, http: Optional[HttpClient] = None):
         self.http = http or HttpClient(limiter=RateLimiter(calls=120, period=60.0), retries=3, backoff=2.0, timeout=60.0)
@@ -109,6 +136,10 @@ class BinanceArchive:
     def metrics_day(self, symbol: str, d: date) -> pd.DataFrame:
         p = self._get(f"{BASE}/futures/um/daily/metrics/{symbol}/{symbol}-metrics-{d.isoformat()}.zip")
         return parse_metrics_zip(p) if p else pd.DataFrame()
+
+    def book_depth_day(self, symbol: str, d: date) -> pd.DataFrame:
+        p = self._get(f"{BASE}/futures/um/daily/bookDepth/{symbol}/{symbol}-bookDepth-{d.isoformat()}.zip")
+        return parse_book_depth_zip(p) if p else pd.DataFrame()
 
     def funding_month(self, symbol: str, y: int, m: int) -> pd.DataFrame:
         p = self._get(f"{BASE}/futures/um/monthly/fundingRate/{symbol}/{symbol}-fundingRate-{y:04d}-{m:02d}.zip")
