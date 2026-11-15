@@ -1128,7 +1128,7 @@ private fun SettingsDialog(s: UiState, lang: Lang, onNextDemo: () -> Unit, onSav
                 TextButton(onClick = onNews) { Text(stringResource(R.string.news_title), color = Gold) }
             }
             if (com.goldaiquant.app.BuildConfig.DEBUG) {
-                val act = LocalContext.current as? android.app.Activity
+                val act = LocalContext.current.findActivity()
                 var allow by remember { mutableStateOf(act?.let { com.goldaiquant.app.Protection.screenshotsAllowed(it) } ?: false) }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(stringResource(R.string.set_allow_shots), color = TextMain, fontSize = 14.sp, modifier = Modifier.weight(1f))
@@ -1304,4 +1304,14 @@ private fun ScenarioSection(t: Trust, position: String) {
             Math.round((b.beatRefShare ?: 0.0) * 100).toInt()), TextMain, 11.sp)
         b.avgR?.let { Body(stringResource(R.string.scen_r, ltr(String.format(java.util.Locale.US, "%+.2fR", it))), TextMain, 11.sp) }
     }
+}
+
+/** Dialog windows get a wrapped context: walk the wrappers to reach the Activity. */
+private fun android.content.Context.findActivity(): android.app.Activity? {
+    var c: android.content.Context? = this
+    while (c is android.content.ContextWrapper) {
+        if (c is android.app.Activity) return c
+        c = c.baseContext
+    }
+    return null
 }
