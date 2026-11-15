@@ -1,5 +1,5 @@
 {
- "updated_at": "2026-11-15T11:40:50.387698+00:00",
+ "updated_at": "2026-11-15T11:52:01.242889+00:00",
  "data_complete": true,
  "assets": {
   "BTC": {
@@ -482,20 +482,20 @@
    },
    "by_activity": {
     "HIGH": {
-     "n": 45932,
-     "p_target": 0.072,
-     "p_stop": 0.2112,
-     "p_neither": 0.7167,
-     "avg_net_pct": -0.1829,
+     "n": 46311,
+     "p_target": 0.113,
+     "p_stop": 0.2878,
+     "p_neither": 0.5993,
+     "avg_net_pct": -0.1811,
      "breakeven_p_target": 0.5421,
      "avg_target_pct": 0.65
     },
     "NOT_HIGH": {
-     "n": 571302,
-     "p_target": 0.0828,
-     "p_stop": 0.2082,
-     "p_neither": 0.709,
-     "avg_net_pct": -0.1804,
+     "n": 570923,
+     "p_target": 0.0795,
+     "p_stop": 0.202,
+     "p_neither": 0.7185,
+     "avg_net_pct": -0.1806,
      "breakeven_p_target": 0.5421,
      "avg_target_pct": 0.65
     }
@@ -1047,20 +1047,20 @@
    },
    "by_activity": {
     "HIGH": {
-     "n": 59400,
-     "p_target": 0.1292,
-     "p_stop": 0.303,
-     "p_neither": 0.5679,
-     "avg_net_pct": -0.1746,
+     "n": 59799,
+     "p_target": 0.1482,
+     "p_stop": 0.3435,
+     "p_neither": 0.5083,
+     "avg_net_pct": -0.1777,
      "breakeven_p_target": 0.5421,
      "avg_target_pct": 0.65
     },
     "NOT_HIGH": {
-     "n": 557834,
-     "p_target": 0.1267,
-     "p_stop": 0.2875,
-     "p_neither": 0.5858,
-     "avg_net_pct": -0.1793,
+     "n": 557435,
+     "p_target": 0.1247,
+     "p_stop": 0.2831,
+     "p_neither": 0.5922,
+     "avg_net_pct": -0.179,
      "breakeven_p_target": 0.5421,
      "avg_target_pct": 0.65
     }
@@ -1612,20 +1612,20 @@
    },
    "by_activity": {
     "HIGH": {
-     "n": 780,
-     "p_target": 0.2359,
-     "p_stop": 0.4949,
-     "p_neither": 0.2692,
-     "avg_net_pct": -0.1934,
+     "n": 792,
+     "p_target": 0.2134,
+     "p_stop": 0.4672,
+     "p_neither": 0.3194,
+     "avg_net_pct": -0.2234,
      "breakeven_p_target": 0.5514,
      "avg_target_pct": 0.65
     },
     "NOT_HIGH": {
-     "n": 616453,
-     "p_target": 0.2057,
+     "n": 616441,
+     "p_target": 0.2058,
      "p_stop": 0.4216,
-     "p_neither": 0.3727,
-     "avg_net_pct": -0.1904,
+     "p_neither": 0.3726,
+     "avg_net_pct": -0.1903,
      "breakeven_p_target": 0.5514,
      "avg_target_pct": 0.65
     }
