@@ -1,0 +1,45 @@
+name: scalp-lab-1m
+# Independent 1-minute crypto scalping engine (backend/goldquant/scalp1m.py): weekly re-validation.
+# 1-minute data (~hundreds of MB) is kept in the Actions cache, never committed; only models/scalp1m_report.json is.
+on:
+  schedule:
+    - cron: "41 4 * * 6"   # Saturday, after the crypto job
+  workflow_dispatch:
+concurrency: { group: scalp-lab, cancel-in-progress: false }
+permissions: { contents: write }
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with: { python-version: "3.12", cache: pip, cache-dependency-path: backend/requirements.txt }
+      - run: pip install -r backend/requirements.txt
+      - id: stamp
+        run: echo "w=$(date -u +%Y-%V)" >> $GITHUB_OUTPUT
+      - name: restore 1-minute data
+        uses: actions/cache/restore@v4
+        with:
+          path: cache_1m
+          key: m1-${{ steps.stamp.outputs.w }}
+          restore-keys: m1-
+      - name: run
+        env:
+          GOLDQUANT_REPO_ROOT: ${{ github.workspace }}
+          SCALP_DATA: ${{ github.workspace }}/cache_1m
+        run: timeout 130m python backend/tools/cloud_job.py scalp1m --budget-min 120
+      - name: save 1-minute data
+        if: ${{ always() }}
+        uses: actions/cache/save@v4
+        with:
+          path: cache_1m
+          key: m1-${{ steps.stamp.outputs.w }}-${{ github.run_id }}
+      - name: commit report
+        if: ${{ always() }}
+        run: |
+          git config user.name "gold-ai-quant-bot"
+          git config user.email "actions@users.noreply.github.com"
+          [ -e models/scalp1m_report.json ] && git add models/scalp1m_report.json
+          git diff --cached --quiet || git commit -m "research: 1-minute scalping engine $(date -u +%FT%TZ)"
+          git push || (git pull --rebase && git push)

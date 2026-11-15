@@ -340,6 +340,54 @@ def crypto_research() -> dict:
     return out
 
 
+def scalp1m(budget_min: float = 75) -> dict:
+    """1-minute scalping engine (goldquant/scalp1m.py, pre-registered). 1-min data is large, so it lives in a CI
+    cache folder (SCALP_DATA), never in git; only the report is committed."""
+    import time
+    from goldquant import crypto_store as CS, scalp1m as S1
+    from goldquant.providers.binance_archive import BinanceArchive, months
+    root = Path(os.environ.get("SCALP_DATA", ROOT / "cache_1m"))
+    t0, arc = time.monotonic(), BinanceArchive()
+    today = date.today()
+    last_full = today.replace(day=1) - timedelta(days=1)
+    syms = {"BTC": "BTCUSDT", "ETH": "ETHUSDT", "SOL": "SOLUSDT"}
+    complete = True
+    for a, sym in syms.items():
+        for y, m in months(date(2021, 1, 1), last_full):
+            if time.monotonic() - t0 > budget_min * 60 * 0.45:
+                complete = False
+                break
+            if CS.have_month(root, sym, "1m", y, m, 38000):
+                continue
+            df = arc.klines_month(sym, "1m", y, m)
+            print(a, "1m", f"{y}-{m:02d}", len(df), CS.save_bars(root, sym, "1m", df), flush=True)
+        d = today.replace(day=1)
+        parts = []
+        while d < today and complete:
+            parts.append(arc.klines_day(sym, "1m", d))
+            d += timedelta(days=1)
+        parts = [p for p in parts if len(p)]
+        if parts:
+            CS.save_bars(root, sym, "1m", pd.concat(parts))
+    out = {"schema": 1, "version": S1.VERSION, "updated_at": datetime.now(timezone.utc).isoformat(),
+           "data_complete": complete, "assets": {}, "fee_sensitivity": {}}
+    for a, sym in syms.items():
+        d = CS.load_bars(root, sym, "1m")
+        print(a, "1m bars", len(d), d.index[0] if len(d) else None, flush=True)
+        if len(d) < 100_000:
+            continue
+        out["assets"][a] = S1.run_asset(d, a)
+        for r in out["assets"][a]:
+            print(a, r["setup"], r["stop"], "orders", r["orders"], "filled", r["filled"], "avg", r["avg_net_pct"],
+                  "ho", r["holdout_avg_pct"], "base", r["baseline_avg_pct"], "dd", r["max_drawdown_pct"],
+                  r["reason"], flush=True)
+        if time.monotonic() - t0 < budget_min * 60 * 0.8:
+            out["fee_sensitivity"][a] = S1.fee_sensitivity(d, a)
+    (MODELS / "scalp1m_report.json").write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str),
+                                                encoding="utf-8")
+    return out
+
+
 def activity_models() -> dict:
     """Weekly: re-validate the scalper activity forecast per coin (pre-registered rules in goldquant/activity.py) and
     export the model ONLY for coins that pass this week. A coin that stops passing disappears from the app."""
@@ -611,13 +659,17 @@ if __name__ == "__main__":
     sys.stdout.reconfigure(line_buffering=True)  # show progress live in the Actions log
     ap = argparse.ArgumentParser()
     ap.add_argument("cmd", choices=["collect", "train", "research", "backfill", "report", "crypto", "crypto_research",
-                                    "crypto_weekly"])
+                                    "crypto_weekly", "scalp1m"])
     ap.add_argument("--years", type=float, default=3.0)
     ap.add_argument("--first", type=date.fromisoformat, default=None, help="backfill range start (YYYY-MM-DD)")
     ap.add_argument("--last", type=date.fromisoformat, default=None, help="backfill range end (YYYY-MM-DD)")
     ap.add_argument("--budget-min", type=float, default=None)
     ap.add_argument("--symbols", default="", help="comma-separated Dukascopy symbols (backfill); default: all")
     a = ap.parse_args()
+    if a.cmd == "scalp1m":
+        MODELS.mkdir(parents=True, exist_ok=True)
+        scalp1m(a.budget_min or 75)
+        raise SystemExit(0)
     if a.cmd.startswith("crypto"):  # crypto lives in its own files; no HistoryStore import needed
         MODELS.mkdir(parents=True, exist_ok=True)
         if a.cmd in ("crypto", "crypto_weekly"):
