@@ -394,6 +394,63 @@ def scalp1m(budget_min: float = 75) -> dict:
     return out
 
 
+def pooled_research(hs: HistoryStore) -> dict:
+    """Multi-asset tournament (goldquant/pooled.py, pre-registered). Gathers the panel (own stores + FRED + COT)."""
+    import io
+    from goldquant import crypto_store as CS, pooled as PO
+    from goldquant.providers.http import HttpClient, RateLimiter
+    http = HttpClient(limiter=RateLimiter(calls=20, period=60.0), retries=2, backoff=2.0, timeout=60.0)
+    closes, cots = {}, {}
+    d = hs.load_bars("TwelveData", "XAU/USD", "D1", limit=10_000)
+    if len(d):
+        closes["XAU"] = d["close"]
+    for sym, a in (("BTCUSDT", "BTC"), ("ETHUSDT", "ETH"), ("SOLUSDT", "SOL")):
+        c = CS.load_bars(MD, sym, "1d")
+        if len(c):
+            closes[a] = c["close"]
+    for sym, a in PO.DUKA_ASSETS.items():
+        h = hs.load_bars("Dukascopy", sym, "H1", limit=10_000_000)
+        if len(h):
+            closes[a] = h["close"].resample("1D").last().dropna()
+    cache = MD / "pooled"
+    cache.mkdir(parents=True, exist_ok=True)
+    for sid, (a, inv) in PO.FRED_ASSETS.items():
+        f = cache / f"fred_{sid}.csv"
+        try:
+            r = http.get("https://fred.stlouisfed.org/graph/fredgraph.csv", {"id": sid, "cosd": "2006-01-01"})
+            f.write_text(r.text, encoding="utf-8")
+        except Exception as exc:  # noqa: BLE001
+            print("FRED", sid, "failed:", exc, "(using cache)" if f.exists() else "", flush=True)
+        if f.exists():
+            t = pd.read_csv(f)
+            t[sid] = pd.to_numeric(t[sid], errors="coerce")
+            t = t.dropna()
+            ser = pd.Series(t[sid].to_numpy(float), index=pd.to_datetime(t[t.columns[0]], utc=True))
+            closes[a] = 1.0 / ser if inv else ser
+    for a, (ds, code) in PO.COT_MAP.items():
+        f = cache / f"cot_{a}.json"
+        try:
+            r = http.get(f"https://publicreporting.cftc.gov/resource/{ds}.json",
+                         {"cftc_contract_market_code": code, "$order": "report_date_as_yyyy_mm_dd", "$limit": 5000})
+            f.write_text(r.text, encoding="utf-8")
+        except Exception as exc:  # noqa: BLE001
+            print("COT", a, "failed:", exc, "(using cache)" if f.exists() else "", flush=True)
+        if f.exists():
+            cots[a] = PO.parse_cot_rows(json.loads(f.read_text(encoding="utf-8")))
+            print("COT", a, len(cots[a]), cots[a]["report"].iloc[0].date() if len(cots[a]) else None, flush=True)
+    for a, s_ in closes.items():
+        print("panel", a, len(s_), s_.index[0].date(), s_.index[-1].date(), flush=True)
+    out = PO.tournament(closes, cots)
+    out["updated_at"] = datetime.now(timezone.utc).isoformat()
+    for r in out["results"]:
+        print("pooled", r["horizon"], r["asset"], r["model"], r.get("trades"), r.get("avg_net_pct"), r.get("avg_net_ci"),
+              "long", r.get("always_long_avg_pct"), "single", r.get("single_asset_avg_pct"), "ho",
+              r.get("holdout_avg_pct"), r["reason"], flush=True)
+    (MODELS / "pooled_report.json").write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str),
+                                               encoding="utf-8")
+    return out
+
+
 def activity_models() -> dict:
     """Weekly: re-validate the scalper activity forecast per coin (pre-registered rules in goldquant/activity.py) and
     export the model ONLY for coins that pass this week. A coin that stops passing disappears from the app."""
@@ -610,6 +667,10 @@ def research(hs: HistoryStore) -> None:
     (MODELS / "outlook_report.json").write_text(json.dumps(outlook_report(daily, "TwelveData D1"), ensure_ascii=False,
                                                            indent=1, default=str), encoding="utf-8")
     print("research written")
+    try:  # weekly re-validation of the multi-asset tournament
+        pooled_research(hs)
+    except Exception as exc:  # noqa: BLE001
+        print("pooled research failed:", exc, flush=True)
 
 
 def report(hs: HistoryStore) -> None:
@@ -665,7 +726,7 @@ if __name__ == "__main__":
     sys.stdout.reconfigure(line_buffering=True)  # show progress live in the Actions log
     ap = argparse.ArgumentParser()
     ap.add_argument("cmd", choices=["collect", "train", "research", "backfill", "report", "crypto", "crypto_research",
-                                    "crypto_weekly", "scalp1m"])
+                                    "crypto_weekly", "scalp1m", "pooled"])
     ap.add_argument("--years", type=float, default=3.0)
     ap.add_argument("--first", type=date.fromisoformat, default=None, help="backfill range start (YYYY-MM-DD)")
     ap.add_argument("--last", type=date.fromisoformat, default=None, help="backfill range end (YYYY-MM-DD)")
@@ -694,5 +755,8 @@ if __name__ == "__main__":
         train(hs)
     elif a.cmd == "report":
         report(hs)
+    elif a.cmd == "pooled":
+        MODELS.mkdir(parents=True, exist_ok=True)
+        pooled_research(hs)
     else:
         research(hs)
