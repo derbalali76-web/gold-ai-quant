@@ -122,7 +122,8 @@ def _block_ci(day, a, b, level=CI_LEVEL, n=1000, seed=5):
     return [round(float(np.percentile(out, q)), 4), round(float(np.percentile(out, 100 - q)), 4)]
 
 
-def evaluate(df: pd.DataFrame, first_year: Optional[int] = None, calibrate: bool = True) -> dict:
+def evaluate(df: pd.DataFrame, first_year: Optional[int] = None, calibrate: bool = True,
+             return_preds: bool = False) -> dict:
     df = df.dropna(subset=["open", "high", "low", "close"])
     X = features(df)
     y = labels(df)
@@ -143,7 +144,7 @@ def evaluate(df: pd.DataFrame, first_year: Optional[int] = None, calibrate: bool
     bounds = [pd.Timestamp(f"{yr}-01-01", tz="UTC") for yr in years if yr >= first_year] + [cut]
     bounds = sorted(set(b for b in bounds if b <= cut)) + [idx[-1] + pd.Timedelta(minutes=1)]
     gap = pd.Timedelta(minutes=15 * HORIZON)
-    P, B, Y, D, H = [], [], [], [], []
+    P, B, Y, D, H, T = [], [], [], [], [], []
     for a, b in zip(bounds[:-1], bounds[1:]):
         tr = idx < a - gap
         te = (idx >= a) & (idx < b)
@@ -159,10 +160,13 @@ def evaluate(df: pd.DataFrame, first_year: Optional[int] = None, calibrate: bool
                              "hit_rate": round(float(yt.mean()), 4), "skill": round(1 - bs / bb, 4),
                              "holdout": bool(a >= cut)})
         P.append(p); B.append(base); Y.append(yt); D.append(idx[te].floor("D").asi8); H.append(np.full(len(p), a >= cut))
+        T.append(idx[te].asi8)
     if not P:
         out["reason"] = "no folds"
         return out
     p, base, yt, day, ho = (np.concatenate(v) for v in (P, B, Y, D, H))
+    if return_preds:  # out-of-sample predictions, indexed by the 15-min bar they were made at (its open time)
+        out["preds"] = pd.DataFrame({"p": p, "usual": base}, index=pd.to_datetime(np.concatenate(T), utc=True))
     ea, eb = (p - yt) ** 2, (base - yt) ** 2
     out["skill"] = round(float(1 - ea.sum() / eb.sum()), 4)
     out["skill_ci99"] = _block_ci(day, ea, eb)

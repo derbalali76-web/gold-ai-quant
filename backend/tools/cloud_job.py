@@ -381,6 +381,12 @@ def scalp1m(budget_min: float = 75) -> dict:
             print(a, r["setup"], r["stop"], "orders", r["orders"], "filled", r["filled"], "avg", r["avg_net_pct"],
                   "ho", r["holdout_avg_pct"], "base", r["baseline_avg_pct"], "dd", r["max_drawdown_pct"],
                   r["reason"], flush=True)
+        r4 = S1.run_round4(d, a)
+        out.setdefault("round4", {"doc": S1.ROUND4_DOC, "assets": {}})["assets"][a] = r4
+        print(a, "round4 activity", r4["activity_forecast"], "gate share", r4["gate_share"], flush=True)
+        for r in r4["results"]:
+            print(a, "r4", r["setup"], r["stop"], "filled", r["filled"], "avg", r["avg_net_pct"], "ho", r["holdout_avg_pct"],
+                  "base", r["baseline_avg_pct"], r["reason"], flush=True)
         if time.monotonic() - t0 < budget_min * 60 * 0.8:
             out["fee_sensitivity"][a] = S1.fee_sensitivity(d, a)
     (MODELS / "scalp1m_report.json").write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str),

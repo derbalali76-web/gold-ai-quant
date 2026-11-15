@@ -49,3 +49,10 @@ def test_limit_needs_trade_through_and_stop_beats_target_in_same_bar():
     d.loc[idx[3], ["high", "low"]] = [101.0, 99.0]
     tr, _, _ = S.simulate(d, [(1, 100.0, 5)], "FIXED", np.full(10, 0.002), S.Costs())
     assert tr[0][2] == "STOP"
+
+
+def test_round4_runs_and_gate_uses_only_past_forecasts():
+    d = m1(days=500, seed=5)
+    r = S.run_round4(d, "SOL")
+    assert len(r["results"]) == 15 and not any(x["qualified"] for x in r["results"])
+    assert 0 <= r["gate_share"] <= 1

@@ -248,7 +248,8 @@ def _ci(x, level=CI_LEVEL, n=2000, seed=7):
 
 
 def backtest(m1: pd.DataFrame, asset: str, setup: str, stop_kind: str, costs: Costs, ctx: Optional[dict] = None,
-             orders=None) -> Report:
+             orders=None, ci_level: Optional[float] = None) -> Report:
+    lvl = ci_level or CI_LEVEL
     m1 = m1.dropna(subset=["open", "high", "low", "close"])
     rep = Report(asset=asset, setup=setup, stop=stop_kind, costs=asdict(costs))
     if len(m1) < 60 * 24 * 60:
@@ -269,7 +270,7 @@ def backtest(m1: pd.DataFrame, asset: str, setup: str, stop_kind: str, costs: Co
     rep.win_rate = round(float((r > 0).mean()), 4)
     rep.avg_net_pct = round(float(r.mean()) * 100, 4)
     rep.gross_avg_pct = round(float(np.mean([t[3] for t in trades])) * 100, 4)
-    rep.avg_net_ci = _ci(r)
+    rep.avg_net_ci = _ci(r, level=lvl)
     eq = np.cumsum(r)
     rep.total_net_pct = round(float(eq[-1]) * 100, 2)
     rep.max_drawdown_pct = round(float(np.max(np.maximum.accumulate(np.r_[0, eq]) - np.r_[0, eq])) * 100, 2)
@@ -293,7 +294,7 @@ def backtest(m1: pd.DataFrame, asset: str, setup: str, stop_kind: str, costs: Co
             rep.baseline_holdout_avg_pct = round(float(bho.mean()) * 100, 4) if len(bho) else None
             rng = np.random.default_rng(11)
             d = [float(np.mean(rng.choice(r, len(r))) - np.mean(rng.choice(b, len(b)))) for _ in range(2000)]
-            a = (100 - CI_LEVEL) / 2
+            a = (100 - lvl) / 2
             rep.edge_ci = [round(float(np.percentile(d, a)) * 100, 4), round(float(np.percentile(d, 100 - a)) * 100, 4)]
     yrs = [v for v in rep.years.values() if v["trades"] >= 20]
     ck = {
@@ -318,6 +319,73 @@ def run_asset(m1: pd.DataFrame, asset: str, costs: Optional[Costs] = None) -> li
         for k in STOPS:
             out.append(asdict(backtest(m1, asset, s, k, costs, ctx, orders)))
     return out
+
+
+# ---------------------------------------------------------------- ROUND 4 (pre-registered 2026-11-15, before results)
+ROUND4_VERSION = "scalp1m-r4"
+ROUND4_CI = 99.9  # 45 combinations (5 setups x 3 stops x 3 coins)
+ROUND4_SETUPS = ("BREAKOUT_RETEST+ACT", "LEVEL_BOUNCE+ACT", "MOMENTUM_CONT+ACT", "DIP_FADE", "DIP_FADE+ACT")
+ROUND4_DOC = """Round 4 (pre-registered before any result):
+  +ACT      the round-1 setup, kept only when the market-activity forecast is HIGH: probability >= usual + 10 points.
+            The forecast is the OUT-OF-SAMPLE walk-forward prediction (expanding window by calendar year, 2022 ->),
+            made hourly from closed 15-min bars, so 2021 is not traded in round 4.
+  DIP_FADE  1-hour trend up (last closed 1-h close > EMA50) and the last three 5-min bars fell 0.50 % or more in total
+            -> buy limit 0.20 % below the last close, valid 15 min (provide liquidity into the drop).
+  Exits, fills, costs, baseline and qualification rules: identical to round 1, at 99.9 % confidence."""
+
+
+def activity_gate(m1: pd.DataFrame) -> tuple[np.ndarray, dict]:
+    from . import activity as ACT
+    m15 = resample(m1, 15)
+    rep = ACT.evaluate(m15, return_preds=True)
+    pr = rep.pop("preds", None)
+    gate = np.zeros(len(m1), bool)
+    if pr is not None and len(pr):
+        hi = ((pr["p"] >= pr["usual"] + 0.10).to_numpy(float))
+        gate = _closed_on_1m(m1, pr, 15, hi) == 1
+    return gate, {k: rep.get(k) for k in ("skill", "skill_ci99", "holdout_skill", "qualified", "reason")}
+
+
+def plan_r4(m1: pd.DataFrame, setup: str, ctx: dict, gate: np.ndarray) -> list[tuple[int, float, int]]:
+    base, act = setup.split("+")[0], setup.endswith("+ACT")
+    if base == "DIP_FADE":
+        m5, h1 = ctx["m5"], resample(m1, 60)
+        up = (h1["close"] > h1["close"].ewm(span=50, adjust=False).mean()).to_numpy(float)
+        t1h = _closed_on_1m(m1, h1, 60, up) == 1
+        c = m5["close"]
+        sig = ((c / c.shift(3) - 1) <= -0.005).fillna(False).to_numpy(bool)
+        price = (c * (1 - 0.002)).to_numpy(float)
+        avail = (m5.index + pd.Timedelta(minutes=5)).asi8
+        pos = np.searchsorted(m1.index.asi8, avail[sig], side="left")
+        pr = price[sig]
+        ok = pos < len(m1)
+        pos, pr = pos[ok], pr[ok]
+        keep = t1h[pos]
+        orders = [(int(p), float(x), 15) for p, x in zip(pos[keep], pr[keep])]
+    else:
+        orders = plan(m1, base, ctx)
+    if act:
+        orders = [o for o in orders if gate[o[0]]]
+    return orders
+
+
+def run_round4(m1: pd.DataFrame, asset: str, costs: Optional[Costs] = None) -> dict:
+    costs = costs or Costs(spread=ASSET_SPREAD.get(asset, 0.0002))
+    gate, act_rep = activity_gate(m1)
+    first = np.flatnonzero(gate)
+    start = m1.index[0] if not len(first) else pd.Timestamp(f"{m1.index[first[0]].year}-01-01", tz="UTC")
+    start = max(start, pd.Timestamp("2022-01-01", tz="UTC"))
+    keep = m1.index >= start
+    m1, gate = m1[keep], gate[keep]
+    ctx = context(m1)
+    out = []
+    for s in ROUND4_SETUPS:
+        orders = plan_r4(m1, s, ctx, gate)
+        for k in STOPS:
+            r = backtest(m1, asset, s, k, costs, ctx, orders, ci_level=ROUND4_CI)
+            r.version = ROUND4_VERSION
+            out.append(asdict(r))
+    return {"activity_forecast": act_rep, "gate_share": round(float(gate.mean()), 4), "results": out}
 
 
 def fee_sensitivity(m1: pd.DataFrame, asset: str, fees=(0.0010, 0.0005)) -> list[dict]:
