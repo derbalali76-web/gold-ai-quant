@@ -502,6 +502,14 @@ def pooled_research(hs: HistoryStore) -> dict:
         print("panel", a, len(s_), s_.index[0].date(), s_.index[-1].date(), flush=True)
     out = PO.tournament(closes, cots)
     out["updated_at"] = datetime.now(timezone.utc).isoformat()
+    try:
+        out["round2"] = PO.tournament_round2(closes, cots)
+        for r in out["round2"]["results"]:
+            print("pooled-2", r["horizon"], r["asset"], r["model"], r.get("avg_net_pct"), r.get("avg_net_ci"), "ALall",
+                  r.get("always_long_all_days_pct"), "edgeAll", r.get("edge_vs_long_all_days_ci"), r["reason"], flush=True)
+        print("COT value", out["round2"]["cot_value"], flush=True)
+    except ImportError as exc:
+        print("round 2 needs lightgbm:", exc, flush=True)
     for r in out["results"]:
         print("pooled", r["horizon"], r["asset"], r["model"], r.get("trades"), r.get("avg_net_pct"), r.get("avg_net_ci"),
               "long", r.get("always_long_avg_pct"), "single", r.get("single_asset_avg_pct"), "ho",

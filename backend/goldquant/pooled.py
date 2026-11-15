@@ -212,7 +212,8 @@ def walk_forward_predictions(panel: pd.DataFrame, days: int, kinds=MODELS + ("SI
 
 
 # ---------------------------------------------------------------- judging
-def _block_boot(x: np.ndarray, block: int, level=CI_LEVEL, n=2000, seed=7, y: Optional[np.ndarray] = None):
+def _block_boot(x: np.ndarray, block: int, level=None, n=2000, seed=7, y: Optional[np.ndarray] = None):
+    level = level or CI_LEVEL
     if len(x) < 2 * block:
         return None
     rng = np.random.default_rng(seed)
@@ -325,4 +326,103 @@ def tournament(closes: dict, cots: dict) -> dict:
                 r = judge(preds, a, m, days)
                 r["horizon"] = hz
                 out["results"].append(r)
+    return out
+
+
+# ---------------------------------------------------------------- ROUND 2 (pre-registered 2026-11-15, before results)
+ROUND2_DOC = """Round 2: does each ingredient add value on its own? Same panel, horizons, rule, costs and checks as round 1.
+  models     LOGIT (pooled logistic) and LGBM (LightGBM: 300 trees, 15 leaves, lr 0.03, min 300 per leaf, subsample 0.8,
+             feature fraction 0.8), each WITHOUT and WITH the COT features -> 4 candidates
+  reference  SINGLE_LOGIT (one asset, price features only) = the closest equivalent of the current single-asset model
+  COT value  measured separately: out-of-sample Brier score of the same model with vs without COT, on the target assets
+             and on every asset that has COT (day-block bootstrap CI); COT 'adds value' only if the CI is above zero
+  judging    4 candidates x 2 horizons x 4 target assets = 32 tests -> 99.85 % confidence"""
+ROUND2_CI = 99.85
+ROUND2_KINDS = ("LOGIT", "LOGIT+COT", "LGBM", "LGBM+COT")
+
+
+def _model2(kind: str):
+    if kind.startswith("LGBM"):
+        import lightgbm as lgb
+        return lgb.LGBMClassifier(n_estimators=300, num_leaves=15, learning_rate=0.03, min_child_samples=300,
+                                  subsample=0.8, subsample_freq=1, colsample_bytree=0.8, verbose=-1, random_state=7)
+    return _model("POOLED_LOGIT")
+
+
+def walk_forward_round2(panel: pd.DataFrame) -> pd.DataFrame:
+    panel = panel.copy()
+    panel["y"] = (panel["fwd"] > 0).astype(float)
+    lab = panel.dropna(subset=["fwd"])
+    out = []
+    for yr in [y for y in sorted(set(panel.index.year)) if y >= FIRST_TEST_YEAR]:
+        start, stop = pd.Timestamp(f"{yr}-01-01", tz="UTC"), pd.Timestamp(f"{yr + 1}-01-01", tz="UTC")
+        tr = lab[lab["end"] < start]
+        te = panel[(panel.index >= start) & (panel.index < stop)]
+        if len(tr) < 2000 or not len(te):
+            continue
+        row = te[["asset", "fwd", "has_cot"]].copy()
+        for k in ROUND2_KINDS:
+            cols = BASE_FEATURES + (COT_FEATURES if k.endswith("+COT") else [])
+            m = _model2(k).fit(tr[cols].fillna(0.0).to_numpy(), tr["y"].to_numpy())
+            row[k] = m.predict_proba(te[cols].fillna(0.0).to_numpy())[:, 1]
+        p_single = np.full(len(te), np.nan)
+        for a in te["asset"].unique():
+            ta = tr[tr["asset"] == a]
+            msk = (te["asset"] == a).to_numpy()
+            if len(ta) >= 500 and ta["y"].nunique() == 2:
+                m = _model("POOLED_LOGIT").fit(ta[BASE_FEATURES].fillna(0.0).to_numpy(), ta["y"])
+                p_single[msk] = m.predict_proba(te.loc[msk, BASE_FEATURES].fillna(0.0).to_numpy())[:, 1]
+        row["SINGLE_LOGIT"] = p_single
+        base = tr.groupby("asset")["y"].mean()
+        row["base_rate"] = te["asset"].map(base).fillna(tr["y"].mean()).to_numpy()
+        out.append(row)
+    return pd.concat(out) if out else pd.DataFrame()
+
+
+def cot_value(preds: pd.DataFrame, model: str, assets) -> dict:
+    d = preds[preds["asset"].isin(assets)].dropna(subset=["fwd"])
+    d = d[d["has_cot"] == 1]
+    if len(d) < 500:
+        return {"n": int(len(d)), "reason": "insufficient"}
+    y = (d["fwd"] > 0).astype(float).to_numpy()
+    e0 = (d[model].to_numpy() - y) ** 2
+    e1 = (d[model + "+COT"].to_numpy() - y) ** 2
+    diff = e0 - e1  # > 0 means COT lowered the error
+    days = d.index.floor("D").asi8
+    u, inv = np.unique(days, return_inverse=True)
+    s = np.bincount(inv, diff, len(u))
+    cnt = np.bincount(inv, None, len(u))
+    rng = np.random.default_rng(3)
+    boots = []
+    for _ in range(2000):
+        k = rng.integers(0, len(u), len(u))
+        boots.append(s[k].sum() / cnt[k].sum())
+    a = (100 - 95.0) / 2
+    ci = [float(np.percentile(boots, a)), float(np.percentile(boots, 100 - a))]
+    return {"n": int(len(d)), "brier_without": round(float(e0.mean()), 5), "brier_with": round(float(e1.mean()), 5),
+            "improvement_ci95": [round(ci[0], 6), round(ci[1], 6)], "adds_value": bool(ci[0] > 0)}
+
+
+def tournament_round2(closes: dict, cots: dict) -> dict:
+    global CI_LEVEL
+    out = {"version": "pooled-2", "doc": ROUND2_DOC, "results": [], "cot_value": {}}
+    saved = CI_LEVEL
+    CI_LEVEL = ROUND2_CI
+    try:
+        for hz, days in HORIZONS.items():
+            panel = build_panel(closes, cots, days)
+            preds = walk_forward_round2(panel)
+            if preds.empty:
+                continue
+            for a in TARGETS:
+                for k in ROUND2_KINDS:
+                    r = judge(preds, a, k, days)
+                    r["horizon"], r["version"] = hz, "pooled-2"
+                    out["results"].append(r)
+            cot_assets = sorted(preds.loc[preds["has_cot"] == 1, "asset"].unique())
+            for m in ("LOGIT", "LGBM"):
+                out["cot_value"][f"{hz}/{m}/targets"] = cot_value(preds, m, TARGETS)
+                out["cot_value"][f"{hz}/{m}/all_cot_assets"] = cot_value(preds, m, cot_assets)
+    finally:
+        CI_LEVEL = saved
     return out
