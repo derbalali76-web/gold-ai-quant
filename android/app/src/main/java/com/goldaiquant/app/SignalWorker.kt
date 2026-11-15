@@ -34,6 +34,7 @@ class SignalWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx
             if (asset in follow) check(prefs, asset, f, pushOn)
             if (!pushOn) checkPriceAlerts(prefs, asset, f)
         }
+        try { PriceWidget.refresh(applicationContext) } catch (e: Exception) { }
         return Result.success()
     }
 

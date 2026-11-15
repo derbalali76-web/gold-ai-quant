@@ -1,5 +1,11 @@
 package com.goldaiquant.app.ui
 
+import androidx.lifecycle.repeatOnLifecycle
+import com.goldaiquant.app.CalendarInfo
+import com.goldaiquant.app.Candles
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.TextStyle
 import com.goldaiquant.app.PriceAlerts
 import com.goldaiquant.app.PriceAlert
 import androidx.compose.runtime.CompositionLocalProvider
@@ -217,7 +223,8 @@ fun GoldScreen(vm: MainViewModel, lang: Lang, onLanguage: (Lang) -> Unit) {
         onNeedNotify = {
             if (android.os.Build.VERSION.SDK_INT >= 33) askNotify.launch(android.Manifest.permission.POST_NOTIFICATIONS)
             else vm.setNotify(true)
-        }) }
+        }, onBars = vm::loadBars, onCalendar = vm::loadCalendar, onOnboarded = vm::finishOnboarding,
+        onPollLive = { vm.pollLive() }) }
 }
 
 private sealed interface Sheet {
@@ -231,6 +238,8 @@ private sealed interface Sheet {
     data object HowSheet : Sheet
     data object NewsSheet : Sheet
     data object ScalpSheet : Sheet
+    data object ChartSheet : Sheet
+    data object CalendarSheet : Sheet
 }
 
 /** Stateless screen (also used by the UI tests on several screen sizes). */
@@ -239,7 +248,8 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
                 onLive: (Boolean) -> Unit, onHorizon: (String) -> Unit, onLanguage: (Lang) -> Unit,
                 onNotify: (Boolean) -> Unit = {}, onAssetPick: (String) -> Unit = {}, onPosition: (String) -> Unit = {},
                 onAlertAsset: (String) -> Unit = {}, onPriceAlert: (PriceAlert) -> Unit = {},
-                onNeedNotify: () -> Unit = {}) {
+                onNeedNotify: () -> Unit = {}, onBars: (String, String) -> Unit = { _, _ -> },
+                onCalendar: () -> Unit = {}, onOnboarded: () -> Unit = {}, onPollLive: suspend () -> Unit = {}) {
     var sheet by remember { mutableStateOf<Sheet?>(null) }
     val onBell: (PriceAlert) -> Unit = { a ->
         val adding = !PriceAlerts.isOn(s.priceAlerts, a.asset, a.price)
@@ -257,16 +267,19 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
             Modifier.fillMaxSize().padding(horizontal = 12.dp, vertical = 6.dp),
             verticalArrangement = Arrangement.spacedBy(gap),
         ) {
-            TopBar(s, compact, onAsset = { sheet = Sheet.Assets }) { sheet = Sheet.Settings }
+            TopBar(s, compact, onAsset = { sheet = Sheet.Assets }, onCalendar = { onCalendar(); sheet = Sheet.CalendarSheet }) { sheet = Sheet.Settings }
             val card = d?.let { HorizonModel.card(it, selected) }
             Row(Modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(gap)) {
-                PriceCard(d, s, Modifier.weight(1.1f).fillMaxHeight())
+                PriceCard(d, s, Modifier.weight(1.1f).fillMaxHeight()) { onBars(s.asset, "H1"); sheet = Sheet.ChartSheet }
                 Box(Modifier.weight(1f).fillMaxHeight()) { TrendCard(card?.trend) { sheet = Sheet.TrendSheet } }
             }
             if (d?.isDemo == true) Text(stringResource(R.string.demo_banner),
                 color = Color.Black, fontSize = 12.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth().background(WaitGold, RoundedCornerShape(8.dp)).padding(vertical = 4.dp))
-            AskButton(s.loading, compact, onAsk)
+            val haptic = androidx.compose.ui.platform.LocalHapticFeedback.current
+            AskButton(s.loading, compact) {
+                haptic.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.LongPress); onAsk()
+            }
             s.error?.let { ErrorStrip(it, onAsk) }
             if (d != null && card != null) {
                 HorizonTabs(d, selected, s.loading, onHorizon)
@@ -308,7 +321,18 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
         Sheet.HowSheet -> HowDialog { sheet = null }
         Sheet.ScalpSheet -> if (d != null) ScalpDialog(d) { sheet = null }
         Sheet.NewsSheet -> NewsDialog { sheet = null }
+        Sheet.ChartSheet -> ChartDialog(s, card, d, onTf = { tf -> onBars(s.asset, tf) }) { sheet = null }
+        Sheet.CalendarSheet -> CalendarDialog(s.calendar) { sheet = null }
         null -> Unit
+    }
+    if (!s.onboarded) OnboardingDialog(onDone = onOnboarded)
+    // live crypto price while this screen is visible (display only; the analysis uses closed bars)
+    val owner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    LaunchedEffect(s.asset, owner) {
+        if (s.asset == "XAU") return@LaunchedEffect
+        owner.lifecycle.repeatOnLifecycle(androidx.lifecycle.Lifecycle.State.STARTED) {
+            while (true) { onPollLive(); kotlinx.coroutines.delay(3000) }
+        }
     }
 }
 
@@ -331,7 +355,7 @@ private fun Bar(fraction: Float, color: Color, modifier: Modifier = Modifier, he
 }
 
 @Composable
-private fun TopBar(s: UiState, compact: Boolean, onAsset: () -> Unit, onSettings: () -> Unit) {
+private fun TopBar(s: UiState, compact: Boolean, onAsset: () -> Unit, onCalendar: () -> Unit = {}, onSettings: () -> Unit) {
     val h = health(s)
     val cdA = stringResource(R.string.cd_asset) + " · " + stringResource(h.label)
     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
@@ -350,6 +374,11 @@ private fun TopBar(s: UiState, compact: Boolean, onAsset: () -> Unit, onSettings
             if (!compact) Text(stringResource(if (s.asset == "XAU") R.string.tagline else R.string.tagline_crypto),
                 color = TextDim, fontSize = 10.sp)
         }
+        val cdc = stringResource(R.string.cal_title)
+        Box(Modifier.size(40.dp).border(1.dp, Gold, CircleShape)
+            .clickable(role = Role.Button, onClick = onCalendar).semantics { contentDescription = cdc },
+            contentAlignment = Alignment.Center) { Text("📅", fontSize = 16.sp) }
+        Spacer(Modifier.width(6.dp))
         val cd = stringResource(R.string.cd_settings)
         Box(Modifier.size(40.dp).border(1.dp, Gold, CircleShape)
             .clickable(role = Role.Button, onClick = onSettings).semantics { contentDescription = cd },
@@ -387,11 +416,32 @@ private fun AssetDialog(s: UiState, onPick: (String) -> Unit, onClose: () -> Uni
 }
 
 @Composable
-private fun PriceCard(d: Decision?, s: UiState, modifier: Modifier) {
-    Panel(modifier) {
+private fun PriceCard(d: Decision?, s: UiState, modifier: Modifier, onChart: () -> Unit = {}) {
+    val tick = s.live[s.asset]?.takeIf { System.currentTimeMillis() - it.at < 15_000 && d?.marketClosed != true }
+    val price = tick?.price ?: d?.quote
+    // brief green/red flash when the price moves
+    var prev by remember(s.asset) { mutableStateOf(price) }
+    val flash = remember { androidx.compose.animation.Animatable(TextMain) }
+    LaunchedEffect(price) {
+        val p0 = prev
+        if (price != null && p0 != null && price != p0) {
+            flash.snapTo(if (price > p0) BuyGreen else SellRed)
+            flash.animateTo(TextMain, tween(900))
+        }
+        prev = price
+    }
+    Panel(modifier, onClick = onChart) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
-            Text(ltr(assetPair(s.asset)), color = TextDim, fontSize = 12.sp)
-            Text(d?.quote?.p2() ?: "—", color = TextMain, fontSize = 28.sp, fontWeight = FontWeight.Bold, maxLines = 1)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(ltr(assetPair(s.asset)), color = TextDim, fontSize = 12.sp)
+                if (tick != null) {
+                    Spacer(Modifier.width(6.dp))
+                    Box(Modifier.size(6.dp).background(BuyGreen, CircleShape))
+                    Spacer(Modifier.width(3.dp))
+                    Text(stringResource(R.string.live_badge), color = BuyGreen, fontSize = 10.sp)
+                }
+            }
+            Text(price?.p2() ?: "—", color = flash.value, fontSize = 28.sp, fontWeight = FontWeight.Bold, maxLines = 1)
             val ch = d?.quoteChange
             if (ch != null) {
                 val up = ch >= 0
@@ -406,8 +456,9 @@ private fun PriceCard(d: Decision?, s: UiState, modifier: Modifier) {
                 today -> t.hms()
                 else -> t.atZone(ZoneId.systemDefault()).format(java.time.format.DateTimeFormatter.ofPattern("EEE HH:mm", Locale.getDefault()))
             }
-            Text(stringResource(if (d?.marketClosed == true) R.string.closed_price_at else R.string.updated_at, ltr(shown)),
+            if (tick == null) Text(stringResource(if (d?.marketClosed == true) R.string.closed_price_at else R.string.updated_at, ltr(shown)),
                 color = if (d?.marketClosed == true) WaitGold else TextDim, fontSize = 10.sp, maxLines = 1)
+            Sparkline(s.candles["${s.asset}/H1"], Modifier.fillMaxWidth().height(18.dp).padding(top = 2.dp))
         }
     }
 }
@@ -1382,4 +1433,148 @@ private fun android.content.Context.findActivity(): android.app.Activity? {
         c = c.baseContext
     }
     return null
+}
+
+// ---------------------------------------------------------------- chart, calendar, onboarding
+/** Thin price line of the last closes (inside the price card). */
+@Composable
+private fun Sparkline(c: Candles?, modifier: Modifier) {
+    if (c == null || c.size < 5) return
+    val xs = c.c.takeLast(48)
+    val up = xs.last() >= xs.first()
+    androidx.compose.foundation.Canvas(modifier) {
+        val lo = xs.min(); val hi = xs.max(); val span = (hi - lo).takeIf { it > 0 } ?: 1.0
+        val path = androidx.compose.ui.graphics.Path()
+        xs.forEachIndexed { i, v ->
+            val x = size.width * i / (xs.size - 1)
+            val y = size.height * (1 - ((v - lo) / span)).toFloat()
+            if (i == 0) path.moveTo(x, y) else path.lineTo(x, y)
+        }
+        drawPath(path, if (up) BuyGreen else SellRed, style = androidx.compose.ui.graphics.drawscope.Stroke(width = 2f))
+    }
+}
+
+/** Candlestick chart with the horizon's levels and today's scenario triggers drawn on it. Closed candles only. */
+@Composable
+private fun ChartDialog(s: UiState, card: HorizonCard?, d: Decision?, onTf: (String) -> Unit, onClose: () -> Unit) {
+    var tf by remember { mutableStateOf("H1") }
+    LaunchedEffect(tf, s.asset) { onTf(tf) }
+    val c = s.candles["${s.asset}/$tf"]
+    DialogFrame(stringResource(R.string.chart_title, ltr(assetPair(s.asset))), onClose) {
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            listOf("H1" to R.string.chart_h1, "D1" to R.string.chart_d1).forEach { (k, label) ->
+                val on = tf == k
+                Text(stringResource(label), color = if (on) Color.Black else Gold, fontSize = 12.sp, fontWeight = FontWeight.Bold,
+                    modifier = Modifier.background(if (on) Gold else Color.Transparent, RoundedCornerShape(10.dp))
+                        .border(1.dp, Gold, RoundedCornerShape(10.dp)).clickable(role = Role.Tab) { tf = k }
+                        .padding(horizontal = 12.dp, vertical = 4.dp))
+            }
+        }
+        if (c == null) {
+            Body(stringResource(R.string.chart_loading), TextDim, 12.sp)
+            return@DialogFrame
+        }
+        val sup = card?.levels?.supports.orEmpty().map { it.price }
+        val res = card?.levels?.resistances.orEmpty().map { it.price }
+        val trig = if (card?.horizon == "HOURS") d?.brief?.scenarios.orEmpty().map { it.trigger } else emptyList()
+        val n = c.size
+        val lo0 = c.l.min(); val hi0 = c.h.max()
+        val pad = (hi0 - lo0) * 0.06
+        // levels are drawn only when they are near the visible range (a far level would squash the candles)
+        val near = { p: Double -> p in (lo0 - (hi0 - lo0) * 0.5)..(hi0 + (hi0 - lo0) * 0.5) }
+        val all = (sup + res + trig).filter(near)
+        val lo = minOf(lo0, all.minOrNull() ?: lo0) - pad
+        val hi = maxOf(hi0, all.maxOrNull() ?: hi0) + pad
+        val measurer = androidx.compose.ui.text.rememberTextMeasurer()
+        androidx.compose.foundation.Canvas(Modifier.fillMaxWidth().height(300.dp).background(Bg, RoundedCornerShape(10.dp))
+            .semantics { contentDescription = "chart" }) {
+            val w = size.width - 120f
+            val y = { p: Double -> (size.height * (1 - (p - lo) / (hi - lo))).toFloat() }
+            val cw = w / n
+            for (i in 0 until n) {
+                val up = c.c[i] >= c.o[i]
+                val col = if (up) BuyGreen else SellRed
+                val cx = cw * i + cw / 2
+                drawLine(col, androidx.compose.ui.geometry.Offset(cx, y(c.h[i])), androidx.compose.ui.geometry.Offset(cx, y(c.l[i])), 1.5f)
+                val top = y(maxOf(c.o[i], c.c[i])); val bot = y(minOf(c.o[i], c.c[i]))
+                drawRect(col, androidx.compose.ui.geometry.Offset(cx - cw * 0.35f, top),
+                    androidx.compose.ui.geometry.Size(cw * 0.7f, maxOf(1.5f, bot - top)))
+            }
+            fun level(p: Double, col: Color, dash: Boolean) {
+                if (!near(p)) return
+                val yy = y(p)
+                drawLine(col.copy(alpha = 0.8f), androidx.compose.ui.geometry.Offset(0f, yy), androidx.compose.ui.geometry.Offset(w, yy), 2f,
+                    pathEffect = if (dash) androidx.compose.ui.graphics.PathEffect.dashPathEffect(floatArrayOf(12f, 8f)) else null)
+                drawText(measurer, String.format(Locale.US, "%.2f", p), androidx.compose.ui.geometry.Offset(w + 8f, yy - 16f),
+                    TextStyle(color = col, fontSize = 10.sp))
+            }
+            sup.forEach { level(it, BuyGreen, true) }
+            res.forEach { level(it, SellRed, true) }
+            trig.forEach { level(it, Gold, false) }
+            level(c.c.last(), TextMain, false)
+        }
+        Body(stringResource(R.string.chart_legend), TextDim, 11.sp)
+    }
+}
+
+@Composable
+private fun CalendarDialog(info: CalendarInfo?, onClose: () -> Unit) {
+    DialogFrame(stringResource(R.string.cal_title), onClose) {
+        if (info == null) { Body(stringResource(R.string.chart_loading), TextDim, 12.sp); return@DialogFrame }
+        val fmt = java.time.format.DateTimeFormatter.ofPattern("EEE d MMM · HH:mm", Locale.getDefault())
+        Body(when (info.state) {
+            "CONNECTED", "NO_EVENTS" -> stringResource(R.string.cal_ok, info.updatedAt?.let { ltr(fmt.format(it.atZone(ZoneId.systemDefault()))) } ?: "—")
+            "STALE" -> stringResource(R.string.ck_news_stale, info.updatedAt?.let { ltr(fmt.format(it.atZone(ZoneId.systemDefault()))) } ?: "—")
+            "NOT_CONFIGURED" -> stringResource(R.string.ck_news_unconf)
+            else -> stringResource(R.string.ck_news_na)
+        }, TextDim, 11.sp)
+        val now = Instant.now()
+        val next = info.events.firstOrNull { it.time.isAfter(now) && it.importance >= 3 }
+        next?.let {
+            val mins = java.time.Duration.between(now, it.time).toMinutes()
+            Text(stringResource(R.string.cal_next, it.name, (mins / 60).toInt(), (mins % 60).toInt()), color = WaitGold,
+                fontSize = 14.sp, fontWeight = FontWeight.Bold)
+        }
+        if (info.events.isEmpty()) Body(stringResource(R.string.cal_none), TextDim, 12.sp)
+        info.events.forEach { e ->
+            val past = e.time.isBefore(now)
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+                Text("★".repeat(e.importance.coerceIn(1, 3)), color = if (e.importance >= 3) SellRed else WaitGold, fontSize = 11.sp,
+                    modifier = Modifier.width(36.dp))
+                Text(e.name, color = if (past) TextDim else TextMain, fontSize = 13.sp, modifier = Modifier.weight(1f), maxLines = 1,
+                    overflow = TextOverflow.Ellipsis)
+                Text(ltr(fmt.format(e.time.atZone(ZoneId.systemDefault()))), color = TextDim, fontSize = 11.sp)
+            }
+        }
+        Body(stringResource(R.string.cal_note), TextDim, 10.sp)
+    }
+}
+
+@Composable
+private fun OnboardingDialog(onDone: () -> Unit) {
+    var page by remember { mutableStateOf(0) }
+    val pages = listOf(
+        R.string.ob1_title to R.string.ob1_text, R.string.ob2_title to R.string.ob2_text, R.string.ob3_title to R.string.ob3_text)
+    Dialog(onDismissRequest = onDone, properties = SecureDialog) {
+        Column(Modifier.fillMaxWidth().background(Card, RoundedCornerShape(18.dp)).border(1.dp, Gold, RoundedCornerShape(18.dp))
+            .padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Text(stringResource(R.string.app_name), color = Gold, fontSize = 20.sp, fontWeight = FontWeight.ExtraBold)
+            Text(stringResource(pages[page].first), color = TextMain, fontSize = 17.sp, fontWeight = FontWeight.Bold)
+            Text(stringResource(pages[page].second), color = TextDim, fontSize = 14.sp, lineHeight = 20.sp)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                repeat(pages.size) { i ->
+                    Box(Modifier.padding(end = 6.dp).size(if (i == page) 10.dp else 7.dp)
+                        .background(if (i == page) Gold else Track, CircleShape))
+                }
+                Spacer(Modifier.weight(1f))
+                if (page < pages.lastIndex) Text(stringResource(R.string.ob_skip), color = TextDim, fontSize = 13.sp,
+                    modifier = Modifier.clickable(role = Role.Button, onClick = onDone).padding(8.dp))
+                Text(stringResource(if (page < pages.lastIndex) R.string.ob_next else R.string.ob_start), color = Color.Black,
+                    fontSize = 14.sp, fontWeight = FontWeight.Bold,
+                    modifier = Modifier.background(Gold, RoundedCornerShape(12.dp))
+                        .clickable(role = Role.Button) { if (page < pages.lastIndex) page++ else onDone() }
+                        .padding(horizontal = 16.dp, vertical = 8.dp))
+            }
+        }
+    }
 }

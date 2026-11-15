@@ -376,6 +376,28 @@
     <string name="sc_hist">تاريخياً: وصل للمستوى التالي في %1$d%% من %2$d حالة مشابهة (%3$d يوماً)</string>
     <string name="notif_price_title">%1$s: السعر وصل %2$s</string>
     <string name="notif_price_text">تنبيهك عند %1$s — السعر الآن %2$s. للمراقبة، ليس توصية.</string>
+    <string name="chart_title">الرسم البياني · %1$s</string>
+    <string name="chart_h1">ساعة</string>
+    <string name="chart_d1">يوم</string>
+    <string name="chart_loading">جارٍ التحميل…</string>
+    <string name="chart_legend">أخضر = دعوم · أحمر = مقاومات · ذهبي = نقاط سيناريوهات اليوم · أبيض = آخر إغلاق. شموع مكتملة فقط.</string>
+    <string name="cal_title">التقويم الاقتصادي</string>
+    <string name="cal_ok">متصل · آخر تحديث %1$s</string>
+    <string name="cal_next">الخبر القوي التالي: %1$s بعد %2$dس %3$dد</string>
+    <string name="cal_none">لا أحداث في الأيام القادمة.</string>
+    <string name="cal_note">أخبار أمريكا تحرّك الذهب والعملات الرقمية. ثلاث نجوم = تأثير قوي؛ لا يعتبر أي محرك التقويمَ المجهول آمناً.</string>
+    <string name="live_badge">مباشر</string>
+    <string name="ob1_title">تحليل صادق، لا إشارات عشوائية</string>
+    <string name="ob1_text">لا يعرض AI QUANT شراءً أو بيعاً إلا إذا اجتاز نموذج اختبارات صارمة خارج العينة. وإلا يخبرك بالمستوى الذي تراقبه وما الذي يغيّر الصورة.</string>
+    <string name="ob2_title">أخبره بوضعك</string>
+    <string name="ob2_text">اضغط «وضعي» في البطاقة: «لدي سيولة» أو «أملك الأصل». تُكتب الخطة لك. وبدّل بين الساعات والأسبوع والشهر من التبويبات.</string>
+    <string name="ob3_title">دع التطبيق يراقب عنك</string>
+    <string name="ob3_text">اضغط 🔔 بجانب أي مستوى أو سيناريو ليصلك إشعار حين يصل السعر إليه. اضغط على السعر لرؤية الرسم البياني، و📅 يعرض أخبار اليوم المهمة.</string>
+    <string name="ob_skip">تخطٍّ</string>
+    <string name="ob_next">التالي</string>
+    <string name="ob_start">ابدأ</string>
+    <string name="widget_desc">السعر والمستوى الذي تراقبه</string>
+    <string name="widget_empty">افتح التطبيق للتحديث</string>
     <string name="r_w_up" formatted="false">صاعد</string>
     <string name="r_w_down" formatted="false">هابط</string>
     <string name="r_w_neutral" formatted="false">محايد</string>

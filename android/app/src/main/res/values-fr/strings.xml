@@ -376,6 +376,28 @@
     <string name="sc_hist">Historique : niveau suivant atteint dans %1$d%% de %2$d cas similaires (%3$d jours)</string>
     <string name="notif_price_title">%1$s a atteint %2$s</string>
     <string name="notif_price_text">Votre alerte à %1$s — maintenant %2$s. À surveiller, pas une recommandation.</string>
+    <string name="chart_title">Graphique · %1$s</string>
+    <string name="chart_h1">1 heure</string>
+    <string name="chart_d1">1 jour</string>
+    <string name="chart_loading">Chargement…</string>
+    <string name="chart_legend">Vert = supports · rouge = résistances · or = déclencheurs du jour · blanc = dernière clôture. Bougies clôturées uniquement.</string>
+    <string name="cal_title">Calendrier économique</string>
+    <string name="cal_ok">Connecté · mise à jour %1$s</string>
+    <string name="cal_next">Prochaine annonce majeure : %1$s dans %2$dh %3$dmin</string>
+    <string name="cal_none">Aucun événement dans les prochains jours.</string>
+    <string name="cal_note">Les annonces US font bouger l\'or et les cryptos. Trois étoiles = fort impact ; aucun moteur ne considère un calendrier inconnu comme sûr.</string>
+    <string name="live_badge">direct</string>
+    <string name="ob1_title">Une analyse honnête, pas des signaux au hasard</string>
+    <string name="ob1_text">AI QUANT n\'affiche achat ou vente que si un modèle a réussi des tests stricts hors échantillon. Sinon, il indique le niveau à surveiller et ce qui changerait la donne.</string>
+    <string name="ob2_title">Indiquez votre position</string>
+    <string name="ob2_text">Touchez « Ma position » sur la carte : « j\'ai des liquidités » ou « je détiens l\'actif ». Le plan est écrit pour vous. Changez heures, semaine ou mois avec les onglets.</string>
+    <string name="ob3_title">Laissez l\'app surveiller pour vous</string>
+    <string name="ob3_text">Touchez 🔔 à côté d\'un niveau ou d\'un scénario pour être averti quand le prix l\'atteint. Touchez le prix pour le graphique ; 📅 montre les annonces du jour.</string>
+    <string name="ob_skip">Passer</string>
+    <string name="ob_next">Suivant</string>
+    <string name="ob_start">Commencer</string>
+    <string name="widget_desc">Prix et niveau à surveiller</string>
+    <string name="widget_empty">Ouvrez l\'app pour mettre à jour</string>
     <string name="r_w_up" formatted="false">haussière</string>
     <string name="r_w_down" formatted="false">baissière</string>
     <string name="r_w_neutral" formatted="false">neutre</string>

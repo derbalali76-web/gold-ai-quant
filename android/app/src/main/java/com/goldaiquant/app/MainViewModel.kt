@@ -28,6 +28,10 @@ data class UiState(
     val positions: Map<String, String> = emptyMap(),  // asset -> CASH | HOLD (stored on the phone only)
     val alertAssets: Set<String> = setOf("XAU"),  // alerts only for the assets this trader follows
     val priceAlerts: List<PriceAlert> = emptyList(),  // one-tap "Alert me" alerts (phone only)
+    val candles: Map<String, Candles> = emptyMap(),  // "ASSET/TF" -> closed candles for the chart
+    val calendar: CalendarInfo? = null,
+    val live: Map<String, LiveTick> = emptyMap(),  // crypto live price (Binance public ticker), display only
+    val onboarded: Boolean = true,
 ) {
     val trust: Trust? get() = trustAll[asset]
     val position: String get() = positions[asset] ?: "CASH"
@@ -80,6 +84,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                 asset = asset0,
                 alertAssets = SignalWorker.alertAssets(prefs),
                 priceAlerts = PriceAlerts.load(prefs),
+                onboarded = prefs.getBoolean("onboarded", false),
                 positions = listOf("XAU", "BTC", "ETH", "SOL").associateWith { a -> prefs.getString("position_$a", "CASH") ?: "CASH" },
             )
         }
@@ -159,6 +164,36 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         syncPush()
     }
 
+    fun finishOnboarding() {
+        prefs.edit().putBoolean("onboarded", true).apply()
+        _state.update { it.copy(onboarded = true) }
+    }
+
+    /** Closed candles for the chart / sparkline; silent on failure (the chart then says so). */
+    fun loadBars(asset: String, tf: String) {
+        val s = _state.value
+        viewModelScope.launch {
+            val c = MarketClient(s.serverUrl, s.token).bars(asset, tf) ?: return@launch
+            _state.update { it.copy(candles = it.candles + ("$asset/$tf" to c)) }
+        }
+    }
+
+    fun loadCalendar() {
+        val s = _state.value
+        viewModelScope.launch {
+            val c = MarketClient(s.serverUrl, s.token).calendar() ?: return@launch
+            _state.update { it.copy(calendar = c) }
+        }
+    }
+
+    /** One live-price poll for the current crypto asset (called every few seconds while the screen is visible). */
+    suspend fun pollLive() {
+        val a = _state.value.asset
+        if (a == "XAU") return
+        val p = MarketClient.livePrice(a) ?: return
+        _state.update { it.copy(live = it.live + (a to LiveTick(p, System.currentTimeMillis()))) }
+    }
+
     /** Keep the server's copy of this phone's alerts current (Firebase push); silent, best effort. */
     fun syncPush() {
         viewModelScope.launch { try { Push.sync(getApplication()) } catch (e: Exception) { } }
@@ -207,6 +242,8 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                 }
                 prefs.edit().putString(key(s.asset), f.raw).putLong("last_received", now.toEpochMilli()).apply()
                 loadTrack()
+                loadBars(s.asset, "H1")
+                PriceWidget.refresh(getApplication())
             } catch (e: ApiException) {
                 _state.update { it.copy(loading = false, error = e) }
             } catch (e: Exception) {

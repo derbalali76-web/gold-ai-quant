@@ -377,6 +377,28 @@
     <string name="sc_hist">History: reached the next level in %1$d%% of %2$d similar cases (%3$d days)</string>
     <string name="notif_price_title">%1$s reached %2$s</string>
     <string name="notif_price_text">Your alert at %1$s — now %2$s. To watch, not a recommendation.</string>
+    <string name="chart_title">Chart · %1$s</string>
+    <string name="chart_h1">1 hour</string>
+    <string name="chart_d1">1 day</string>
+    <string name="chart_loading">Loading…</string>
+    <string name="chart_legend">Green = supports · red = resistances · gold = today\'s scenario triggers · white = last close. Closed candles only.</string>
+    <string name="cal_title">Economic calendar</string>
+    <string name="cal_ok">Connected · last update %1$s</string>
+    <string name="cal_next">Next major: %1$s in %2$dh %3$dm</string>
+    <string name="cal_none">No events in the coming days.</string>
+    <string name="cal_note">US releases move gold and crypto. Three stars = high impact; no trading engine treats an unknown calendar as safe.</string>
+    <string name="live_badge">live</string>
+    <string name="ob1_title">Honest analysis, not random signals</string>
+    <string name="ob1_text">AI QUANT shows buy or sell only when a model has passed strict out-of-sample tests. Otherwise it tells you which level to watch and what would change the picture.</string>
+    <string name="ob2_title">Tell it your position</string>
+    <string name="ob2_text">Tap “My position” on the card: “I have cash” or “I hold it”. The plan is written for you. Switch hours, week or month with the tabs.</string>
+    <string name="ob3_title">Let the app watch for you</string>
+    <string name="ob3_text">Tap 🔔 next to any level or scenario and get a notification when the price gets there. Tap the price to see the chart; 📅 shows today\'s major news.</string>
+    <string name="ob_skip">Skip</string>
+    <string name="ob_next">Next</string>
+    <string name="ob_start">Start</string>
+    <string name="widget_desc">Price and the level to watch</string>
+    <string name="widget_empty">Open the app to update</string>
     <string name="r_w_up" formatted="false">up</string>
     <string name="r_w_down" formatted="false">down</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

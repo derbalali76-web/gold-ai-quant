@@ -510,6 +510,58 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
         return sum(1 for ln in crash_log.read_text(encoding="utf-8").splitlines()
                    if ln.strip() and _json.loads(ln).get("at", "") >= cut)
 
+    bars_cache: dict = {}
+
+    @app.get("/bars", dependencies=[Depends(auth)])
+    def bars_endpoint(asset: str = Query("XAU"), tf: str = Query("H1"), limit: int = Query(120, ge=20, le=300)):
+        """Closed candles for the in-app chart (no look-ahead: only complete bars). Cached 60 s."""
+        a, tf = asset.upper(), tf.upper()
+        if tf not in ("H1", "D1"):
+            raise HTTPException(422, "tf must be H1 or D1")
+        key = (a, tf, limit)
+        hit = bars_cache.get(key)
+        if hit and time.time() - hit[0] < 60:
+            return hit[1]
+        now = utcnow()
+        if a == "XAU":
+            prov = live_provider if live_provider is not None else demo
+            b = prov.bars(tf, now, limit + 5)
+            df = b.df if b is not None else None
+        else:
+            from . import crypto_engine as CE
+            from .levels import LevelService
+            if a not in CE.ASSETS:
+                raise HTTPException(422, "asset must be XAU, BTC, ETH or SOL")
+            if crypto_state["feed"] is None:
+                crypto_state["feed"], crypto_state["levels"] = CE.CryptoFeed(), LevelService()
+            ASSETS = CE.ASSETS
+            df = crypto_state["feed"].bars(ASSETS[a], "H1" if tf == "H1" else "1d", now, limit + 5)
+        if df is None or not len(df):
+            raise HTTPException(503, "bars unavailable")
+        df = df.tail(limit)
+        out = {"asset": a, "tf": tf, "t": [int(x.timestamp()) for x in df.index],
+               "o": [round(float(v), 6) for v in df["open"]], "h": [round(float(v), 6) for v in df["high"]],
+               "l": [round(float(v), 6) for v in df["low"]], "c": [round(float(v), 6) for v in df["close"]]}
+        bars_cache[key] = (time.time(), out)
+        return out
+
+    @app.get("/calendar", dependencies=[Depends(auth)])
+    def calendar_endpoint():
+        """Economic calendar for the in-app screen: state, last successful update, events -12 h .. +7 days."""
+        now = utcnow()
+        if context is None:
+            return {"state": "NOT_CONFIGURED", "updated_at": None, "events": []}
+        cs_ = context.calendar_status(now)
+        cal = cs_.pop("cal", None)
+        evs = []
+        if cal is not None:
+            for e in sorted(cal.events, key=lambda e: e.time_utc):
+                dt = (e.time_utc - now).total_seconds()
+                if -12 * 3600 <= dt <= 7 * 86400:
+                    evs.append({"time_utc": e.time_utc.isoformat(), "name": e.name, "importance": e.importance,
+                                "source": e.source})
+        return {"state": cs_["state"], "updated_at": cs_["updated_at"], "events": evs[:40]}
+
     @app.post("/push/register", dependencies=[Depends(auth)])
     def push_register(body: dict = Body(...)):
         """Phone registers its anonymous FCM token, followed assets and one-tap alerts (no personal data)."""
@@ -567,6 +619,7 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
         a = asset.upper()
         if a != "XAU":
             from . import crypto_engine as CE
+            from .levels import LevelService
             if a not in CE.ASSETS:
                 raise HTTPException(422, "asset must be XAU, BTC, ETH or SOL")
             d = crypto_decision(a)

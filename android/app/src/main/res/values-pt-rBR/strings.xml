@@ -376,6 +376,28 @@
     <string name="sc_hist">Histórico: atingiu o próximo nível em %1$d%% de %2$d casos semelhantes (%3$d dias)</string>
     <string name="notif_price_title">%1$s atingiu %2$s</string>
     <string name="notif_price_text">Seu alerta em %1$s — agora %2$s. Para observar, não é recomendação.</string>
+    <string name="chart_title">Gráfico · %1$s</string>
+    <string name="chart_h1">1 hora</string>
+    <string name="chart_d1">1 dia</string>
+    <string name="chart_loading">Carregando…</string>
+    <string name="chart_legend">Verde = suportes · vermelho = resistências · dourado = gatilhos de hoje · branco = último fechamento. Só velas fechadas.</string>
+    <string name="cal_title">Calendário econômico</string>
+    <string name="cal_ok">Conectado · atualizado %1$s</string>
+    <string name="cal_next">Próximo importante: %1$s em %2$dh %3$dmin</string>
+    <string name="cal_none">Sem eventos nos próximos dias.</string>
+    <string name="cal_note">Os dados dos EUA movem ouro e cripto. Três estrelas = alto impacto; nenhum motor trata um calendário desconhecido como seguro.</string>
+    <string name="live_badge">ao vivo</string>
+    <string name="ob1_title">Análise honesta, não sinais aleatórios</string>
+    <string name="ob1_text">AI QUANT só mostra compra ou venda quando um modelo passa em testes rigorosos fora da amostra. Caso contrário, diz qual nível observar e o que mudaria o quadro.</string>
+    <string name="ob2_title">Informe sua posição</string>
+    <string name="ob2_text">Toque «Minha posição» no cartão: «tenho caixa» ou «tenho o ativo». O plano é escrito para você. Troque horas, semana ou mês nas abas.</string>
+    <string name="ob3_title">Deixe o app observar por você</string>
+    <string name="ob3_text">Toque 🔔 ao lado de um nível ou cenário e receba um aviso quando o preço chegar. Toque no preço para o gráfico; 📅 mostra as notícias do dia.</string>
+    <string name="ob_skip">Pular</string>
+    <string name="ob_next">Próximo</string>
+    <string name="ob_start">Começar</string>
+    <string name="widget_desc">Preço e nível a observar</string>
+    <string name="widget_empty">Abra o app para atualizar</string>
     <string name="r_w_up" formatted="false">de alta</string>
     <string name="r_w_down" formatted="false">de baixa</string>
     <string name="r_w_neutral" formatted="false">neutra</string>
