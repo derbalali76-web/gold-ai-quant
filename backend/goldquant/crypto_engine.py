@@ -116,7 +116,9 @@ def decide(asset: str, feed: CryptoFeed, as_of: Optional[datetime] = None,
     for tf in ("M15", "H1"):
         r = DQ.check_bars(bars[tf], tf, as_of, 7.0, market="crypto")
         for c in r["checks"]:
-            if c["code"] in ("coverage", "gaps") and c["status"] == DQ.FAIL:
+            # crypto trades 24/7 with real exchange volume: big genuine jumps happen (news, liquidations), so an
+            # abnormal jump is a warning here, not a block; broken bars / frozen prices / stale data still block
+            if c["code"] in ("coverage", "gaps", "outliers") and c["status"] == DQ.FAIL:
                 c["status"] = DQ.WARN
             prev = dq.get(c["code"])
             if prev is None or DQ.RANK[c["status"]] > DQ.RANK[prev["status"]]:

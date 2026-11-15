@@ -170,3 +170,24 @@ def test_parse_metrics_hourly_known_at_bar_close():
     m = BA.parse_metrics_zip(_zip(t))
     # 00:05 .. 01:00 -> bar 00:00 (last = 01:00 snapshot, known at the bar's close)
     assert m.loc["2024-01-01 00:00", "oi"] == 110 and m.loc["2024-01-01 01:00", "oi"] == 120
+
+
+def test_crypto_big_genuine_jump_warns_but_does_not_block():
+    from datetime import datetime, timezone
+    from goldquant import crypto_engine as CE
+    now = datetime(2026, 11, 15, 6, 7, tzinfo=timezone.utc)
+    rng = np.random.default_rng(3)
+
+    class Feed:
+        def bars(self, sym, tf, as_of, limit=1000):
+            m = {"M15": 15, "M30": 30, "H1": 60, "H4": 240, "1d": 1440}[tf]
+            idx = pd.date_range(end=pd.Timestamp(now).floor(f"{m}min") - pd.Timedelta(minutes=m), periods=800,
+                                freq=f"{m}min", tz="UTC")
+            r = rng.normal(0, 0.001, len(idx))
+            r[-20] = 0.09  # a 9 % liquidation candle
+            c = 3000 * np.exp(np.cumsum(r))
+            o = np.r_[c[0], c[:-1]]
+            return pd.DataFrame({"open": o, "high": np.maximum(o, c) * 1.0005, "low": np.minimum(o, c) * 0.9995,
+                                 "close": c, "volume": 1.0, "tick_volume": 1.0, "taker_buy_volume": 0.5}, index=idx)
+    d = CE.decide("ETH", Feed(), now)
+    assert d.action.value == "WAIT" and d.data_health.status == "WARN"

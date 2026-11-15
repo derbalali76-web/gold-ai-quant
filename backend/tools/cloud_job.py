@@ -285,11 +285,8 @@ def crypto_research() -> dict:
         a = {"bars_1h": len(h1), "first": str(h1.index[0]), "last": str(h1.index[-1]),
              "data_quality": DQ.check_bars(h1, "1h", now, None, market="crypto")}
         base_cols = PLN.FEATURES + PLN.INTRADAY
-        rb = PLN.walk_forward(h1, "HOURS", cols=base_cols, asset=sym, **fast)
-        a["HOURS"] = asdict(rb)
-        print(sym, "HOURS spot", rb.trades, rb.expectancy_pct, rb.baseline_expectancy_pct, rb.reason, flush=True)
         rp = PLN.walk_forward(h1, "HOURS", cols=base_cols, asset=sym + "_PERP", **fast)
-        a["HOURS_perp"] = asdict(rp)
+        a["HOURS"] = a["HOURS_perp"] = asdict(rp)  # perpetual cost (the cheaper realistic venue) is the reference
         print(sym, "HOURS perp", rp.trades, rp.expectancy_pct, rp.baseline_expectancy_pct, rp.reason, flush=True)
         met = CS.load_metrics(MD, sym)
         starts = [h1.index[0]] + ([fund.index[0]] if len(fund) else []) + ([met.index[0]] if len(met) else [])
@@ -302,12 +299,23 @@ def crypto_research() -> dict:
         a["HOURS_flow_ab"] = {"since": since, "cost": "perp", "features": extra, "base": asdict(cb), "flow": asdict(cf)}
         print(sym, "HOURS perp A/B", since, "| base", cb.expectancy_pct, cb.direction_accuracy, cb.reason,
               "| flow+metrics", cf.expectancy_pct, cf.direction_accuracy, cf.reason, flush=True)
+        # ETH / SOL: Bitcoin's own recent moves as a leading market (same period, same cost as the reference)
+        if sym != "BTCUSDT":
+            btc = CS.load_bars(MD, "BTCUSDT", "1h")
+            bb = rp
+            bx = PLN.walk_forward(h1, "HOURS", cols=base_cols + PLN.cross_cols(["BTCUSDT"]), asset=sym + "_PERP",
+                                  aux={"BTCUSDT": btc}, **fast)
+            a["HOURS_btc_lead_ab"] = {"base": asdict(bb), "btc_lead": asdict(bx)}
+            print(sym, "HOURS BTC-lead A/B | base", bb.expectancy_pct, bb.reason, "| +BTC", bx.expectancy_pct, bx.reason,
+                  flush=True)
         if len(d1) > 1300:
             for hz in PLN.DAILY_HZ:
                 r = PLN.walk_forward(d1, hz, asset=sym)
                 a[hz] = asdict(r)
                 rq = PLN.walk_forward(d1, hz, asset=sym + "_PERP")
                 a[hz + "_perp"] = asdict(rq)
+                a[hz + "_regimes"] = {rg: asdict(PLN.walk_forward(d1, hz, asset=sym + "_PERP", regime=rg))
+                                      for rg in PLN.REGIMES}
                 print(sym, hz, "spot", r.expectancy_pct, r.baseline_expectancy_pct, r.reason, "| perp", rq.expectancy_pct,
                       rq.baseline_expectancy_pct, rq.reason, flush=True)
         out["assets"][sym] = a
