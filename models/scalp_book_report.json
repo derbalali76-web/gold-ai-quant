@@ -1,0 +1,1221 @@
+{
+ "doc": "Experiment 3 — does order-book depth add information? (pre-registered before any result)\n  data      Binance USD-M futures bookDepth snapshots (cumulative notional within +-1/2/5 % of the price), from the\n            first available day; a snapshot is used only from its own timestamp, and only if it is <= 5 minutes old\n  features  imbalance (bid - ask)/(bid + ask) at 1, 2 and 5 %; its change over 5 and 15 minutes; total depth within\n            5 % vs its 1-day average\n  labels    (30 min, stop 0.40 %) and (60 min, stop 0.65 %), target +0.65 %, same execution and costs as experiment 2\n  models    LOGIT and LGBM, each WITHOUT and WITH the book features (same rows, same folds) -> 4 candidates\n  folds     re-fitted at the start of every calendar quarter once 2 quarters of data exist; last 20 % of time = holdout\n  judging   same checks as experiment 2; 4 candidates x 2 labels x 3 coins = 24 tests -> 99.8 % confidence\n  value     'book adds information' only if the paired out-of-sample Brier improvement has a 95 % day-block CI > 0",
+ "updated_at": "2026-11-15T13:27:56.790051+00:00",
+ "assets": {
+  "BTC": {
+   "asset": "BTC",
+   "book_from": "2023-01-01 00:06:05+00:00",
+   "decisions_with_book": 401668,
+   "results": [
+    {
+     "asset": "BTC",
+     "model": "LOGIT",
+     "implementation": "logit",
+     "window_min": 30,
+     "stop_pct": 0.4,
+     "target_pct": 0.65,
+     "threshold_p": 0.6107,
+     "version": "scalp-book-1",
+     "qualified": false,
+     "decisions": 353381,
+     "max_p": 0.9098,
+     "share_above_threshold": 0.00042,
+     "brier_holdout": 0.03905,
+     "brier_base_holdout": 0.04221,
+     "base_rate_holdout": 0.0441,
+     "trades": 129,
+     "win_rate": 0.3488,
+     "p_target_first": 0.3411,
+     "avg_predicted_p": 0.7105,
+     "avg_net_pct": -0.203,
+     "avg_net_ci": [
+      -0.3182,
+      -0.0528
+     ],
+     "total_net_pct": -26.19,
+     "max_drawdown_pct": 27.97,
+     "trades_per_week": 0.73,
+     "years": {
+      "2023": {
+       "trades": 23,
+       "avg_net_pct": -0.0479
+      },
+      "2024": {
+       "trades": 45,
+       "avg_net_pct": -0.1755
+      },
+      "2025": {
+       "trades": 47,
+       "avg_net_pct": -0.2613
+      },
+      "2026": {
+       "trades": 14,
+       "avg_net_pct": -0.3507
+      }
+     },
+     "holdout_trades": 11,
+     "holdout_avg_pct": -0.3855,
+     "baseline_even_avg_pct": -0.1821,
+     "edge_vs_even_ci": [
+      -0.1395,
+      0.1297
+     ],
+     "edge_vs_activity_ci": [
+      -0.1216,
+      0.1437
+     ],
+     "baseline_activity_avg_pct": -0.2017,
+     "checks": {
+      "at least 200 trades": false,
+      "average net CI above zero": false,
+      "every year positive": false,
+      "final holdout positive": false,
+      "beats evenly-timed entries (CI)": false,
+      "beats activity-only rule (CI)": false,
+      "calibrated on holdout": true
+     },
+     "reason": "failed: at least 200 trades; average net CI above zero; every year positive; final holdout positive; beats evenly-timed entries (CI); beats activity-only rule (CI)"
+    },
+    {
+     "asset": "BTC",
+     "model": "LOGIT+BOOK",
+     "implementation": "logit",
+     "window_min": 30,
+     "stop_pct": 0.4,
+     "target_pct": 0.65,
+     "threshold_p": 0.6107,
+     "version": "scalp-book-1",
+     "qualified": false,
+     "decisions": 353381,
+     "max_p": 0.8378,
+     "share_above_threshold": 0.00042,
+     "brier_holdout": 0.03909,
+     "brier_base_holdout": 0.04221,
+     "base_rate_holdout": 0.0441,
+     "trades": 129,
+     "win_rate": 0.3721,
+     "p_target_first": 0.3643,
+     "avg_predicted_p": 0.6946,
+     "avg_net_pct": -0.1819,
+     "avg_net_ci": [
+      -0.3063,
+      -0.0372
+     ],
+     "total_net_pct": -23.46,
+     "max_drawdown_pct": 25.06,
+     "trades_per_week": 0.73,
+     "years": {
+      "2023": {
+       "trades": 30,
+       "avg_net_pct": -0.0651
+      },
+      "2024": {
+       "trades": 36,
+       "avg_net_pct": -0.0878
+      },
+      "2025": {
+       "trades": 50,
+       "avg_net_pct": -0.2376
+      },
+      "2026": {
+       "trades": 13,
+       "avg_net_pct": -0.4977
+      }
+     },
+     "holdout_trades": 10,
+     "holdout_avg_pct": -0.58,
+     "baseline_even_avg_pct": -0.1821,
+     "edge_vs_even_ci": [
+      -0.131,
+      0.1553
+     ],
+     "edge_vs_activity_ci": [
+      -0.1075,
+      0.1596
+     ],
+     "baseline_activity_avg_pct": -0.2017,
+     "checks": {
+      "at least 200 trades": false,
+      "average net CI above zero": false,
+      "every year positive": false,
+      "final holdout positive": false,
+      "beats evenly-timed entries (CI)": false,
+      "beats activity-only rule (CI)": false,
+      "calibrated on holdout": true
+     },
+     "reason": "failed: at least 200 trades; average net CI above zero; every year positive; final holdout positive; beats evenly-timed entries (CI); beats activity-only rule (CI)"
+    },
+    {
+     "asset": "BTC",
+     "model": "LGBM",
+     "implementation": "lightgbm",
+     "window_min": 30,
+     "stop_pct": 0.4,
+     "target_pct": 0.65,
+     "threshold_p": 0.6107,
+     "version": "scalp-book-1",
+     "qualified": false,
+     "decisions": 353381,
+     "max_p": 0.67,
+     "share_above_threshold": 1e-05,
+     "brier_holdout": 0.03874,
+     "brier_base_holdout": 0.04221,
+     "base_rate_holdout": 0.0441,
+     "trades": 4,
+     "reason": "too few trades (model rarely sees an edge above break-even)",
+     "checks": {}
+    },
+    {
+     "asset": "BTC",
+     "model": "LGBM+BOOK",
+     "implementation": "lightgbm",
+     "window_min": 30,
+     "stop_pct": 0.4,
+     "target_pct": 0.65,
+     "threshold_p": 0.6107,
+     "version": "scalp-book-1",
+     "qualified": false,
+     "decisions": 353381,
+     "max_p": 0.7033,
+     "share_above_threshold": 1e-05,
+     "brier_holdout": 0.03875,
+     "brier_base_holdout": 0.04221,
+     "base_rate_holdout": 0.0441,
+     "trades": 5,
+     "reason": "too few trades (model rarely sees an edge above break-even)",
+     "checks": {}
+    },
+    {
+     "asset": "BTC",
+     "model": "LOGIT",
+     "implementation": "logit",
+     "window_min": 60,
+     "stop_pct": 0.65,
+     "target_pct": 0.65,
+     "threshold_p": 0.6939,
+     "version": "scalp-book-1",
+     "qualified": false,
+     "decisions": 353381,
+     "max_p": 0.8903,
+     "share_above_threshold": 0.00051,
+     "brier_holdout": 0.07981,
+     "brier_base_holdout": 0.08818,
+     "base_rate_holdout": 0.0975,
+     "trades": 133,
+     "win_rate": 0.4586,
+     "p_target_first": 0.4586,
+     "avg_predicted_p": 0.7658,
+     "avg_net_pct": -0.2246,
+     "avg_net_ci": [
+      -0.3834,
+      -0.0658
+     ],
+     "total_net_pct": -29.87,
+     "max_drawdown_pct": 31.15,
+     "trades_per_week": 0.76,
+     "years": {
+      "2023": {
+       "trades": 20,
+       "avg_net_pct": -0.104
+      },
+      "2024": {
+       "trades": 53,
+       "avg_net_pct": -0.3319
+      },
+      "2025": {
+       "trades": 49,
+       "avg_net_pct": -0.1835
+      },
+      "2026": {
+       "trades": 11,
+       "avg_net_pct": -0.11
+      }
+     },
+     "holdout_trades": 9,
+     "holdout_avg_pct": -0.2433,
+     "baseline_even_avg_pct": -0.1911,
+     "edge_vs_even_ci": [
+      -0.2122,
+      0.1427
+     ],
+     "edge_vs_activity_ci": [
+      -0.1779,
+      0.157
+     ],
+     "baseline_activity_avg_pct": -0.2079,
+     "checks": {
+      "at least 200 trades": false,
+      "average net CI above zero": false,
+      "every year positive": false,
+      "final holdout positive": false,
+      "beats evenly-timed entries (CI)": false,
+      "beats activity-only rule (CI)": false,
+      "calibrated on holdout": true
+     },
+     "reason": "failed: at least 200 trades; average net CI above zero; every year positive; final holdout positive; beats evenly-timed entries (CI); beats activity-only rule (CI)"
+    },
+    {
+     "asset": "BTC",
+     "model": "LOGIT+BOOK",
+     "implementation": "logit",
+     "window_min": 60,
+     "stop_pct": 0.65,
+     "target_pct": 0.65,
+     "threshold_p": 0.6939,
+     "version": "scalp-book-1",
+     "qualified": false,
+     "decisions": 353381,
+     "max_p": 0.8722,
+     "share_above_threshold": 0.00044,
+     "brier_holdout": 0.07988,
+     "brier_base_holdout": 0.08818,
+     "base_rate_holdout": 0.0975,
+     "trades": 118,
+     "win_rate": 0.4746,
+     "p_target_first": 0.4746,
+     "avg_predicted_p": 0.7564,
+     "avg_net_pct": -0.2036,
+     "avg_net_ci": [
+      -0.3825,
+      -0.0134
+     ],
+     "total_net_pct": -24.02,
+     "max_drawdown_pct": 26.43,
+     "trades_per_week": 0.67,
+     "years": {
+      "2023": {
+       "trades": 30,
+       "avg_net_pct": -0.082
+      },
+      "2024": {
+       "trades": 33,
+       "avg_net_pct": -0.31
+      },
+      "2025": {
+       "trades": 46,
+       "avg_net_pct": -0.17
+      },
+      "2026": {
+       "trades": 9,
+       "avg_net_pct": -0.39
+      }
+     },
+     "holdout_trades": 7,
+     "holdout_avg_pct": -0.6414,
+     "baseline_even_avg_pct": -0.2181,
+     "edge_vs_even_ci": [
+      -0.1817,
+      0.2114
+     ],
+     "edge_vs_activity_ci": [
+      -0.1804,
+      0.1898
+     ],
+     "baseline_activity_avg_pct": -0.2079,
+     "checks": {
+      "at least 200 trades": false,
+      "average net CI above zero": false,
+      "every year positive": false,
+      "final holdout positive": false,
+      "beats evenly-timed entries (CI)": false,
+      "beats activity-only rule (CI)": false,
+      "calibrated on holdout": true
+     },
+     "reason": "failed: at least 200 trades; average net CI above zero; every year positive; final holdout positive; beats evenly-timed entries (CI); beats activity-only rule (CI)"
+    },
+    {
+     "asset": "BTC",
+     "model": "LGBM",
+     "implementation": "lightgbm",
+     "window_min": 60,
+     "stop_pct": 0.65,
+     "target_pct": 0.65,
+     "threshold_p": 0.6939,
+     "version": "scalp-book-1",
+     "qualified": false,
+     "decisions": 353381,
+     "max_p": 0.6832,
+     "share_above_threshold": 0.0,
+     "brier_holdout": 0.07884,
+     "brier_base_holdout": 0.08818,
+     "base_rate_holdout": 0.0975,
+     "trades": 0,
+     "reason": "too few trades (model rarely sees an edge above break-even)",
+     "checks": {}
+    },
+    {
+     "asset": "BTC",
+     "model": "LGBM+BOOK",
+     "implementation": "lightgbm",
+     "window_min": 60,
+     "stop_pct": 0.65,
+     "target_pct": 0.65,
+     "threshold_p": 0.6939,
+     "version": "scalp-book-1",
+     "qualified": false,
+     "decisions": 353381,
+     "max_p": 0.6721,
+     "share_above_threshold": 0.0,
+     "brier_holdout": 0.07882,
+     "brier_base_holdout": 0.08818,
+     "base_rate_holdout": 0.0975,
+     "trades": 0,
+     "reason": "too few trades (model rarely sees an edge above break-even)",
+     "checks": {}
+    }
+   ],
+   "book_value": {
+    "30m/0.40%/LOGIT": {
+     "n": 353381,
+     "brier_without": 0.042259,
+     "brier_with": 0.042262,
+     "improvement_ci95": [
+      -5.36e-05,
+      4.39e-05
+     ],
+     "adds_information": false
+    },
+    "30m/0.40%/LGBM": {
+     "n": 353381,
+     "brier_without": 0.041915,
+     "brier_with": 0.041951,
+     "improvement_ci95": [
+      -0.0001053,
+      3.04e-05
+     ],
+     "adds_information": false
+    },
+    "60m/0.65%/LOGIT": {
+     "n": 353381,
+     "brier_without": 0.084119,
+     "brier_with": 0.084152,
+     "improvement_ci95": [
+      -0.0001559,
+      8.17e-05
+     ],
+     "adds_information": false
+    },
+    "60m/0.65%/LGBM": {
+     "n": 353381,
+     "brier_without": 0.083323,
+     "brier_with": 0.083413,
+     "improvement_ci95": [
+      -0.0002324,
+      4.23e-05
+     ],
+     "adds_information": false
+    }
+   }
+  },
+  "ETH": {
+   "asset": "ETH",
+   "book_from": "2023-01-01 00:06:05+00:00",
+   "decisions_with_book": 402052,
+   "results": [
+    {
+     "asset": "ETH",
+     "model": "LOGIT",
+     "implementation": "logit",
+     "window_min": 30,
+     "stop_pct": 0.4,
+     "target_pct": 0.65,
+     "threshold_p": 0.6107,
+     "version": "scalp-book-1",
+     "qualified": false,
+     "decisions": 353765,
+     "max_p": 0.9543,
+     "share_above_threshold": 0.00122,
+     "brier_holdout": 0.06738,
+     "brier_base_holdout": 0.0722,
+     "base_rate_holdout": 0.0782,
+     "trades": 364,
+     "win_rate": 0.3489,
+     "p_target_first": 0.3462,
+     "avg_predicted_p": 0.7098,
+     "avg_net_pct": -0.2063,
+     "avg_net_ci": [
+      -0.2808,
+      -0.1305
+     ],
+     "total_net_pct": -75.09,
+     "max_drawdown_pct": 75.09,
+     "trades_per_week": 2.07,
+     "years": {
+      "2023": {
+       "trades": 17,
+       "avg_net_pct": -0.2024
+      },
+      "2024": {
+       "trades": 107,
+       "avg_net_pct": -0.23
+      },
+      "2025": {
+       "trades": 178,
+       "avg_net_pct": -0.1864
+      },
+      "2026": {
+       "trades": 62,
+       "avg_net_pct": -0.2238
+      }
+     },
+     "holdout_trades": 45,
+     "holdout_avg_pct": -0.2233,
+     "baseline_even_avg_pct": -0.2019,
+     "edge_vs_even_ci": [
+      -0.0956,
+      0.0781
+     ],
+     "edge_vs_activity_ci": [
+      -0.0814,
+      0.0788
+     ],
+     "baseline_activity_avg_pct": -0.2076,
+     "checks": {
+      "at least 200 trades": true,
+      "average net CI above zero": false,
+      "every year positive": false,
+      "final holdout positive": false,
+      "beats evenly-timed entries (CI)": false,
+      "beats activity-only rule (CI)": false,
+      "calibrated on holdout": true
+     },
+     "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats evenly-timed entries (CI); beats activity-only rule (CI)"
+    },
+    {
+     "asset": "ETH",
+     "model": "LOGIT+BOOK",
+     "implementation": "logit",
+     "window_min": 30,
+     "stop_pct": 0.4,
+     "target_pct": 0.65,
+     "threshold_p": 0.6107,
+     "version": "scalp-book-1",
+     "qualified": false,
+     "decisions": 353765,
+     "max_p": 0.9376,
+     "share_above_threshold": 0.00101,
+     "brier_holdout": 0.06734,
+     "brier_base_holdout": 0.0722,
+     "base_rate_holdout": 0.0782,
+     "trades": 319,
+     "win_rate": 0.3323,
+     "p_target_first": 0.3323,
+     "avg_predicted_p": 0.6986,
+     "avg_net_pct": -0.2228,
+     "avg_net_ci": [
+      -0.3051,
+      -0.139
+     ],
+     "total_net_pct": -71.08,
+     "max_drawdown_pct": 71.57,
+     "trades_per_week": 1.81,
+     "years": {
+      "2023": {
+       "trades": 13,
+       "avg_net_pct": -0.2508
+      },
+      "2024": {
+       "trades": 100,
+       "avg_net_pct": -0.2269
+      },
+      "2025": {
+       "trades": 150,
+       "avg_net_pct": -0.2199
+      },
+      "2026": {
+       "trades": 56,
+       "avg_net_pct": -0.217
+      }
+     },
+     "holdout_trades": 39,
+     "holdout_avg_pct": -0.2233,
+     "baseline_even_avg_pct": -0.2011,
+     "edge_vs_even_ci": [
+      -0.1102,
+      0.0681
+     ],
+     "edge_vs_activity_ci": [
+      -0.101,
+      0.0688
+     ],
+     "baseline_activity_avg_pct": -0.2076,
+     "checks": {
+      "at least 200 trades": true,
+      "average net CI above zero": false,
+      "every year positive": false,
+      "final holdout positive": false,
+      "beats evenly-timed entries (CI)": false,
+      "beats activity-only rule (CI)": false,
+      "calibrated on holdout": true
+     },
+     "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats evenly-timed entries (CI); beats activity-only rule (CI)"
+    },
+    {
+     "asset": "ETH",
+     "model": "LGBM",
+     "implementation": "lightgbm",
+     "window_min": 30,
+     "stop_pct": 0.4,
+     "target_pct": 0.65,
+     "threshold_p": 0.6107,
+     "version": "scalp-book-1",
+     "qualified": false,
+     "decisions": 353765,
+     "max_p": 0.6231,
+     "share_above_threshold": 1e-05,
+     "brier_holdout": 0.06661,
+     "brier_base_holdout": 0.0722,
+     "base_rate_holdout": 0.0782,
+     "trades": 2,
+     "reason": "too few trades (model rarely sees an edge above break-even)",
+     "checks": {}
+    },
+    {
+     "asset": "ETH",
+     "model": "LGBM+BOOK",
+     "implementation": "lightgbm",
+     "window_min": 30,
+     "stop_pct": 0.4,
+     "target_pct": 0.65,
+     "threshold_p": 0.6107,
+     "version": "scalp-book-1",
+     "qualified": false,
+     "decisions": 353765,
+     "max_p": 0.6475,
+     "share_above_threshold": 3e-05,
+     "brier_holdout": 0.06667,
+     "brier_base_holdout": 0.0722,
+     "base_rate_holdout": 0.0782,
+     "trades": 11,
+     "reason": "too few trades (model rarely sees an edge above break-even)",
+     "checks": {}
+    },
+    {
+     "asset": "ETH",
+     "model": "LOGIT",
+     "implementation": "logit",
+     "window_min": 60,
+     "stop_pct": 0.65,
+     "target_pct": 0.65,
+     "threshold_p": 0.6939,
+     "version": "scalp-book-1",
+     "qualified": false,
+     "decisions": 353765,
+     "max_p": 0.9577,
+     "share_above_threshold": 0.00162,
+     "brier_holdout": 0.12088,
+     "brier_base_holdout": 0.13133,
+     "base_rate_holdout": 0.1551,
+     "trades": 410,
+     "win_rate": 0.4512,
+     "p_target_first": 0.4512,
+     "avg_predicted_p": 0.7705,
+     "avg_net_pct": -0.2295,
+     "avg_net_ci": [
+      -0.3149,
+      -0.1265
+     ],
+     "total_net_pct": -94.11,
+     "max_drawdown_pct": 94.6,
+     "trades_per_week": 2.33,
+     "years": {
+      "2023": {
+       "trades": 15,
+       "avg_net_pct": -0.3448
+      },
+      "2024": {
+       "trades": 118,
+       "avg_net_pct": -0.2429
+      },
+      "2025": {
+       "trades": 203,
+       "avg_net_pct": -0.1894
+      },
+      "2026": {
+       "trades": 74,
+       "avg_net_pct": -0.2949
+      }
+     },
+     "holdout_trades": 55,
+     "holdout_avg_pct": -0.326,
+     "baseline_even_avg_pct": -0.1979,
+     "edge_vs_even_ci": [
+      -0.1224,
+      0.0746
+     ],
+     "edge_vs_activity_ci": [
+      -0.1221,
+      0.0745
+     ],
+     "baseline_activity_avg_pct": -0.2065,
+     "checks": {
+      "at least 200 trades": true,
+      "average net CI above zero": false,
+      "every year positive": false,
+      "final holdout positive": false,
+      "beats evenly-timed entries (CI)": false,
+      "beats activity-only rule (CI)": false,
+      "calibrated on holdout": true
+     },
+     "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats evenly-timed entries (CI); beats activity-only rule (CI)"
+    },
+    {
+     "asset": "ETH",
+     "model": "LOGIT+BOOK",
+     "implementation": "logit",
+     "window_min": 60,
+     "stop_pct": 0.65,
+     "target_pct": 0.65,
+     "threshold_p": 0.6939,
+     "version": "scalp-book-1",
+     "qualified": false,
+     "decisions": 353765,
+     "max_p": 0.9381,
+     "share_above_threshold": 0.00134,
+     "brier_holdout": 0.12086,
+     "brier_base_holdout": 0.13133,
+     "base_rate_holdout": 0.1551,
+     "trades": 352,
+     "win_rate": 0.4631,
+     "p_target_first": 0.4602,
+     "avg_predicted_p": 0.7588,
+     "avg_net_pct": -0.2178,
+     "avg_net_ci": [
+      -0.3247,
+      -0.0986
+     ],
+     "total_net_pct": -76.66,
+     "max_drawdown_pct": 77.64,
+     "trades_per_week": 2.0,
+     "years": {
+      "2023": {
+       "trades": 7,
+       "avg_net_pct": -0.1674
+      },
+      "2024": {
+       "trades": 109,
+       "avg_net_pct": -0.1882
+      },
+      "2025": {
+       "trades": 166,
+       "avg_net_pct": -0.2277
+      },
+      "2026": {
+       "trades": 70,
+       "avg_net_pct": -0.2454
+      }
+     },
+     "holdout_trades": 49,
+     "holdout_avg_pct": -0.2643,
+     "baseline_even_avg_pct": -0.1849,
+     "edge_vs_even_ci": [
+      -0.1521,
+      0.0795
+     ],
+     "edge_vs_activity_ci": [
+      -0.1218,
+      0.1122
+     ],
+     "baseline_activity_avg_pct": -0.2065,
+     "checks": {
+      "at least 200 trades": true,
+      "average net CI above zero": false,
+      "every year positive": false,
+      "final holdout positive": false,
+      "beats evenly-timed entries (CI)": false,
+      "beats activity-only rule (CI)": false,
+      "calibrated on holdout": true
+     },
+     "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats evenly-timed entries (CI); beats activity-only rule (CI)"
+    },
+    {
+     "asset": "ETH",
+     "model": "LGBM",
+     "implementation": "lightgbm",
+     "window_min": 60,
+     "stop_pct": 0.65,
+     "target_pct": 0.65,
+     "threshold_p": 0.6939,
+     "version": "scalp-book-1",
+     "qualified": false,
+     "decisions": 353765,
+     "max_p": 0.7139,
+     "share_above_threshold": 1e-05,
+     "brier_holdout": 0.11961,
+     "brier_base_holdout": 0.13133,
+     "base_rate_holdout": 0.1551,
+     "trades": 4,
+     "reason": "too few trades (model rarely sees an edge above break-even)",
+     "checks": {}
+    },
+    {
+     "asset": "ETH",
+     "model": "LGBM+BOOK",
+     "implementation": "lightgbm",
+     "window_min": 60,
+     "stop_pct": 0.65,
+     "target_pct": 0.65,
+     "threshold_p": 0.6939,
+     "version": "scalp-book-1",
+     "qualified": false,
+     "decisions": 353765,
+     "max_p": 0.7188,
+     "share_above_threshold": 1e-05,
+     "brier_holdout": 0.1198,
+     "brier_base_holdout": 0.13133,
+     "base_rate_holdout": 0.1551,
+     "trades": 3,
+     "reason": "too few trades (model rarely sees an edge above break-even)",
+     "checks": {}
+    }
+   ],
+   "book_value": {
+    "30m/0.40%/LOGIT": {
+     "n": 353765,
+     "brier_without": 0.075061,
+     "brier_with": 0.075152,
+     "improvement_ci95": [
+      -0.0001772,
+      -7.1e-06
+     ],
+     "adds_information": false
+    },
+    "30m/0.40%/LGBM": {
+     "n": 353765,
+     "brier_without": 0.074272,
+     "brier_with": 0.074354,
+     "improvement_ci95": [
+      -0.0001616,
+      -2.7e-06
+     ],
+     "adds_information": false
+    },
+    "60m/0.65%/LOGIT": {
+     "n": 353765,
+     "brier_without": 0.131282,
+     "brier_with": 0.131518,
+     "improvement_ci95": [
+      -0.0004127,
+      -5.8e-05
+     ],
+     "adds_information": false
+    },
+    "60m/0.65%/LGBM": {
+     "n": 353765,
+     "brier_without": 0.130263,
+     "brier_with": 0.130368,
+     "improvement_ci95": [
+      -0.0002538,
+      5.69e-05
+     ],
+     "adds_information": false
+    }
+   }
+  },
+  "SOL": {
+   "asset": "SOL",
+   "book_from": "2023-01-01 00:06:05+00:00",
+   "decisions_with_book": 400893,
+   "results": [
+    {
+     "asset": "SOL",
+     "model": "LOGIT",
+     "implementation": "logit",
+     "window_min": 30,
+     "stop_pct": 0.4,
+     "target_pct": 0.65,
+     "threshold_p": 0.6201,
+     "version": "scalp-book-1",
+     "qualified": false,
+     "decisions": 352607,
+     "max_p": 0.9197,
+     "share_above_threshold": 0.00211,
+     "brier_holdout": 0.08316,
+     "brier_base_holdout": 0.09385,
+     "base_rate_holdout": 0.0994,
+     "trades": 700,
+     "win_rate": 0.3171,
+     "p_target_first": 0.3171,
+     "avg_predicted_p": 0.6983,
+     "avg_net_pct": -0.2499,
+     "avg_net_ci": [
+      -0.3103,
+      -0.1857
+     ],
+     "total_net_pct": -174.95,
+     "max_drawdown_pct": 174.95,
+     "trades_per_week": 3.98,
+     "years": {
+      "2023": {
+       "trades": 228,
+       "avg_net_pct": -0.2311
+      },
+      "2024": {
+       "trades": 266,
+       "avg_net_pct": -0.2883
+      },
+      "2025": {
+       "trades": 172,
+       "avg_net_pct": -0.2354
+      },
+      "2026": {
+       "trades": 34,
+       "avg_net_pct": -0.1494
+      }
+     },
+     "holdout_trades": 27,
+     "holdout_avg_pct": -0.1144,
+     "baseline_even_avg_pct": -0.2283,
+     "edge_vs_even_ci": [
+      -0.0851,
+      0.0556
+     ],
+     "edge_vs_activity_ci": [
+      -0.1615,
+      0.1166
+     ],
+     "baseline_activity_avg_pct": -0.2341,
+     "checks": {
+      "at least 200 trades": true,
+      "average net CI above zero": false,
+      "every year positive": false,
+      "final holdout positive": false,
+      "beats evenly-timed entries (CI)": false,
+      "beats activity-only rule (CI)": false,
+      "calibrated on holdout": true
+     },
+     "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats evenly-timed entries (CI); beats activity-only rule (CI)"
+    },
+    {
+     "asset": "SOL",
+     "model": "LOGIT+BOOK",
+     "implementation": "logit",
+     "window_min": 30,
+     "stop_pct": 0.4,
+     "target_pct": 0.65,
+     "threshold_p": 0.6201,
+     "version": "scalp-book-1",
+     "qualified": false,
+     "decisions": 352607,
+     "max_p": 0.9228,
+     "share_above_threshold": 0.00195,
+     "brier_holdout": 0.08308,
+     "brier_base_holdout": 0.09385,
+     "base_rate_holdout": 0.0994,
+     "trades": 634,
+     "win_rate": 0.3202,
+     "p_target_first": 0.3202,
+     "avg_predicted_p": 0.6867,
+     "avg_net_pct": -0.2466,
+     "avg_net_ci": [
+      -0.2998,
+      -0.1849
+     ],
+     "total_net_pct": -156.34,
+     "max_drawdown_pct": 156.34,
+     "trades_per_week": 3.6,
+     "years": {
+      "2023": {
+       "trades": 234,
+       "avg_net_pct": -0.2357
+      },
+      "2024": {
+       "trades": 220,
+       "avg_net_pct": -0.2933
+      },
+      "2025": {
+       "trades": 152,
+       "avg_net_pct": -0.2169
+      },
+      "2026": {
+       "trades": 28,
+       "avg_net_pct": -0.1314
+      }
+     },
+     "holdout_trades": 24,
+     "holdout_avg_pct": -0.0996,
+     "baseline_even_avg_pct": -0.2056,
+     "edge_vs_even_ci": [
+      -0.1028,
+      0.0249
+     ],
+     "edge_vs_activity_ci": [
+      -0.1498,
+      0.1218
+     ],
+     "baseline_activity_avg_pct": -0.2341,
+     "checks": {
+      "at least 200 trades": true,
+      "average net CI above zero": false,
+      "every year positive": false,
+      "final holdout positive": false,
+      "beats evenly-timed entries (CI)": false,
+      "beats activity-only rule (CI)": false,
+      "calibrated on holdout": true
+     },
+     "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats evenly-timed entries (CI); beats activity-only rule (CI)"
+    },
+    {
+     "asset": "SOL",
+     "model": "LGBM",
+     "implementation": "lightgbm",
+     "window_min": 30,
+     "stop_pct": 0.4,
+     "target_pct": 0.65,
+     "threshold_p": 0.6201,
+     "version": "scalp-book-1",
+     "qualified": false,
+     "decisions": 352607,
+     "max_p": 0.6043,
+     "share_above_threshold": 0.0,
+     "brier_holdout": 0.08235,
+     "brier_base_holdout": 0.09385,
+     "base_rate_holdout": 0.0994,
+     "trades": 0,
+     "reason": "too few trades (model rarely sees an edge above break-even)",
+     "checks": {}
+    },
+    {
+     "asset": "SOL",
+     "model": "LGBM+BOOK",
+     "implementation": "lightgbm",
+     "window_min": 30,
+     "stop_pct": 0.4,
+     "target_pct": 0.65,
+     "threshold_p": 0.6201,
+     "version": "scalp-book-1",
+     "qualified": false,
+     "decisions": 352607,
+     "max_p": 0.6515,
+     "share_above_threshold": 1e-05,
+     "brier_holdout": 0.08241,
+     "brier_base_holdout": 0.09385,
+     "base_rate_holdout": 0.0994,
+     "trades": 2,
+     "reason": "too few trades (model rarely sees an edge above break-even)",
+     "checks": {}
+    },
+    {
+     "asset": "SOL",
+     "model": "LOGIT",
+     "implementation": "logit",
+     "window_min": 60,
+     "stop_pct": 0.65,
+     "target_pct": 0.65,
+     "threshold_p": 0.7015,
+     "version": "scalp-book-1",
+     "qualified": false,
+     "decisions": 352607,
+     "max_p": 0.9316,
+     "share_above_threshold": 0.00262,
+     "brier_holdout": 0.14242,
+     "brier_base_holdout": 0.16408,
+     "base_rate_holdout": 0.1909,
+     "trades": 766,
+     "win_rate": 0.4256,
+     "p_target_first": 0.4256,
+     "avg_predicted_p": 0.7581,
+     "avg_net_pct": -0.2782,
+     "avg_net_ci": [
+      -0.3506,
+      -0.2024
+     ],
+     "total_net_pct": -213.12,
+     "max_drawdown_pct": 213.12,
+     "trades_per_week": 4.35,
+     "years": {
+      "2023": {
+       "trades": 277,
+       "avg_net_pct": -0.2586
+      },
+      "2024": {
+       "trades": 301,
+       "avg_net_pct": -0.3006
+      },
+      "2025": {
+       "trades": 160,
+       "avg_net_pct": -0.2955
+      },
+      "2026": {
+       "trades": 28,
+       "avg_net_pct": -0.1329
+      }
+     },
+     "holdout_trades": 26,
+     "holdout_avg_pct": -0.0785,
+     "baseline_even_avg_pct": -0.2146,
+     "edge_vs_even_ci": [
+      -0.1361,
+      0.0108
+     ],
+     "edge_vs_activity_ci": [
+      -0.2407,
+      0.2253
+     ],
+     "baseline_activity_avg_pct": -0.2636,
+     "checks": {
+      "at least 200 trades": true,
+      "average net CI above zero": false,
+      "every year positive": false,
+      "final holdout positive": false,
+      "beats evenly-timed entries (CI)": false,
+      "beats activity-only rule (CI)": false,
+      "calibrated on holdout": true
+     },
+     "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats evenly-timed entries (CI); beats activity-only rule (CI)"
+    },
+    {
+     "asset": "SOL",
+     "model": "LOGIT+BOOK",
+     "implementation": "logit",
+     "window_min": 60,
+     "stop_pct": 0.65,
+     "target_pct": 0.65,
+     "threshold_p": 0.7015,
+     "version": "scalp-book-1",
+     "qualified": false,
+     "decisions": 352607,
+     "max_p": 0.9351,
+     "share_above_threshold": 0.00235,
+     "brier_holdout": 0.14219,
+     "brier_base_holdout": 0.16408,
+     "base_rate_holdout": 0.1909,
+     "trades": 686,
+     "win_rate": 0.4373,
+     "p_target_first": 0.4373,
+     "avg_predicted_p": 0.7505,
+     "avg_net_pct": -0.2627,
+     "avg_net_ci": [
+      -0.3339,
+      -0.1838
+     ],
+     "total_net_pct": -180.24,
+     "max_drawdown_pct": 180.24,
+     "trades_per_week": 3.9,
+     "years": {
+      "2023": {
+       "trades": 270,
+       "avg_net_pct": -0.2631
+      },
+      "2024": {
+       "trades": 238,
+       "avg_net_pct": -0.2632
+      },
+      "2025": {
+       "trades": 151,
+       "avg_net_pct": -0.2805
+      },
+      "2026": {
+       "trades": 27,
+       "avg_net_pct": -0.1556
+      }
+     },
+     "holdout_trades": 25,
+     "holdout_avg_pct": -0.1008,
+     "baseline_even_avg_pct": -0.236,
+     "edge_vs_even_ci": [
+      -0.1099,
+      0.0548
+     ],
+     "edge_vs_activity_ci": [
+      -0.2398,
+      0.2424
+     ],
+     "baseline_activity_avg_pct": -0.2636,
+     "checks": {
+      "at least 200 trades": true,
+      "average net CI above zero": false,
+      "every year positive": false,
+      "final holdout positive": false,
+      "beats evenly-timed entries (CI)": false,
+      "beats activity-only rule (CI)": false,
+      "calibrated on holdout": true
+     },
+     "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats evenly-timed entries (CI); beats activity-only rule (CI)"
+    },
+    {
+     "asset": "SOL",
+     "model": "LGBM",
+     "implementation": "lightgbm",
+     "window_min": 60,
+     "stop_pct": 0.65,
+     "target_pct": 0.65,
+     "threshold_p": 0.7015,
+     "version": "scalp-book-1",
+     "qualified": false,
+     "decisions": 352607,
+     "max_p": 0.6878,
+     "share_above_threshold": 0.0,
+     "brier_holdout": 0.14062,
+     "brier_base_holdout": 0.16408,
+     "base_rate_holdout": 0.1909,
+     "trades": 0,
+     "reason": "too few trades (model rarely sees an edge above break-even)",
+     "checks": {}
+    },
+    {
+     "asset": "SOL",
+     "model": "LGBM+BOOK",
+     "implementation": "lightgbm",
+     "window_min": 60,
+     "stop_pct": 0.65,
+     "target_pct": 0.65,
+     "threshold_p": 0.7015,
+     "version": "scalp-book-1",
+     "qualified": false,
+     "decisions": 352607,
+     "max_p": 0.7154,
+     "share_above_threshold": 1e-05,
+     "brier_holdout": 0.14044,
+     "brier_base_holdout": 0.16408,
+     "base_rate_holdout": 0.1909,
+     "trades": 3,
+     "reason": "too few trades (model rarely sees an edge above break-even)",
+     "checks": {}
+    }
+   ],
+   "book_value": {
+    "30m/0.40%/LOGIT": {
+     "n": 352607,
+     "brier_without": 0.122692,
+     "brier_with": 0.122661,
+     "improvement_ci95": [
+      -7.03e-05,
+      0.0001361
+     ],
+     "adds_information": false
+    },
+    "30m/0.40%/LGBM": {
+     "n": 352607,
+     "brier_without": 0.121412,
+     "brier_with": 0.121491,
+     "improvement_ci95": [
+      -0.0001674,
+      1.11e-05
+     ],
+     "adds_information": false
+    },
+    "60m/0.65%/LOGIT": {
+     "n": 352607,
+     "brier_without": 0.185847,
+     "brier_with": 0.185824,
+     "improvement_ci95": [
+      -0.0001685,
+      0.0001969
+     ],
+     "adds_information": false
+    },
+    "60m/0.65%/LGBM": {
+     "n": 352607,
+     "brier_without": 0.184599,
+     "brier_with": 0.184565,
+     "improvement_ci95": [
+      -0.0001724,
+      0.0002258
+     ],
+     "adds_information": false
+    }
+   }
+  }
+ }
+}
