@@ -7,7 +7,7 @@ from typing import Any, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-SCHEMA_VERSION = "1.11.0"
+SCHEMA_VERSION = "1.12.0"
 
 
 class Action(str, Enum):
@@ -238,6 +238,9 @@ class Check(BaseModel):
     code: str  # session | news | volatility | trend | level | reward_risk | model
     ok: Optional[bool] = None
     args: list[str] = Field(default_factory=list)
+    # v1.12 (news): CONNECTED | NO_EVENTS | STALE | DISCONNECTED | NOT_CONFIGURED ; last successful calendar update
+    state: Optional[str] = None
+    updated_at: Optional[str] = None
 
 
 class Scenario(BaseModel):

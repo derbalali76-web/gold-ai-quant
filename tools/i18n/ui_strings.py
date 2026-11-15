@@ -426,4 +426,6 @@ UI = {
     "Solo en la versión de prueba, para enviar capturas. La app publicada siempre las bloquea.",
     "Somente na versão de teste, para enviar capturas. O app publicado sempre as bloqueia."),
 "tagline_crypto": ("AI for crypto", "الذكاء الاصطناعي للعملات الرقمية", "L'IA pour les cryptos", "IA para cripto", "IA para cripto"),
+"ck_news_stale": ("News calendar out of date (last update %1$s)", "تقويم الأخبار قديم (آخر تحديث %1$s)", "Calendrier des annonces obsolète (mise à jour %1$s)", "Calendario de noticias desactualizado (actualizado %1$s)", "Calendário de notícias desatualizado (atualizado %1$s)"),
+"ck_news_unconf": ("News calendar not set up", "تقويم الأخبار غير مهيأ", "Calendrier des annonces non configuré", "Calendario de noticias no configurado", "Calendário de notícias não configurado"),
 }

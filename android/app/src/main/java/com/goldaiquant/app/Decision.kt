@@ -40,7 +40,8 @@ data class Outlook(
 )
 
 /** v1.7.3 live entry condition; ok == null: cannot be checked right now. */
-data class Check(val code: String, val ok: Boolean?, val args: List<String>)
+data class Check(val code: String, val ok: Boolean?, val args: List<String>, val state: String? = null,
+                 val updatedAt: Instant? = null)
 
 /** Daily context (v1.7.2): bias + level scenarios to WATCH; never a recommendation. */
 data class Scenario(val kind: String, val trigger: Double, val triggerLevel: String, val target: Double?, val targetLevel: String?)
@@ -371,7 +372,8 @@ object DecisionParser {
             val e = a.optJSONObject(i) ?: return@mapNotNull null
             val args = e.optJSONArray("args")
             Check(e.optString("code"), if (e.isNull("ok") || !e.has("ok")) null else e.optBoolean("ok"),
-                if (args == null) emptyList() else (0 until args.length()).map { args.optString(it) })
+                if (args == null) emptyList() else (0 until args.length()).map { args.optString(it) },
+                e.optString("state").takeIf { e.has("state") && !e.isNull("state") }, e.time("updated_at"))
         }
     }
 

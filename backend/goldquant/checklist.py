@@ -18,12 +18,14 @@ def _nearest(levels, price: float):
 
 def build(d: Decision, o: HorizonOutlook, ctx=None) -> list[Check]:
     out = [Check(code="session", ok=not d.market_closed)]
+    state = getattr(ctx, "calendar_state", None) if ctx is not None else None
+    upd = getattr(ctx, "calendar_updated_at", None) if ctx is not None else None
     if ctx is not None and getattr(ctx, "calendar_connected", False):
         ev = list(getattr(ctx, "embargo_events", []) or [])
         name = str(ev[0].get("name") if isinstance(ev[0], dict) else ev[0])[:40] if ev else ""
-        out.append(Check(code="news", ok=not ev, args=[name] if ev else []))
-    else:
-        out.append(Check(code="news", ok=None))
+        out.append(Check(code="news", ok=not ev, args=[name] if ev else [], state=state, updated_at=upd))
+    else:  # unknown is NOT "no news": ok stays None
+        out.append(Check(code="news", ok=None, state=state or "NOT_CONFIGURED", updated_at=upd))
     if o.horizon == "HOURS":
         out.append(Check(code="volatility", ok=None if d.vol_regime is None else d.vol_regime not in ("HIGH_VOL", "EXCEPTIONAL")))
         t = d.market_trend

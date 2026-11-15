@@ -366,6 +366,8 @@
     <string name="set_allow_shots">Autoriser les captures (version de test)</string>
     <string name="set_allow_shots_note">Uniquement dans la version de test, pour envoyer des captures. L\'app publiée les bloque toujours.</string>
     <string name="tagline_crypto">L\'IA pour les cryptos</string>
+    <string name="ck_news_stale">Calendrier des annonces obsolète (mise à jour %1$s)</string>
+    <string name="ck_news_unconf">Calendrier des annonces non configuré</string>
     <string name="r_w_up" formatted="false">haussière</string>
     <string name="r_w_down" formatted="false">baissière</string>
     <string name="r_w_neutral" formatted="false">neutre</string>

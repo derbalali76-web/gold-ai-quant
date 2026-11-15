@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.11.0",
+  "schema_version": "1.12.0",
   "decision_id": "ae4a8112c4e38b2c",
   "mode": "DEMO",
   "action": "WAIT",
@@ -351,22 +351,30 @@
         {
           "code": "session",
           "ok": true,
-          "args": []
+          "args": [],
+          "state": null,
+          "updated_at": null
         },
         {
           "code": "news",
           "ok": null,
-          "args": []
+          "args": [],
+          "state": "NOT_CONFIGURED",
+          "updated_at": null
         },
         {
           "code": "volatility",
           "ok": true,
-          "args": []
+          "args": [],
+          "state": null,
+          "updated_at": null
         },
         {
           "code": "trend",
           "ok": true,
-          "args": []
+          "args": [],
+          "state": null,
+          "updated_at": null
         },
         {
           "code": "level",
@@ -374,12 +382,16 @@
           "args": [
             "S1",
             "2.37"
-          ]
+          ],
+          "state": null,
+          "updated_at": null
         },
         {
           "code": "model",
           "ok": false,
-          "args": []
+          "args": [],
+          "state": null,
+          "updated_at": null
         }
       ],
       "plan": {
@@ -535,6 +547,23 @@
         "supports": [
           {
             "name": "S1",
+            "price": 2099.55,
+            "zone_low": 2094.72,
+            "zone_high": 2104.38,
+            "strength": null,
+            "strength_label_ar": "ضعيف",
+            "tests": 1,
+            "timeframes": [
+              "D1"
+            ],
+            "role_flip": false,
+            "broken_recently": false,
+            "distance_atr": -0.41,
+            "last_test_utc": "2025-12-29T00:00:00Z",
+            "hold_probability": null
+          },
+          {
+            "name": "S2",
             "price": 2078.39,
             "zone_low": 2073.43,
             "zone_high": 2083.35,
@@ -551,37 +580,20 @@
             "hold_probability": null
           },
           {
-            "name": "S2",
-            "price": 2059.08,
-            "zone_low": 2053.35,
-            "zone_high": 2064.82,
-            "strength": null,
-            "strength_label_ar": "قوي",
-            "tests": 5,
-            "timeframes": [
-              "D1"
-            ],
-            "role_flip": false,
-            "broken_recently": false,
-            "distance_atr": -2.76,
-            "last_test_utc": "2025-12-19T00:00:00Z",
-            "hold_probability": null
-          },
-          {
             "name": "S3",
-            "price": 2037.39,
-            "zone_low": 2031.59,
-            "zone_high": 2043.19,
+            "price": 2061.06,
+            "zone_low": 2053.35,
+            "zone_high": 2065.93,
             "strength": null,
-            "strength_label_ar": "قوي",
-            "tests": 8,
+            "strength_label_ar": "متوسط",
+            "tests": 4,
             "timeframes": [
               "D1"
             ],
             "role_flip": false,
             "broken_recently": false,
-            "distance_atr": -4.02,
-            "last_test_utc": "2025-12-15T00:00:00Z",
+            "distance_atr": -2.64,
+            "last_test_utc": "2025-12-19T00:00:00Z",
             "hold_probability": null
           }
         ],
@@ -610,30 +622,40 @@
         {
           "code": "session",
           "ok": true,
-          "args": []
+          "args": [],
+          "state": null,
+          "updated_at": null
         },
         {
           "code": "news",
           "ok": null,
-          "args": []
+          "args": [],
+          "state": "NOT_CONFIGURED",
+          "updated_at": null
         },
         {
           "code": "trend",
           "ok": true,
-          "args": []
+          "args": [],
+          "state": null,
+          "updated_at": null
         },
         {
           "code": "level",
-          "ok": false,
+          "ok": true,
           "args": [
             "S1",
-            "32.18"
-          ]
+            "11.02"
+          ],
+          "state": null,
+          "updated_at": null
         },
         {
           "code": "model",
           "ok": false,
-          "args": []
+          "args": [],
+          "state": null,
+          "updated_at": null
         }
       ],
       "plan": {
@@ -811,8 +833,8 @@
             "zone_low": 2073.43,
             "zone_high": 2083.35,
             "strength": null,
-            "strength_label_ar": "متوسط",
-            "tests": 3,
+            "strength_label_ar": "قوي",
+            "tests": 5,
             "timeframes": [
               "D1"
             ],
@@ -824,9 +846,62 @@
           },
           {
             "name": "S2",
-            "price": 2059.08,
-            "zone_low": 2053.35,
+            "price": 2062.23,
+            "zone_low": 2059.65,
             "zone_high": 2064.82,
+            "strength": null,
+            "strength_label_ar": "قوي",
+            "tests": 7,
+            "timeframes": [
+              "D1"
+            ],
+            "role_flip": false,
+            "broken_recently": false,
+            "distance_atr": -2.58,
+            "last_test_utc": "2025-12-19T00:00:00Z",
+            "hold_probability": null
+          },
+          {
+            "name": "S3",
+            "price": 2039.18,
+            "zone_low": 2036.6,
+            "zone_high": 2041.77,
+            "strength": null,
+            "strength_label_ar": "قوي",
+            "tests": 9,
+            "timeframes": [
+              "D1"
+            ],
+            "role_flip": false,
+            "broken_recently": false,
+            "distance_atr": -3.91,
+            "last_test_utc": "2025-12-15T00:00:00Z",
+            "hold_probability": null
+          }
+        ],
+        "resistances": [
+          {
+            "name": "R1",
+            "price": 2136.78,
+            "zone_low": 2131.97,
+            "zone_high": 2141.59,
+            "strength": null,
+            "strength_label_ar": "متوسط",
+            "tests": 4,
+            "timeframes": [
+              "D1"
+            ],
+            "role_flip": false,
+            "broken_recently": false,
+            "distance_atr": 1.75,
+            "last_test_utc": "2024-09-24T00:00:00Z",
+            "hold_probability": null
+          },
+          {
+            "name": "R2",
+            "price": 2170.14,
+            "zone_low": 2167.56,
+            "zone_high": 2172.73,
             "strength": null,
             "strength_label_ar": "قوي",
             "tests": 5,
@@ -835,29 +910,28 @@
             ],
             "role_flip": false,
             "broken_recently": false,
-            "distance_atr": -2.76,
-            "last_test_utc": "2025-12-19T00:00:00Z",
+            "distance_atr": 3.68,
+            "last_test_utc": "2024-08-26T00:00:00Z",
             "hold_probability": null
           },
           {
-            "name": "S3",
-            "price": 2037.39,
-            "zone_low": 2031.59,
-            "zone_high": 2043.19,
+            "name": "R3",
+            "price": 2399.59,
+            "zone_low": 2397.01,
+            "zone_high": 2402.18,
             "strength": null,
-            "strength_label_ar": "قوي",
-            "tests": 8,
+            "strength_label_ar": "متوسط",
+            "tests": 3,
             "timeframes": [
               "D1"
             ],
             "role_flip": false,
             "broken_recently": false,
-            "distance_atr": -4.02,
-            "last_test_utc": "2025-12-15T00:00:00Z",
+            "distance_atr": 16.99,
+            "last_test_utc": "2024-06-27T00:00:00Z",
             "hold_probability": null
           }
         ],
-        "resistances": [],
         "validated": false,
         "atr_h1": null,
         "validation_ar": null,
@@ -883,30 +957,40 @@
         {
           "code": "session",
           "ok": true,
-          "args": []
+          "args": [],
+          "state": null,
+          "updated_at": null
         },
         {
           "code": "news",
           "ok": null,
-          "args": []
+          "args": [],
+          "state": "NOT_CONFIGURED",
+          "updated_at": null
         },
         {
           "code": "trend",
           "ok": true,
-          "args": []
+          "args": [],
+          "state": null,
+          "updated_at": null
         },
         {
           "code": "level",
           "ok": false,
           "args": [
-            "S1",
-            "32.18"
-          ]
+            "R1",
+            "26.21"
+          ],
+          "state": null,
+          "updated_at": null
         },
         {
           "code": "model",
           "ok": false,
-          "args": []
+          "args": [],
+          "state": null,
+          "updated_at": null
         }
       ],
       "plan": {
@@ -1010,7 +1094,7 @@
     ]
   },
   "scalp_activity": null,
-  "audit_hash": "6bb70d29430719fa4ce14a4b8455287e96d25a8f18d58b1ab24093a2cee051b7",
+  "audit_hash": "1a0ecace04c8fdfec7c93116272d3d7a4fd5fbd94a10ddd54e2cf868325575a2",
   "supporting_evidence": [
     {
       "engine": "mtf_bias",

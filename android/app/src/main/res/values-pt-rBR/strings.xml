@@ -366,6 +366,8 @@
     <string name="set_allow_shots">Permitir capturas (versão de teste)</string>
     <string name="set_allow_shots_note">Somente na versão de teste, para enviar capturas. O app publicado sempre as bloqueia.</string>
     <string name="tagline_crypto">IA para cripto</string>
+    <string name="ck_news_stale">Calendário de notícias desatualizado (atualizado %1$s)</string>
+    <string name="ck_news_unconf">Calendário de notícias não configurado</string>
     <string name="r_w_up" formatted="false">de alta</string>
     <string name="r_w_down" formatted="false">de baixa</string>
     <string name="r_w_neutral" formatted="false">neutra</string>

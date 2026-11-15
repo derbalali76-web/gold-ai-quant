@@ -7,6 +7,8 @@ Optional shared token: set GOLDQUANT_TOKEN and send header X-Goldquant-Token (al
 """
 from __future__ import annotations
 
+import logging
+
 import dataclasses
 import hmac
 import os
@@ -194,6 +196,11 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
                             "next_events": [e for e in o.get("events", []) if e["time_utc"] >= utcnow().isoformat()[:19]][:6]}
             except ValueError:
                 cal_info = {"status": "ملف التقويم التلقائي تالف"}
+        if context is not None:
+            cs_ = context.calendar_status(utcnow())
+            cs_.pop("cal", None)
+            cal_info = {**cal_info, "state": cs_["state"], "last_successful_update": cs_["updated_at"],
+                        "reason": cs_["reason"]}
         return {"providers": provs, "live_provider_configured": live_provider is not None,
                 "economic_calendar": cal_info,
                 "context_enabled": context is not None,
@@ -345,6 +352,20 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
 
     crypto_state: dict = {"feed": None, "levels": None, "cache": {}}
 
+    ctx_cache: dict = {"t": 0.0, "ctx": None}
+
+    def shared_context():
+        """Calendar & macro context for the crypto engines (snapshot only; refreshing stays in the gold loop)."""
+        if context is None:
+            return None
+        if time.time() - ctx_cache["t"] > 60:
+            try:
+                ctx_cache["ctx"], ctx_cache["t"] = context.snapshot(utcnow()), time.time()
+            except Exception as exc:  # noqa: BLE001
+                logging.getLogger("goldquant.calendar").warning("context snapshot failed: %s", type(exc).__name__)
+                ctx_cache["ctx"], ctx_cache["t"] = None, time.time()
+        return ctx_cache["ctx"]
+
     activity_state: dict = {"mtime": None, "params": {}}
 
     def attach_activity(asset: str, d: Decision) -> None:
@@ -393,7 +414,7 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
         hit = crypto_state["cache"].get(asset)
         if hit and time.time() - hit[0] < 60:
             return hit[1]
-        d = CE.decide(asset, crypto_state["feed"], utcnow(), crypto_state["levels"])
+        d = CE.decide(asset, crypto_state["feed"], utcnow(), crypto_state["levels"], shared_context())
         attach_activity(asset, d)
         crypto_state["cache"][asset] = (time.time(), d)
         return d

@@ -367,6 +367,8 @@
     <string name="set_allow_shots">Allow screenshots (test build)</string>
     <string name="set_allow_shots_note">Only in the test build, to send screenshots for review. The published app always blocks them.</string>
     <string name="tagline_crypto">AI for crypto</string>
+    <string name="ck_news_stale">News calendar out of date (last update %1$s)</string>
+    <string name="ck_news_unconf">News calendar not set up</string>
     <string name="r_w_up" formatted="false">up</string>
     <string name="r_w_down" formatted="false">down</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

@@ -93,7 +93,8 @@ def _cards(daily: Optional[pd.DataFrame], as_of: datetime) -> list[HorizonOutloo
 
 
 def decide(asset: str, feed: CryptoFeed, as_of: Optional[datetime] = None,
-           levels: Optional[LevelService] = None) -> Decision:
+           levels: Optional[LevelService] = None, ctx=None) -> Decision:
+    """ctx: the shared market context (economic calendar: US macro releases move crypto too). None = unknown."""
     sym = ASSETS[asset]
     as_of = as_of or datetime.now(timezone.utc)
     did = hashlib.sha256(f"{sym}|{as_of.isoformat()}".encode()).hexdigest()[:16]
@@ -134,7 +135,14 @@ def decide(asset: str, feed: CryptoFeed, as_of: Optional[datetime] = None,
             else Mg("un.stale", f"{age:.0f}")
         return Decision(action=Action.UNAVAILABLE, data_quality="INSUFFICIENT", warning_ar=str(msg),
                         reason_short_ar=str(msg), warning_ref=_ref(msg), reason_short_ref=_ref(msg), **common)
-    fe = {tf: frame_features(df).iloc[-1] for tf, df in bars.items()}
+    ff = {tf: frame_features(df) for tf, df in bars.items()}
+    fe = {tf: f.iloc[-1] for tf, f in ff.items()}
+    try:  # descriptive volatility regime (same classifier as gold); used by the checklist only
+        from .regime import classify, volatility_regime
+        z = fe["M15"].get("ret_z", float("nan"))
+        vreg = volatility_regime(classify(ff["M15"]), float(z) if z == z else 0.0)
+    except Exception:  # noqa: BLE001
+        vreg = None
     trend = MarketTrend(**market_trend(fe, "RANGE"))
     ls = levels or LevelService()
     sr = compute_levels(bars, as_of, price, ls.model(("crypto", sym), bars, as_of))
@@ -148,10 +156,11 @@ def decide(asset: str, feed: CryptoFeed, as_of: Optional[datetime] = None,
                            validation_ref=_ref(Mg("va.crypto_unq")))
     msg = Mg("va.crypto_unq")
     d = Decision(action=Action.WAIT, data_quality="GOOD" if dq_status == DQ.OK else "DEGRADED", market_trend=trend,
+                 vol_regime=vreg,
                  levels=lv, outlooks=[hours] + _cards(daily, as_of), reason_short_ar=str(msg), warning_ar=str(msg),
                  reason_short_ref=_ref(msg), warning_ref=_ref(msg), **common)
     PL.attach(d)
-    CK.attach(d, None)
+    CK.attach(d, ctx)
     d.daily_brief = BR.build(d)
     if d.daily_brief is not None:
         d.daily_brief.events = BR.events(d, bars["H1"])

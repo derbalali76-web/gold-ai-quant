@@ -4,6 +4,8 @@ Every source can fail independently; failures are recorded and surface as `missi
 """
 from __future__ import annotations
 
+import logging
+
 from .msg import M
 
 import threading
@@ -26,9 +28,17 @@ EMBARGO_BEFORE_MIN = 60  # top-tier releases (NFP, CPI, FOMC...) move gold most 
 EMBARGO_AFTER_MIN = 45
 
 
+CAL_CONNECTED, CAL_NO_EVENTS, CAL_STALE, CAL_DISCONNECTED, CAL_NOT_CONFIGURED = (
+    "CONNECTED", "NO_EVENTS", "STALE", "DISCONNECTED", "NOT_CONFIGURED")
+log = logging.getLogger("goldquant.calendar")
+
+
 @dataclass
 class MarketContext:
     calendar_connected: bool = False
+    calendar_state: str = CAL_NOT_CONFIGURED
+    calendar_updated_at: Optional[str] = None  # last successful refresh of the calendar file(s)
+    calendar_reason: Optional[str] = None
     embargo_events: list = field(default_factory=list)  # high-impact events from 60 min before to 45 min after
     upcoming_events: list = field(default_factory=list)  # high-impact events in the next 72 hours (names + time)
     recent_news: list = field(default_factory=list)  # (source, title, published_at) high-impact last 30 min
@@ -89,15 +99,54 @@ class ContextService:
                     self._news_items = items
                 self.history.log_fetch(now, "RSS", bool(items), None, f"{len(items)} items; errors={list(self.news.errors)}")
 
+    def calendar_status(self, as_of: datetime) -> dict:
+        """Calendar state without guessing: NOT_CONFIGURED (no file), DISCONNECTED (unreadable), STALE (older than
+        8 days or no future event), CONNECTED / NO_EVENTS (fresh; NO_EVENTS = nothing high-impact in 24 h).
+        Files are re-read only when they change (mtime cache); the reason is logged, never any key."""
+        paths = [self.calendar_path] + ([self.auto_calendar_path] if self.auto_calendar_path else [])
+        existing = [p for p in paths if p.exists()]
+        key = tuple((str(p), p.stat().st_mtime) for p in existing)
+        cached = getattr(self, "_cal_cache", None)
+        if cached and cached[0] == key:
+            cal, err = cached[1], cached[2]
+        else:
+            cal, err = None, None
+            if existing:
+                try:
+                    cal = CAL.load_calendars(existing)
+                except (ValueError, KeyError, OSError) as exc:
+                    err = f"calendar file unreadable: {type(exc).__name__}: {str(exc)[:120]}"
+            self._cal_cache = (key, cal, err)
+        st = {"state": CAL_NOT_CONFIGURED, "updated_at": None, "reason": "no calendar file", "cal": cal}
+        if not existing:
+            pass
+        elif cal is None:
+            st.update(state=CAL_DISCONNECTED, reason=err)
+        else:
+            st["updated_at"] = cal.updated_at.isoformat() if cal.updated_at else None
+            if cal.connected(as_of):
+                soon = cal.upcoming(as_of, hours=24)
+                st.update(state=CAL_CONNECTED if soon else CAL_NO_EVENTS, reason=None)
+            else:
+                age = (as_of - cal.updated_at) if cal.updated_at else None
+                st.update(state=CAL_STALE, reason=("no future event listed" if age is not None and age <= CAL.STALE_AFTER
+                                                   else f"last successful update {st['updated_at']}"))
+        if st["state"] not in (CAL_CONNECTED, CAL_NO_EVENTS):
+            prev = getattr(self, "_cal_logged", None)
+            if prev != (st["state"], st["reason"]):
+                log.warning("economic calendar %s: %s", st["state"], st["reason"])
+                self._cal_logged = (st["state"], st["reason"])
+        return st
+
     def snapshot(self, as_of: datetime) -> MarketContext:
         ctx = MarketContext()
-        cal = None
-        try:
-            cal = CAL.load_calendars([self.calendar_path] + ([self.auto_calendar_path] if self.auto_calendar_path else []))
-        except (ValueError, KeyError) as exc:
-            ctx.missing.append(f"ملف التقويم غير صالح: {exc}")
-        if cal is not None:
-            ctx.calendar_connected = cal.connected(as_of)
+        cs = self.calendar_status(as_of)
+        cal = cs.pop("cal")
+        ctx.calendar_state, ctx.calendar_updated_at, ctx.calendar_reason = cs["state"], cs["updated_at"], cs["reason"]
+        ctx.calendar_connected = cs["state"] in (CAL_CONNECTED, CAL_NO_EVENTS)
+        if cs["state"] == CAL_DISCONNECTED:
+            ctx.missing.append(f"ملف التقويم غير صالح: {cs['reason']}")
+        if cal is not None and ctx.calendar_connected:
             ctx.embargo_events = [e.name for e in cal.embargo(as_of, before_min=EMBARGO_BEFORE_MIN, after_min=EMBARGO_AFTER_MIN)]
             ctx.upcoming_events = [f"{e.name} ({e.time_utc:%Y-%m-%d %H:%M} UTC)" for e in cal.upcoming(as_of, hours=72)]
         if not ctx.calendar_connected:
@@ -131,3 +180,11 @@ class ContextService:
         ctx.sources_status = {"news_errors": dict(self.news.errors), "fred_error": self.fred.last_error,
                               "cftc_error": self.cftc.last_error}
         return ctx
+
+
+def news_clear(ctx) -> bool:
+    """True ONLY when the calendar is verified (fresh) AND no high-impact event is in the embargo window.
+    An unknown calendar is never 'no news': any trading engine (scalping included) must treat it as not clear."""
+    return bool(ctx is not None and getattr(ctx, "calendar_connected", False)
+                and getattr(ctx, "calendar_state", None) in (CAL_CONNECTED, CAL_NO_EVENTS)
+                and not getattr(ctx, "embargo_events", None))

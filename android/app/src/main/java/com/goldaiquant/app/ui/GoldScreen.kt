@@ -688,8 +688,17 @@ private fun checkText(k: Check): String {
     val a0 = k.args.getOrNull(0) ?: ""; val a1 = k.args.getOrNull(1)?.let { ltr(it) } ?: ""
     return when (k.code) {
         "session" -> stringResource(if (k.ok == true) R.string.ck_session_ok else R.string.ck_session_no)
-        "news" -> when (k.ok) { true -> stringResource(R.string.ck_news_ok); false -> stringResource(R.string.ck_news_no, a0)
-            else -> stringResource(R.string.ck_news_na) }
+        "news" -> when (k.ok) {
+            true -> stringResource(R.string.ck_news_ok)
+            false -> stringResource(R.string.ck_news_no, a0)
+            else -> when (k.state) {  // unknown is never shown as "no news"
+                "STALE" -> stringResource(R.string.ck_news_stale, k.updatedAt?.let {
+                    ltr(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm").format(it.atZone(java.time.ZoneId.systemDefault())))
+                } ?: "—")
+                "NOT_CONFIGURED" -> stringResource(R.string.ck_news_unconf)
+                else -> stringResource(R.string.ck_news_na)
+            }
+        }
         "volatility" -> stringResource(when (k.ok) { true -> R.string.ck_vol_ok; false -> R.string.ck_vol_no; else -> R.string.ck_vol_na })
         "trend" -> stringResource(when (k.ok) { true -> R.string.ck_trend_ok; false -> R.string.ck_trend_no; else -> R.string.ck_trend_na })
         "level" -> when (k.ok) { true -> stringResource(R.string.ck_level_ok, a0); false -> stringResource(R.string.ck_level_no, a0, a1)
