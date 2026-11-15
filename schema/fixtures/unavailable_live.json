@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.10.0",
+  "schema_version": "1.11.0",
   "decision_id": "098d32e5d77c2ef8",
   "mode": "LIVE",
   "action": "UNAVAILABLE",
@@ -50,7 +50,7 @@
   "daily_brief": null,
   "data_health": null,
   "scalp_activity": null,
-  "audit_hash": "ae4399c015c7fe817d9b357d905dea01ea1c7527afe810a76dec81330330cbd8",
+  "audit_hash": "ca720458d8381e67a8d69c6dff72d2a74f608ec5561792d03826b3153f736988",
   "supporting_evidence": [],
   "contrary_evidence": [],
   "invalidation_ar": [],

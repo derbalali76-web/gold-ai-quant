@@ -869,6 +869,7 @@ private fun LevelDialog(l: Level, isSupport: Boolean, c: HorizonCard, onClose: (
         // strength only when the engine validated it; otherwise it is explicitly "not validated"
         KV(stringResource(R.string.lv_strength), l.strength?.let { stringResource(R.string.lv_strength_val, it) }
             ?: stringResource(R.string.lv_not_validated))
+        l.holdProbability?.let { KV(stringResource(R.string.lv_hold_prob), "${Math.round(it * 100)}%") }
         KV(stringResource(R.string.lv_tests), "${l.tests}")
         KV(stringResource(R.string.lv_last_test), l.lastTest?.let { ltr(fmt.format(it.atZone(ZoneId.systemDefault()))) } ?: "—")
         KV(stringResource(R.string.lv_timeframes), ltr(l.timeframes.joinToString(" / ").ifEmpty { "—" }))

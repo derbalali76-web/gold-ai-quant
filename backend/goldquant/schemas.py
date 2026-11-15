@@ -7,7 +7,7 @@ from typing import Any, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-SCHEMA_VERSION = "1.10.0"
+SCHEMA_VERSION = "1.11.0"
 
 
 class Action(str, Enum):
@@ -134,6 +134,8 @@ class PriceLevel(BaseModel):
     broken_recently: bool = False
     distance_atr: float
     last_test_utc: Optional[str] = None
+    # v1.11: if the price reaches this zone, P(it holds) within 12 H1 bars — only when calibrated out of sample
+    hold_probability: Optional[float] = Field(default=None, ge=0.0, le=1.0)
 
 
 class LevelsBlock(BaseModel):

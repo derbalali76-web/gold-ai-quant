@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.10.0",
+  "schema_version": "1.11.0",
   "decision_id": "ae4a8112c4e38b2c",
   "mode": "DEMO",
   "action": "WAIT",
@@ -139,7 +139,8 @@
         "role_flip": true,
         "broken_recently": true,
         "distance_atr": -0.61,
-        "last_test_utc": "2025-12-30T19:00:00Z"
+        "last_test_utc": "2025-12-30T19:00:00Z",
+        "hold_probability": null
       },
       {
         "name": "S2",
@@ -157,7 +158,8 @@
         "role_flip": true,
         "broken_recently": true,
         "distance_atr": -1.81,
-        "last_test_utc": "2025-12-30T20:00:00Z"
+        "last_test_utc": "2025-12-30T20:00:00Z",
+        "hold_probability": null
       },
       {
         "name": "S3",
@@ -175,7 +177,8 @@
         "role_flip": false,
         "broken_recently": false,
         "distance_atr": -5.32,
-        "last_test_utc": "2025-12-22T05:00:00Z"
+        "last_test_utc": "2025-12-22T05:00:00Z",
+        "hold_probability": null
       }
     ],
     "resistances": [
@@ -193,7 +196,8 @@
         "role_flip": false,
         "broken_recently": true,
         "distance_atr": 0.62,
-        "last_test_utc": "2025-12-30T19:00:00Z"
+        "last_test_utc": "2025-12-30T19:00:00Z",
+        "hold_probability": null
       },
       {
         "name": "R2",
@@ -209,7 +213,8 @@
         "role_flip": false,
         "broken_recently": true,
         "distance_atr": 1.17,
-        "last_test_utc": "2025-12-30T17:00:00Z"
+        "last_test_utc": "2025-12-30T17:00:00Z",
+        "hold_probability": null
       },
       {
         "name": "R3",
@@ -225,7 +230,8 @@
         "role_flip": false,
         "broken_recently": true,
         "distance_atr": 2.83,
-        "last_test_utc": "2025-12-30T14:00:00Z"
+        "last_test_utc": "2025-12-30T14:00:00Z",
+        "hold_probability": null
       }
     ],
     "validated": false,
@@ -541,7 +547,8 @@
             "role_flip": false,
             "broken_recently": false,
             "distance_atr": -1.64,
-            "last_test_utc": "2025-12-24T00:00:00Z"
+            "last_test_utc": "2025-12-24T00:00:00Z",
+            "hold_probability": null
           },
           {
             "name": "S2",
@@ -557,7 +564,8 @@
             "role_flip": false,
             "broken_recently": false,
             "distance_atr": -2.76,
-            "last_test_utc": "2025-12-19T00:00:00Z"
+            "last_test_utc": "2025-12-19T00:00:00Z",
+            "hold_probability": null
           },
           {
             "name": "S3",
@@ -573,7 +581,8 @@
             "role_flip": false,
             "broken_recently": false,
             "distance_atr": -4.02,
-            "last_test_utc": "2025-12-15T00:00:00Z"
+            "last_test_utc": "2025-12-15T00:00:00Z",
+            "hold_probability": null
           }
         ],
         "resistances": [],
@@ -810,7 +819,8 @@
             "role_flip": false,
             "broken_recently": false,
             "distance_atr": -1.64,
-            "last_test_utc": "2025-12-24T00:00:00Z"
+            "last_test_utc": "2025-12-24T00:00:00Z",
+            "hold_probability": null
           },
           {
             "name": "S2",
@@ -826,7 +836,8 @@
             "role_flip": false,
             "broken_recently": false,
             "distance_atr": -2.76,
-            "last_test_utc": "2025-12-19T00:00:00Z"
+            "last_test_utc": "2025-12-19T00:00:00Z",
+            "hold_probability": null
           },
           {
             "name": "S3",
@@ -842,7 +853,8 @@
             "role_flip": false,
             "broken_recently": false,
             "distance_atr": -4.02,
-            "last_test_utc": "2025-12-15T00:00:00Z"
+            "last_test_utc": "2025-12-15T00:00:00Z",
+            "hold_probability": null
           }
         ],
         "resistances": [],
@@ -998,7 +1010,7 @@
     ]
   },
   "scalp_activity": null,
-  "audit_hash": "ba920c2083d5ffea4398623335076c629b254b1c302200a3cf0717b80331d690",
+  "audit_hash": "6bb70d29430719fa4ce14a4b8455287e96d25a8f18d58b1ab24093a2cee051b7",
   "supporting_evidence": [
     {
       "engine": "mtf_bias",

@@ -362,6 +362,7 @@
     <string name="scalp_activity_none">El pronóstico de actividad no está validado para este activo.</string>
     <string name="notif_locked">Nueva alerta — desbloquea para leer</string>
     <string name="protect_note">Protección del contenido: las capturas, la grabación de pantalla y la vista previa de apps recientes están bloqueadas en esta app, y las pantallas de análisis llevan tu código anónimo %1$s. Esto no impide una foto tomada con otro dispositivo ni todos los métodos de elusión.</string>
+    <string name="lv_hold_prob">Si se alcanza: probabilidad de que resista (12 h)</string>
     <string name="r_w_up" formatted="false">alcista</string>
     <string name="r_w_down" formatted="false">bajista</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

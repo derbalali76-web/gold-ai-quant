@@ -18,8 +18,14 @@ Strength features (all computed from bars strictly before the evaluation time)
 Weights are learned on historical "level test" events with purged walk-forward validation: a test HOLDS if the
 price moves >= 1 ATR away before closing >= 0.5 ATR beyond the zone (within 12 H1 bars). Validation compares
 out-of-sample AUC with a tests-only baseline. The displayed strength is a PERCENTILE RANK of the model score
-versus historical levels ("stronger than x % of past levels") — it is NOT a probability of a bounce. When the
-validation fails or data are thin, only a coarse label (weak / medium / strong) is shown.
+versus historical levels ("stronger than x % of past levels"). When the validation fails or data are thin, only a
+coarse label (weak / medium / strong) is shown.
+
+Hold probability (pre-registered 2026-11-15, before any result): "if the price reaches this zone, P(it holds) as defined
+above, within 12 H1 bars". Shown ONLY when, on the same out-of-sample folds, the ranking is validated AND
+  * Brier skill vs the training base rate has a 99 % day-block bootstrap CI above zero, and
+  * every probability bin with >= 200 events has |predicted - actual| <= 5 points.
+Otherwise no probability is shown (the percentile strength above is unaffected).
 """
 from __future__ import annotations
 
@@ -87,6 +93,7 @@ class Zone:
     role: str = ""  # SUPPORT | RESISTANCE
     distance_atr: float = 0.0
     broken_recently: bool = False
+    hold_p: float | None = None
 
 
 def build_zones(piv: pd.DataFrame, tol: float) -> list[Zone]:
@@ -213,7 +220,7 @@ def validate(ev: pd.DataFrame, n_folds: int = 5, seed: int = 0) -> dict:
         return {"validated": False, "n_events": int(len(ev)), "reason_ar": "أحداث اختبار المستويات غير كافية"}
     t = ev["time"]
     edges = [t.quantile(q) for q in np.linspace(0.4, 1.0, n_folds + 1)]
-    ps, bs, ys = [], [], []
+    ps, bs, ys, brs = [], [], [], []
     for a_, b_ in zip(edges[:-1], edges[1:]):
         tr = ev[ev["label_known_at"] < a_]
         te = ev[(t >= a_) & (t < b_)]
@@ -223,6 +230,7 @@ def validate(ev: pd.DataFrame, n_folds: int = 5, seed: int = 0) -> dict:
         ps.append(m.predict_proba(te[FEATURES].to_numpy())[:, 1])
         bs.append(te["tests"].to_numpy(float))
         ys.append(te["hold"].to_numpy())
+        brs.append(np.full(len(te), float(tr["hold"].mean())))
     if not ps:
         return {"validated": False, "n_events": int(len(ev)), "reason_ar": "لم يكتمل التحقق المتدرج"}
     p, b, y = np.concatenate(ps), np.concatenate(bs), np.concatenate(ys)
@@ -244,11 +252,33 @@ def validate(ev: pd.DataFrame, n_folds: int = 5, seed: int = 0) -> dict:
             boots.append(roc_auc_score(y[i], p[i]))
     lo, hi = float(np.percentile(boots, 2.5)), float(np.percentile(boots, 97.5))
     ok = len(y) >= MIN_EVENTS and lo > 0.5 and auc > auc_b and auc >= MIN_USEFUL_AUC
-    return {"validated": bool(ok), "n_events": int(len(ev)), "n_oos": int(len(y)), "auc_oos": round(float(auc), 4),
+    cal = probability_calibration(p, y, np.concatenate(brs), groups, rng)
+    return {"validated": bool(ok), "prob_calibrated": bool(ok and cal["ok"]), "calibration": cal, "n_events": int(len(ev)), "n_oos": int(len(y)), "auc_oos": round(float(auc), 4),
             "auc_oos_ci95": [round(lo, 4), round(hi, 4)], "auc_baseline_tests_only": round(float(auc_b), 4),
             "base_hold_rate": round(float(y.mean()), 4),
             "reason_ar": "الأوزان تفوقت على عدد الاختبارات وحده خارج العينة" if ok else
             "الأوزان لم تثبت تفوقاً خارج العينة — تُعرض تصنيفات تقديرية فقط"}
+
+
+def probability_calibration(p, y, base, groups, rng, level=99.0) -> dict:
+    ea, eb = (p - y) ** 2, (base - y) ** 2
+    skill = float(1 - ea.sum() / eb.sum()) if eb.sum() > 0 else 0.0
+    boots = []
+    for _ in range(500):
+        i = np.concatenate([groups[g] for g in rng.integers(0, len(groups), len(groups))])
+        if eb[i].sum() > 0:
+            boots.append(1 - ea[i].sum() / eb[i].sum())
+    q = (100 - level) / 2
+    ci = [round(float(np.percentile(boots, q)), 4), round(float(np.percentile(boots, 100 - q)), 4)] if boots else None
+    bins = []
+    for lo_, hi_ in ((0, .3), (.3, .45), (.45, .55), (.55, .7), (.7, 1.01)):
+        m = (p >= lo_) & (p < hi_)
+        if m.sum():
+            bins.append({"bin": f"{int(lo_ * 100)}-{min(100, int(hi_ * 100))}%", "n": int(m.sum()),
+                         "predicted": round(float(p[m].mean()), 4), "actual": round(float(y[m].mean()), 4)})
+    calibrated = all(abs(b["predicted"] - b["actual"]) <= 0.05 for b in bins if b["n"] >= 200)
+    return {"brier_skill": round(skill, 4), "brier_skill_ci99": ci, "bins": bins,
+            "ok": bool(ci is not None and ci[0] > 0 and calibrated)}
 
 
 # ------------------------------------------------------------------ live service
@@ -319,6 +349,9 @@ def compute_levels(bars: dict, as_of, price: float, model: LevelModel | None = N
         z.score = _score(model, f)
         pct = float((ref <= z.score).mean() * 100) if len(ref) >= 50 else None
         z.strength = int(round(pct)) if (pct is not None and model.validation.get("validated")) else None
+        z.hold_p = None
+        if model.model is not None and model.validation.get("prob_calibrated"):
+            z.hold_p = round(float(model.model.predict_proba(np.array([[f[k] for k in FEATURES]], float))[0, 1]), 3)
         bucket = pct if pct is not None else None
         z.label = ("قوي" if bucket >= 67 else "متوسط" if bucket >= 34 else "ضعيف") if bucket is not None else "غير مُقيَّم"
         z.distance_atr = round((z.center - price) / atr_now, 2) if atr_now > 0 else 0.0
@@ -339,7 +372,8 @@ def compute_levels(bars: dict, as_of, price: float, model: LevelModel | None = N
                          "strength": z.strength, "strength_label_ar": z.label, "tests": int(z.features.get("tests", 0)),
                          "timeframes": list(z.tfs), "role_flip": bool(z.features.get("role_flip")),
                          "broken_recently": z.broken_recently, "distance_atr": z.distance_atr,
-                         "last_test_utc": getattr(z, "last_test_utc", None)}
+                         "last_test_utc": getattr(z, "last_test_utc", None),
+                         "hold_probability": getattr(z, "hold_p", None)}
     return {"supports": [to_d(z, f"S{i + 1}") for i, z in enumerate(out_s[:n])],
             "resistances": [to_d(z, f"R{i + 1}") for i, z in enumerate(out_r[:n])],
             "atr_h1": round(atr_now, 3), "validated": bool(model.validation.get("validated")),

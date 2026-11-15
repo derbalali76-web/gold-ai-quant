@@ -418,4 +418,5 @@ UI = {
     "Protection du contenu : captures d'écran, enregistrement de l'écran et aperçu des apps récentes sont bloqués dans cette app, et les écrans d'analyse portent votre code anonyme %1$s. Cela n'empêche pas une photo prise avec un autre appareil ni tous les contournements.",
     "Protección del contenido: las capturas, la grabación de pantalla y la vista previa de apps recientes están bloqueadas en esta app, y las pantallas de análisis llevan tu código anónimo %1$s. Esto no impide una foto tomada con otro dispositivo ni todos los métodos de elusión.",
     "Proteção do conteúdo: capturas de tela, gravação de tela e a prévia de apps recentes estão bloqueadas neste app, e as telas de análise levam seu código anônimo %1$s. Isso não impede uma foto tirada com outro aparelho nem todas as formas de contorno."),
+"lv_hold_prob": ("If reached: chance it holds (12 h)", "إن وصل السعر: احتمال الصمود (12 ساعة)", "Si atteint : probabilité de tenue (12 h)", "Si se alcanza: probabilidad de que resista (12 h)", "Se atingido: chance de segurar (12 h)"),
 }

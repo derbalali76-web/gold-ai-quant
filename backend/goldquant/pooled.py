@@ -26,6 +26,10 @@ Judged on XAU, BTC, ETH, SOL (2 models x 2 horizons x 4 assets = 16 tests -> 99.
           >= 50 non-overlapping trade-equivalents; average net CI above zero; both halves positive; holdout positive;
           beats ALWAYS-LONG on the same days (CI above zero); beats SINGLE_LOGIT on average; Brier better than the
           training base rate (calibration) on the target asset.
+Correction (declared after the first run, 2026-11-15): for buy-only assets "always long on the same days" equals the
+rule itself, so that check could never pass. The baseline that tests TIMING is always-long on EVERY day; it is now
+required for all assets (and the same-days check stays for assets that can be shorted). No rule, threshold or model
+changed.
 """
 from __future__ import annotations
 
@@ -223,6 +227,17 @@ def _block_boot(x: np.ndarray, block: int, level=CI_LEVEL, n=2000, seed=7, y: Op
     return [round(float(np.percentile(res, a)) * 100, 4), round(float(np.percentile(res, 100 - a)) * 100, 4)]
 
 
+def _boot_means(x: np.ndarray, block: int, n=2000, seed=7) -> np.ndarray:
+    rng = np.random.default_rng(seed)
+    nb = int(np.ceil(len(x) / block))
+    out = np.empty(n)
+    for i in range(n):
+        s = rng.integers(0, max(1, len(x) - block + 1), nb)
+        idx = (s[:, None] + np.arange(block)[None, :]).ravel()[:len(x)]
+        out[i] = x[np.clip(idx, 0, len(x) - 1)].mean()
+    return out
+
+
 def judge(preds: pd.DataFrame, asset: str, model: str, days: int) -> dict:
     d = preds[(preds["asset"] == asset)].dropna(subset=["fwd", model]).sort_index()
     rep = {"asset": asset, "model": model, "horizon_days": days, "version": VERSION, "qualified": False}
@@ -246,7 +261,14 @@ def judge(preds: pd.DataFrame, asset: str, model: str, days: int) -> dict:
     rep["avg_net_pct"] = round(float(net.mean()) * 100, 4)
     rep["avg_net_ci"] = _block_boot(net, block)
     rep["always_long_avg_pct"] = round(float(long_all.mean()) * 100, 4)
-    rep["edge_vs_long_ci"] = _block_boot(net, block, y=long_all)
+    rep["edge_vs_long_ci"] = _block_boot(net, block, y=long_all) if asset not in LONG_ONLY else None
+    all_long = fwd - cost  # always long on every decision day
+    rep["always_long_all_days_pct"] = round(float(all_long.mean()) * 100, 4)
+    b1 = _boot_means(net, block)
+    b2 = _boot_means(all_long, block, seed=8)
+    a_ = (100 - CI_LEVEL) / 2
+    rep["edge_vs_long_all_days_ci"] = [round(float(np.percentile(b1 - b2, a_)) * 100, 4),
+                                       round(float(np.percentile(b1 - b2, 100 - a_)) * 100, 4)]
     rep["win_rate"] = round(float((net > 0).mean()), 4)
     half = len(net) // 2
     rep["halves_pct"] = [round(float(net[:half].mean()) * 100, 4), round(float(net[half:].mean()) * 100, 4)]
@@ -276,7 +298,9 @@ def judge(preds: pd.DataFrame, asset: str, model: str, days: int) -> dict:
         "average net CI above zero": bool(rep["avg_net_ci"] and rep["avg_net_ci"][0] > 0),
         "both halves positive": min(rep["halves_pct"]) > 0,
         "final holdout positive": rep["holdout_trades"] >= days and (rep["holdout_avg_pct"] or 0) > 0,
-        "beats always-long (CI)": bool(rep["edge_vs_long_ci"] and rep["edge_vs_long_ci"][0] > 0),
+        "beats always-long on the same days (CI)": asset in LONG_ONLY or bool(rep["edge_vs_long_ci"]
+                                                                              and rep["edge_vs_long_ci"][0] > 0),
+        "beats always-long on every day (CI)": rep["edge_vs_long_all_days_ci"][0] > 0,
         "beats single-asset model": single is None or float(net.mean()) > single,
         "calibrated (Brier < base rate)": brier < brier_base,
     }

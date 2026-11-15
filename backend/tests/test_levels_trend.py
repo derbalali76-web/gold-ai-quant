@@ -176,3 +176,18 @@ def test_engine_decision_contains_trend_levels_and_two_sentence_reason(demo):
     assert len([x for x in re.split(r"\.(?:\s|$)", d.reason_short_ar) if x.strip()]) == 2
     assert d.quote_change is not None
     Decision(**d.model_dump())
+
+
+def test_level_probability_calibration_rule():
+    import numpy as np
+    from goldquant.levels import probability_calibration
+    rng = np.random.default_rng(0)
+    n = 6000
+    p = rng.uniform(0.2, 0.8, n)
+    y = (rng.random(n) < p).astype(float)
+    groups = [np.arange(i, min(i + 20, n)) for i in range(0, n, 20)]
+    good = probability_calibration(p, y, np.full(n, y.mean()), groups, np.random.default_rng(1))
+    assert good["ok"] and good["brier_skill"] > 0
+    over = np.clip(p + (p - 0.5) * 1.5, 0.01, 0.99)  # overconfident
+    bad = probability_calibration(over, y, np.full(n, y.mean()), groups, np.random.default_rng(1))
+    assert not bad["ok"]

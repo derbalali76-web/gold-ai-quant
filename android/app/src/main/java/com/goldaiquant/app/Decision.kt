@@ -16,7 +16,8 @@ data class Trend(val direction: String, val strength: Int?, val labelAr: String,
 
 data class Level(val name: String, val price: Double, val zoneLow: Double, val zoneHigh: Double, val strength: Int?,
                  val labelAr: String, val tests: Int, val timeframes: List<String>, val brokenRecently: Boolean,
-                 val lastTest: Instant? = null, val roleFlip: Boolean = false, val distanceAtr: Double? = null)
+                 val lastTest: Instant? = null, val roleFlip: Boolean = false, val distanceAtr: Double? = null,
+                 val holdProbability: Double? = null)
 
 data class Levels(val supports: List<Level>, val resistances: List<Level>, val validated: Boolean, val validationAr: String?)
 
@@ -334,7 +335,8 @@ object DecisionParser {
             Level(e.getString("name"), e.getDouble("price"), e.getDouble("zone_low"), e.getDouble("zone_high"),
                 if (e.isNull("strength")) null else e.getInt("strength"), e.getString("strength_label_ar"),
                 e.optInt("tests", 0), e.strings("timeframes"), e.optBoolean("broken_recently", false),
-                e.time("last_test_utc"), e.optBoolean("role_flip", false), e.dbl("distance_atr"))
+                e.time("last_test_utc"), e.optBoolean("role_flip", false), e.dbl("distance_atr"),
+                e.dbl("hold_probability")?.takeIf { it in 0.0..1.0 })
         }
     }
     private fun JSONObject.court(k: String): List<Judgement> {

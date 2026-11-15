@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.10.0",
+  "schema_version": "1.11.0",
   "decision_id": "55b0467d7304a8f2",
   "mode": "DEMO",
   "action": "BUY",
@@ -120,7 +120,8 @@
         "role_flip": true,
         "broken_recently": true,
         "distance_atr": -0.15,
-        "last_test_utc": "2025-12-31T14:00:00Z"
+        "last_test_utc": "2025-12-31T14:00:00Z",
+        "hold_probability": null
       },
       {
         "name": "S2",
@@ -136,7 +137,8 @@
         "role_flip": true,
         "broken_recently": true,
         "distance_atr": -0.74,
-        "last_test_utc": "2025-12-31T12:00:00Z"
+        "last_test_utc": "2025-12-31T12:00:00Z",
+        "hold_probability": null
       },
       {
         "name": "S3",
@@ -153,7 +155,8 @@
         "role_flip": true,
         "broken_recently": true,
         "distance_atr": -2.06,
-        "last_test_utc": "2025-12-30T19:00:00Z"
+        "last_test_utc": "2025-12-30T19:00:00Z",
+        "hold_probability": null
       }
     ],
     "resistances": [
@@ -171,7 +174,8 @@
         "role_flip": false,
         "broken_recently": true,
         "distance_atr": 1.65,
-        "last_test_utc": "2025-12-30T14:00:00Z"
+        "last_test_utc": "2025-12-30T14:00:00Z",
+        "hold_probability": null
       },
       {
         "name": "R2",
@@ -189,7 +193,8 @@
         "role_flip": false,
         "broken_recently": false,
         "distance_atr": 2.75,
-        "last_test_utc": "2025-12-30T11:00:00Z"
+        "last_test_utc": "2025-12-30T11:00:00Z",
+        "hold_probability": null
       }
     ],
     "validated": false,
@@ -534,7 +539,8 @@
             "role_flip": false,
             "broken_recently": false,
             "distance_atr": -1.64,
-            "last_test_utc": "2025-12-24T00:00:00Z"
+            "last_test_utc": "2025-12-24T00:00:00Z",
+            "hold_probability": null
           },
           {
             "name": "S2",
@@ -550,7 +556,8 @@
             "role_flip": false,
             "broken_recently": false,
             "distance_atr": -2.76,
-            "last_test_utc": "2025-12-19T00:00:00Z"
+            "last_test_utc": "2025-12-19T00:00:00Z",
+            "hold_probability": null
           },
           {
             "name": "S3",
@@ -566,7 +573,8 @@
             "role_flip": false,
             "broken_recently": false,
             "distance_atr": -4.02,
-            "last_test_utc": "2025-12-15T00:00:00Z"
+            "last_test_utc": "2025-12-15T00:00:00Z",
+            "hold_probability": null
           }
         ],
         "resistances": [],
@@ -803,7 +811,8 @@
             "role_flip": false,
             "broken_recently": false,
             "distance_atr": -1.64,
-            "last_test_utc": "2025-12-24T00:00:00Z"
+            "last_test_utc": "2025-12-24T00:00:00Z",
+            "hold_probability": null
           },
           {
             "name": "S2",
@@ -819,7 +828,8 @@
             "role_flip": false,
             "broken_recently": false,
             "distance_atr": -2.76,
-            "last_test_utc": "2025-12-19T00:00:00Z"
+            "last_test_utc": "2025-12-19T00:00:00Z",
+            "hold_probability": null
           },
           {
             "name": "S3",
@@ -835,7 +845,8 @@
             "role_flip": false,
             "broken_recently": false,
             "distance_atr": -4.02,
-            "last_test_utc": "2025-12-15T00:00:00Z"
+            "last_test_utc": "2025-12-15T00:00:00Z",
+            "hold_probability": null
           }
         ],
         "resistances": [],
@@ -991,7 +1002,7 @@
     ]
   },
   "scalp_activity": null,
-  "audit_hash": "247e08411479bca340d0bb3ac3e01d9b1649e259d32d2d1d0cee612c3046d5de",
+  "audit_hash": "151dc4d58cc6ce41bc2ffe6aa3ab29336735aef60454dd2abed979565df9c9e0",
   "supporting_evidence": [
     {
       "engine": "mtf_bias",

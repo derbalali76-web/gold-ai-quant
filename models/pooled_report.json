@@ -56,6 +56,11 @@
     -0.1437,
     0.0067
    ],
+   "always_long_all_days_pct": 0.0991,
+   "edge_vs_long_all_days_ci": [
+    -0.1557,
+    0.6105
+   ],
    "win_rate": 0.5611,
    "halves_pct": [
     0.0326,
@@ -73,11 +78,12 @@
     "average net CI above zero": false,
     "both halves positive": true,
     "final holdout positive": true,
-    "beats always-long (CI)": false,
+    "beats always-long on the same days (CI)": false,
+    "beats always-long on every day (CI)": false,
     "beats single-asset model": true,
     "calibrated (Brier < base rate)": true
    },
-   "reason": "failed: average net CI above zero; beats always-long (CI)",
+   "reason": "failed: average net CI above zero; beats always-long on the same days (CI); beats always-long on every day (CI)",
    "horizon": "WEEK"
   },
   {
@@ -101,6 +107,11 @@
     -0.3581,
     0.2195
    ],
+   "always_long_all_days_pct": 0.0991,
+   "edge_vs_long_all_days_ci": [
+    -0.5368,
+    0.2486
+   ],
    "win_rate": 0.4933,
    "halves_pct": [
     -0.1458,
@@ -118,11 +129,12 @@
     "average net CI above zero": false,
     "both halves positive": false,
     "final holdout positive": true,
-    "beats always-long (CI)": false,
+    "beats always-long on the same days (CI)": false,
+    "beats always-long on every day (CI)": false,
     "beats single-asset model": false,
     "calibrated (Brier < base rate)": false
    },
-   "reason": "failed: average net CI above zero; both halves positive; beats always-long (CI); beats single-asset model; calibrated (Brier < base rate)",
+   "reason": "failed: average net CI above zero; both halves positive; beats always-long on the same days (CI); beats always-long on every day (CI); beats single-asset model; calibrated (Brier < base rate)",
    "horizon": "WEEK"
   },
   {
@@ -142,9 +154,11 @@
     3.704
    ],
    "always_long_avg_pct": 0.4742,
-   "edge_vs_long_ci": [
-    0.0,
-    0.0
+   "edge_vs_long_ci": null,
+   "always_long_all_days_pct": 0.712,
+   "edge_vs_long_all_days_ci": [
+    -3.1932,
+    3.3643
    ],
    "win_rate": 0.4509,
    "halves_pct": [
@@ -163,11 +177,12 @@
     "average net CI above zero": false,
     "both halves positive": false,
     "final holdout positive": true,
-    "beats always-long (CI)": false,
+    "beats always-long on the same days (CI)": true,
+    "beats always-long on every day (CI)": false,
     "beats single-asset model": true,
     "calibrated (Brier < base rate)": true
    },
-   "reason": "failed: at least 50 trade-equivalents; average net CI above zero; both halves positive; beats always-long (CI)",
+   "reason": "failed: at least 50 trade-equivalents; average net CI above zero; both halves positive; beats always-long on every day (CI)",
    "horizon": "WEEK"
   },
   {
@@ -187,9 +202,11 @@
     2.8539
    ],
    "always_long_avg_pct": 0.7274,
-   "edge_vs_long_ci": [
-    0.0,
-    0.0
+   "edge_vs_long_ci": null,
+   "always_long_all_days_pct": 0.712,
+   "edge_vs_long_all_days_ci": [
+    -2.1404,
+    2.396
    ],
    "win_rate": 0.4703,
    "halves_pct": [
@@ -208,11 +225,12 @@
     "average net CI above zero": false,
     "both halves positive": false,
     "final holdout positive": false,
-    "beats always-long (CI)": false,
+    "beats always-long on the same days (CI)": true,
+    "beats always-long on every day (CI)": false,
     "beats single-asset model": true,
     "calibrated (Brier < base rate)": false
    },
-   "reason": "failed: average net CI above zero; both halves positive; final holdout positive; beats always-long (CI); calibrated (Brier < base rate)",
+   "reason": "failed: average net CI above zero; both halves positive; final holdout positive; beats always-long on every day (CI); calibrated (Brier < base rate)",
    "horizon": "WEEK"
   },
   {
@@ -232,9 +250,11 @@
     7.7866
    ],
    "always_long_avg_pct": 4.2805,
-   "edge_vs_long_ci": [
-    0.0,
-    0.0
+   "edge_vs_long_ci": null,
+   "always_long_all_days_pct": 0.9568,
+   "edge_vs_long_all_days_ci": [
+    -0.5794,
+    7.3286
    ],
    "win_rate": 0.6049,
    "halves_pct": [
@@ -253,11 +273,12 @@
     "average net CI above zero": true,
     "both halves positive": true,
     "final holdout positive": false,
-    "beats always-long (CI)": false,
+    "beats always-long on the same days (CI)": true,
+    "beats always-long on every day (CI)": false,
     "beats single-asset model": true,
     "calibrated (Brier < base rate)": true
    },
-   "reason": "failed: final holdout positive; beats always-long (CI)",
+   "reason": "failed: final holdout positive; beats always-long on every day (CI)",
    "horizon": "WEEK"
   },
   {
@@ -277,9 +298,11 @@
     5.1161
    ],
    "always_long_avg_pct": 1.2405,
-   "edge_vs_long_ci": [
-    0.0,
-    0.0
+   "edge_vs_long_ci": null,
+   "always_long_all_days_pct": 0.9568,
+   "edge_vs_long_all_days_ci": [
+    -3.0443,
+    4.4119
    ],
    "win_rate": 0.4959,
    "halves_pct": [
@@ -298,11 +321,12 @@
     "average net CI above zero": false,
     "both halves positive": true,
     "final holdout positive": false,
-    "beats always-long (CI)": false,
+    "beats always-long on the same days (CI)": true,
+    "beats always-long on every day (CI)": false,
     "beats single-asset model": false,
     "calibrated (Brier < base rate)": false
    },
-   "reason": "failed: average net CI above zero; final holdout positive; beats always-long (CI); beats single-asset model; calibrated (Brier < base rate)",
+   "reason": "failed: average net CI above zero; final holdout positive; beats always-long on every day (CI); beats single-asset model; calibrated (Brier < base rate)",
    "horizon": "WEEK"
   },
   {
@@ -322,9 +346,11 @@
     8.2188
    ],
    "always_long_avg_pct": 2.7085,
-   "edge_vs_long_ci": [
-    0.0,
-    0.0
+   "edge_vs_long_ci": null,
+   "always_long_all_days_pct": 0.9852,
+   "edge_vs_long_all_days_ci": [
+    -3.8294,
+    7.4847
    ],
    "win_rate": 0.4901,
    "halves_pct": [
@@ -343,11 +369,12 @@
     "average net CI above zero": false,
     "both halves positive": true,
     "final holdout positive": false,
-    "beats always-long (CI)": false,
+    "beats always-long on the same days (CI)": true,
+    "beats always-long on every day (CI)": false,
     "beats single-asset model": true,
     "calibrated (Brier < base rate)": true
    },
-   "reason": "failed: average net CI above zero; final holdout positive; beats always-long (CI)",
+   "reason": "failed: average net CI above zero; final holdout positive; beats always-long on every day (CI)",
    "horizon": "WEEK"
   },
   {
@@ -367,9 +394,11 @@
     10.0252
    ],
    "always_long_avg_pct": 2.8337,
-   "edge_vs_long_ci": [
-    0.0,
-    0.0
+   "edge_vs_long_ci": null,
+   "always_long_all_days_pct": 0.9852,
+   "edge_vs_long_all_days_ci": [
+    -4.6045,
+    9.6708
    ],
    "win_rate": 0.4386,
    "halves_pct": [
@@ -388,11 +417,12 @@
     "average net CI above zero": false,
     "both halves positive": true,
     "final holdout positive": true,
-    "beats always-long (CI)": false,
+    "beats always-long on the same days (CI)": true,
+    "beats always-long on every day (CI)": false,
     "beats single-asset model": true,
     "calibrated (Brier < base rate)": false
    },
-   "reason": "failed: at least 50 trade-equivalents; average net CI above zero; beats always-long (CI); calibrated (Brier < base rate)",
+   "reason": "failed: at least 50 trade-equivalents; average net CI above zero; beats always-long on every day (CI); calibrated (Brier < base rate)",
    "horizon": "WEEK"
   },
   {
@@ -416,6 +446,11 @@
     -0.3185,
     0.3156
    ],
+   "always_long_all_days_pct": 0.5702,
+   "edge_vs_long_all_days_ci": [
+    -1.9008,
+    1.1701
+   ],
    "win_rate": 0.4654,
    "halves_pct": [
     -1.3559,
@@ -433,11 +468,12 @@
     "average net CI above zero": false,
     "both halves positive": false,
     "final holdout positive": true,
-    "beats always-long (CI)": false,
+    "beats always-long on the same days (CI)": false,
+    "beats always-long on every day (CI)": false,
     "beats single-asset model": false,
     "calibrated (Brier < base rate)": true
    },
-   "reason": "failed: at least 50 trade-equivalents; average net CI above zero; both halves positive; beats always-long (CI); beats single-asset model",
+   "reason": "failed: at least 50 trade-equivalents; average net CI above zero; both halves positive; beats always-long on the same days (CI); beats always-long on every day (CI); beats single-asset model",
    "horizon": "MONTH"
   },
   {
@@ -461,6 +497,11 @@
     -1.2901,
     0.0349
    ],
+   "always_long_all_days_pct": 0.5702,
+   "edge_vs_long_all_days_ci": [
+    -1.7499,
+    0.6483
+   ],
    "win_rate": 0.4931,
    "halves_pct": [
     -0.3988,
@@ -478,11 +519,12 @@
     "average net CI above zero": false,
     "both halves positive": false,
     "final holdout positive": true,
-    "beats always-long (CI)": false,
+    "beats always-long on the same days (CI)": false,
+    "beats always-long on every day (CI)": false,
     "beats single-asset model": false,
     "calibrated (Brier < base rate)": false
    },
-   "reason": "failed: average net CI above zero; both halves positive; beats always-long (CI); beats single-asset model; calibrated (Brier < base rate)",
+   "reason": "failed: average net CI above zero; both halves positive; beats always-long on the same days (CI); beats always-long on every day (CI); beats single-asset model; calibrated (Brier < base rate)",
    "horizon": "MONTH"
   },
   {
@@ -502,9 +544,11 @@
     17.5373
    ],
    "always_long_avg_pct": 5.5483,
-   "edge_vs_long_ci": [
-    0.0,
-    0.0
+   "edge_vs_long_ci": null,
+   "always_long_all_days_pct": 4.136,
+   "edge_vs_long_all_days_ci": [
+    -9.7366,
+    13.6402
    ],
    "win_rate": 0.5037,
    "halves_pct": [
@@ -523,11 +567,12 @@
     "average net CI above zero": false,
     "both halves positive": true,
     "final holdout positive": false,
-    "beats always-long (CI)": false,
+    "beats always-long on the same days (CI)": true,
+    "beats always-long on every day (CI)": false,
     "beats single-asset model": true,
     "calibrated (Brier < base rate)": true
    },
-   "reason": "failed: at least 50 trade-equivalents; average net CI above zero; final holdout positive; beats always-long (CI)",
+   "reason": "failed: at least 50 trade-equivalents; average net CI above zero; final holdout positive; beats always-long on every day (CI)",
    "horizon": "MONTH"
   },
   {
@@ -547,9 +592,11 @@
     11.6074
    ],
    "always_long_avg_pct": 2.052,
-   "edge_vs_long_ci": [
-    0.0,
-    0.0
+   "edge_vs_long_ci": null,
+   "always_long_all_days_pct": 4.136,
+   "edge_vs_long_all_days_ci": [
+    -11.0216,
+    7.4214
    ],
    "win_rate": 0.4863,
    "halves_pct": [
@@ -568,11 +615,12 @@
     "average net CI above zero": false,
     "both halves positive": true,
     "final holdout positive": true,
-    "beats always-long (CI)": false,
+    "beats always-long on the same days (CI)": true,
+    "beats always-long on every day (CI)": false,
     "beats single-asset model": true,
     "calibrated (Brier < base rate)": true
    },
-   "reason": "failed: at least 50 trade-equivalents; average net CI above zero; beats always-long (CI)",
+   "reason": "failed: at least 50 trade-equivalents; average net CI above zero; beats always-long on every day (CI)",
    "horizon": "MONTH"
   },
   {
@@ -592,9 +640,11 @@
     22.9512
    ],
    "always_long_avg_pct": 9.2879,
-   "edge_vs_long_ci": [
-    0.0,
-    0.0
+   "edge_vs_long_ci": null,
+   "always_long_all_days_pct": 5.2927,
+   "edge_vs_long_all_days_ci": [
+    -8.5108,
+    17.9908
    ],
    "win_rate": 0.5781,
    "halves_pct": [
@@ -613,11 +663,12 @@
     "average net CI above zero": false,
     "both halves positive": true,
     "final holdout positive": true,
-    "beats always-long (CI)": false,
+    "beats always-long on the same days (CI)": true,
+    "beats always-long on every day (CI)": false,
     "beats single-asset model": true,
     "calibrated (Brier < base rate)": true
    },
-   "reason": "failed: at least 50 trade-equivalents; average net CI above zero; beats always-long (CI)",
+   "reason": "failed: at least 50 trade-equivalents; average net CI above zero; beats always-long on every day (CI)",
    "horizon": "MONTH"
   },
   {
@@ -637,9 +688,11 @@
     16.7802
    ],
    "always_long_avg_pct": 4.6538,
-   "edge_vs_long_ci": [
-    0.0,
-    0.0
+   "edge_vs_long_ci": null,
+   "always_long_all_days_pct": 5.2927,
+   "edge_vs_long_all_days_ci": [
+    -11.8932,
+    12.0656
    ],
    "win_rate": 0.5141,
    "halves_pct": [
@@ -658,11 +711,12 @@
     "average net CI above zero": false,
     "both halves positive": true,
     "final holdout positive": false,
-    "beats always-long (CI)": false,
+    "beats always-long on the same days (CI)": true,
+    "beats always-long on every day (CI)": false,
     "beats single-asset model": false,
     "calibrated (Brier < base rate)": true
    },
-   "reason": "failed: at least 50 trade-equivalents; average net CI above zero; final holdout positive; beats always-long (CI); beats single-asset model",
+   "reason": "failed: at least 50 trade-equivalents; average net CI above zero; final holdout positive; beats always-long on every day (CI); beats single-asset model",
    "horizon": "MONTH"
   },
   {
@@ -682,9 +736,11 @@
     28.8078
    ],
    "always_long_avg_pct": 9.5741,
-   "edge_vs_long_ci": [
-    0.0,
-    0.0
+   "edge_vs_long_ci": null,
+   "always_long_all_days_pct": 7.3403,
+   "edge_vs_long_all_days_ci": [
+    -21.0667,
+    24.2733
    ],
    "win_rate": 0.4792,
    "halves_pct": [
@@ -703,11 +759,12 @@
     "average net CI above zero": false,
     "both halves positive": true,
     "final holdout positive": false,
-    "beats always-long (CI)": false,
+    "beats always-long on the same days (CI)": true,
+    "beats always-long on every day (CI)": false,
     "beats single-asset model": true,
     "calibrated (Brier < base rate)": true
    },
-   "reason": "failed: at least 50 trade-equivalents; average net CI above zero; final holdout positive; beats always-long (CI)",
+   "reason": "failed: at least 50 trade-equivalents; average net CI above zero; final holdout positive; beats always-long on every day (CI)",
    "horizon": "MONTH"
   },
   {
@@ -727,9 +784,11 @@
     33.8237
    ],
    "always_long_avg_pct": 8.5829,
-   "edge_vs_long_ci": [
-    0.0,
-    0.0
+   "edge_vs_long_ci": null,
+   "always_long_all_days_pct": 7.3403,
+   "edge_vs_long_all_days_ci": [
+    -20.9002,
+    28.4091
    ],
    "win_rate": 0.4704,
    "halves_pct": [
@@ -748,11 +807,12 @@
     "average net CI above zero": false,
     "both halves positive": true,
     "final holdout positive": false,
-    "beats always-long (CI)": false,
+    "beats always-long on the same days (CI)": true,
+    "beats always-long on every day (CI)": false,
     "beats single-asset model": true,
     "calibrated (Brier < base rate)": true
    },
-   "reason": "failed: at least 50 trade-equivalents; average net CI above zero; final holdout positive; beats always-long (CI)",
+   "reason": "failed: at least 50 trade-equivalents; average net CI above zero; final holdout positive; beats always-long on every day (CI)",
    "horizon": "MONTH"
   }
  ],
@@ -760,5 +820,5 @@
   "WEEK": 63560,
   "MONTH": 63560
  },
- "updated_at": "2026-11-15T11:29:22.935826+00:00"
+ "updated_at": "2026-11-15T11:37:39.796886+00:00"
 }
