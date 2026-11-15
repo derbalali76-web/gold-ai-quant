@@ -1,17 +1,10 @@
 {
- "updated_at": "2026-11-15T06:15:49.094827Z",
+ "updated_at": "2026-11-15T15:37:31.562201Z",
  "sources": {
   "bls": "ok",
   "fomc": "ok"
  },
  "events": [
-  {
-   "time_utc": "2026-11-13T13:30:00Z",
-   "name": "US PPI",
-   "importance": 2,
-   "source": "bls.gov",
-   "detail": "Producer Price Index"
-  },
   {
    "time_utc": "2026-12-01T15:00:00Z",
    "name": "US JOLTS",
