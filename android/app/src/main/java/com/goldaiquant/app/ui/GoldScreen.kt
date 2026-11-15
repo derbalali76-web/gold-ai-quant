@@ -201,7 +201,7 @@ fun GoldScreen(vm: MainViewModel, lang: Lang, onLanguage: (Lang) -> Unit) {
     GoldContent(s, lang, onAsk = vm::ask, onNextDemo = vm::nextDemoMoment,
         onSave = { u, t -> vm.setServerUrl(u); vm.setToken(t) }, onLive = vm::setLiveMode,
         onHorizon = vm::selectHorizon, onLanguage = onLanguage, onNotify = vm::setNotify, onAssetPick = vm::setAsset,
-        onPosition = vm::setPosition)
+        onPosition = vm::setPosition, onAlertAsset = vm::toggleAlertAsset)
 }
 
 private sealed interface Sheet {
@@ -220,7 +220,8 @@ private sealed interface Sheet {
 @Composable
 fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Unit, onSave: (String, String) -> Unit,
                 onLive: (Boolean) -> Unit, onHorizon: (String) -> Unit, onLanguage: (Lang) -> Unit,
-                onNotify: (Boolean) -> Unit = {}, onAssetPick: (String) -> Unit = {}, onPosition: (String) -> Unit = {}) {
+                onNotify: (Boolean) -> Unit = {}, onAssetPick: (String) -> Unit = {}, onPosition: (String) -> Unit = {},
+                onAlertAsset: (String) -> Unit = {}) {
     var sheet by remember { mutableStateOf<Sheet?>(null) }
     val d = s.decision
     val selected = HorizonModel.resolve(s.selectedHorizon, d)
@@ -278,7 +279,7 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
         Sheet.Details -> if (card != null && d != null) DetailsDialog(card, d) { sheet = null }
         Sheet.Assets -> AssetDialog(s, { a -> sheet = null; onAssetPick(a) }) { sheet = null }
         Sheet.TrustSheet -> TrustDialog(s.trust, s.position) { sheet = null }
-        Sheet.Settings -> SettingsDialog(s, lang, onNextDemo, onSave, onLive, onLanguage, onNotify,
+        Sheet.Settings -> SettingsDialog(s, lang, onNextDemo, onSave, onLive, onLanguage, onNotify, onAlertAsset,
             onHow = { sheet = Sheet.HowSheet }, onNews = { sheet = Sheet.NewsSheet }) { sheet = null }
         Sheet.HowSheet -> HowDialog { sheet = null }
         Sheet.NewsSheet -> NewsDialog { sheet = null }
@@ -1021,7 +1022,7 @@ private fun DetailsDialog(c: HorizonCard, d: Decision, onClose: () -> Unit) {
 @Composable
 private fun SettingsDialog(s: UiState, lang: Lang, onNextDemo: () -> Unit, onSave: (String, String) -> Unit,
                            onLive: (Boolean) -> Unit, onLanguage: (Lang) -> Unit, onNotify: (Boolean) -> Unit,
-                           onHow: () -> Unit = {}, onNews: () -> Unit = {}, onClose: () -> Unit) {
+                           onAlertAsset: (String) -> Unit = {}, onHow: () -> Unit = {}, onNews: () -> Unit = {}, onClose: () -> Unit) {
     val askPermission = androidx.activity.compose.rememberLauncherForActivityResult(
         androidx.activity.result.contract.ActivityResultContracts.RequestPermission()) { granted -> onNotify(granted) }
     Dialog(onDismissRequest = onClose) {
@@ -1057,6 +1058,19 @@ private fun SettingsDialog(s: UiState, lang: Lang, onNextDemo: () -> Unit, onSav
                 })
             }
             Text(stringResource(R.string.set_notify_note), color = TextDim, fontSize = 11.sp)
+            if (s.notify) {
+                Text(stringResource(R.string.alerts_assets), color = TextMain, fontSize = 12.sp)
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    listOf("XAU", "BTC", "ETH", "SOL").forEach { a ->
+                        val on = a in s.alertAssets
+                        Text((if (on) "✓ " else "") + a, color = if (on) Color.Black else TextMain, fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.background(if (on) Gold else Color.Transparent, RoundedCornerShape(10.dp))
+                                .border(1.dp, Gold, RoundedCornerShape(10.dp)).clickable(role = Role.Checkbox) { onAlertAsset(a) }
+                                .padding(horizontal = 10.dp, vertical = 6.dp))
+                    }
+                }
+            }
             if (!s.liveMode) TextButton(onClick = { onNextDemo(); onClose() }) {
                 Text(stringResource(R.string.set_demo_next, s.demoStep + 1), color = TextDim)
             }

@@ -153,4 +153,6 @@ def decide(asset: str, feed: CryptoFeed, as_of: Optional[datetime] = None,
     PL.attach(d)
     CK.attach(d, None)
     d.daily_brief = BR.build(d)
+    if d.daily_brief is not None:
+        d.daily_brief.events = BR.events(d, bars["H1"])
     return d

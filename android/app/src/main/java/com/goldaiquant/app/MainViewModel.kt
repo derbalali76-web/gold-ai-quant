@@ -26,6 +26,7 @@ data class UiState(
     val trustAll: Map<String, Trust> = emptyMap(),
     val asset: String = "XAU",  // XAU | BTC | ETH | SOL
     val positions: Map<String, String> = emptyMap(),  // asset -> CASH | HOLD (stored on the phone only)
+    val alertAssets: Set<String> = setOf("XAU"),  // alerts only for the assets this trader follows
 ) {
     val trust: Trust? get() = trustAll[asset]
     val position: String get() = positions[asset] ?: "CASH"
@@ -76,6 +77,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                 receivedAt = prefs.getLong("last_received", 0L).takeIf { v -> v > 0 }?.let(Instant::ofEpochMilli),
                 trustAll = TrustParser.parseAll(prefs.getString("trust", null)),
                 asset = asset0,
+                alertAssets = SignalWorker.alertAssets(prefs),
                 positions = listOf("XAU", "BTC", "ETH", "SOL").associateWith { a -> prefs.getString("position_$a", "CASH") ?: "CASH" },
             )
         }
@@ -151,6 +153,14 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         _state.update { it.copy(notify = v) }
         prefs.edit().putBoolean("notify", v).apply()
         SignalWorker.schedule(getApplication(), v)
+    }
+
+    /** Which assets may send alerts (each trader follows only the markets they trade). */
+    fun toggleAlertAsset(a: String) {
+        val cur = _state.value.alertAssets
+        val next = if (a in cur) cur - a else cur + a
+        prefs.edit().putString("alert_assets", next.joinToString(",")).apply()
+        _state.update { it.copy(alertAssets = next) }
     }
 
     fun setLiveMode(v: Boolean) {

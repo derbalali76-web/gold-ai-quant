@@ -43,7 +43,12 @@ data class Check(val code: String, val ok: Boolean?, val args: List<String>)
 
 /** Daily context (v1.7.2): bias + level scenarios to WATCH; never a recommendation. */
 data class Scenario(val kind: String, val trigger: Double, val triggerLevel: String, val target: Double?, val targetLevel: String?)
-data class Brief(val date: String, val bias: String, val scenarios: List<Scenario>)
+data class Brief(val date: String, val bias: String, val scenarios: List<Scenario>,
+                 val events: List<ScenarioEvent> = emptyList())
+
+/** v1.9: the last closed hour broke a level — a fact to watch, not a recommendation. */
+data class ScenarioEvent(val kind: String, val level: Double, val levelName: String, val target: Double?,
+                         val targetName: String?, val hourUtc: String)
 
 /** v1.8 automatic data-quality check (status OK / WARN / FAIL; FAIL blocks the decision on the server). */
 data class DqCheck(val code: String, val status: String, val value: String?, val tf: String?)
@@ -380,7 +385,14 @@ object DecisionParser {
             Scenario(kind, trig, e.optString("trigger_level"), e.dbl("target"), e.str("target_level"))
         }
         if (sc.isEmpty()) return null
-        return Brief(b.optString("date"), b.optString("bias", "UNKNOWN"), sc)
+        val ea = b.optJSONArray("events")
+        val ev = (0 until (ea?.length() ?: 0)).mapNotNull { i ->
+            val e = ea!!.optJSONObject(i) ?: return@mapNotNull null
+            val kind = e.optString("kind"); val lvl = e.dbl("level") ?: return@mapNotNull null
+            if (kind != "BULL" && kind != "BEAR") return@mapNotNull null
+            ScenarioEvent(kind, lvl, e.optString("level_name"), e.dbl("target"), e.str("target_name"), e.optString("hour_utc"))
+        }
+        return Brief(b.optString("date"), b.optString("bias", "UNKNOWN"), sc, ev)
     }
 
     private fun parsePlan(p: JSONObject): Plan? {

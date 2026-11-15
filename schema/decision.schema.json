@@ -134,6 +134,13 @@
           "title": "Date",
           "type": "string"
         },
+        "events": {
+          "items": {
+            "$ref": "#/$defs/ScenarioEvent"
+          },
+          "title": "Events",
+          "type": "array"
+        },
         "price": {
           "title": "Price",
           "type": "number"
@@ -1066,6 +1073,61 @@
       "title": "Scenario",
       "type": "object"
     },
+    "ScenarioEvent": {
+      "additionalProperties": false,
+      "description": "v1.9: the last CLOSED hour broke a level (close crossed it). A fact to watch, not a recommendation.",
+      "properties": {
+        "hour_utc": {
+          "format": "date-time",
+          "title": "Hour Utc",
+          "type": "string"
+        },
+        "kind": {
+          "title": "Kind",
+          "type": "string"
+        },
+        "level": {
+          "title": "Level",
+          "type": "number"
+        },
+        "level_name": {
+          "title": "Level Name",
+          "type": "string"
+        },
+        "target": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target"
+        },
+        "target_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Name"
+        }
+      },
+      "required": [
+        "kind",
+        "level",
+        "level_name",
+        "hour_utc"
+      ],
+      "title": "ScenarioEvent",
+      "type": "object"
+    },
     "Setup": {
       "enum": [
         "BUY_NOW",
@@ -1863,7 +1925,7 @@
       "title": "Reward Risk"
     },
     "schema_version": {
-      "default": "1.8.0",
+      "default": "1.9.0",
       "title": "Schema Version",
       "type": "string"
     },

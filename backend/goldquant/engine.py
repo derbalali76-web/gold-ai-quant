@@ -264,7 +264,7 @@ class DecisionEngine:
 
     def decide(self, provider: Optional[MarketDataProvider], mode: Mode, as_of: datetime, *args, **kwargs) -> Decision:
         """The decision plus one trade plan per horizon (plans only re-express the decision; see plans.py)."""
-        self._daily, self._ctx, self._dq = None, None, None
+        self._daily, self._ctx, self._dq, self._bars = None, None, None, None
         return self._decide(provider, mode, as_of, *args, **kwargs)
 
     def _decide(self, provider: Optional[MarketDataProvider], mode: Mode, as_of: datetime,
@@ -305,6 +305,7 @@ class DecisionEngine:
         except Exception:  # noqa: BLE001 — daily history is optional context; never blocks or creates a trade
             daily = None
         self._daily = daily
+        self._bars = bars
         try:
             outlooks = daily_outlooks(daily, as_of, mode, context)
         except Exception:  # noqa: BLE001 — optional layer
@@ -687,6 +688,9 @@ class DecisionEngine:
             pass
         try:
             d.daily_brief = BR.build(d)
+            h1 = (getattr(self, "_bars", None) or {}).get("H1")
+            if d.daily_brief is not None and not d.market_closed:
+                d.daily_brief.events = BR.events(d, h1)
         except Exception:  # noqa: BLE001 — context only
             d.daily_brief = None
         record = {"decision": d.model_dump(mode="json"), "pit": (audit or {}).get("pit"),

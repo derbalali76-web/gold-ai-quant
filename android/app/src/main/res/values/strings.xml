@@ -344,6 +344,11 @@
     <string name="scen_counts">%1$d scenarios · %2$d triggered · %3$d not triggered · %4$d won · %5$d lost</string>
     <string name="scen_perf">Average %1$s after costs · max drawdown %2$s · beat the reference %3$d%%</string>
     <string name="scen_r">Average %1$s per triggered trade</string>
+    <string name="alerts_assets">Alerts only for these assets:</string>
+    <string name="notif_trig_up">%1$s: upside scenario triggered</string>
+    <string name="notif_trig_down">%1$s: downside scenario triggered</string>
+    <string name="notif_trig_up_text">An hour closed above %1$s (%2$s) — next level %3$s %4$s · back below %1$s cancels it</string>
+    <string name="notif_trig_down_text">An hour closed below %1$s (%2$s) — next level %3$s %4$s · back above %1$s cancels it</string>
     <string name="r_w_up" formatted="false">up</string>
     <string name="r_w_down" formatted="false">down</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

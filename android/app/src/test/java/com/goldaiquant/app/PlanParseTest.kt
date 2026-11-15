@@ -44,4 +44,16 @@ class PlanParseTest {
             b.scenarios.forEach { assertTrue(it.kind == "BULL" || it.kind == "BEAR") }
         }
     }
+
+    @Test fun briefEvents() {
+        val body = javaClass.classLoader!!.getResource("fixtures/wait_demo.json")!!.readText()
+        val o = org.json.JSONObject(body)
+        val b = o.optJSONObject("daily_brief") ?: return
+        b.put("events", org.json.JSONArray().put(org.json.JSONObject().put("kind", "BULL").put("level", 2010.5)
+            .put("level_name", "R1").put("target", 2020.0).put("target_name", "R2").put("hour_utc", "2026-11-16T09:00:00Z")))
+        val d = DecisionParser.parse(o.toString())
+        val e = d.brief!!.events.single()
+        org.junit.Assert.assertEquals("R1", e.levelName)
+        org.junit.Assert.assertEquals(2020.0, e.target!!, 1e-9)
+    }
 }

@@ -2,7 +2,7 @@
 levels and trend the engine already computed. It is context for the user every day, never a recommendation."""
 from __future__ import annotations
 
-from .schemas import Decision, DailyBrief, Scenario
+from .schemas import Decision, DailyBrief, Scenario, ScenarioEvent
 
 
 def _levels(d: Decision):
@@ -40,3 +40,23 @@ def build(d: Decision) -> DailyBrief | None:
     if not sc:
         return None
     return DailyBrief(date=d.analyzed_at_utc.date().isoformat(), bias=bias, price=round(price, 2), scenarios=sc, source=src)
+
+
+def events(d: Decision, h1) -> list[ScenarioEvent]:
+    """Levels broken by the last CLOSED hour: previous close on one side, last close on the other. Uses every
+    known level (not only the two nearest ones, which move with the price)."""
+    if h1 is None or len(h1) < 2 or d.levels is None:
+        return []
+    c_prev, c_last = float(h1["close"].iloc[-2]), float(h1["close"].iloc[-1])
+    lv = sorted(list(d.levels.supports) + list(d.levels.resistances), key=lambda l: l.price)
+    out = []
+    for i, l in enumerate(lv):
+        if c_prev <= l.price < c_last:  # closed above
+            nxt = lv[i + 1] if i + 1 < len(lv) else None
+            out.append(ScenarioEvent(kind="BULL", level=l.price, level_name=l.name, target=nxt.price if nxt else None,
+                                     target_name=nxt.name if nxt else None, hour_utc=h1.index[-1].to_pydatetime()))
+        elif c_prev >= l.price > c_last:  # closed below
+            nxt = lv[i - 1] if i > 0 else None
+            out.append(ScenarioEvent(kind="BEAR", level=l.price, level_name=l.name, target=nxt.price if nxt else None,
+                                     target_name=nxt.name if nxt else None, hour_utc=h1.index[-1].to_pydatetime()))
+    return out

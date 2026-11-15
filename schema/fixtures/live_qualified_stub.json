@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.8.0",
+  "schema_version": "1.9.0",
   "decision_id": "205eb339bbe99584",
   "mode": "LIVE",
   "action": "BUY",
@@ -973,6 +973,7 @@
         "invalidation": 2121.53
       }
     ],
+    "events": [],
     "source": "H1_LEVELS"
   },
   "data_health": {
@@ -1022,7 +1023,7 @@
       }
     ]
   },
-  "audit_hash": "cbe4e33d218923995f00caeceaca77d34c1b08cb9d79395b10542f7b9a31b3aa",
+  "audit_hash": "36de1c0ab2845c66f3820b8f98fd2439750fa80ef65c3027ef45383458523dca",
   "supporting_evidence": [
     {
       "engine": "mtf_bias",

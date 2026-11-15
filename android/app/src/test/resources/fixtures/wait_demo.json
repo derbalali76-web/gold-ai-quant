@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.8.0",
+  "schema_version": "1.9.0",
   "decision_id": "ae4a8112c4e38b2c",
   "mode": "DEMO",
   "action": "WAIT",
@@ -947,6 +947,7 @@
         "invalidation": 2112.98
       }
     ],
+    "events": [],
     "source": "H1_LEVELS"
   },
   "data_health": {
@@ -996,7 +997,7 @@
       }
     ]
   },
-  "audit_hash": "38c0b39634a60e14fa461be517120af285502825d6ff6a4b49205b3718aa2b72",
+  "audit_hash": "d6144ec44a883541b791ca9515164fdcf2ac358884757c81494e1a6512c94692",
   "supporting_evidence": [
     {
       "engine": "mtf_bias",

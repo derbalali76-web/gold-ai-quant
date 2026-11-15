@@ -7,7 +7,7 @@ from typing import Any, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-SCHEMA_VERSION = "1.8.0"
+SCHEMA_VERSION = "1.9.0"
 
 
 class Action(str, Enum):
@@ -249,6 +249,17 @@ class Scenario(BaseModel):
     invalidation: Optional[float] = None
 
 
+class ScenarioEvent(BaseModel):
+    """v1.9: the last CLOSED hour broke a level (close crossed it). A fact to watch, not a recommendation."""
+    model_config = ConfigDict(extra="forbid")
+    kind: str  # BULL (closed above) | BEAR (closed below)
+    level: float
+    level_name: str
+    target: Optional[float] = None
+    target_name: Optional[str] = None
+    hour_utc: datetime  # open time of the hour that closed across the level
+
+
 class DailyBrief(BaseModel):
     """Every day, even when no trade is validated: today's bias and the two levels that would change the picture."""
     model_config = ConfigDict(extra="forbid")
@@ -256,6 +267,7 @@ class DailyBrief(BaseModel):
     bias: str  # UP | DOWN | SIDEWAYS | UNKNOWN (from the analytic trend, not a forecast probability)
     price: float
     scenarios: list[Scenario] = Field(default_factory=list)
+    events: list[ScenarioEvent] = Field(default_factory=list)  # v1.9
     source: str = "H1_LEVELS"  # H1_LEVELS | DAILY_LEVELS
 
 

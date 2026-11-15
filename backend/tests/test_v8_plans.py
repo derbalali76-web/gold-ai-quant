@@ -123,3 +123,21 @@ def test_checklist_never_says_ready_without_a_validated_model():
         assert m.ok == bool(o.validated)
     sat = DecisionEngine(Store()).decide(DemoProvider(), Mode.DEMO, datetime(2026, 11, 7, 14, tzinfo=timezone.utc))
     assert all(next(c for c in o.checklist if c.code == "session").ok is False for o in sat.outlooks)
+
+
+def test_scenario_events_from_the_last_closed_hour():
+    import pandas as pd
+    from goldquant import brief as BR
+    from goldquant.schemas import LevelsBlock, PriceLevel
+    lv = lambda n, p, k: PriceLevel(name=n, price=p, zone_low=p - 1, zone_high=p + 1, strength_label_ar="x", tests=3, distance_atr=1.0)
+    class D:  # minimal stand-in with the fields events() reads
+        levels = LevelsBlock(supports=[lv("S1", 1990.0, "SUPPORT"), lv("S2", 1980.0, "SUPPORT")],
+                             resistances=[lv("R1", 2010.0, "RESISTANCE"), lv("R2", 2020.0, "RESISTANCE")], validated=False)
+    idx = pd.date_range("2026-11-16 08:00", periods=3, freq="h", tz="UTC")
+    up = pd.DataFrame({"close": [2000.0, 2005.0, 2012.0]}, index=idx)
+    ev = BR.events(D(), up)
+    assert [(e.kind, e.level_name, e.target_name) for e in ev] == [("BULL", "R1", "R2")]
+    down = pd.DataFrame({"close": [2000.0, 1995.0, 1985.0]}, index=idx)
+    assert [(e.kind, e.level_name, e.target_name) for e in BR.events(D(), down)] == [("BEAR", "S1", "S2")]
+    flat = pd.DataFrame({"close": [2000.0, 2001.0, 2002.0]}, index=idx)
+    assert BR.events(D(), flat) == []

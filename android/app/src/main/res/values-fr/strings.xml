@@ -343,6 +343,11 @@
     <string name="scen_counts">%1$d scénarios · %2$d déclenchés · %3$d non déclenchés · %4$d gagnés · %5$d perdus</string>
     <string name="scen_perf">Moyenne %1$s après coûts · baisse max %2$s · bat la référence %3$d%%</string>
     <string name="scen_r">Moyenne %1$s par trade déclenché</string>
+    <string name="alerts_assets">Alertes uniquement pour ces actifs :</string>
+    <string name="notif_trig_up">%1$s : scénario haussier déclenché</string>
+    <string name="notif_trig_down">%1$s : scénario baissier déclenché</string>
+    <string name="notif_trig_up_text">Une heure a clôturé au-dessus de %1$s (%2$s) — niveau suivant %3$s %4$s · repasser sous %1$s l\'annule</string>
+    <string name="notif_trig_down_text">Une heure a clôturé sous %1$s (%2$s) — niveau suivant %3$s %4$s · repasser au-dessus de %1$s l\'annule</string>
     <string name="r_w_up" formatted="false">haussière</string>
     <string name="r_w_down" formatted="false">baissière</string>
     <string name="r_w_neutral" formatted="false">neutre</string>

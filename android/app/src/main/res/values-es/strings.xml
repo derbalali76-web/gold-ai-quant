@@ -343,6 +343,11 @@
     <string name="scen_counts">%1$d escenarios · %2$d activados · %3$d no activados · %4$d ganados · %5$d perdidos</string>
     <string name="scen_perf">Media %1$s tras costes · caída máx. %2$s · supera la referencia %3$d%%</string>
     <string name="scen_r">Media %1$s por operación activada</string>
+    <string name="alerts_assets">Alertas solo para estos activos:</string>
+    <string name="notif_trig_up">%1$s: escenario alcista activado</string>
+    <string name="notif_trig_down">%1$s: escenario bajista activado</string>
+    <string name="notif_trig_up_text">Una hora cerró por encima de %1$s (%2$s) — siguiente nivel %3$s %4$s · volver por debajo de %1$s lo anula</string>
+    <string name="notif_trig_down_text">Una hora cerró por debajo de %1$s (%2$s) — siguiente nivel %3$s %4$s · volver por encima de %1$s lo anula</string>
     <string name="r_w_up" formatted="false">alcista</string>
     <string name="r_w_down" formatted="false">bajista</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

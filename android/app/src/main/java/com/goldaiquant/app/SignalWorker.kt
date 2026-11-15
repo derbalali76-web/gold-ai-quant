@@ -24,42 +24,82 @@ class SignalWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx
         val prefs = applicationContext.getSharedPreferences("gold_ai_quant", Context.MODE_PRIVATE)
         if (!prefs.getBoolean("notify", false)) return Result.success()
         val url = prefs.getString("server_url", null) ?: return Result.success()
-        val f = try { ApiClient(url, prefs.getString("token", "") ?: "").decision("LIVE", 0) } catch (e: Exception) {
-            return Result.success() // try again at the next period
-        }
-        val last = prefs.getString("notified", "")!!.split(';').filter { it.contains('=') }
-            .associate { it.substringBefore('=') to it.substringAfter('=') }
-        val (fresh, memory) = SignalWatch.diff(f.decision, last)
-        prefs.edit().putString("notified", memory.entries.joinToString(";") { "${it.key}=${it.value}" })
-            .putString("last_decision", f.raw).putLong("last_received", System.currentTimeMillis()).apply()
-        if (fresh.isNotEmpty()) notify(fresh)
-        // price reached a watch level of today's scenarios: a fact, not a recommendation (once per level per day)
-        val price = f.decision.quote
-        val prev = if (prefs.contains("last_price")) prefs.getFloat("last_price", 0f).toDouble() else null
-        val brief0 = f.decision.brief
-        if (price != null && prev != null && brief0 != null && !f.decision.marketClosed) {
-            val day = java.time.LocalDate.now().toString()
-            val done = prefs.getString("level_alerts", "")!!.split(';').filter { it.startsWith(day) }.toMutableSet()
-            brief0.scenarios.forEach { sc ->
-                val crossed = SignalWatch.crossed(sc, prev, price)
-                val key = "$day|${sc.kind}|${sc.triggerLevel}"
-                if (crossed && key !in done) { done += key; notifyLevel(sc) }
-            }
-            prefs.edit().putString("level_alerts", done.joinToString(";")).apply()
-        }
-        if (price != null) prefs.edit().putFloat("last_price", price.toFloat()).apply()
-        // once a day, in the morning: today's plan (bias + watch scenarios), so the user sees the app at work
-        val today = java.time.LocalDate.now().toString()
-        val hour = java.time.LocalTime.now().hour
-        val b = f.decision.brief
-        if (b != null && !f.decision.marketClosed && hour >= 7 && prefs.getString("brief_day", "") != today) {
-            prefs.edit().putString("brief_day", today).apply()
-            notifyBrief(b)
+        val api = ApiClient(url, prefs.getString("token", "") ?: "")
+        for (asset in alertAssets(prefs)) {  // only the markets this trader follows
+            val f = try { api.decision("LIVE", 0, asset) } catch (e: Exception) { continue }
+            check(prefs, asset, f)
         }
         return Result.success()
     }
 
-    private fun notify(signals: List<SignalWatch.Signal>) {
+    private fun check(prefs: android.content.SharedPreferences, asset: String, f: Fetched) {
+        val sfx = if (asset == "XAU") "" else "_$asset"
+        val label = if (asset == "XAU") "XAU/USD" else "$asset/USD"
+        // 1) a NEW validated recommendation (only ever exists after out-of-sample validation)
+        val last = prefs.getString("notified$sfx", "")!!.split(';').filter { it.contains('=') }
+            .associate { it.substringBefore('=') to it.substringAfter('=') }
+        val (fresh, memory) = SignalWatch.diff(f.decision, last)
+        prefs.edit().putString("notified$sfx", memory.entries.joinToString(";") { "${it.key}=${it.value}" })
+            .putString(if (asset == "XAU") "last_decision" else "last_decision_$asset", f.raw)
+            .putLong("last_received", System.currentTimeMillis()).apply()
+        if (fresh.isNotEmpty()) notify(fresh, label)
+        val day = java.time.LocalDate.now().toString()
+        val b = f.decision.brief
+        if (b != null && !f.decision.marketClosed) {
+            // 2) scenario triggered: the last closed hour broke a level (once per level and hour)
+            val seen = prefs.getString("events$sfx", "")!!.split(';').filter { it.startsWith(day) }.toMutableSet()
+            b.events.forEach { e ->
+                val key = "$day|${e.hourUtc}|${e.kind}|${e.levelName}"
+                if (key !in seen) { seen += key; notifyEvent(e, label) }
+            }
+            prefs.edit().putString("events$sfx", seen.joinToString(";")).apply()
+            // 3) price reached a watch level of today's scenarios (once per level per day)
+            val price = f.decision.quote
+            val pk = "last_price$sfx"
+            val prev = if (prefs.contains(pk)) prefs.getFloat(pk, 0f).toDouble() else null
+            if (price != null && prev != null) {
+                val done = prefs.getString("level_alerts$sfx", "")!!.split(';').filter { it.startsWith(day) }.toMutableSet()
+                b.scenarios.forEach { sc ->
+                    val key = "$day|${sc.kind}|${sc.triggerLevel}"
+                    if (SignalWatch.crossed(sc, prev, price) && key !in done) { done += key; notifyLevel(sc, label) }
+                }
+                prefs.edit().putString("level_alerts$sfx", done.joinToString(";")).apply()
+            }
+            if (price != null) prefs.edit().putFloat(pk, price.toFloat()).apply()
+            // 4) once a day, in the morning: today's plan for this asset
+            if (java.time.LocalTime.now().hour >= 7 && prefs.getString("brief_day$sfx", "") != day) {
+                prefs.edit().putString("brief_day$sfx", day).apply()
+                notifyBrief(b, label)
+            }
+        }
+    }
+
+    private fun ready(ctx: Context): Boolean {
+        if (Build.VERSION.SDK_INT >= 33 && ContextCompat.checkSelfPermission(applicationContext,
+                android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) return false
+        applicationContext.getSystemService(NotificationManager::class.java).createNotificationChannel(
+            NotificationChannel(CHANNEL, ctx.getString(R.string.notif_channel), NotificationManager.IMPORTANCE_HIGH))
+        return true
+    }
+
+    private fun notifyEvent(e: ScenarioEvent, label: String) {
+        val ctx = LanguageStore.wrap(applicationContext, LanguageStore.resolve(applicationContext))
+        if (!ready(ctx)) return
+        val p2 = { v: Double -> String.format(java.util.Locale.US, "%.2f", v) }
+        val title = ctx.getString(if (e.kind == "BULL") R.string.notif_trig_up else R.string.notif_trig_down, label)
+        val text = ctx.getString(if (e.kind == "BULL") R.string.notif_trig_up_text else R.string.notif_trig_down_text,
+            p2(e.level), e.levelName, e.target?.let(p2) ?: "—", e.targetName ?: "") + "\n" + ctx.getString(R.string.pos_watch_note)
+        val open = PendingIntent.getActivity(applicationContext, 3,
+            Intent(applicationContext, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),
+            PendingIntent.FLAG_IMMUTABLE)
+        val n = NotificationCompat.Builder(applicationContext, CHANNEL)
+            .setSmallIcon(android.R.drawable.stat_notify_more).setContentTitle(title)
+            .setContentText(text.substringBefore("\n")).setStyle(NotificationCompat.BigTextStyle().bigText(text))
+            .setContentIntent(open).setAutoCancel(true).build()
+        NotificationManagerCompat.from(applicationContext).notify(("evt$label${e.kind}${e.levelName}").hashCode(), n)
+    }
+
+    private fun notify(signals: List<SignalWatch.Signal>, label: String) {
         val ctx = LanguageStore.wrap(applicationContext, LanguageStore.resolve(applicationContext))
         if (Build.VERSION.SDK_INT >= 33 && ContextCompat.checkSelfPermission(applicationContext,
                 android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) return
@@ -74,15 +114,15 @@ class SignalWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx
             val a = ctx.getString(if (sg.action == Action.BUY) R.string.a_buy else R.string.a_sell)
             val n = NotificationCompat.Builder(applicationContext, CHANNEL)
                 .setSmallIcon(android.R.drawable.stat_notify_more)
-                .setContentTitle(ctx.getString(R.string.notif_title, a, h))
+                .setContentTitle("$label · " + ctx.getString(R.string.notif_title, a, h))
                 .setContentText(ctx.getString(R.string.notif_text))
                 .setStyle(NotificationCompat.BigTextStyle().bigText(ctx.getString(R.string.notif_text)))
                 .setContentIntent(open).setAutoCancel(true).build()
-            NotificationManagerCompat.from(applicationContext).notify(sg.horizon.hashCode(), n)
+            NotificationManagerCompat.from(applicationContext).notify((label + sg.horizon).hashCode(), n)
         }
     }
 
-    private fun notifyLevel(sc: Scenario) {
+    private fun notifyLevel(sc: Scenario, label: String) {
         val ctx = LanguageStore.wrap(applicationContext, LanguageStore.resolve(applicationContext))
         if (Build.VERSION.SDK_INT >= 33 && ContextCompat.checkSelfPermission(applicationContext,
                 android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) return
@@ -95,13 +135,13 @@ class SignalWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx
         val text = ctx.getString(if (sc.kind == "BULL") R.string.notif_level_up else R.string.notif_level_down)
         val n = NotificationCompat.Builder(applicationContext, CHANNEL)
             .setSmallIcon(android.R.drawable.stat_notify_more)
-            .setContentTitle(ctx.getString(R.string.notif_level_title, String.format(java.util.Locale.US, "%.2f", sc.trigger), sc.triggerLevel))
+            .setContentTitle("$label · " + ctx.getString(R.string.notif_level_title, String.format(java.util.Locale.US, "%.2f", sc.trigger), sc.triggerLevel))
             .setContentText(text).setStyle(NotificationCompat.BigTextStyle().bigText(text))
             .setContentIntent(open).setAutoCancel(true).build()
-        NotificationManagerCompat.from(applicationContext).notify(("lvl" + sc.kind + sc.triggerLevel).hashCode(), n)
+        NotificationManagerCompat.from(applicationContext).notify(("lvl" + label + sc.kind + sc.triggerLevel).hashCode(), n)
     }
 
-    private fun notifyBrief(b: Brief) {
+    private fun notifyBrief(b: Brief, label: String) {
         val ctx = LanguageStore.wrap(applicationContext, LanguageStore.resolve(applicationContext))
         if (Build.VERSION.SDK_INT >= 33 && ContextCompat.checkSelfPermission(applicationContext,
                 android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) return
@@ -124,17 +164,22 @@ class SignalWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx
             PendingIntent.FLAG_IMMUTABLE)
         val n = NotificationCompat.Builder(applicationContext, CHANNEL)
             .setSmallIcon(android.R.drawable.stat_notify_more)
-            .setContentTitle(ctx.getString(R.string.notif_brief_title))
+            .setContentTitle("$label · " + ctx.getString(R.string.notif_brief_title))
             .setContentText(lines.getOrElse(1) { lines[0] })
             .setStyle(NotificationCompat.BigTextStyle().bigText(lines.joinToString("\n")))
             .setContentIntent(open).setAutoCancel(true).build()
-        NotificationManagerCompat.from(applicationContext).notify(BRIEF_ID, n)
+        NotificationManagerCompat.from(applicationContext).notify(BRIEF_ID + label.hashCode() % 1000, n)
     }
 
     companion object {
         private const val BRIEF_ID = 4711
         private const val CHANNEL = "signals"
         private const val WORK = "signal-watch"
+
+        /** Assets this trader receives alerts for (default: gold only). Stored on the phone only. */
+        fun alertAssets(prefs: android.content.SharedPreferences): Set<String> =
+            (prefs.getString("alert_assets", "XAU") ?: "XAU").split(',').map { it.trim() }
+                .filter { it in setOf("XAU", "BTC", "ETH", "SOL") }.toSet()
 
         fun schedule(ctx: Context, on: Boolean) {
             val wm = WorkManager.getInstance(ctx)

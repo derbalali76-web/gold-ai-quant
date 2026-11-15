@@ -343,6 +343,11 @@
     <string name="scen_counts">%1$d سيناريو · %2$d تفعّل · %3$d لم يتفعّل · %4$d ربح · %5$d خسارة</string>
     <string name="scen_perf">المتوسط %1$s بعد التكاليف · أقصى تراجع %2$s · تفوّق على المرجع %3$d%%</string>
     <string name="scen_r">متوسط %1$s لكل صفقة متفعّلة</string>
+    <string name="alerts_assets">التنبيهات لهذه الأصول فقط:</string>
+    <string name="notif_trig_up">%1$s: تفعّل سيناريو الصعود</string>
+    <string name="notif_trig_down">%1$s: تفعّل سيناريو الهبوط</string>
+    <string name="notif_trig_up_text">أُغلقت ساعة فوق %1$s (%2$s) — المستوى التالي %3$s %4$s · العودة تحت %1$s تلغيه</string>
+    <string name="notif_trig_down_text">أُغلقت ساعة تحت %1$s (%2$s) — المستوى التالي %3$s %4$s · العودة فوق %1$s تلغيه</string>
     <string name="r_w_up" formatted="false">صاعد</string>
     <string name="r_w_down" formatted="false">هابط</string>
     <string name="r_w_neutral" formatted="false">محايد</string>

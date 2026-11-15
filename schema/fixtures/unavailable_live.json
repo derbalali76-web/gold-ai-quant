@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.8.0",
+  "schema_version": "1.9.0",
   "decision_id": "098d32e5d77c2ef8",
   "mode": "LIVE",
   "action": "UNAVAILABLE",
@@ -49,7 +49,7 @@
   "market_closed": false,
   "daily_brief": null,
   "data_health": null,
-  "audit_hash": "da7d8934d8f814721ea658d042dc675490cd5b480aecb0e73e350f72a09991b2",
+  "audit_hash": "cccd66dd6d6ad2e5c3853b7011a4ad80164e69f9293e41fc5f7c1741f9051ead",
   "supporting_evidence": [],
   "contrary_evidence": [],
   "invalidation_ar": [],
