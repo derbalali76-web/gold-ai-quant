@@ -331,7 +331,7 @@ def crypto_research() -> dict:
                                    on="t", direction="backward")
                 m15 = m15.assign(funding=mm["funding"].to_numpy())
             out["assets"][sym]["scalp"] = {"cost": 0.0015, "results": SC.run_all(m15, 0.0015) + SC.run_all(
-                m15, 0.0015, rules=SC.CRYPTO_RULES2, ci_level=SC.CI_ROUND2)}
+                m15, 0.0015, rules=SC.CRYPTO_RULES2 + SC.CRYPTO_RULES3, ci_level=SC.CI_ROUND2)}
             for r in out["assets"][sym]["scalp"]["results"]:
                 print(sym, "scalp", r["rule"], r["stop"], r["trades"], r["avg_net_pct"], r["reason"], flush=True)
     (MODELS / "crypto_report.json").write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str),

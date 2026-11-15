@@ -26,6 +26,12 @@ RULES = ("BREAKOUT_LONG", "BREAKOUT_SHORT", "PULLBACK_LONG")
 CRYPTO_RULES2 = ("FLOW_BREAKOUT_LONG", "TAKER_SURGE_LONG", "FUNDING_FADE_LONG", "CAPITULATION_REVERSAL_LONG")
 # Gold (session opens, when the big intraday moves start):
 GOLD_RULES2 = ("LONDON_OPEN_LONG", "LONDON_OPEN_SHORT", "NY_OPEN_LONG", "NY_OPEN_SHORT")
+# Round 3 (pre-registered 2026-11-15, from published studies, BEFORE looking at any result):
+#   INTRADAY_MOMENTUM_LONG  Shen, Urquhart & Wang (Financial Review 2022): the day's early return predicts its
+#                           last part -> at 22:00 UTC buy if the day so far (00:00 -> 22:00 UTC) is up
+#   LATE_HOUR_LONG          Quantpedia (Gemini data 2015-2022): 22:00-23:00 UTC were the strongest hours
+#                           -> buy at 21:00 UTC every day
+CRYPTO_RULES3 = ("INTRADAY_MOMENTUM_LONG", "LATE_HOUR_LONG")
 CI_ROUND2 = 99.0  # more rules tested -> stricter confidence (Bonferroni-style) before anything can qualify
 TARGET = 0.0065
 STOPS = (0.0040, 0.0065)
@@ -103,6 +109,14 @@ def _signals2(df: pd.DataFrame, rule: str) -> np.ndarray:
             drop = (c / c.shift(4) - 1).to_numpy()
             return (pd.Series(drop).shift(1).to_numpy() < -0.025) & (pd.Series(vz).shift(1).to_numpy() > 2.0) & \
                 (c > o).to_numpy()
+    if rule in CRYPTO_RULES3:
+        idx = df.index + pd.Timedelta(minutes=15)  # bar close time (index = bar open)
+        mins = idx.hour * 60 + idx.minute
+        if rule == "LATE_HOUR_LONG":
+            return np.asarray(mins == 21 * 60)
+        day = (df.index).floor("D")
+        first_open = df["open"].groupby(day).transform("first").to_numpy(float)
+        return np.asarray(mins == 22 * 60) & (c.to_numpy(float) > first_open)
     if rule in GOLD_RULES2:
         idx = df.index
         if rule.startswith("LONDON"):  # London open (08:00-10:00 London time) breaks the Asian range (00:00-07:00 UTC)
