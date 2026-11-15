@@ -484,7 +484,7 @@ def research(hs: HistoryStore) -> None:
             cmp_.setdefault("regimes", {})["HOURS"] = {
                 rg: asdict(PLN.walk_forward(h1, "HOURS", cols=PLN.FEATURES + PLN.INTRADAY, regime=rg)) for rg in PLN.REGIMES}
             aux = {s_: hs.load_bars("Dukascopy", s_, "H1", limit=200_000) for s_ in PLN.CROSS_SYMBOLS}
-            aux = {k: v for k, v in aux.items() if len(v) > 4000}
+            aux = {k: v for k, v in aux.items() if len(v) > 15000}  # >= ~3 years, so the A/B covers a long period
             if len(aux) >= 3:  # same period, with vs without intraday cross-asset returns (both reported)
                 since = str(max(v.index[0] for v in aux.values()) + pd.Timedelta(days=30))[:10]
                 cb = PLN.walk_forward(h1, "HOURS", cols=PLN.FEATURES + PLN.INTRADAY, since=since)
