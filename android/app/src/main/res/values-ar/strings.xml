@@ -363,6 +363,8 @@
     <string name="notif_locked">تنبيه جديد — افتح القفل للقراءة</string>
     <string name="protect_note">حماية المحتوى: لقطات الشاشة وتسجيلها ومعاينة التطبيقات الأخيرة محظورة في هذا التطبيق، وتحمل شاشات التحليل رمزك المجهول %1$s. هذا لا يمنع التصوير بجهاز آخر ولا كل وسائل الالتفاف.</string>
     <string name="lv_hold_prob">إن وصل السعر: احتمال الصمود (12 ساعة)</string>
+    <string name="set_allow_shots">السماح بلقطات الشاشة (نسخة الاختبار)</string>
+    <string name="set_allow_shots_note">فقط في نسخة الاختبار لإرسال لقطات للمراجعة. التطبيق المنشور يمنعها دائماً.</string>
     <string name="r_w_up" formatted="false">صاعد</string>
     <string name="r_w_down" formatted="false">هابط</string>
     <string name="r_w_neutral" formatted="false">محايد</string>

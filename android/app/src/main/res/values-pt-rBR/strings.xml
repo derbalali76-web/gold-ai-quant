@@ -363,6 +363,8 @@
     <string name="notif_locked">Novo alerta — desbloqueie para ler</string>
     <string name="protect_note">Proteção do conteúdo: capturas de tela, gravação de tela e a prévia de apps recentes estão bloqueadas neste app, e as telas de análise levam seu código anônimo %1$s. Isso não impede uma foto tirada com outro aparelho nem todas as formas de contorno.</string>
     <string name="lv_hold_prob">Se atingido: chance de segurar (12 h)</string>
+    <string name="set_allow_shots">Permitir capturas (versão de teste)</string>
+    <string name="set_allow_shots_note">Somente na versão de teste, para enviar capturas. O app publicado sempre as bloqueia.</string>
     <string name="r_w_up" formatted="false">de alta</string>
     <string name="r_w_down" formatted="false">de baixa</string>
     <string name="r_w_neutral" formatted="false">neutra</string>

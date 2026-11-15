@@ -419,4 +419,10 @@ UI = {
     "Protección del contenido: las capturas, la grabación de pantalla y la vista previa de apps recientes están bloqueadas en esta app, y las pantallas de análisis llevan tu código anónimo %1$s. Esto no impide una foto tomada con otro dispositivo ni todos los métodos de elusión.",
     "Proteção do conteúdo: capturas de tela, gravação de tela e a prévia de apps recentes estão bloqueadas neste app, e as telas de análise levam seu código anônimo %1$s. Isso não impede uma foto tirada com outro aparelho nem todas as formas de contorno."),
 "lv_hold_prob": ("If reached: chance it holds (12 h)", "إن وصل السعر: احتمال الصمود (12 ساعة)", "Si atteint : probabilité de tenue (12 h)", "Si se alcanza: probabilidad de que resista (12 h)", "Se atingido: chance de segurar (12 h)"),
+"set_allow_shots": ("Allow screenshots (test build)", "السماح بلقطات الشاشة (نسخة الاختبار)", "Autoriser les captures (version de test)", "Permitir capturas (versión de prueba)", "Permitir capturas (versão de teste)"),
+"set_allow_shots_note": ("Only in the test build, to send screenshots for review. The published app always blocks them.",
+    "فقط في نسخة الاختبار لإرسال لقطات للمراجعة. التطبيق المنشور يمنعها دائماً.",
+    "Uniquement dans la version de test, pour envoyer des captures. L'app publiée les bloque toujours.",
+    "Solo en la versión de prueba, para enviar capturas. La app publicada siempre las bloquea.",
+    "Somente na versão de teste, para enviar capturas. O app publicado sempre as bloqueia."),
 }

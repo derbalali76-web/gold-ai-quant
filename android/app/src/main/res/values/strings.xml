@@ -364,6 +364,8 @@
     <string name="notif_locked">New alert — unlock to read</string>
     <string name="protect_note">Content protection: screenshots, screen recording and the recent-apps preview are blocked in this app, and analysis screens carry your anonymous code %1$s. This cannot stop a photo taken with another device or every workaround.</string>
     <string name="lv_hold_prob">If reached: chance it holds (12 h)</string>
+    <string name="set_allow_shots">Allow screenshots (test build)</string>
+    <string name="set_allow_shots_note">Only in the test build, to send screenshots for review. The published app always blocks them.</string>
     <string name="r_w_up" formatted="false">up</string>
     <string name="r_w_down" formatted="false">down</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

@@ -834,7 +834,9 @@ private fun Segments(fill: Float, color: Color) {
 // ---------------------------------------------------------------- reason card
 // ---------------------------------------------------------------- dialogs (in-screen, no extra pages)
 /** Dialogs are separate windows: they get FLAG_SECURE explicitly (not only by inheritance). */
-internal val SecureDialog = DialogProperties(securePolicy = SecureFlagPolicy.SecureOn)
+internal val SecureDialog: DialogProperties
+    get() = DialogProperties(securePolicy = if (com.goldaiquant.app.Protection.dialogsSecure) SecureFlagPolicy.SecureOn
+                             else SecureFlagPolicy.SecureOff)
 
 @Composable
 private fun DialogFrame(title: String, onClose: () -> Unit, content: @Composable () -> Unit) {
@@ -1124,6 +1126,18 @@ private fun SettingsDialog(s: UiState, lang: Lang, onNextDemo: () -> Unit, onSav
             Row {
                 TextButton(onClick = onHow) { Text(stringResource(R.string.how_title), color = Gold) }
                 TextButton(onClick = onNews) { Text(stringResource(R.string.news_title), color = Gold) }
+            }
+            if (com.goldaiquant.app.BuildConfig.DEBUG) {
+                val act = LocalContext.current as? android.app.Activity
+                var allow by remember { mutableStateOf(act?.let { com.goldaiquant.app.Protection.screenshotsAllowed(it) } ?: false) }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(stringResource(R.string.set_allow_shots), color = TextMain, fontSize = 14.sp, modifier = Modifier.weight(1f))
+                    Switch(checked = allow, onCheckedChange = { on ->
+                        allow = on
+                        act?.let { com.goldaiquant.app.Protection.setScreenshotsAllowed(it, on); onClose(); it.recreate() }
+                    })
+                }
+                Text(stringResource(R.string.set_allow_shots_note), color = TextDim, fontSize = 11.sp)
             }
             Text(stringResource(R.string.app_version, com.goldaiquant.app.BuildConfig.VERSION_NAME,
                 com.goldaiquant.app.BuildConfig.VERSION_CODE), color = TextDim, fontSize = 11.sp)

@@ -24,9 +24,31 @@ import java.security.SecureRandom
  * code. What it cannot do: stop a photo taken with another camera, a rooted / modified device, or other workarounds.
  */
 object Protection {
+    private const val PREFS = "protection"
+    private const val KEY_ALLOW = "allow_screenshots"
+
+    /** Dialog windows follow the same choice as the activity. */
+    @Volatile var dialogsSecure: Boolean = true
+        private set
+
+    /** Test builds only (debug APK): the owner may allow screenshots to send them for review. Release: never. */
+    fun screenshotsAllowed(ctx: Context): Boolean =
+        BuildConfig.DEBUG && ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getBoolean(KEY_ALLOW, false)
+
+    fun setScreenshotsAllowed(ctx: Context, allow: Boolean) {
+        ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putBoolean(KEY_ALLOW, allow && BuildConfig.DEBUG).apply()
+    }
+
     fun secure(activity: Activity) {
+        if (screenshotsAllowed(activity)) {
+            activity.window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+            if (Build.VERSION.SDK_INT >= 33) activity.setRecentsScreenshotEnabled(true)
+            dialogsSecure = false
+            return
+        }
         activity.window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
         if (Build.VERSION.SDK_INT >= 33) activity.setRecentsScreenshotEnabled(false)
+        dialogsSecure = true
     }
 
     fun isSecure(activity: Activity): Boolean =
