@@ -1,0 +1,764 @@
+{
+ "version": "pooled-1",
+ "assets_in_panel": [
+  "AUD",
+  "BRENT",
+  "BTC",
+  "CAD",
+  "CHF",
+  "ETH",
+  "EUR",
+  "GBP",
+  "JPY",
+  "NASDAQ",
+  "SOL",
+  "SPX",
+  "TBOND",
+  "USDX",
+  "WTI",
+  "XAU"
+ ],
+ "cot_assets": [
+  "AUD",
+  "BTC",
+  "CAD",
+  "CHF",
+  "ETH",
+  "EUR",
+  "GBP",
+  "JPY",
+  "NASDAQ",
+  "SPX",
+  "TBOND",
+  "USDX",
+  "WTI",
+  "XAU"
+ ],
+ "results": [
+  {
+   "asset": "XAU",
+   "model": "POOLED_LOGIT",
+   "horizon_days": 7,
+   "version": "pooled-1",
+   "qualified": false,
+   "period": "2012-01-02 -> 2026-11-06",
+   "days": 3871,
+   "trades": 736,
+   "long_share": 0.98,
+   "trade_equivalents": 75.1,
+   "avg_net_pct": 0.3173,
+   "avg_net_ci": [
+    -0.0262,
+    0.676
+   ],
+   "always_long_avg_pct": 0.3507,
+   "edge_vs_long_ci": [
+    -0.1437,
+    0.0067
+   ],
+   "win_rate": 0.5611,
+   "halves_pct": [
+    0.0326,
+    0.602
+   ],
+   "holdout_trades": 120,
+   "holdout_avg_pct": 1.2724,
+   "max_drawdown_pct": 17.22,
+   "total_net_nonoverlap_pct": 50.18,
+   "single_asset_avg_pct": 0.0991,
+   "brier": 0.24871,
+   "brier_base": 0.2501,
+   "checks": {
+    "at least 50 trade-equivalents": true,
+    "average net CI above zero": false,
+    "both halves positive": true,
+    "final holdout positive": true,
+    "beats always-long (CI)": false,
+    "beats single-asset model": true,
+    "calibrated (Brier < base rate)": true
+   },
+   "reason": "failed: average net CI above zero; beats always-long (CI)",
+   "horizon": "WEEK"
+  },
+  {
+   "asset": "XAU",
+   "model": "POOLED_HGB",
+   "horizon_days": 7,
+   "version": "pooled-1",
+   "qualified": false,
+   "period": "2012-01-02 -> 2026-11-06",
+   "days": 3871,
+   "trades": 1275,
+   "long_share": 0.787,
+   "trade_equivalents": 130.1,
+   "avg_net_pct": -0.044,
+   "avg_net_ci": [
+    -0.3865,
+    0.2691
+   ],
+   "always_long_avg_pct": -0.0191,
+   "edge_vs_long_ci": [
+    -0.3581,
+    0.2195
+   ],
+   "win_rate": 0.4933,
+   "halves_pct": [
+    -0.1458,
+    0.0575
+   ],
+   "holdout_trades": 114,
+   "holdout_avg_pct": 0.3157,
+   "max_drawdown_pct": 37.07,
+   "total_net_nonoverlap_pct": 18.4,
+   "single_asset_avg_pct": 0.0991,
+   "brier": 0.25199,
+   "brier_base": 0.2501,
+   "checks": {
+    "at least 50 trade-equivalents": true,
+    "average net CI above zero": false,
+    "both halves positive": false,
+    "final holdout positive": true,
+    "beats always-long (CI)": false,
+    "beats single-asset model": false,
+    "calibrated (Brier < base rate)": false
+   },
+   "reason": "failed: average net CI above zero; both halves positive; beats always-long (CI); beats single-asset model; calibrated (Brier < base rate)",
+   "horizon": "WEEK"
+  },
+  {
+   "asset": "BTC",
+   "model": "POOLED_LOGIT",
+   "horizon_days": 7,
+   "version": "pooled-1",
+   "qualified": false,
+   "period": "2018-09-10 -> 2026-11-07",
+   "days": 2981,
+   "trades": 326,
+   "long_share": 1.0,
+   "trade_equivalents": 46.6,
+   "avg_net_pct": 0.4742,
+   "avg_net_ci": [
+    -2.4326,
+    3.704
+   ],
+   "always_long_avg_pct": 0.4742,
+   "edge_vs_long_ci": [
+    0.0,
+    0.0
+   ],
+   "win_rate": 0.4509,
+   "halves_pct": [
+    1.9358,
+    -0.9874
+   ],
+   "holdout_trades": 14,
+   "holdout_avg_pct": 0.3962,
+   "max_drawdown_pct": 33.83,
+   "total_net_nonoverlap_pct": 57.29,
+   "single_asset_avg_pct": -0.0902,
+   "brier": 0.25165,
+   "brier_base": 0.2521,
+   "checks": {
+    "at least 50 trade-equivalents": false,
+    "average net CI above zero": false,
+    "both halves positive": false,
+    "final holdout positive": true,
+    "beats always-long (CI)": false,
+    "beats single-asset model": true,
+    "calibrated (Brier < base rate)": true
+   },
+   "reason": "failed: at least 50 trade-equivalents; average net CI above zero; both halves positive; beats always-long (CI)",
+   "horizon": "WEEK"
+  },
+  {
+   "asset": "BTC",
+   "model": "POOLED_HGB",
+   "horizon_days": 7,
+   "version": "pooled-1",
+   "qualified": false,
+   "period": "2018-09-10 -> 2026-11-07",
+   "days": 2981,
+   "trades": 674,
+   "long_share": 1.0,
+   "trade_equivalents": 96.3,
+   "avg_net_pct": 0.7274,
+   "avg_net_ci": [
+    -1.2959,
+    2.8539
+   ],
+   "always_long_avg_pct": 0.7274,
+   "edge_vs_long_ci": [
+    0.0,
+    0.0
+   ],
+   "win_rate": 0.4703,
+   "halves_pct": [
+    1.505,
+    -0.0502
+   ],
+   "holdout_trades": 84,
+   "holdout_avg_pct": -1.331,
+   "max_drawdown_pct": 88.56,
+   "total_net_nonoverlap_pct": -24.1,
+   "single_asset_avg_pct": -0.0902,
+   "brier": 0.25484,
+   "brier_base": 0.2521,
+   "checks": {
+    "at least 50 trade-equivalents": true,
+    "average net CI above zero": false,
+    "both halves positive": false,
+    "final holdout positive": false,
+    "beats always-long (CI)": false,
+    "beats single-asset model": true,
+    "calibrated (Brier < base rate)": false
+   },
+   "reason": "failed: average net CI above zero; both halves positive; final holdout positive; beats always-long (CI); calibrated (Brier < base rate)",
+   "horizon": "WEEK"
+  },
+  {
+   "asset": "ETH",
+   "model": "POOLED_LOGIT",
+   "horizon_days": 7,
+   "version": "pooled-1",
+   "qualified": false,
+   "period": "2018-09-10 -> 2026-11-07",
+   "days": 2981,
+   "trades": 410,
+   "long_share": 1.0,
+   "trade_equivalents": 58.6,
+   "avg_net_pct": 4.2805,
+   "avg_net_ci": [
+    0.5927,
+    7.7866
+   ],
+   "always_long_avg_pct": 4.2805,
+   "edge_vs_long_ci": [
+    0.0,
+    0.0
+   ],
+   "win_rate": 0.6049,
+   "halves_pct": [
+    5.1962,
+    3.3648
+   ],
+   "holdout_trades": 4,
+   "holdout_avg_pct": 7.8991,
+   "max_drawdown_pct": 33.67,
+   "total_net_nonoverlap_pct": 244.04,
+   "single_asset_avg_pct": 1.3067,
+   "brier": 0.24836,
+   "brier_base": 0.25285,
+   "checks": {
+    "at least 50 trade-equivalents": true,
+    "average net CI above zero": true,
+    "both halves positive": true,
+    "final holdout positive": false,
+    "beats always-long (CI)": false,
+    "beats single-asset model": true,
+    "calibrated (Brier < base rate)": true
+   },
+   "reason": "failed: final holdout positive; beats always-long (CI)",
+   "horizon": "WEEK"
+  },
+  {
+   "asset": "ETH",
+   "model": "POOLED_HGB",
+   "horizon_days": 7,
+   "version": "pooled-1",
+   "qualified": false,
+   "period": "2018-09-10 -> 2026-11-07",
+   "days": 2981,
+   "trades": 365,
+   "long_share": 1.0,
+   "trade_equivalents": 52.1,
+   "avg_net_pct": 1.2405,
+   "avg_net_ci": [
+    -2.215,
+    5.1161
+   ],
+   "always_long_avg_pct": 1.2405,
+   "edge_vs_long_ci": [
+    0.0,
+    0.0
+   ],
+   "win_rate": 0.4959,
+   "halves_pct": [
+    1.5642,
+    0.9185
+   ],
+   "holdout_trades": 50,
+   "holdout_avg_pct": -0.9021,
+   "max_drawdown_pct": 57.23,
+   "total_net_nonoverlap_pct": 37.67,
+   "single_asset_avg_pct": 1.3067,
+   "brier": 0.25348,
+   "brier_base": 0.25285,
+   "checks": {
+    "at least 50 trade-equivalents": true,
+    "average net CI above zero": false,
+    "both halves positive": true,
+    "final holdout positive": false,
+    "beats always-long (CI)": false,
+    "beats single-asset model": false,
+    "calibrated (Brier < base rate)": false
+   },
+   "reason": "failed: average net CI above zero; final holdout positive; beats always-long (CI); beats single-asset model; calibrated (Brier < base rate)",
+   "horizon": "WEEK"
+  },
+  {
+   "asset": "SOL",
+   "model": "POOLED_LOGIT",
+   "horizon_days": 7,
+   "version": "pooled-1",
+   "qualified": false,
+   "period": "2021-05-11 -> 2026-11-07",
+   "days": 2007,
+   "trades": 455,
+   "long_share": 1.0,
+   "trade_equivalents": 65.0,
+   "avg_net_pct": 2.7085,
+   "avg_net_ci": [
+    -2.2014,
+    8.2188
+   ],
+   "always_long_avg_pct": 2.7085,
+   "edge_vs_long_ci": [
+    0.0,
+    0.0
+   ],
+   "win_rate": 0.4901,
+   "halves_pct": [
+    2.7754,
+    2.6418
+   ],
+   "holdout_trades": 5,
+   "holdout_avg_pct": -7.6585,
+   "max_drawdown_pct": 146.46,
+   "total_net_nonoverlap_pct": 123.65,
+   "single_asset_avg_pct": -0.6842,
+   "brier": 0.25343,
+   "brier_base": 0.25515,
+   "checks": {
+    "at least 50 trade-equivalents": true,
+    "average net CI above zero": false,
+    "both halves positive": true,
+    "final holdout positive": false,
+    "beats always-long (CI)": false,
+    "beats single-asset model": true,
+    "calibrated (Brier < base rate)": true
+   },
+   "reason": "failed: average net CI above zero; final holdout positive; beats always-long (CI)",
+   "horizon": "WEEK"
+  },
+  {
+   "asset": "SOL",
+   "model": "POOLED_HGB",
+   "horizon_days": 7,
+   "version": "pooled-1",
+   "qualified": false,
+   "period": "2021-05-11 -> 2026-11-07",
+   "days": 2007,
+   "trades": 342,
+   "long_share": 1.0,
+   "trade_equivalents": 48.9,
+   "avg_net_pct": 2.8337,
+   "avg_net_ci": [
+    -3.0269,
+    10.0252
+   ],
+   "always_long_avg_pct": 2.8337,
+   "edge_vs_long_ci": [
+    0.0,
+    0.0
+   ],
+   "win_rate": 0.4386,
+   "halves_pct": [
+    4.739,
+    0.9285
+   ],
+   "holdout_trades": 18,
+   "holdout_avg_pct": 1.6699,
+   "max_drawdown_pct": 104.07,
+   "total_net_nonoverlap_pct": 75.35,
+   "single_asset_avg_pct": -0.6842,
+   "brier": 0.25518,
+   "brier_base": 0.25515,
+   "checks": {
+    "at least 50 trade-equivalents": false,
+    "average net CI above zero": false,
+    "both halves positive": true,
+    "final holdout positive": true,
+    "beats always-long (CI)": false,
+    "beats single-asset model": true,
+    "calibrated (Brier < base rate)": false
+   },
+   "reason": "failed: at least 50 trade-equivalents; average net CI above zero; beats always-long (CI); calibrated (Brier < base rate)",
+   "horizon": "WEEK"
+  },
+  {
+   "asset": "XAU",
+   "model": "POOLED_LOGIT",
+   "horizon_days": 30,
+   "version": "pooled-1",
+   "qualified": false,
+   "period": "2012-01-02 -> 2026-10-14",
+   "days": 3848,
+   "trades": 1588,
+   "long_share": 0.97,
+   "trade_equivalents": 37.8,
+   "avg_net_pct": 0.0289,
+   "avg_net_ci": [
+    -1.0618,
+    1.3711
+   ],
+   "always_long_avg_pct": 0.0452,
+   "edge_vs_long_ci": [
+    -0.3185,
+    0.3156
+   ],
+   "win_rate": 0.4654,
+   "halves_pct": [
+    -1.3559,
+    1.4136
+   ],
+   "holdout_trades": 399,
+   "holdout_avg_pct": 2.7905,
+   "max_drawdown_pct": 59.05,
+   "total_net_nonoverlap_pct": 15.67,
+   "single_asset_avg_pct": 0.4501,
+   "brier": 0.25556,
+   "brier_base": 0.25614,
+   "checks": {
+    "at least 50 trade-equivalents": false,
+    "average net CI above zero": false,
+    "both halves positive": false,
+    "final holdout positive": true,
+    "beats always-long (CI)": false,
+    "beats single-asset model": false,
+    "calibrated (Brier < base rate)": true
+   },
+   "reason": "failed: at least 50 trade-equivalents; average net CI above zero; both halves positive; beats always-long (CI); beats single-asset model",
+   "horizon": "MONTH"
+  },
+  {
+   "asset": "XAU",
+   "model": "POOLED_HGB",
+   "horizon_days": 30,
+   "version": "pooled-1",
+   "qualified": false,
+   "period": "2012-01-02 -> 2026-10-14",
+   "days": 3848,
+   "trades": 2379,
+   "long_share": 0.816,
+   "trade_equivalents": 56.6,
+   "avg_net_pct": 0.1397,
+   "avg_net_ci": [
+    -0.7567,
+    0.9385
+   ],
+   "always_long_avg_pct": 0.686,
+   "edge_vs_long_ci": [
+    -1.2901,
+    0.0349
+   ],
+   "win_rate": 0.4931,
+   "halves_pct": [
+    -0.3988,
+    0.6777
+   ],
+   "holdout_trades": 386,
+   "holdout_avg_pct": 1.0286,
+   "max_drawdown_pct": 41.24,
+   "total_net_nonoverlap_pct": 14.04,
+   "single_asset_avg_pct": 0.4501,
+   "brier": 0.26518,
+   "brier_base": 0.25614,
+   "checks": {
+    "at least 50 trade-equivalents": true,
+    "average net CI above zero": false,
+    "both halves positive": false,
+    "final holdout positive": true,
+    "beats always-long (CI)": false,
+    "beats single-asset model": false,
+    "calibrated (Brier < base rate)": false
+   },
+   "reason": "failed: average net CI above zero; both halves positive; beats always-long (CI); beats single-asset model; calibrated (Brier < base rate)",
+   "horizon": "MONTH"
+  },
+  {
+   "asset": "BTC",
+   "model": "POOLED_LOGIT",
+   "horizon_days": 30,
+   "version": "pooled-1",
+   "qualified": false,
+   "period": "2018-09-10 -> 2026-10-15",
+   "days": 2958,
+   "trades": 820,
+   "long_share": 1.0,
+   "trade_equivalents": 27.3,
+   "avg_net_pct": 5.5483,
+   "avg_net_ci": [
+    -4.4849,
+    17.5373
+   ],
+   "always_long_avg_pct": 5.5483,
+   "edge_vs_long_ci": [
+    0.0,
+    0.0
+   ],
+   "win_rate": 0.5037,
+   "halves_pct": [
+    7.9122,
+    3.1845
+   ],
+   "holdout_trades": 41,
+   "holdout_avg_pct": -2.155,
+   "max_drawdown_pct": 45.0,
+   "total_net_nonoverlap_pct": 300.35,
+   "single_asset_avg_pct": 0.0774,
+   "brier": 0.25341,
+   "brier_base": 0.27848,
+   "checks": {
+    "at least 50 trade-equivalents": false,
+    "average net CI above zero": false,
+    "both halves positive": true,
+    "final holdout positive": false,
+    "beats always-long (CI)": false,
+    "beats single-asset model": true,
+    "calibrated (Brier < base rate)": true
+   },
+   "reason": "failed: at least 50 trade-equivalents; average net CI above zero; final holdout positive; beats always-long (CI)",
+   "horizon": "MONTH"
+  },
+  {
+   "asset": "BTC",
+   "model": "POOLED_HGB",
+   "horizon_days": 30,
+   "version": "pooled-1",
+   "qualified": false,
+   "period": "2018-09-10 -> 2026-10-15",
+   "days": 2958,
+   "trades": 983,
+   "long_share": 1.0,
+   "trade_equivalents": 32.8,
+   "avg_net_pct": 2.052,
+   "avg_net_ci": [
+    -5.0593,
+    11.6074
+   ],
+   "always_long_avg_pct": 2.052,
+   "edge_vs_long_ci": [
+    0.0,
+    0.0
+   ],
+   "win_rate": 0.4863,
+   "halves_pct": [
+    3.0456,
+    1.0603
+   ],
+   "holdout_trades": 141,
+   "holdout_avg_pct": 3.6773,
+   "max_drawdown_pct": 131.29,
+   "total_net_nonoverlap_pct": 128.16,
+   "single_asset_avg_pct": 0.0774,
+   "brier": 0.26543,
+   "brier_base": 0.27848,
+   "checks": {
+    "at least 50 trade-equivalents": false,
+    "average net CI above zero": false,
+    "both halves positive": true,
+    "final holdout positive": true,
+    "beats always-long (CI)": false,
+    "beats single-asset model": true,
+    "calibrated (Brier < base rate)": true
+   },
+   "reason": "failed: at least 50 trade-equivalents; average net CI above zero; beats always-long (CI)",
+   "horizon": "MONTH"
+  },
+  {
+   "asset": "ETH",
+   "model": "POOLED_LOGIT",
+   "horizon_days": 30,
+   "version": "pooled-1",
+   "qualified": false,
+   "period": "2018-09-10 -> 2026-10-15",
+   "days": 2958,
+   "trades": 1140,
+   "long_share": 1.0,
+   "trade_equivalents": 38.0,
+   "avg_net_pct": 9.2879,
+   "avg_net_ci": [
+    -1.6799,
+    22.9512
+   ],
+   "always_long_avg_pct": 9.2879,
+   "edge_vs_long_ci": [
+    0.0,
+    0.0
+   ],
+   "win_rate": 0.5781,
+   "halves_pct": [
+    15.5274,
+    3.0485
+   ],
+   "holdout_trades": 66,
+   "holdout_avg_pct": 1.051,
+   "max_drawdown_pct": 107.93,
+   "total_net_nonoverlap_pct": 293.94,
+   "single_asset_avg_pct": 4.9446,
+   "brier": 0.24853,
+   "brier_base": 0.27192,
+   "checks": {
+    "at least 50 trade-equivalents": false,
+    "average net CI above zero": false,
+    "both halves positive": true,
+    "final holdout positive": true,
+    "beats always-long (CI)": false,
+    "beats single-asset model": true,
+    "calibrated (Brier < base rate)": true
+   },
+   "reason": "failed: at least 50 trade-equivalents; average net CI above zero; beats always-long (CI)",
+   "horizon": "MONTH"
+  },
+  {
+   "asset": "ETH",
+   "model": "POOLED_HGB",
+   "horizon_days": 30,
+   "version": "pooled-1",
+   "qualified": false,
+   "period": "2018-09-10 -> 2026-10-15",
+   "days": 2958,
+   "trades": 1171,
+   "long_share": 1.0,
+   "trade_equivalents": 39.0,
+   "avg_net_pct": 4.6538,
+   "avg_net_ci": [
+    -5.7044,
+    16.7802
+   ],
+   "always_long_avg_pct": 4.6538,
+   "edge_vs_long_ci": [
+    0.0,
+    0.0
+   ],
+   "win_rate": 0.5141,
+   "halves_pct": [
+    8.5597,
+    0.7546
+   ],
+   "holdout_trades": 45,
+   "holdout_avg_pct": -9.7277,
+   "max_drawdown_pct": 76.9,
+   "total_net_nonoverlap_pct": 310.91,
+   "single_asset_avg_pct": 4.9446,
+   "brier": 0.25656,
+   "brier_base": 0.27192,
+   "checks": {
+    "at least 50 trade-equivalents": false,
+    "average net CI above zero": false,
+    "both halves positive": true,
+    "final holdout positive": false,
+    "beats always-long (CI)": false,
+    "beats single-asset model": false,
+    "calibrated (Brier < base rate)": true
+   },
+   "reason": "failed: at least 50 trade-equivalents; average net CI above zero; final holdout positive; beats always-long (CI); beats single-asset model",
+   "horizon": "MONTH"
+  },
+  {
+   "asset": "SOL",
+   "model": "POOLED_LOGIT",
+   "horizon_days": 30,
+   "version": "pooled-1",
+   "qualified": false,
+   "period": "2021-05-11 -> 2026-10-15",
+   "days": 1984,
+   "trades": 1373,
+   "long_share": 1.0,
+   "trade_equivalents": 45.8,
+   "avg_net_pct": 9.5741,
+   "avg_net_ci": [
+    -5.1882,
+    28.8078
+   ],
+   "always_long_avg_pct": 9.5741,
+   "edge_vs_long_ci": [
+    0.0,
+    0.0
+   ],
+   "win_rate": 0.4792,
+   "halves_pct": [
+    11.5712,
+    7.5799
+   ],
+   "holdout_trades": 170,
+   "holdout_avg_pct": -7.0014,
+   "max_drawdown_pct": 187.69,
+   "total_net_nonoverlap_pct": 448.41,
+   "single_asset_avg_pct": -2.6357,
+   "brier": 0.25997,
+   "brier_base": 0.26734,
+   "checks": {
+    "at least 50 trade-equivalents": false,
+    "average net CI above zero": false,
+    "both halves positive": true,
+    "final holdout positive": false,
+    "beats always-long (CI)": false,
+    "beats single-asset model": true,
+    "calibrated (Brier < base rate)": true
+   },
+   "reason": "failed: at least 50 trade-equivalents; average net CI above zero; final holdout positive; beats always-long (CI)",
+   "horizon": "MONTH"
+  },
+  {
+   "asset": "SOL",
+   "model": "POOLED_HGB",
+   "horizon_days": 30,
+   "version": "pooled-1",
+   "qualified": false,
+   "period": "2021-05-11 -> 2026-10-15",
+   "days": 1984,
+   "trades": 1048,
+   "long_share": 1.0,
+   "trade_equivalents": 34.9,
+   "avg_net_pct": 8.5829,
+   "avg_net_ci": [
+    -6.3388,
+    33.8237
+   ],
+   "always_long_avg_pct": 8.5829,
+   "edge_vs_long_ci": [
+    0.0,
+    0.0
+   ],
+   "win_rate": 0.4704,
+   "halves_pct": [
+    9.2091,
+    7.9567
+   ],
+   "holdout_trades": 105,
+   "holdout_avg_pct": -9.6115,
+   "max_drawdown_pct": 132.69,
+   "total_net_nonoverlap_pct": 388.95,
+   "single_asset_avg_pct": -2.6357,
+   "brier": 0.26218,
+   "brier_base": 0.26734,
+   "checks": {
+    "at least 50 trade-equivalents": false,
+    "average net CI above zero": false,
+    "both halves positive": true,
+    "final holdout positive": false,
+    "beats always-long (CI)": false,
+    "beats single-asset model": true,
+    "calibrated (Brier < base rate)": true
+   },
+   "reason": "failed: at least 50 trade-equivalents; average net CI above zero; final holdout positive; beats always-long (CI)",
+   "horizon": "MONTH"
+  }
+ ],
+ "panel_rows": {
+  "WEEK": 63560,
+  "MONTH": 63560
+ },
+ "updated_at": "2026-11-15T11:29:22.935826+00:00"
+}
