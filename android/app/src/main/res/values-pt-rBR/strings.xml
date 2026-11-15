@@ -360,6 +360,8 @@
     <string name="scalp_activity_note">Não é uma direção: indica quanto o preço deve se mover, não se vai subir ou cair.</string>
     <string name="scalp_activity_valid">Validado fora da amostra: %1$d%% melhor que a estimativa da hora habitual (teste final: %2$d%%). Reverificado semanalmente.</string>
     <string name="scalp_activity_none">A previsão de atividade não está validada para este ativo.</string>
+    <string name="notif_locked">Novo alerta — desbloqueie para ler</string>
+    <string name="protect_note">Proteção do conteúdo: capturas de tela, gravação de tela e a prévia de apps recentes estão bloqueadas neste app, e as telas de análise levam seu código anônimo %1$s. Isso não impede uma foto tirada com outro aparelho nem todas as formas de contorno.</string>
     <string name="r_w_up" formatted="false">de alta</string>
     <string name="r_w_down" formatted="false">de baixa</string>
     <string name="r_w_neutral" formatted="false">neutra</string>

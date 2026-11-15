@@ -361,6 +361,8 @@
     <string name="scalp_activity_note">This is not a direction: it says how much the price is likely to move, not whether up or down.</string>
     <string name="scalp_activity_valid">Validated out of sample: %1$d%% better than the usual-hour estimate (final test: %2$d%%). Re-checked weekly.</string>
     <string name="scalp_activity_none">The activity forecast is not validated for this asset.</string>
+    <string name="notif_locked">New alert — unlock to read</string>
+    <string name="protect_note">Content protection: screenshots, screen recording and the recent-apps preview are blocked in this app, and analysis screens carry your anonymous code %1$s. This cannot stop a photo taken with another device or every workaround.</string>
     <string name="r_w_up" formatted="false">up</string>
     <string name="r_w_down" formatted="false">down</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

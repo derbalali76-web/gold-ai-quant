@@ -360,6 +360,8 @@
     <string name="scalp_activity_note">No es una dirección: indica cuánto es probable que se mueva el precio, no si sube o baja.</string>
     <string name="scalp_activity_valid">Validado fuera de muestra: %1$d%% mejor que la estimación de la hora habitual (prueba final: %2$d%%). Se revisa cada semana.</string>
     <string name="scalp_activity_none">El pronóstico de actividad no está validado para este activo.</string>
+    <string name="notif_locked">Nueva alerta — desbloquea para leer</string>
+    <string name="protect_note">Protección del contenido: las capturas, la grabación de pantalla y la vista previa de apps recientes están bloqueadas en esta app, y las pantallas de análisis llevan tu código anónimo %1$s. Esto no impide una foto tomada con otro dispositivo ni todos los métodos de elusión.</string>
     <string name="r_w_up" formatted="false">alcista</string>
     <string name="r_w_down" formatted="false">bajista</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

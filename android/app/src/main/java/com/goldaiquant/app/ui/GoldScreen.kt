@@ -1,5 +1,11 @@
 package com.goldaiquant.app.ui
 
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.window.SecureFlagPolicy
+import com.goldaiquant.app.InstallCode
+import com.goldaiquant.app.LocalWatermark
+import com.goldaiquant.app.watermark
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
@@ -198,10 +204,12 @@ private fun actionColor(a: Action, tilt: Int): Color = when (a) {
 @Composable
 fun GoldScreen(vm: MainViewModel, lang: Lang, onLanguage: (Lang) -> Unit) {
     val s by vm.state.collectAsStateWithLifecycle()
-    GoldContent(s, lang, onAsk = vm::ask, onNextDemo = vm::nextDemoMoment,
+    val ctx = LocalContext.current
+    val code = remember { InstallCode.get(ctx) }
+    CompositionLocalProvider(LocalWatermark provides code) { GoldContent(s, lang, onAsk = vm::ask, onNextDemo = vm::nextDemoMoment,
         onSave = { u, t -> vm.setServerUrl(u); vm.setToken(t) }, onLive = vm::setLiveMode,
         onHorizon = vm::selectHorizon, onLanguage = onLanguage, onNotify = vm::setNotify, onAssetPick = vm::setAsset,
-        onPosition = vm::setPosition, onAlertAsset = vm::toggleAlertAsset)
+        onPosition = vm::setPosition, onAlertAsset = vm::toggleAlertAsset) }
 }
 
 private sealed interface Sheet {
@@ -226,7 +234,7 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
     var sheet by remember { mutableStateOf<Sheet?>(null) }
     val d = s.decision
     val selected = HorizonModel.resolve(s.selectedHorizon, d)
-    BoxWithConstraints(Modifier.fillMaxSize().background(Bg).safeDrawingPadding()) {
+    BoxWithConstraints(Modifier.fillMaxSize().background(Bg).watermark(LocalWatermark.current).safeDrawingPadding()) {
         // Compact layout on short screens: secondary details are dropped instead of shrinking the text.
         val compact = maxHeight < 700.dp
         val gap = if (compact) 6.dp else 8.dp
@@ -825,10 +833,14 @@ private fun Segments(fill: Float, color: Color) {
 
 // ---------------------------------------------------------------- reason card
 // ---------------------------------------------------------------- dialogs (in-screen, no extra pages)
+/** Dialogs are separate windows: they get FLAG_SECURE explicitly (not only by inheritance). */
+internal val SecureDialog = DialogProperties(securePolicy = SecureFlagPolicy.SecureOn)
+
 @Composable
 private fun DialogFrame(title: String, onClose: () -> Unit, content: @Composable () -> Unit) {
-    Dialog(onDismissRequest = onClose) {
+    Dialog(onDismissRequest = onClose, properties = SecureDialog) {
         Column(Modifier.fillMaxWidth().heightIn(max = 620.dp).background(Card, RoundedCornerShape(16.dp))
+            .watermark(LocalWatermark.current)
             .border(1.dp, Gold, RoundedCornerShape(16.dp)).verticalScroll(rememberScrollState()).padding(14.dp),
             verticalArrangement = Arrangement.spacedBy(5.dp)) {
             Text(title, color = Gold, fontSize = 17.sp, fontWeight = FontWeight.Bold)
@@ -1059,7 +1071,7 @@ private fun SettingsDialog(s: UiState, lang: Lang, onNextDemo: () -> Unit, onSav
                            onAlertAsset: (String) -> Unit = {}, onHow: () -> Unit = {}, onNews: () -> Unit = {}, onClose: () -> Unit) {
     val askPermission = androidx.activity.compose.rememberLauncherForActivityResult(
         androidx.activity.result.contract.ActivityResultContracts.RequestPermission()) { granted -> onNotify(granted) }
-    Dialog(onDismissRequest = onClose) {
+    Dialog(onDismissRequest = onClose, properties = SecureDialog) {
         Column(Modifier.fillMaxWidth().heightIn(max = 640.dp).background(Card, RoundedCornerShape(16.dp))
             .border(1.dp, Gold, RoundedCornerShape(16.dp)).verticalScroll(rememberScrollState()).padding(14.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -1244,6 +1256,7 @@ private fun HowDialog(onClose: () -> Unit) {
             Text(stringResource(R.string.trust_verify), color = Gold, fontWeight = FontWeight.Bold)
         }
         Body(stringResource(R.string.how_disclaimer), TextDim, 11.sp)
+        LocalWatermark.current?.let { Body(stringResource(R.string.protect_note, it), TextDim, 11.sp) }
     }
 }
 

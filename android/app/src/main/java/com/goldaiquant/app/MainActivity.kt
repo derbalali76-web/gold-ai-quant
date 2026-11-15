@@ -36,6 +36,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Protection.secure(this) // before any content: no screenshots / recording / recent-apps preview
         val crash = try { crashFile().takeIf { it.exists() }?.readText() } catch (_: Throwable) { null }
         if (crash != null) { reportCrash(crash); showCrash(crash); return }
         enableEdgeToEdge()

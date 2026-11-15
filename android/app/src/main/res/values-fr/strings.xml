@@ -360,6 +360,8 @@
     <string name="scalp_activity_note">Ce n\'est pas une direction : il indique l\'ampleur probable du mouvement, pas s\'il sera à la hausse ou à la baisse.</string>
     <string name="scalp_activity_valid">Validé hors échantillon : %1$d%% meilleur que l\'estimation horaire habituelle (test final : %2$d%%). Revérifié chaque semaine.</string>
     <string name="scalp_activity_none">La prévision d\'activité n\'est pas validée pour cet actif.</string>
+    <string name="notif_locked">Nouvelle alerte — déverrouillez pour lire</string>
+    <string name="protect_note">Protection du contenu : captures d\'écran, enregistrement de l\'écran et aperçu des apps récentes sont bloqués dans cette app, et les écrans d\'analyse portent votre code anonyme %1$s. Cela n\'empêche pas une photo prise avec un autre appareil ni tous les contournements.</string>
     <string name="r_w_up" formatted="false">haussière</string>
     <string name="r_w_down" formatted="false">baissière</string>
     <string name="r_w_neutral" formatted="false">neutre</string>

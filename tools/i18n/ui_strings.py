@@ -412,4 +412,10 @@ UI = {
 "scalp_activity_none": ("The activity forecast is not validated for this asset.", "توقّع النشاط غير معتمد لهذا الأصل.",
     "La prévision d'activité n'est pas validée pour cet actif.", "El pronóstico de actividad no está validado para este activo.",
     "A previsão de atividade não está validada para este ativo."),
+"notif_locked": ("New alert — unlock to read", "تنبيه جديد — افتح القفل للقراءة", "Nouvelle alerte — déverrouillez pour lire", "Nueva alerta — desbloquea para leer", "Novo alerta — desbloqueie para ler"),
+"protect_note": ("Content protection: screenshots, screen recording and the recent-apps preview are blocked in this app, and analysis screens carry your anonymous code %1$s. This cannot stop a photo taken with another device or every workaround.",
+    "حماية المحتوى: لقطات الشاشة وتسجيلها ومعاينة التطبيقات الأخيرة محظورة في هذا التطبيق، وتحمل شاشات التحليل رمزك المجهول %1$s. هذا لا يمنع التصوير بجهاز آخر ولا كل وسائل الالتفاف.",
+    "Protection du contenu : captures d'écran, enregistrement de l'écran et aperçu des apps récentes sont bloqués dans cette app, et les écrans d'analyse portent votre code anonyme %1$s. Cela n'empêche pas une photo prise avec un autre appareil ni tous les contournements.",
+    "Protección del contenido: las capturas, la grabación de pantalla y la vista previa de apps recientes están bloqueadas en esta app, y las pantallas de análisis llevan tu código anónimo %1$s. Esto no impide una foto tomada con otro dispositivo ni todos los métodos de elusión.",
+    "Proteção do conteúdo: capturas de tela, gravação de tela e a prévia de apps recentes estão bloqueadas neste app, e as telas de análise levam seu código anônimo %1$s. Isso não impede uma foto tirada com outro aparelho nem todas as formas de contorno."),
 }

@@ -95,7 +95,7 @@ class SignalWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx
         val n = NotificationCompat.Builder(applicationContext, CHANNEL)
             .setSmallIcon(android.R.drawable.stat_notify_more).setContentTitle(title)
             .setContentText(text.substringBefore("\n")).setStyle(NotificationCompat.BigTextStyle().bigText(text))
-            .setContentIntent(open).setAutoCancel(true).build()
+            .setContentIntent(open).setAutoCancel(true).private(applicationContext).build()
         NotificationManagerCompat.from(applicationContext).notify(("evt$label${e.kind}${e.levelName}").hashCode(), n)
     }
 
@@ -117,7 +117,7 @@ class SignalWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx
                 .setContentTitle("$label · " + ctx.getString(R.string.notif_title, a, h))
                 .setContentText(ctx.getString(R.string.notif_text))
                 .setStyle(NotificationCompat.BigTextStyle().bigText(ctx.getString(R.string.notif_text)))
-                .setContentIntent(open).setAutoCancel(true).build()
+                .setContentIntent(open).setAutoCancel(true).private(applicationContext).build()
             NotificationManagerCompat.from(applicationContext).notify((label + sg.horizon).hashCode(), n)
         }
     }
@@ -137,7 +137,7 @@ class SignalWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx
             .setSmallIcon(android.R.drawable.stat_notify_more)
             .setContentTitle("$label · " + ctx.getString(R.string.notif_level_title, String.format(java.util.Locale.US, "%.2f", sc.trigger), sc.triggerLevel))
             .setContentText(text).setStyle(NotificationCompat.BigTextStyle().bigText(text))
-            .setContentIntent(open).setAutoCancel(true).build()
+            .setContentIntent(open).setAutoCancel(true).private(applicationContext).build()
         NotificationManagerCompat.from(applicationContext).notify(("lvl" + label + sc.kind + sc.triggerLevel).hashCode(), n)
     }
 
@@ -167,7 +167,7 @@ class SignalWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx
             .setContentTitle("$label · " + ctx.getString(R.string.notif_brief_title))
             .setContentText(lines.getOrElse(1) { lines[0] })
             .setStyle(NotificationCompat.BigTextStyle().bigText(lines.joinToString("\n")))
-            .setContentIntent(open).setAutoCancel(true).build()
+            .setContentIntent(open).setAutoCancel(true).private(applicationContext).build()
         NotificationManagerCompat.from(applicationContext).notify(BRIEF_ID + label.hashCode() % 1000, n)
     }
 
@@ -191,3 +191,9 @@ class SignalWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx
         }
     }
 }
+
+/** On a locked screen, show only "AI QUANT — new alert", never the analysis text (the user unlocks to read it). */
+private fun NotificationCompat.Builder.private(ctx: android.content.Context): NotificationCompat.Builder =
+    setVisibility(NotificationCompat.VISIBILITY_PRIVATE).setPublicVersion(
+        NotificationCompat.Builder(ctx, "signals").setSmallIcon(android.R.drawable.stat_notify_more)
+            .setContentTitle("AI QUANT").setContentText(ctx.getString(R.string.notif_locked)).build())

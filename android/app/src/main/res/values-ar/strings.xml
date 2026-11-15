@@ -360,6 +360,8 @@
     <string name="scalp_activity_note">هذا ليس اتجاهاً: يقول كم يُرجَّح أن يتحرك السعر، لا إن كان صعوداً أو هبوطاً.</string>
     <string name="scalp_activity_valid">معتمد خارج العينة: أفضل بنسبة %1$d%% من تقدير الساعة المعتادة (الاختبار النهائي: %2$d%%). يُعاد فحصه أسبوعياً.</string>
     <string name="scalp_activity_none">توقّع النشاط غير معتمد لهذا الأصل.</string>
+    <string name="notif_locked">تنبيه جديد — افتح القفل للقراءة</string>
+    <string name="protect_note">حماية المحتوى: لقطات الشاشة وتسجيلها ومعاينة التطبيقات الأخيرة محظورة في هذا التطبيق، وتحمل شاشات التحليل رمزك المجهول %1$s. هذا لا يمنع التصوير بجهاز آخر ولا كل وسائل الالتفاف.</string>
     <string name="r_w_up" formatted="false">صاعد</string>
     <string name="r_w_down" formatted="false">هابط</string>
     <string name="r_w_neutral" formatted="false">محايد</string>
