@@ -56,3 +56,23 @@ def test_round4_runs_and_gate_uses_only_past_forecasts():
     r = S.run_round4(d, "SOL")
     assert len(r["results"]) == 15 and not any(x["qualified"] for x in r["results"])
     assert 0 <= r["gate_share"] <= 1
+
+
+def test_feasibility_random_walk_is_near_symmetric_and_loses_costs():
+    from goldquant import scalp_feasibility as F
+    d = m1(days=40, seed=9)
+    r = F.study(d, "BTC")
+    sym = [x for x in r["fixed"] if x["window_min"] == 60 and x["stop_pct"] == 0.65]
+    lo, sh = sym
+    assert abs(lo["p_target"] - lo["p_stop"]) < 0.05  # no drift -> symmetric barriers hit about equally
+    assert all(x["avg_net_pct"] < 0 for x in r["fixed"])
+    assert r["dynamic"] and r["by_hour"]
+
+
+def test_first_passage_stop_wins_ties():
+    from goldquant import scalp_feasibility as F
+    c = np.array([100.0] * 5)
+    h = np.array([100, 101, 100, 100, 100.0])
+    lo = np.array([100, 99, 100, 100, 100.0])
+    out, ret = F.first_passage(h, lo, c, np.array([0]), 3, 0.0065, 0.0065)
+    assert out[0] == -1

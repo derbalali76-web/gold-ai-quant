@@ -340,11 +340,10 @@ def crypto_research() -> dict:
     return out
 
 
-def scalp1m(budget_min: float = 75) -> dict:
-    """1-minute scalping engine (goldquant/scalp1m.py, pre-registered). 1-min data is large, so it lives in a CI
-    cache folder (SCALP_DATA), never in git; only the report is committed."""
+def ensure_1m(budget_min: float) -> tuple:
+    """Download missing 1-minute months into the CI cache folder (SCALP_DATA). Returns (root, complete, symbols)."""
     import time
-    from goldquant import crypto_store as CS, scalp1m as S1
+    from goldquant import crypto_store as CS
     from goldquant.providers.binance_archive import BinanceArchive, months
     root = Path(os.environ.get("SCALP_DATA", ROOT / "cache_1m"))
     t0, arc = time.monotonic(), BinanceArchive()
@@ -354,7 +353,7 @@ def scalp1m(budget_min: float = 75) -> dict:
     complete = True
     for a, sym in syms.items():
         for y, m in months(date(2021, 1, 1), last_full):
-            if time.monotonic() - t0 > budget_min * 60 * 0.45:
+            if time.monotonic() - t0 > budget_min * 60:
                 complete = False
                 break
             if CS.have_month(root, sym, "1m", y, m, 38000):
@@ -369,6 +368,39 @@ def scalp1m(budget_min: float = 75) -> dict:
         parts = [p for p in parts if len(p)]
         if parts:
             CS.save_bars(root, sym, "1m", pd.concat(parts))
+    return root, complete, syms
+
+
+def scalp_feasibility(budget_min: float = 75) -> dict:
+    """Base-rate study of the +0.65 % target (goldquant/scalp_feasibility.py)."""
+    from goldquant import crypto_store as CS, scalp1m as S1, scalp_feasibility as SF
+    root, complete, syms = ensure_1m(budget_min * 0.45)
+    out = {"updated_at": datetime.now(timezone.utc).isoformat(), "data_complete": complete, "assets": {}}
+    for a, sym in syms.items():
+        d = CS.load_bars(root, sym, "1m")
+        if len(d) < 100_000:
+            continue
+        gate, act = S1.activity_gate(d)
+        r = SF.study(d, a, gate.astype(int))
+        r["activity_forecast"] = act
+        out["assets"][a] = r
+        for x in r["fixed"]:
+            print(a, "fixed", x, flush=True)
+        for x in r["dynamic"]:
+            print(a, "dynamic", x, flush=True)
+        print(a, "activity", r["by_activity"], flush=True)
+    (MODELS / "scalp_feasibility.json").write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str),
+                                                   encoding="utf-8")
+    return out
+
+
+def scalp1m(budget_min: float = 75) -> dict:
+    """1-minute scalping engine (goldquant/scalp1m.py, pre-registered). 1-min data is large, so it lives in a CI
+    cache folder (SCALP_DATA), never in git; only the report is committed."""
+    import time
+    from goldquant import crypto_store as CS, scalp1m as S1
+    t0 = time.monotonic()
+    root, complete, syms = ensure_1m(budget_min * 0.45)
     out = {"schema": 1, "version": S1.VERSION, "updated_at": datetime.now(timezone.utc).isoformat(),
            "data_complete": complete, "assets": {}, "fee_sensitivity": {}}
     for a, sym in syms.items():
@@ -726,16 +758,16 @@ if __name__ == "__main__":
     sys.stdout.reconfigure(line_buffering=True)  # show progress live in the Actions log
     ap = argparse.ArgumentParser()
     ap.add_argument("cmd", choices=["collect", "train", "research", "backfill", "report", "crypto", "crypto_research",
-                                    "crypto_weekly", "scalp1m", "pooled"])
+                                    "crypto_weekly", "scalp1m", "pooled", "scalp_feasibility"])
     ap.add_argument("--years", type=float, default=3.0)
     ap.add_argument("--first", type=date.fromisoformat, default=None, help="backfill range start (YYYY-MM-DD)")
     ap.add_argument("--last", type=date.fromisoformat, default=None, help="backfill range end (YYYY-MM-DD)")
     ap.add_argument("--budget-min", type=float, default=None)
     ap.add_argument("--symbols", default="", help="comma-separated Dukascopy symbols (backfill); default: all")
     a = ap.parse_args()
-    if a.cmd == "scalp1m":
+    if a.cmd in ("scalp1m", "scalp_feasibility"):
         MODELS.mkdir(parents=True, exist_ok=True)
-        scalp1m(a.budget_min or 75)
+        (scalp1m if a.cmd == "scalp1m" else scalp_feasibility)(a.budget_min or 75)
         raise SystemExit(0)
     if a.cmd.startswith("crypto"):  # crypto lives in its own files; no HistoryStore import needed
         MODELS.mkdir(parents=True, exist_ok=True)
