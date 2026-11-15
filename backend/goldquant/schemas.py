@@ -7,7 +7,7 @@ from typing import Any, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-SCHEMA_VERSION = "1.9.0"
+SCHEMA_VERSION = "1.10.0"
 
 
 class Action(str, Enum):
@@ -344,6 +344,21 @@ class DataHealth(BaseModel):
     checks: list[DQCheck] = Field(default_factory=list)
 
 
+class ScalpActivity(BaseModel):
+    """v1.10: will price move at least target_pct (either way) within `hours`? NOT a direction, never a BUY/SELL.
+    Present only for assets whose forecast passed the weekly pre-registered validation (goldquant/activity.py)."""
+    model_config = ConfigDict(extra="forbid")
+    probability: float = Field(ge=0.0, le=1.0)
+    usual: float = Field(ge=0.0, le=1.0)  # the normal rate for this hour of the week
+    level: str  # HIGH | NORMAL | LOW (vs usual)
+    target_pct: float
+    hours: float
+    skill: Optional[float] = None  # Brier skill vs usual, all out-of-sample years
+    holdout_skill: Optional[float] = None
+    validated_period: Optional[str] = None
+    model_fitted_until: Optional[str] = None
+
+
 class Decision(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -399,6 +414,7 @@ class Decision(BaseModel):
     market_closed: bool = False
     daily_brief: Optional[DailyBrief] = None
     data_health: Optional[DataHealth] = None  # v1.8
+    scalp_activity: Optional[ScalpActivity] = None  # v1.10
     audit_hash: Optional[str] = None
 
     supporting_evidence: list[Evidence] = Field(default_factory=list)

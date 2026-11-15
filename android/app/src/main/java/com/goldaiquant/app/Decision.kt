@@ -54,6 +54,12 @@ data class ScenarioEvent(val kind: String, val level: Double, val levelName: Str
 data class DqCheck(val code: String, val status: String, val value: String?, val tf: String?)
 data class DataHealth(val status: String, val checks: List<DqCheck>)
 
+/** v1.10 market activity for scalpers: chance of a ±targetPct move within `hours` (never a direction). */
+data class ScalpActivity(
+    val probability: Double, val usual: Double, val level: String, val targetPct: Double, val hours: Double,
+    val skill: Double?, val holdoutSkill: Double?,
+)
+
 /** v1.7 trade plan of one horizon. A watch plan (WAIT_TO_*) never carries a stop or a target. */
 data class Plan(
     val setup: String, val recommendation: Boolean, val side: String?, val entryLow: Double?, val entryHigh: Double?,
@@ -141,6 +147,7 @@ data class Decision(
     val brief: Brief? = null,
     val dataHealth: DataHealth? = null,
     val instrument: String = "XAU/USD",
+    val scalpActivity: ScalpActivity? = null,
 ) {
     val isDemo: Boolean get() = mode == "DEMO"
 
@@ -227,6 +234,7 @@ object DecisionParser {
             brief = o.optJSONObject("daily_brief")?.let { parseBrief(it) },
             dataHealth = o.optJSONObject("data_health")?.let { parseHealth(it) },
             instrument = o.optString("instrument", "XAU/USD"),
+            scalpActivity = o.optJSONObject("scalp_activity")?.let { parseActivity(it) },
             reasonShort = o.reason("reason_short_ref"), waitFor = o.reason("wait_for_ref"), warning = o.reason("warning_ref"),
             invalidationRefs = o.reasons("invalidation_refs"), missingRefs = o.reasons("missing_refs"),
             alternativeEntryNote = o.reason("alternative_entry_note_ref"),
@@ -363,6 +371,16 @@ object DecisionParser {
             Check(e.optString("code"), if (e.isNull("ok") || !e.has("ok")) null else e.optBoolean("ok"),
                 if (args == null) emptyList() else (0 until args.length()).map { args.optString(it) })
         }
+    }
+
+    internal fun parseActivity(a: JSONObject): ScalpActivity? {
+        if (!a.has("probability") || a.isNull("probability")) return null
+        val p = a.optDouble("probability")
+        val u = a.optDouble("usual")
+        if (p.isNaN() || u.isNaN() || p !in 0.0..1.0) return null
+        return ScalpActivity(p, u, a.optString("level", "NORMAL"), a.optDouble("target_pct", 0.65), a.optDouble("hours", 4.0),
+            a.optDouble("skill").takeIf { !it.isNaN() && a.has("skill") && !a.isNull("skill") },
+            a.optDouble("holdout_skill").takeIf { !it.isNaN() && a.has("holdout_skill") && !a.isNull("holdout_skill") })
     }
 
     private fun parseHealth(h: JSONObject): DataHealth {

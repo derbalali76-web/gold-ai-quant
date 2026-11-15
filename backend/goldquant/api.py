@@ -345,6 +345,46 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
 
     crypto_state: dict = {"feed": None, "levels": None, "cache": {}}
 
+    activity_state: dict = {"mtime": None, "params": {}}
+
+    def attach_activity(asset: str, d: Decision) -> None:
+        """Market-activity forecast for scalpers: only for coins that passed this week's validation."""
+        from . import activity as ACT
+        from .schemas import ScalpActivity
+        p = None
+        for base in (repo_dir / "models", st.data_dir):
+            if (base / "activity_models.json").exists():
+                p = base / "activity_models.json"
+                break
+        if p is None or d.action == Action.UNAVAILABLE:
+            return
+        try:
+            mt = p.stat().st_mtime
+            if activity_state["mtime"] != mt:
+                import json as _json
+                raw = _json.loads(p.read_text(encoding="utf-8"))
+                activity_state["params"] = {a: v.get("model") for a, v in raw.get("assets", {}).items()}
+                activity_state["mtime"] = mt
+            prm = activity_state["params"].get(asset)
+            if not prm or not prm.get("qualified"):
+                return
+            m15 = crypto_state["feed"].bars(CE_SYMBOL(asset), "M15", utcnow())
+            r = ACT.predict(prm, m15)
+            if r is None:
+                return
+            level = "HIGH" if r["probability"] >= r["usual"] + 0.10 else "LOW" if r["probability"] <= r["usual"] - 0.10 \
+                else "NORMAL"
+            d.scalp_activity = ScalpActivity(probability=r["probability"], usual=r["usual"], level=level,
+                                             target_pct=prm["target_pct"], hours=prm["hours"], skill=prm.get("skill"),
+                                             holdout_skill=prm.get("holdout_skill"), validated_period=prm.get("period"),
+                                             model_fitted_until=prm.get("fitted_until"))
+        except Exception:  # noqa: BLE001 — an optional extra must never break the decision
+            return
+
+    def CE_SYMBOL(asset: str) -> str:  # noqa: N802
+        from .crypto_engine import ASSETS
+        return ASSETS[asset]
+
     def crypto_decision(asset: str) -> Decision:
         from . import crypto_engine as CE
         from .levels import LevelService
@@ -354,6 +394,7 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
         if hit and time.time() - hit[0] < 60:
             return hit[1]
         d = CE.decide(asset, crypto_state["feed"], utcnow(), crypto_state["levels"])
+        attach_activity(asset, d)
         crypto_state["cache"][asset] = (time.time(), d)
         return d
 

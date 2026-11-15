@@ -214,6 +214,7 @@ private sealed interface Sheet {
     data object TrustSheet : Sheet
     data object HowSheet : Sheet
     data object NewsSheet : Sheet
+    data object ScalpSheet : Sheet
 }
 
 /** Stateless screen (also used by the UI tests on several screen sizes). */
@@ -252,7 +253,8 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
                     DecisionCard(c, s, d, compact, Modifier.fillMaxSize(), onPosition) { l, sup -> sheet = Sheet.LevelSheet(l, sup) }
                 }
                 Row(Modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(gap)) {
-                    ProbTile(card, Modifier.weight(1f).fillMaxHeight()) { sheet = Sheet.Probabilities }
+                    if (d.instrument != "XAU/USD") ScalpTile(d, Modifier.weight(1f).fillMaxHeight()) { sheet = Sheet.ScalpSheet }
+                    else ProbTile(card, Modifier.weight(1f).fillMaxHeight()) { sheet = Sheet.Probabilities }
                     Tile(stringResource(R.string.trust_short),
                         s.trust?.let { stringResource(R.string.trust_tile, it.all.completed) } ?: "…",
                         WaitGold, Modifier.weight(1f).fillMaxHeight()) { sheet = Sheet.TrustSheet }
@@ -282,6 +284,7 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
         Sheet.Settings -> SettingsDialog(s, lang, onNextDemo, onSave, onLive, onLanguage, onNotify, onAlertAsset,
             onHow = { sheet = Sheet.HowSheet }, onNews = { sheet = Sheet.NewsSheet }) { sheet = null }
         Sheet.HowSheet -> HowDialog { sheet = null }
+        Sheet.ScalpSheet -> if (d != null) ScalpDialog(d) { sheet = null }
         Sheet.NewsSheet -> NewsDialog { sheet = null }
         null -> Unit
     }
@@ -498,6 +501,37 @@ private fun Tile(title: String, value: String, valueColor: Color, modifier: Modi
             Text(title, color = TextMain, fontSize = 12.sp, fontWeight = FontWeight.Bold, maxLines = 1)
             Text(value, color = valueColor, fontSize = 11.sp, maxLines = 2, textAlign = TextAlign.Center, lineHeight = 14.sp)
         }
+    }
+}
+
+@Composable
+private fun ScalpTile(d: Decision, modifier: Modifier, onClick: () -> Unit) {
+    val a = d.scalpActivity
+    val color = when (a?.level) { "HIGH" -> BuyGreen; "LOW" -> TextDim; else -> WaitGold }
+    Tile(stringResource(R.string.scalp_tile),
+        if (a != null) stringResource(R.string.scalp_tile_act, Math.round(a.probability * 100).toInt())
+        else stringResource(R.string.scalp_engine_off), if (a != null) color else WaitGold, modifier, onClick)
+}
+
+@Composable
+private fun ScalpDialog(d: Decision, onClose: () -> Unit) {
+    DialogFrame(stringResource(R.string.scalp_tile), onClose) {
+        val a = d.scalpActivity
+        if (a != null) {
+            val hrs = if (a.hours % 1.0 == 0.0) a.hours.toInt().toString() else a.hours.toString()
+            Text(stringResource(R.string.scalp_activity_head, hrs), color = TextMain, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+            Text(stringResource(when (a.level) { "HIGH" -> R.string.scalp_level_high; "LOW" -> R.string.scalp_level_low
+                else -> R.string.scalp_level_normal }),
+                color = when (a.level) { "HIGH" -> BuyGreen; "LOW" -> TextDim; else -> WaitGold }, fontSize = 15.sp,
+                fontWeight = FontWeight.Bold)
+            Body(stringResource(R.string.scalp_activity_prob, String.format(java.util.Locale.US, "%.2f", a.targetPct),
+                Math.round(a.probability * 100).toInt(), Math.round(a.usual * 100).toInt()), TextMain, 13.sp)
+            Body(stringResource(R.string.scalp_activity_note), TextDim, 12.sp)
+            if (a.skill != null && a.holdoutSkill != null) Body(stringResource(R.string.scalp_activity_valid,
+                Math.round(a.skill * 100).toInt(), Math.round(a.holdoutSkill * 100).toInt()), TextDim, 11.sp)
+        } else Body(stringResource(R.string.scalp_activity_none), TextDim, 12.sp)
+        Spacer(Modifier.height(4.dp))
+        Body(stringResource(R.string.scalp_engine_status), WaitGold, 12.sp)
     }
 }
 

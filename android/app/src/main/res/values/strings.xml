@@ -349,6 +349,18 @@
     <string name="notif_trig_down">%1$s: downside scenario triggered</string>
     <string name="notif_trig_up_text">An hour closed above %1$s (%2$s) — next level %3$s %4$s · back below %1$s cancels it</string>
     <string name="notif_trig_down_text">An hour closed below %1$s (%2$s) — next level %3$s %4$s · back above %1$s cancels it</string>
+    <string name="scalp_tile">Scalping</string>
+    <string name="scalp_tile_act">Activity %1$d%%</string>
+    <string name="scalp_engine_off">Engine not validated</string>
+    <string name="scalp_engine_status">Scalping engine: not validated, so no buy/sell signals. It is re-tested every week on 1-minute data after fees; signals appear only if a strategy passes.</string>
+    <string name="scalp_activity_head">Market activity — next %1$s h</string>
+    <string name="scalp_activity_prob">Chance of a ±%1$s%% move: %2$d%% (usual for this hour: %3$d%%)</string>
+    <string name="scalp_level_high">Moving more than usual</string>
+    <string name="scalp_level_normal">Usual activity</string>
+    <string name="scalp_level_low">Quieter than usual</string>
+    <string name="scalp_activity_note">This is not a direction: it says how much the price is likely to move, not whether up or down.</string>
+    <string name="scalp_activity_valid">Validated out of sample: %1$d%% better than the usual-hour estimate (final test: %2$d%%). Re-checked weekly.</string>
+    <string name="scalp_activity_none">The activity forecast is not validated for this asset.</string>
     <string name="r_w_up" formatted="false">up</string>
     <string name="r_w_down" formatted="false">down</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

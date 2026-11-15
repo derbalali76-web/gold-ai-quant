@@ -348,6 +348,18 @@
     <string name="notif_trig_down">%1$s: تفعّل سيناريو الهبوط</string>
     <string name="notif_trig_up_text">أُغلقت ساعة فوق %1$s (%2$s) — المستوى التالي %3$s %4$s · العودة تحت %1$s تلغيه</string>
     <string name="notif_trig_down_text">أُغلقت ساعة تحت %1$s (%2$s) — المستوى التالي %3$s %4$s · العودة فوق %1$s تلغيه</string>
+    <string name="scalp_tile">سكالبينغ</string>
+    <string name="scalp_tile_act">النشاط %1$d%%</string>
+    <string name="scalp_engine_off">المحرك غير معتمد</string>
+    <string name="scalp_engine_status">محرك السكالبينغ: غير معتمد، لذلك لا توجد إشارات شراء أو بيع. يُعاد اختباره كل أسبوع على شموع الدقيقة بعد الرسوم، ولا تظهر الإشارات إلا إذا اجتازت استراتيجية الاختبار.</string>
+    <string name="scalp_activity_head">نشاط السوق — الساعات %1$s القادمة</string>
+    <string name="scalp_activity_prob">احتمال حركة ±%1$s%%: ‏%2$d%% (المعتاد لهذه الساعة: %3$d%%)</string>
+    <string name="scalp_level_high">يتحرك أكثر من المعتاد</string>
+    <string name="scalp_level_normal">نشاط معتاد</string>
+    <string name="scalp_level_low">أهدأ من المعتاد</string>
+    <string name="scalp_activity_note">هذا ليس اتجاهاً: يقول كم يُرجَّح أن يتحرك السعر، لا إن كان صعوداً أو هبوطاً.</string>
+    <string name="scalp_activity_valid">معتمد خارج العينة: أفضل بنسبة %1$d%% من تقدير الساعة المعتادة (الاختبار النهائي: %2$d%%). يُعاد فحصه أسبوعياً.</string>
+    <string name="scalp_activity_none">توقّع النشاط غير معتمد لهذا الأصل.</string>
     <string name="r_w_up" formatted="false">صاعد</string>
     <string name="r_w_down" formatted="false">هابط</string>
     <string name="r_w_neutral" formatted="false">محايد</string>

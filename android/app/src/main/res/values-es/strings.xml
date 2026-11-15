@@ -348,6 +348,18 @@
     <string name="notif_trig_down">%1$s: escenario bajista activado</string>
     <string name="notif_trig_up_text">Una hora cerró por encima de %1$s (%2$s) — siguiente nivel %3$s %4$s · volver por debajo de %1$s lo anula</string>
     <string name="notif_trig_down_text">Una hora cerró por debajo de %1$s (%2$s) — siguiente nivel %3$s %4$s · volver por encima de %1$s lo anula</string>
+    <string name="scalp_tile">Scalping</string>
+    <string name="scalp_tile_act">Actividad %1$d%%</string>
+    <string name="scalp_engine_off">Motor no validado</string>
+    <string name="scalp_engine_status">Motor de scalping: no validado, por lo que no hay señales de compra o venta. Se vuelve a probar cada semana con datos de 1 minuto tras comisiones; las señales solo aparecen si una estrategia aprueba.</string>
+    <string name="scalp_activity_head">Actividad del mercado — próximas %1$s h</string>
+    <string name="scalp_activity_prob">Probabilidad de un movimiento de ±%1$s%%: %2$d%% (habitual a esta hora: %3$d%%)</string>
+    <string name="scalp_level_high">Más activo de lo habitual</string>
+    <string name="scalp_level_normal">Actividad habitual</string>
+    <string name="scalp_level_low">Más tranquilo de lo habitual</string>
+    <string name="scalp_activity_note">No es una dirección: indica cuánto es probable que se mueva el precio, no si sube o baja.</string>
+    <string name="scalp_activity_valid">Validado fuera de muestra: %1$d%% mejor que la estimación de la hora habitual (prueba final: %2$d%%). Se revisa cada semana.</string>
+    <string name="scalp_activity_none">El pronóstico de actividad no está validado para este activo.</string>
     <string name="r_w_up" formatted="false">alcista</string>
     <string name="r_w_down" formatted="false">bajista</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

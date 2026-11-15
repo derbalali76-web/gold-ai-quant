@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.9.0",
+  "schema_version": "1.10.0",
   "decision_id": "fab4e9027eed9445",
   "mode": "DEMO",
   "action": "SELL",
@@ -1053,7 +1053,8 @@
       }
     ]
   },
-  "audit_hash": "98e7bbcbfb90ecfb969c6381481a8440357e6a3f884ac11050c5ff3fa26e8157",
+  "scalp_activity": null,
+  "audit_hash": "9b5385cae2f7d06ad6c718208c94fb078665e920de8389ce985ba593c572d7c3",
   "supporting_evidence": [
     {
       "engine": "mtf_bias",

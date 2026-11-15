@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.9.0",
+  "schema_version": "1.10.0",
   "decision_id": "ae4a8112c4e38b2c",
   "mode": "DEMO",
   "action": "WAIT",
@@ -997,7 +997,8 @@
       }
     ]
   },
-  "audit_hash": "d6144ec44a883541b791ca9515164fdcf2ac358884757c81494e1a6512c94692",
+  "scalp_activity": null,
+  "audit_hash": "ba920c2083d5ffea4398623335076c629b254b1c302200a3cf0717b80331d690",
   "supporting_evidence": [
     {
       "engine": "mtf_bias",
