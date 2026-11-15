@@ -966,5 +966,174 @@
    ],
    "regime": null
   }
+ },
+ "HOURS_cross": {
+  "since": "2024-03-02",
+  "assets": [
+   "DOLLARIDXUSD",
+   "USA500IDXUSD",
+   "USTBONDTRUSD",
+   "XAGUSD"
+  ],
+  "base": {
+   "horizon": "HOURS",
+   "version": "planner-daily-1.0.0",
+   "period": "2024-09-03 → 2026-11-13",
+   "decision_days": 11005,
+   "direction_accuracy": 0.5237,
+   "direction_baseline": 0.5408,
+   "trades": 542,
+   "not_filled": 10,
+   "tp_first_rate": 0.3063,
+   "timeout_rate": 0.2601,
+   "avg_win_pct": 0.66,
+   "avg_loss_pct": -0.574,
+   "expectancy_pct": -0.03,
+   "expectancy_ci95": [
+    -0.093,
+    0.036
+   ],
+   "expectancy_halves": [
+    -0.012,
+    -0.048
+   ],
+   "holdout_expectancy_pct": -0.028,
+   "holdout_trades": 67,
+   "max_drawdown_pct": 19.555,
+   "profit_factor": 0.907,
+   "median_days_to_target": 3.0,
+   "brier_tp": 0.2081,
+   "brier_climatology": 0.2063,
+   "reliability_gap": 0.1035,
+   "plans_used": {
+    "L_MARKET_2.0_1.5": 237,
+    "S_MARKET_2.0_1.5": 104,
+    "S_MARKET_1.0_1.0": 63,
+    "L_MARKET_1.0_1.0": 35,
+    "L_MARKET_1.5_1.0": 25,
+    "S_MARKET_1.5_1.0": 23
+   },
+   "baseline_plan": "L_MARKET_2.0_1.5",
+   "baseline_expectancy_pct": -0.022,
+   "baseline_trades": 1784,
+   "edge_over_baseline_ci95": [
+    -0.076,
+    0.062
+   ],
+   "qualified": false,
+   "probabilities_calibrated": false,
+   "reason": "failed: expectancy CI above zero; both halves positive; final holdout positive; beats the no-model baseline (CI)",
+   "checks": {
+    "enough trades (>=30)": true,
+    "expectancy CI above zero": false,
+    "both halves positive": false,
+    "final holdout positive": false,
+    "beats the no-model baseline (CI)": false,
+    "Brier better than climatology": false,
+    "reliability gap <= 0.10": false
+   },
+   "features": [
+    "dist20",
+    "dist50",
+    "dist200",
+    "mom63",
+    "mom126",
+    "mom252",
+    "ret5",
+    "ret20",
+    "rsi",
+    "rangepos",
+    "atr_pct",
+    "hsin",
+    "hcos"
+   ],
+   "regime": null
+  },
+  "cross": {
+   "horizon": "HOURS",
+   "version": "planner-daily-1.0.0",
+   "period": "2024-09-03 → 2026-11-13",
+   "decision_days": 1565,
+   "direction_accuracy": 0.5847,
+   "direction_baseline": 0.6166,
+   "trades": 277,
+   "not_filled": 8,
+   "tp_first_rate": 0.3032,
+   "timeout_rate": 0.3285,
+   "avg_win_pct": 0.398,
+   "avg_loss_pct": -0.363,
+   "expectancy_pct": 0.03,
+   "expectancy_ci95": [
+    -0.021,
+    0.082
+   ],
+   "expectancy_halves": [
+    0.01,
+    0.051
+   ],
+   "holdout_expectancy_pct": 0.389,
+   "holdout_trades": 3,
+   "max_drawdown_pct": 7.498,
+   "profit_factor": 1.172,
+   "median_days_to_target": 4.0,
+   "brier_tp": 0.2197,
+   "brier_climatology": 0.2048,
+   "reliability_gap": 0.2812,
+   "plans_used": {
+    "L_MARKET_2.0_1.5": 126,
+    "L_MARKET_2.0_1.0": 47,
+    "L_MARKET_1.5_1.0": 34,
+    "L_MARKET_1.0_1.0": 19,
+    "S_MARKET_2.0_1.5": 16,
+    "S_MARKET_1.0_1.0": 10
+   },
+   "baseline_plan": "L_MARKET_2.0_1.5",
+   "baseline_expectancy_pct": 0.03,
+   "baseline_trades": 351,
+   "edge_over_baseline_ci95": [
+    -0.069,
+    0.069
+   ],
+   "qualified": false,
+   "probabilities_calibrated": false,
+   "reason": "failed: expectancy CI above zero; beats the no-model baseline (CI)",
+   "checks": {
+    "enough trades (>=30)": true,
+    "expectancy CI above zero": false,
+    "both halves positive": true,
+    "final holdout positive": true,
+    "beats the no-model baseline (CI)": false,
+    "Brier better than climatology": false,
+    "reliability gap <= 0.10": false
+   },
+   "features": [
+    "dist20",
+    "dist50",
+    "dist200",
+    "mom63",
+    "mom126",
+    "mom252",
+    "ret5",
+    "ret20",
+    "rsi",
+    "rangepos",
+    "atr_pct",
+    "hsin",
+    "hcos",
+    "DOLLARIDXUSD_r1",
+    "DOLLARIDXUSD_r4",
+    "DOLLARIDXUSD_r8",
+    "USTBONDTRUSD_r1",
+    "USTBONDTRUSD_r4",
+    "USTBONDTRUSD_r8",
+    "USA500IDXUSD_r1",
+    "USA500IDXUSD_r4",
+    "USA500IDXUSD_r8",
+    "XAGUSD_r1",
+    "XAGUSD_r4",
+    "XAGUSD_r8"
+   ],
+   "regime": null
+  }
  }
 }
