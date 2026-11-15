@@ -7,7 +7,7 @@ from typing import Any, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-SCHEMA_VERSION = "1.12.0"
+SCHEMA_VERSION = "1.13.0"
 
 
 class Action(str, Enum):
@@ -252,6 +252,10 @@ class Scenario(BaseModel):
     target: Optional[float] = None
     target_level: Optional[str] = None
     invalidation: Optional[float] = None
+    # v1.13 descriptive history (not a forecast): share of similar past breaks that reached the same distance
+    hist_rate: Optional[float] = Field(default=None, ge=0.0, le=1.0)
+    hist_n: Optional[int] = None
+    hist_days: Optional[int] = None
 
 
 class ScenarioEvent(BaseModel):

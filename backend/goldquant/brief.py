@@ -60,3 +60,87 @@ def events(d: Decision, h1) -> list[ScenarioEvent]:
             out.append(ScenarioEvent(kind="BEAR", level=l.price, level_name=l.name, target=nxt.price if nxt else None,
                                      target_name=nxt.name if nxt else None, hour_utc=h1.index[-1].to_pydatetime()))
     return out
+
+
+HIST_MIN_N = 30
+HIST_WINDOW = 24  # hours
+
+
+def history_rate(h1, kind: str, k_atr: float) -> tuple:
+    """How often did a SIMILAR break play out, on the bars we have? (fixed definition, descriptive only)
+    similar break: an hourly close beyond the extreme of the previous 24 closed hours (below the lowest low for BEAR,
+    above the highest high for BULL). Played out: within the next 24 hours the price went a further k x ATR(14) —
+    the current trigger-to-target distance in ATR — BEFORE an hourly close back across the broken extreme.
+    Returns (rate, n, days) or (None, n, days) when fewer than 30 cases exist."""
+    import numpy as np
+    import pandas as pd
+    if h1 is None or len(h1) < 200 or not (k_atr > 0):
+        return None, 0, 0
+    h, lo, c = (h1[x].to_numpy(float) for x in ("high", "low", "close"))
+    tr = np.maximum(h - lo, np.maximum(np.abs(h - np.r_[c[0], c[:-1]]), np.abs(lo - np.r_[c[0], c[:-1]])))
+    atr = pd.Series(tr).rolling(14).mean().to_numpy()
+    lowest = pd.Series(lo).rolling(HIST_WINDOW).min().shift(1).to_numpy()
+    highest = pd.Series(h).rolling(HIST_WINDOW).max().shift(1).to_numpy()
+    n = len(c)
+    hits = tot = 0
+    t = HIST_WINDOW + 15
+    while t < n - HIST_WINDOW:
+        if not np.isfinite(atr[t]):
+            t += 1
+            continue
+        if kind == "BEAR" and c[t] < lowest[t] <= c[t - 1]:
+            lvl, goal = lowest[t], c[t] - k_atr * atr[t]
+            ok = False
+            for j in range(t + 1, t + 1 + HIST_WINDOW):
+                if lo[j] <= goal:
+                    ok = True
+                    break
+                if c[j] > lvl:
+                    break
+        elif kind == "BULL" and c[t] > highest[t] >= c[t - 1]:
+            lvl, goal = highest[t], c[t] + k_atr * atr[t]
+            ok = False
+            for j in range(t + 1, t + 1 + HIST_WINDOW):
+                if h[j] >= goal:
+                    ok = True
+                    break
+                if c[j] < lvl:
+                    break
+        else:
+            t += 1
+            continue
+        tot += 1
+        hits += ok
+        t += HIST_WINDOW  # non-overlapping cases
+    days = int((h1.index[-1] - h1.index[0]).days)
+    return (round(hits / tot, 3) if tot >= HIST_MIN_N else None), tot, days
+
+
+K_GRID = [round(0.25 * i, 2) for i in range(1, 17)]  # 0.25 .. 4.0 ATR
+
+
+def history_table(h1) -> dict:
+    """Pre-computed in CI over the last two years of hourly bars: {kind: {k: [rate, n]}}."""
+    out = {"days": 0, "BULL": {}, "BEAR": {}}
+    for kind in ("BULL", "BEAR"):
+        for k in K_GRID:
+            r, n, days = history_rate(h1, kind, k)
+            out[kind][str(k)] = [r, n]
+            out["days"] = days
+    return out
+
+
+def attach_history(brief, table: dict | None, atr_now) -> None:
+    """Fill each scenario with the rate for the nearest pre-computed distance (rounded to 0.25 ATR)."""
+    if brief is None or not table or not atr_now:
+        return
+    for sc in brief.scenarios:
+        if sc.target is None:
+            continue
+        k = abs(sc.target - sc.trigger) / float(atr_now)
+        kk = min(K_GRID, key=lambda g: abs(g - k))
+        if abs(kk - k) > 0.25:  # outside the table: say nothing
+            continue
+        r, n = (table.get(sc.kind) or {}).get(str(kk), [None, 0])
+        if r is not None:
+            sc.hist_rate, sc.hist_n, sc.hist_days = r, n, table.get("days")

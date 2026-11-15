@@ -27,6 +27,7 @@ data class UiState(
     val asset: String = "XAU",  // XAU | BTC | ETH | SOL
     val positions: Map<String, String> = emptyMap(),  // asset -> CASH | HOLD (stored on the phone only)
     val alertAssets: Set<String> = setOf("XAU"),  // alerts only for the assets this trader follows
+    val priceAlerts: List<PriceAlert> = emptyList(),  // one-tap "نبّهني" alerts (phone only)
 ) {
     val trust: Trust? get() = trustAll[asset]
     val position: String get() = positions[asset] ?: "CASH"
@@ -78,6 +79,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                 trustAll = TrustParser.parseAll(prefs.getString("trust", null)),
                 asset = asset0,
                 alertAssets = SignalWorker.alertAssets(prefs),
+                priceAlerts = PriceAlerts.load(prefs),
                 positions = listOf("XAU", "BTC", "ETH", "SOL").associateWith { a -> prefs.getString("position_$a", "CASH") ?: "CASH" },
             )
         }
@@ -153,6 +155,13 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         _state.update { it.copy(notify = v) }
         prefs.edit().putBoolean("notify", v).apply()
         SignalWorker.schedule(getApplication(), v)
+    }
+
+    /** "نبّهني": add or remove a one-shot price alert; alerts need notifications on (asked by the screen). */
+    fun togglePriceAlert(a: PriceAlert) {
+        val next = PriceAlerts.toggle(_state.value.priceAlerts, a)
+        PriceAlerts.save(prefs, next)
+        _state.update { it.copy(priceAlerts = next) }
     }
 
     /** Which assets may send alerts (each trader follows only the markets they trade). */

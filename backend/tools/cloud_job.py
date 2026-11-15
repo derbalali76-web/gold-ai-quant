@@ -582,6 +582,23 @@ def pooled_research(hs: HistoryStore) -> dict:
     return out
 
 
+def scenario_history(hs) -> dict:
+    """Daily: descriptive history of scenario breaks (goldquant/brief.py) over the last two years of H1 bars."""
+    from goldquant import brief as BR, crypto_store as CS
+    out = {"updated_at": datetime.now(timezone.utc).isoformat(), "assets": {}}
+    two_years = pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=730)
+    frames = {"XAU": hs.load_bars("Dukascopy", "XAUUSD", "H1", limit=10_000_000) if hs is not None else None}
+    for sym, a in (("BTCUSDT", "BTC"), ("ETHUSDT", "ETH"), ("SOLUSDT", "SOL")):
+        frames[a] = CS.load_bars(MD, sym, "1h")
+    for a, h1 in frames.items():
+        if h1 is None or len(h1) < 2000:
+            continue
+        out["assets"][a] = BR.history_table(h1[h1.index >= two_years])
+    (MODELS / "scenario_history.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
+    print("scenario history:", {a: v["days"] for a, v in out["assets"].items()}, flush=True)
+    return out
+
+
 def activity_models() -> dict:
     """Weekly: re-validate the scalper activity forecast per coin (pre-registered rules in goldquant/activity.py) and
     export the model ONLY for coins that pass this week. A coin that stops passing disappears from the app."""
@@ -654,6 +671,10 @@ def train(hs: HistoryStore) -> None:
     lm = LevelService().model(label, bars, as_of)
     (MODELS / "levels_model.pkl").write_bytes(pickle.dumps(lm))
     print("trained:", label, as_of, "qualified:", st.qualified, st.reason_ar, "levels:", lm.validation.get("reason_ar"))
+    try:
+        scenario_history(hs)
+    except Exception as exc:  # noqa: BLE001
+        print("scenario history failed:", exc, flush=True)
 
 
 def outlook_report(daily: pd.DataFrame, label: str) -> dict:

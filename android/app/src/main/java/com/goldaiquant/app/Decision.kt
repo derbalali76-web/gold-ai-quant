@@ -44,7 +44,8 @@ data class Check(val code: String, val ok: Boolean?, val args: List<String>, val
                  val updatedAt: Instant? = null)
 
 /** Daily context (v1.7.2): bias + level scenarios to WATCH; never a recommendation. */
-data class Scenario(val kind: String, val trigger: Double, val triggerLevel: String, val target: Double?, val targetLevel: String?)
+data class Scenario(val kind: String, val trigger: Double, val triggerLevel: String, val target: Double?, val targetLevel: String?,
+                    val histRate: Double? = null, val histN: Int = 0, val histDays: Int = 0)
 data class Brief(val date: String, val bias: String, val scenarios: List<Scenario>,
                  val events: List<ScenarioEvent> = emptyList())
 
@@ -404,7 +405,8 @@ object DecisionParser {
             val e = a.optJSONObject(i) ?: return@mapNotNull null
             val kind = e.optString("kind"); val trig = e.dbl("trigger") ?: return@mapNotNull null
             if (kind != "BULL" && kind != "BEAR") return@mapNotNull null
-            Scenario(kind, trig, e.optString("trigger_level"), e.dbl("target"), e.str("target_level"))
+            Scenario(kind, trig, e.optString("trigger_level"), e.dbl("target"), e.str("target_level"),
+                e.dbl("hist_rate")?.takeIf { it in 0.0..1.0 }, e.optInt("hist_n", 0), e.optInt("hist_days", 0))
         }
         if (sc.isEmpty()) return null
         val ea = b.optJSONArray("events")

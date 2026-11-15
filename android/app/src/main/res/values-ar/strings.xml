@@ -368,6 +368,14 @@
     <string name="tagline_crypto">الذكاء الاصطناعي للعملات الرقمية</string>
     <string name="ck_news_stale">تقويم الأخبار قديم (آخر تحديث %1$s)</string>
     <string name="ck_news_unconf">تقويم الأخبار غير مهيأ</string>
+    <string name="hl_watch">راقب %1$s</string>
+    <string name="hl_hold_watch">احتفظ — راقب %1$s</string>
+    <string name="hl_sub">لا صفقة معتمدة الآن — هذا ما يغيّر الصورة:</string>
+    <string name="bell_off">🔔 نبّهني</string>
+    <string name="bell_on">🔔 مفعّل</string>
+    <string name="sc_hist">تاريخياً: وصل للمستوى التالي في %1$d%% من %2$d حالة مشابهة (%3$d يوماً)</string>
+    <string name="notif_price_title">%1$s: السعر وصل %2$s</string>
+    <string name="notif_price_text">تنبيهك عند %1$s — السعر الآن %2$s. للمراقبة، ليس توصية.</string>
     <string name="r_w_up" formatted="false">صاعد</string>
     <string name="r_w_down" formatted="false">هابط</string>
     <string name="r_w_neutral" formatted="false">محايد</string>

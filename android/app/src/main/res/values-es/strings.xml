@@ -368,6 +368,14 @@
     <string name="tagline_crypto">IA para cripto</string>
     <string name="ck_news_stale">Calendario de noticias desactualizado (actualizado %1$s)</string>
     <string name="ck_news_unconf">Calendario de noticias no configurado</string>
+    <string name="hl_watch">Vigila %1$s</string>
+    <string name="hl_hold_watch">Mantén — vigila %1$s</string>
+    <string name="hl_sub">Sin operación validada — esto cambiaría el panorama:</string>
+    <string name="bell_off">🔔 Avísame</string>
+    <string name="bell_on">🔔 Activado</string>
+    <string name="sc_hist">Histórico: alcanzó el siguiente nivel en %1$d%% de %2$d casos similares (%3$d días)</string>
+    <string name="notif_price_title">%1$s alcanzó %2$s</string>
+    <string name="notif_price_text">Tu alerta en %1$s — ahora %2$s. Para vigilar, no es una recomendación.</string>
     <string name="r_w_up" formatted="false">alcista</string>
     <string name="r_w_down" formatted="false">bajista</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

@@ -76,3 +76,23 @@ def test_crypto_checklist_gets_calendar_and_volatility(tmp_path):
     d2 = CE.decide("BTC", Feed(), NOW, ctx=None)
     n2 = next(c for c in d2.outlooks[0].checklist if c.code == "news")
     assert n2.ok is None and n2.state == "NOT_CONFIGURED"
+
+
+def test_scenario_history_is_descriptive_and_needs_enough_cases():
+    from goldquant import brief as BR
+    from goldquant.schemas import DailyBrief, Scenario
+    rng = np.random.default_rng(2)
+    n = 6000
+    c = 100 * np.exp(np.cumsum(rng.normal(0, 0.003, n)))
+    o = np.r_[c[0], c[:-1]]
+    h1 = pd.DataFrame({"open": o, "high": np.maximum(o, c) * 1.002, "low": np.minimum(o, c) * 0.998, "close": c},
+                      index=pd.date_range("2024-01-01", periods=n, freq="1h", tz="UTC"))
+    t = BR.history_table(h1)
+    r, k = t["BEAR"]["1.0"]
+    assert r is not None and 0 < r < 1 and k >= 30
+    few = BR.history_table(h1.iloc[:300])
+    assert few["BULL"]["1.0"][0] is None  # too few cases -> nothing shown
+    b = DailyBrief(date="2026-11-15", bias="DOWN", price=100.0,
+                   scenarios=[Scenario(kind="BEAR", trigger=99.0, trigger_level="S1", target=98.0, target_level="S2")])
+    BR.attach_history(b, t, 1.0)
+    assert b.scenarios[0].hist_rate == t["BEAR"]["1.0"][0] and b.scenarios[0].hist_n == k

@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.12.0",
+  "schema_version": "1.13.0",
   "decision_id": "fab4e9027eed9445",
   "mode": "DEMO",
   "action": "SELL",
@@ -1059,7 +1059,10 @@
         "trigger_level": "S1",
         "target": 2018.29,
         "target_level": "S2",
-        "invalidation": 2063.19
+        "invalidation": 2063.19,
+        "hist_rate": null,
+        "hist_n": null,
+        "hist_days": null
       },
       {
         "kind": "BULL",
@@ -1067,7 +1070,10 @@
         "trigger_level": "R1",
         "target": 2067.29,
         "target_level": "R2",
-        "invalidation": 2023.75
+        "invalidation": 2023.75,
+        "hist_rate": null,
+        "hist_n": null,
+        "hist_days": null
       }
     ],
     "events": [],
@@ -1121,7 +1127,7 @@
     ]
   },
   "scalp_activity": null,
-  "audit_hash": "311b2ee58b34098107e7590048571971c38c0a91f0a723f157f44c95e9147b5d",
+  "audit_hash": "0cfe1e67e8e1ea0ee20c7fc27652e9d2b4e544176f7b61bbc10736882bf97445",
   "supporting_evidence": [
     {
       "engine": "mtf_bias",

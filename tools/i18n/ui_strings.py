@@ -428,4 +428,12 @@ UI = {
 "tagline_crypto": ("AI for crypto", "الذكاء الاصطناعي للعملات الرقمية", "L'IA pour les cryptos", "IA para cripto", "IA para cripto"),
 "ck_news_stale": ("News calendar out of date (last update %1$s)", "تقويم الأخبار قديم (آخر تحديث %1$s)", "Calendrier des annonces obsolète (mise à jour %1$s)", "Calendario de noticias desactualizado (actualizado %1$s)", "Calendário de notícias desatualizado (atualizado %1$s)"),
 "ck_news_unconf": ("News calendar not set up", "تقويم الأخبار غير مهيأ", "Calendrier des annonces non configuré", "Calendario de noticias no configurado", "Calendário de notícias não configurado"),
+"hl_watch": ("Watch %1$s", "راقب %1$s", "Surveiller %1$s", "Vigila %1$s", "Observe %1$s"),
+"hl_hold_watch": ("Hold — watch %1$s", "احتفظ — راقب %1$s", "Conserver — surveiller %1$s", "Mantén — vigila %1$s", "Mantenha — observe %1$s"),
+"hl_sub": ("No validated trade now — this would change the picture:", "لا صفقة معتمدة الآن — هذا ما يغيّر الصورة:", "Aucune opération validée — ceci changerait la donne :", "Sin operación validada — esto cambiaría el panorama:", "Nenhuma operação validada — isto mudaria o quadro:"),
+"bell_off": ("🔔 Alert me", "🔔 نبّهني", "🔔 M'alerter", "🔔 Avísame", "🔔 Me avise"),
+"bell_on": ("🔔 On", "🔔 مفعّل", "🔔 Activé", "🔔 Activado", "🔔 Ativado"),
+"sc_hist": ("History: reached the next level in %1$d%% of %2$d similar cases (%3$d days)", "تاريخياً: وصل للمستوى التالي في %1$d%% من %2$d حالة مشابهة (%3$d يوماً)", "Historique : niveau suivant atteint dans %1$d%% de %2$d cas similaires (%3$d jours)", "Histórico: alcanzó el siguiente nivel en %1$d%% de %2$d casos similares (%3$d días)", "Histórico: atingiu o próximo nível em %1$d%% de %2$d casos semelhantes (%3$d dias)"),
+"notif_price_title": ("%1$s reached %2$s", "%1$s: السعر وصل %2$s", "%1$s a atteint %2$s", "%1$s alcanzó %2$s", "%1$s atingiu %2$s"),
+"notif_price_text": ("Your alert at %1$s — now %2$s. To watch, not a recommendation.", "تنبيهك عند %1$s — السعر الآن %2$s. للمراقبة، ليس توصية.", "Votre alerte à %1$s — maintenant %2$s. À surveiller, pas une recommandation.", "Tu alerta en %1$s — ahora %2$s. Para vigilar, no es una recomendación.", "Seu alerta em %1$s — agora %2$s. Para observar, não é recomendação."),
 }

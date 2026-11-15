@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.12.0",
+  "schema_version": "1.13.0",
   "decision_id": "55b0467d7304a8f2",
   "mode": "DEMO",
   "action": "BUY",
@@ -1026,7 +1026,10 @@
         "trigger_level": "R1",
         "target": 2125.49,
         "target_level": "R2",
-        "invalidation": 2115.09
+        "invalidation": 2115.09,
+        "hist_rate": null,
+        "hist_n": null,
+        "hist_days": null
       },
       {
         "kind": "BEAR",
@@ -1034,7 +1037,10 @@
         "trigger_level": "S1",
         "target": 2112.98,
         "target_level": "S2",
-        "invalidation": 2121.53
+        "invalidation": 2121.53,
+        "hist_rate": null,
+        "hist_n": null,
+        "hist_days": null
       }
     ],
     "events": [],
@@ -1088,7 +1094,7 @@
     ]
   },
   "scalp_activity": null,
-  "audit_hash": "4c684874a6764737f4ad4daf2e73ca2311c35f086265aa34b63b403462bfee41",
+  "audit_hash": "f46b099e655d2540aae024cf82e7d4fa2bd56c55be8ad2687caffaff7bd3e8ff",
   "supporting_evidence": [
     {
       "engine": "mtf_bias",

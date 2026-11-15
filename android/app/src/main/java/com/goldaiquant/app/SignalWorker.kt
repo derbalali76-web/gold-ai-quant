@@ -25,9 +25,12 @@ class SignalWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx
         if (!prefs.getBoolean("notify", false)) return Result.success()
         val url = prefs.getString("server_url", null) ?: return Result.success()
         val api = ApiClient(url, prefs.getString("token", "") ?: "")
-        for (asset in alertAssets(prefs)) {  // only the markets this trader follows
+        val follow = alertAssets(prefs)
+        val alerts = PriceAlerts.load(prefs)
+        for (asset in follow + alerts.map { it.asset }.toSet()) {  // followed markets + markets with a "نبّهني" alert
             val f = try { api.decision("LIVE", 0, asset) } catch (e: Exception) { continue }
-            check(prefs, asset, f)
+            if (asset in follow) check(prefs, asset, f)
+            checkPriceAlerts(prefs, asset, f)
         }
         return Result.success()
     }
@@ -71,6 +74,32 @@ class SignalWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx
                 prefs.edit().putString("brief_day$sfx", day).apply()
                 notifyBrief(b, label)
             }
+        }
+    }
+
+    /** One-shot "نبّهني" alerts: fire once when the price is at/through the level, then removed. */
+    private fun checkPriceAlerts(prefs: android.content.SharedPreferences, asset: String, f: Fetched) {
+        val price = f.decision.quote ?: return
+        if (f.decision.marketClosed) return
+        val all = PriceAlerts.load(prefs)
+        val hit = all.filter { it.asset == asset && PriceAlerts.reached(it, price) }
+        if (hit.isEmpty()) return
+        PriceAlerts.save(prefs, all - hit.toSet())
+        val ctx = LanguageStore.wrap(applicationContext, LanguageStore.resolve(applicationContext))
+        if (!ready(ctx)) return
+        val label = if (asset == "XAU") "XAU/USD" else "$asset/USD"
+        val p2 = { v: Double -> String.format(java.util.Locale.US, "%.2f", v) }
+        val open = PendingIntent.getActivity(applicationContext, 5,
+            Intent(applicationContext, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),
+            PendingIntent.FLAG_IMMUTABLE)
+        hit.forEach { a ->
+            val n = NotificationCompat.Builder(applicationContext, CHANNEL)
+                .setSmallIcon(android.R.drawable.stat_notify_more)
+                .setContentTitle(ctx.getString(R.string.notif_price_title, label, p2(a.price)))
+                .setContentText(ctx.getString(R.string.notif_price_text, a.label, p2(price)))
+                .setStyle(NotificationCompat.BigTextStyle().bigText(ctx.getString(R.string.notif_price_text, a.label, p2(price))))
+                .setContentIntent(open).setAutoCancel(true).private(applicationContext).build()
+            NotificationManagerCompat.from(applicationContext).notify(a.key.hashCode(), n)
         }
     }
 

@@ -225,6 +225,7 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
             context.refresh(now)
             ctx = context.snapshot(now)
         d = engine.decide(live_provider, Mode.LIVE, now, ctx)
+        attach_scenario_history("XAU", d)
         if live_provider is not None:
             b = live_provider.bars("M15", now, 2000)
             if b is not None:
@@ -406,6 +407,27 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
         from .crypto_engine import ASSETS
         return ASSETS[asset]
 
+    hist_state: dict = {"mtime": None, "table": {}}
+
+    def attach_scenario_history(asset: str, d: Decision) -> None:
+        from . import brief as BR
+        p = None
+        for base in (repo_dir / "models", st.data_dir):
+            if (base / "scenario_history.json").exists():
+                p = base / "scenario_history.json"
+                break
+        if p is None or d.daily_brief is None or d.levels is None:
+            return
+        try:
+            mt = p.stat().st_mtime
+            if hist_state["mtime"] != mt:
+                import json as _json
+                hist_state["table"] = _json.loads(p.read_text(encoding="utf-8")).get("assets", {})
+                hist_state["mtime"] = mt
+            BR.attach_history(d.daily_brief, hist_state["table"].get(asset), d.levels.atr_h1)
+        except Exception:  # noqa: BLE001 — descriptive extra
+            return
+
     def crypto_decision(asset: str) -> Decision:
         from . import crypto_engine as CE
         from .levels import LevelService
@@ -416,6 +438,7 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
             return hit[1]
         d = CE.decide(asset, crypto_state["feed"], utcnow(), crypto_state["levels"], shared_context())
         attach_activity(asset, d)
+        attach_scenario_history(asset, d)
         crypto_state["cache"][asset] = (time.time(), d)
         return d
 

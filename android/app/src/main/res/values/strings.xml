@@ -369,6 +369,14 @@
     <string name="tagline_crypto">AI for crypto</string>
     <string name="ck_news_stale">News calendar out of date (last update %1$s)</string>
     <string name="ck_news_unconf">News calendar not set up</string>
+    <string name="hl_watch">Watch %1$s</string>
+    <string name="hl_hold_watch">Hold — watch %1$s</string>
+    <string name="hl_sub">No validated trade now — this would change the picture:</string>
+    <string name="bell_off">🔔 Alert me</string>
+    <string name="bell_on">🔔 On</string>
+    <string name="sc_hist">History: reached the next level in %1$d%% of %2$d similar cases (%3$d days)</string>
+    <string name="notif_price_title">%1$s reached %2$s</string>
+    <string name="notif_price_text">Your alert at %1$s — now %2$s. To watch, not a recommendation.</string>
     <string name="r_w_up" formatted="false">up</string>
     <string name="r_w_down" formatted="false">down</string>
     <string name="r_w_neutral" formatted="false">neutral</string>
