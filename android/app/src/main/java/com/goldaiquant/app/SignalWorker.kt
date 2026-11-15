@@ -27,7 +27,7 @@ class SignalWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx
         val api = ApiClient(url, prefs.getString("token", "") ?: "")
         val follow = alertAssets(prefs)
         val alerts = PriceAlerts.load(prefs)
-        for (asset in follow + alerts.map { it.asset }.toSet()) {  // followed markets + markets with a "نبّهني" alert
+        for (asset in follow + alerts.map { it.asset }.toSet()) {  // followed markets + markets with a "Alert me" alert
             val f = try { api.decision("LIVE", 0, asset) } catch (e: Exception) { continue }
             if (asset in follow) check(prefs, asset, f)
             checkPriceAlerts(prefs, asset, f)
@@ -77,7 +77,7 @@ class SignalWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx
         }
     }
 
-    /** One-shot "نبّهني" alerts: fire once when the price is at/through the level, then removed. */
+    /** One-shot "Alert me" alerts: fire once when the price is at/through the level, then removed. */
     private fun checkPriceAlerts(prefs: android.content.SharedPreferences, asset: String, f: Fetched) {
         val price = f.decision.quote ?: return
         if (f.decision.marketClosed) return

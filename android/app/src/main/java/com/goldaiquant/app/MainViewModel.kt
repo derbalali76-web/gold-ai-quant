@@ -27,7 +27,7 @@ data class UiState(
     val asset: String = "XAU",  // XAU | BTC | ETH | SOL
     val positions: Map<String, String> = emptyMap(),  // asset -> CASH | HOLD (stored on the phone only)
     val alertAssets: Set<String> = setOf("XAU"),  // alerts only for the assets this trader follows
-    val priceAlerts: List<PriceAlert> = emptyList(),  // one-tap "نبّهني" alerts (phone only)
+    val priceAlerts: List<PriceAlert> = emptyList(),  // one-tap "Alert me" alerts (phone only)
 ) {
     val trust: Trust? get() = trustAll[asset]
     val position: String get() = positions[asset] ?: "CASH"
@@ -157,7 +157,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         SignalWorker.schedule(getApplication(), v)
     }
 
-    /** "نبّهني": add or remove a one-shot price alert; alerts need notifications on (asked by the screen). */
+    /** "Alert me": add or remove a one-shot price alert; alerts need notifications on (asked by the screen). */
     fun togglePriceAlert(a: PriceAlert) {
         val next = PriceAlerts.toggle(_state.value.priceAlerts, a)
         PriceAlerts.save(prefs, next)

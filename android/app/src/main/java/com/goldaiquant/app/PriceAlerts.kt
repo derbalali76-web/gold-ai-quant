@@ -3,7 +3,7 @@ package com.goldaiquant.app
 import android.content.SharedPreferences
 import java.util.Locale
 
-/** One-tap price alert the user set on a level or scenario ("نبّهني"). Stored on the phone only; fires once. */
+/** One-tap price alert the user set on a level or scenario ("Alert me"). Stored on the phone only; fires once. */
 data class PriceAlert(val asset: String, val price: Double, val dir: String, val label: String) {
     val key: String get() = "$asset|$dir|" + String.format(Locale.US, "%.6f", price)
 }
