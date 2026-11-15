@@ -394,6 +394,34 @@ def scalp_feasibility(budget_min: float = 75) -> dict:
     return out
 
 
+def scalp_ml(budget_min: float = 75) -> dict:
+    """Scalping experiment 2: P(target before stop) models (goldquant/scalp_ml.py, pre-registered)."""
+    import time
+    from goldquant import crypto_store as CS, scalp1m as S1, scalp_ml as SM
+    t0 = time.monotonic()
+    root, complete, syms = ensure_1m(budget_min * 0.3)
+    out = {"version": SM.VERSION, "updated_at": datetime.now(timezone.utc).isoformat(), "data_complete": complete,
+           "assets": {}}
+    for a, sym in syms.items():
+        if time.monotonic() - t0 > budget_min * 60 * 0.85:
+            print("scalp_ml: time budget reached before", a, flush=True)
+            break
+        d = CS.load_bars(root, sym, "1m")
+        if len(d) < 100_000:
+            continue
+        gate, _ = S1.activity_gate(d)
+        fund = CS.load_funding(MD, sym)
+        out["assets"][a] = SM.run_asset(d, a, fund if len(fund) else None, gate.astype(int))
+        for r in out["assets"][a]:
+            print(a, "ml", r["model"], r.get("implementation"), r["window_min"], r["stop_pct"], "thr", r["threshold_p"],
+                  "maxp", r.get("max_p"), "trades", r.get("trades"), "avg", r.get("avg_net_pct"), r.get("avg_net_ci"),
+                  "ho", r.get("holdout_avg_pct"), "even", r.get("baseline_even_avg_pct"), "act",
+                  r.get("baseline_activity_avg_pct"), r["reason"], flush=True)
+        (MODELS / "scalp_ml_report.json").write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str),
+                                                     encoding="utf-8")
+    return out
+
+
 def scalp1m(budget_min: float = 75) -> dict:
     """1-minute scalping engine (goldquant/scalp1m.py, pre-registered). 1-min data is large, so it lives in a CI
     cache folder (SCALP_DATA), never in git; only the report is committed."""
@@ -758,16 +786,16 @@ if __name__ == "__main__":
     sys.stdout.reconfigure(line_buffering=True)  # show progress live in the Actions log
     ap = argparse.ArgumentParser()
     ap.add_argument("cmd", choices=["collect", "train", "research", "backfill", "report", "crypto", "crypto_research",
-                                    "crypto_weekly", "scalp1m", "pooled", "scalp_feasibility"])
+                                    "crypto_weekly", "scalp1m", "pooled", "scalp_feasibility", "scalp_ml"])
     ap.add_argument("--years", type=float, default=3.0)
     ap.add_argument("--first", type=date.fromisoformat, default=None, help="backfill range start (YYYY-MM-DD)")
     ap.add_argument("--last", type=date.fromisoformat, default=None, help="backfill range end (YYYY-MM-DD)")
     ap.add_argument("--budget-min", type=float, default=None)
     ap.add_argument("--symbols", default="", help="comma-separated Dukascopy symbols (backfill); default: all")
     a = ap.parse_args()
-    if a.cmd in ("scalp1m", "scalp_feasibility"):
+    if a.cmd in ("scalp1m", "scalp_feasibility", "scalp_ml"):
         MODELS.mkdir(parents=True, exist_ok=True)
-        (scalp1m if a.cmd == "scalp1m" else scalp_feasibility)(a.budget_min or 75)
+        {"scalp1m": scalp1m, "scalp_feasibility": scalp_feasibility, "scalp_ml": scalp_ml}[a.cmd](a.budget_min or 75)
         raise SystemExit(0)
     if a.cmd.startswith("crypto"):  # crypto lives in its own files; no HistoryStore import needed
         MODELS.mkdir(parents=True, exist_ok=True)

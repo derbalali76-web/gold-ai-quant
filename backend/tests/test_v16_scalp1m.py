@@ -76,3 +76,18 @@ def test_first_passage_stop_wins_ties():
     lo = np.array([100, 99, 100, 100, 100.0])
     out, ret = F.first_passage(h, lo, c, np.array([0]), 3, 0.0065, 0.0065)
     assert out[0] == -1
+
+
+def test_scalp_ml_features_are_causal_and_random_walk_fails():
+    from goldquant import scalp_ml as M
+    d = m1(days=420, seed=11)
+    d.index = d.index - (d.index[0] - pd.Timestamp("2021-06-01", tz="UTC"))
+    f = M.features(d)
+    cut = len(d) // 2
+    d2 = d.copy()
+    d2.iloc[cut:, :4] *= 1.05
+    f2 = M.features(d2)
+    a, b = f.iloc[1500:cut - 1].fillna(0), f2.iloc[1500:cut - 1].fillna(0)
+    assert np.allclose(a.to_numpy(), b.to_numpy(), atol=1e-5)
+    rows = M.run_asset(d, "BTC")
+    assert len(rows) == 8 and not any(r["qualified"] for r in rows)

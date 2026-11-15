@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       job:
-        description: "scalp1m | scalp_feasibility"
+        description: "scalp1m | scalp_feasibility | scalp_ml"
         default: "scalp1m"
 concurrency: { group: scalp-lab, cancel-in-progress: false }
 permissions: { contents: write }
@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v5
       - uses: actions/setup-python@v6
         with: { python-version: "3.12", cache: pip, cache-dependency-path: backend/requirements.txt }
-      - run: pip install -r backend/requirements.txt
+      - run: pip install -r backend/requirements.txt lightgbm
       - id: stamp
         run: echo "w=$(date -u +%Y-%V)" >> $GITHUB_OUTPUT
       - name: restore 1-minute data
@@ -44,6 +44,6 @@ jobs:
         run: |
           git config user.name "gold-ai-quant-bot"
           git config user.email "actions@users.noreply.github.com"
-          for f in models/scalp1m_report.json models/scalp_feasibility.json; do [ -e "$f" ] && git add "$f"; done
+          for f in models/scalp1m_report.json models/scalp_feasibility.json models/scalp_ml_report.json; do [ -e "$f" ] && git add "$f"; done
           git diff --cached --quiet || git commit -m "research: 1-minute scalping engine $(date -u +%FT%TZ)"
           git push || (git pull --rebase && git push)
