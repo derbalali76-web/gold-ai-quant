@@ -365,6 +365,7 @@
     <string name="lv_hold_prob">إن وصل السعر: احتمال الصمود (12 ساعة)</string>
     <string name="set_allow_shots">السماح بلقطات الشاشة (نسخة الاختبار)</string>
     <string name="set_allow_shots_note">فقط في نسخة الاختبار لإرسال لقطات للمراجعة. التطبيق المنشور يمنعها دائماً.</string>
+    <string name="tagline_crypto">الذكاء الاصطناعي للعملات الرقمية</string>
     <string name="r_w_up" formatted="false">صاعد</string>
     <string name="r_w_down" formatted="false">هابط</string>
     <string name="r_w_neutral" formatted="false">محايد</string>

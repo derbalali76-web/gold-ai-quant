@@ -425,4 +425,5 @@ UI = {
     "Uniquement dans la version de test, pour envoyer des captures. L'app publiée les bloque toujours.",
     "Solo en la versión de prueba, para enviar capturas. La app publicada siempre las bloquea.",
     "Somente na versão de teste, para enviar capturas. O app publicado sempre as bloqueia."),
+"tagline_crypto": ("AI for crypto", "الذكاء الاصطناعي للعملات الرقمية", "L'IA pour les cryptos", "IA para cripto", "IA para cripto"),
 }

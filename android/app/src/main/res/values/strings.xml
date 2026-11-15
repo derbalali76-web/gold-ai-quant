@@ -366,6 +366,7 @@
     <string name="lv_hold_prob">If reached: chance it holds (12 h)</string>
     <string name="set_allow_shots">Allow screenshots (test build)</string>
     <string name="set_allow_shots_note">Only in the test build, to send screenshots for review. The published app always blocks them.</string>
+    <string name="tagline_crypto">AI for crypto</string>
     <string name="r_w_up" formatted="false">up</string>
     <string name="r_w_down" formatted="false">down</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

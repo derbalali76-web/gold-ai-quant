@@ -333,7 +333,8 @@ private fun TopBar(s: UiState, compact: Boolean, onAsset: () -> Unit, onSettings
         }
         Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
             Text(stringResource(R.string.app_name), color = Gold, fontWeight = FontWeight.ExtraBold, fontSize = 18.sp, maxLines = 1)
-            if (!compact) Text(stringResource(R.string.tagline), color = TextDim, fontSize = 10.sp)
+            if (!compact) Text(stringResource(if (s.asset == "XAU") R.string.tagline else R.string.tagline_crypto),
+                color = TextDim, fontSize = 10.sp)
         }
         val cd = stringResource(R.string.cd_settings)
         Box(Modifier.size(40.dp).border(1.dp, Gold, CircleShape)
@@ -604,8 +605,9 @@ private fun DecisionCard(c: HorizonCard, s: UiState, d: Decision, compact: Boole
                 KV(stringResource(R.string.l_duration), durationText(c), 12.sp)
             } else {
                 c.plan?.takeIf { it.watchPrice != null }?.let { PlanLine(it, d) }
-                d.brief?.let { BriefLines(it) }
-                if (d.brief == null && c.action == Action.WAIT) c.waitForPrice?.let { KV(stringResource(R.string.l_reeval), it.p2(), 12.sp) }
+                // today's scenarios are built from HOURLY levels: they belong to the hours horizon only
+                if (c.horizon == "HOURS") d.brief?.let { BriefLines(it) }
+                if ((d.brief == null || c.horizon != "HOURS") && c.action == Action.WAIT) c.waitForPrice?.let { KV(stringResource(R.string.l_reeval), it.p2(), 12.sp) }
             }
             Divider()
             val lv = c.levels

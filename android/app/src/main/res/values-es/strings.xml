@@ -365,6 +365,7 @@
     <string name="lv_hold_prob">Si se alcanza: probabilidad de que resista (12 h)</string>
     <string name="set_allow_shots">Permitir capturas (versión de prueba)</string>
     <string name="set_allow_shots_note">Solo en la versión de prueba, para enviar capturas. La app publicada siempre las bloquea.</string>
+    <string name="tagline_crypto">IA para cripto</string>
     <string name="r_w_up" formatted="false">alcista</string>
     <string name="r_w_down" formatted="false">bajista</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

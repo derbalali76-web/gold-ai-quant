@@ -313,6 +313,25 @@ def daily_trend_block(daily: pd.DataFrame, horizon: str) -> dict:
             "per_timeframe": {k: ("UP" if bool(checks[k]) else "DOWN") for k in names}}
 
 
+def horizon_levels(daily: pd.DataFrame, px: float, hz: str) -> dict:
+    """WEEK: the NEAREST levels from recent (90 d) and yearly swings together; MONTH: MAJOR swings only (10-day
+    pivots over two years), so the two horizons answer different questions."""
+    if hz == "MONTH":
+        return daily_levels(daily, px, window=10, lookback=500)
+    a = daily_levels(daily, px, window=2, lookback=90)
+    b = daily_levels(daily, px, window=5, lookback=250)
+    out = dict(a)
+    for side in ("supports", "resistances"):
+        merged = sorted(a.get(side, []) + b.get(side, []), key=lambda z: abs(z["price"] - px))
+        keep = []
+        for z in merged:
+            if all(abs(z["price"] - k["price"]) > 0.005 * px for k in keep):
+                keep.append(z)
+        tag = "S" if side == "supports" else "R"
+        out[side] = [dict(z, name=f"{tag}{k + 1}") for k, z in enumerate(keep[:3])]
+    return out
+
+
 def compute(daily: Optional[pd.DataFrame], as_of: datetime, synthetic: bool = False,
             upcoming_events: Optional[list] = None, macro: Optional[dict] = None) -> list[HorizonView]:
     """daily: OHLC indexed by day OPEN time (UTC); only days CLOSED at or before as_of are used."""
@@ -332,7 +351,9 @@ def compute(daily: Optional[pd.DataFrame], as_of: datetime, synthetic: bool = Fa
         stats = evaluate_rule(f, sig, hz)
         v = _view(hz, f, sig, stats, synthetic)
         try:
-            v.levels = daily_levels(daily, float(f["close"].iloc[-1]))
+            # horizon-specific: WEEK = swings of the last ~3 months, MONTH = major swings of the last year
+            px = float(f["close"].iloc[-1])
+            v.levels = horizon_levels(daily, px, hz)
         except Exception:  # levels are informative only; never break the outlook
             v.levels = None
         v.trend = daily_trend_block(daily, hz)
