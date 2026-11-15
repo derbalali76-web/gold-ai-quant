@@ -532,6 +532,10 @@ def activity_models() -> dict:
         r = ACT.evaluate(d)
         out["assets"][a] = {"report": r, "model": ACT.export(d, r) if r["qualified"] else None}
         summary[a] = {k: r.get(k) for k in ("skill", "skill_ci99", "holdout_skill", "qualified", "reason")}
+        try:  # challenger: HAR replaces the current model only if it wins out of sample (it never does by itself)
+            out["assets"][a]["har_vs_current"] = ACT.compare_har(d)
+        except Exception as exc:  # noqa: BLE001
+            print(a, "HAR comparison failed:", exc, flush=True)
         print(a, "activity", summary[a], flush=True)
     (MODELS / "activity_models.json").write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str),
                                                  encoding="utf-8")

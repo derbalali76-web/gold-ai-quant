@@ -61,3 +61,12 @@ def test_api_shows_activity_only_for_qualified_coins(tmp_path, monkeypatch):
     assert b["scalp_activity"] is not None and b["scalp_activity"]["level"] in ("HIGH", "NORMAL", "LOW")
     assert b["action"] == "WAIT"  # activity never turns into a trade signal
     assert c.get("/decision?asset=ETH").json()["scalp_activity"] is None
+
+
+def test_out_of_sample_predictions_keep_real_timestamps():
+    d = frame(40000)
+    d.index = (d.index - (d.index[0] - pd.Timestamp("2021-08-01", tz="UTC"))).as_unit("us")  # archive: microseconds
+    r = A.evaluate(d, first_year=2022, return_preds=True)
+    p = r["preds"]
+    assert len(p) and p.index.min() >= d.index[0] and p.index.max() <= d.index[-1]
+    assert set(p.index).issubset(set(d.index))

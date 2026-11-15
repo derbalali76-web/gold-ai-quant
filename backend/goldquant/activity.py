@@ -160,13 +160,13 @@ def evaluate(df: pd.DataFrame, first_year: Optional[int] = None, calibrate: bool
                              "hit_rate": round(float(yt.mean()), 4), "skill": round(1 - bs / bb, 4),
                              "holdout": bool(a >= cut)})
         P.append(p); B.append(base); Y.append(yt); D.append(idx[te].floor("D").asi8); H.append(np.full(len(p), a >= cut))
-        T.append(idx[te].asi8)
+        T.append(idx[te].tz_convert("UTC").tz_localize(None).to_numpy())
     if not P:
         out["reason"] = "no folds"
         return out
     p, base, yt, day, ho = (np.concatenate(v) for v in (P, B, Y, D, H))
     if return_preds:  # out-of-sample predictions, indexed by the 15-min bar they were made at (its open time)
-        out["preds"] = pd.DataFrame({"p": p, "usual": base}, index=pd.to_datetime(np.concatenate(T), utc=True))
+        out["preds"] = pd.DataFrame({"p": p, "usual": base}, index=pd.DatetimeIndex(np.concatenate(T)).tz_localize("UTC"))
     ea, eb = (p - yt) ** 2, (base - yt) ** 2
     out["skill"] = round(float(1 - ea.sum() / eb.sum()), 4)
     out["skill_ci99"] = _block_ci(day, ea, eb)
@@ -247,3 +247,55 @@ def predict(params: dict, recent: pd.DataFrame) -> Optional[dict]:
         p = float(np.interp(p, params["iso_x"], params["iso_y"]))
     usual = params["usual"].get(str(int(_how(recent.index[-1:])[0])), params["base_rate"])
     return {"probability": round(float(p), 3), "usual": round(float(usual), 3)}
+
+
+# ---------------------------------------------------------------- HAR challenger (pre-registered 2026-11-15)
+HAR_DOC = """HAR challenger: the same target, folds, calibration and holdout as the current model, but the inputs are only the
+three classic HAR components of realised volatility (last 4 h, last day, last week of 15-min returns, in logs) plus
+hour of day. The current model is replaced ONLY if HAR's out-of-sample Brier score is better with a 99 % day-block
+bootstrap CI above zero AND it is also better on the final holdout."""
+HAR_FEATURES = ("har4h", "har1d", "har1w", "hsin", "hcos")
+_base_features = features
+
+
+def har_features(df: pd.DataFrame) -> pd.DataFrame:
+    r2 = np.log(df["close"]).diff() ** 2
+    f = pd.DataFrame(index=df.index)
+    f["har4h"] = np.log(r2.rolling(16, min_periods=12).mean() + 1e-10)
+    f["har1d"] = np.log(r2.rolling(96, min_periods=72).mean() + 1e-10)
+    f["har1w"] = np.log(r2.rolling(672, min_periods=400).mean() + 1e-10)
+    base = _base_features(df)
+    f["hsin"], f["hcos"] = base["hsin"], base["hcos"]
+    return f
+
+
+def compare_har(df: pd.DataFrame) -> dict:
+    """Run current vs HAR on identical rows and folds; return both skills and the paired difference CI."""
+    cur = evaluate(df, return_preds=True)
+    orig, orig_cols = features, FEATURES
+    try:
+        globals()["features"] = har_features
+        globals()["FEATURES"] = HAR_FEATURES
+        har = evaluate(df, return_preds=True)
+    finally:
+        globals()["features"], globals()["FEATURES"] = orig, orig_cols
+    a, b = cur.pop("preds"), har.pop("preds")
+    j = a.join(b, lsuffix="_cur", rsuffix="_har", how="inner")
+    y = pd.Series(labels(df), index=df.index).reindex(j.index).to_numpy()
+    ok = np.isfinite(y)
+    j, y = j[ok], y[ok]
+    e_cur, e_har = (j["p_cur"].to_numpy() - y) ** 2, (j["p_har"].to_numpy() - y) ** 2
+    d = e_cur - e_har  # > 0: HAR better
+    day = j.index.floor("D").asi8
+    u, inv = np.unique(day, return_inverse=True)
+    s, cnt = np.bincount(inv, d, len(u)), np.bincount(inv, None, len(u))
+    rng = np.random.default_rng(4)
+    boots = [s[k].sum() / cnt[k].sum() for k in (rng.integers(0, len(u), len(u)) for _ in range(2000))]
+    ci = [float(np.percentile(boots, 0.5)), float(np.percentile(boots, 99.5))]
+    cut = j.index[int(len(j) * (1 - HOLDOUT_FRAC))]
+    ho = j.index >= cut
+    return {"current_skill": cur.get("skill"), "har_skill": har.get("skill"), "current_qualified": cur.get("qualified"),
+            "har_qualified": har.get("qualified"), "brier_current": round(float(e_cur.mean()), 5),
+            "brier_har": round(float(e_har.mean()), 5), "har_better_ci99": [round(ci[0], 6), round(ci[1], 6)],
+            "holdout_brier_current": round(float(e_cur[ho].mean()), 5), "holdout_brier_har": round(float(e_har[ho].mean()), 5),
+            "replace": bool(ci[0] > 0 and e_har[ho].mean() < e_cur[ho].mean())}
