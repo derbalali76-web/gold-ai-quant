@@ -25,17 +25,19 @@ class SignalWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx
         if (!prefs.getBoolean("notify", false)) return Result.success()
         val url = prefs.getString("server_url", null) ?: return Result.success()
         val api = ApiClient(url, prefs.getString("token", "") ?: "")
+        try { Push.sync(applicationContext) } catch (e: Exception) { }  // re-registers after a server restart
+        val pushOn = Push.active(applicationContext)  // the server sends price/scenario/signal alerts instantly
         val follow = alertAssets(prefs)
-        val alerts = PriceAlerts.load(prefs)
+        val alerts = if (pushOn) emptyList() else PriceAlerts.load(prefs)
         for (asset in follow + alerts.map { it.asset }.toSet()) {  // followed markets + markets with a "Alert me" alert
             val f = try { api.decision("LIVE", 0, asset) } catch (e: Exception) { continue }
-            if (asset in follow) check(prefs, asset, f)
-            checkPriceAlerts(prefs, asset, f)
+            if (asset in follow) check(prefs, asset, f, pushOn)
+            if (!pushOn) checkPriceAlerts(prefs, asset, f)
         }
         return Result.success()
     }
 
-    private fun check(prefs: android.content.SharedPreferences, asset: String, f: Fetched) {
+    private fun check(prefs: android.content.SharedPreferences, asset: String, f: Fetched, pushOn: Boolean = false) {
         val sfx = if (asset == "XAU") "" else "_$asset"
         val label = if (asset == "XAU") "XAU/USD" else "$asset/USD"
         // 1) a NEW validated recommendation (only ever exists after out-of-sample validation)
@@ -45,7 +47,7 @@ class SignalWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx
         prefs.edit().putString("notified$sfx", memory.entries.joinToString(";") { "${it.key}=${it.value}" })
             .putString(if (asset == "XAU") "last_decision" else "last_decision_$asset", f.raw)
             .putLong("last_received", System.currentTimeMillis()).apply()
-        if (fresh.isNotEmpty()) notify(fresh, label)
+        if (fresh.isNotEmpty() && !pushOn) notify(fresh, label)
         val day = java.time.LocalDate.now().toString()
         val b = f.decision.brief
         if (b != null && !f.decision.marketClosed) {
@@ -53,7 +55,7 @@ class SignalWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx
             val seen = prefs.getString("events$sfx", "")!!.split(';').filter { it.startsWith(day) }.toMutableSet()
             b.events.forEach { e ->
                 val key = "$day|${e.hourUtc}|${e.kind}|${e.levelName}"
-                if (key !in seen) { seen += key; notifyEvent(e, label) }
+                if (key !in seen) { seen += key; if (!pushOn) notifyEvent(e, label) }
             }
             prefs.edit().putString("events$sfx", seen.joinToString(";")).apply()
             // 3) price reached a watch level of today's scenarios (once per level per day)

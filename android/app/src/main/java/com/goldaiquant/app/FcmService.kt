@@ -1,0 +1,73 @@
+package com.goldaiquant.app
+
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
+import com.google.firebase.messaging.FirebaseMessagingService
+import com.google.firebase.messaging.RemoteMessage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
+
+/** Receives the server's DATA messages and shows them in the phone's language. Never trades. */
+class FcmService : FirebaseMessagingService() {
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
+    override fun onNewToken(token: String) {
+        scope.launch { Push.sync(applicationContext, token) }
+    }
+
+    override fun onMessageReceived(m: RemoteMessage) {
+        val d = m.data
+        val asset = d["asset"] ?: return
+        val label = if (asset == "XAU") "XAU/USD" else "$asset/USD"
+        val ctx = LanguageStore.wrap(applicationContext, LanguageStore.resolve(applicationContext))
+        val p2 = { s: String? -> s?.toDoubleOrNull()?.let { String.format(java.util.Locale.US, "%.2f", it) } ?: "—" }
+        val (title, text) = when (d["type"]) {
+            "price" -> {
+                // fired once: remove it from the phone's list too (the bell turns off)
+                val prefs = applicationContext.getSharedPreferences("gold_ai_quant", MODE_PRIVATE)
+                d["key"]?.takeIf { it.isNotBlank() }?.let { k ->
+                    PriceAlerts.save(prefs, PriceAlerts.load(prefs).filterNot { it.key == k })
+                }
+                ctx.getString(R.string.notif_price_title, label, p2(d["level"])) to
+                    ctx.getString(R.string.notif_price_text, d["label"].orEmpty(), p2(d["price"]))
+            }
+            "event" -> {
+                val up = d["kind"] == "BULL"
+                ctx.getString(if (up) R.string.notif_trig_up else R.string.notif_trig_down, label) to
+                    (ctx.getString(if (up) R.string.notif_trig_up_text else R.string.notif_trig_down_text,
+                        p2(d["level"]), d["level_name"].orEmpty(), p2(d["target"]), d["target_name"].orEmpty()) +
+                        "\n" + ctx.getString(R.string.pos_watch_note))
+            }
+            "signal" -> {
+                val h = ctx.getString(when (d["horizon"]) { "WEEK" -> R.string.h_week; "MONTH" -> R.string.h_month; else -> R.string.h_hours })
+                val a = ctx.getString(if (d["side"] == "BUY") R.string.a_buy else R.string.a_sell)
+                "$label · " + ctx.getString(R.string.notif_title, a, h) to ctx.getString(R.string.notif_text)
+            }
+            else -> return
+        }
+        if (Build.VERSION.SDK_INT >= 33 && ContextCompat.checkSelfPermission(this,
+                android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) return
+        getSystemService(NotificationManager::class.java).createNotificationChannel(
+            NotificationChannel("signals", ctx.getString(R.string.notif_channel), NotificationManager.IMPORTANCE_HIGH))
+        val open = PendingIntent.getActivity(this, 7,
+            Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),
+            PendingIntent.FLAG_IMMUTABLE)
+        val n = NotificationCompat.Builder(this, "signals").setSmallIcon(android.R.drawable.stat_notify_more)
+            .setContentTitle(title).setContentText(text).setStyle(NotificationCompat.BigTextStyle().bigText(text))
+            .setContentIntent(open).setAutoCancel(true)
+            .setVisibility(NotificationCompat.VISIBILITY_PRIVATE).setPublicVersion(
+                NotificationCompat.Builder(this, "signals").setSmallIcon(android.R.drawable.stat_notify_more)
+                    .setContentTitle("AI QUANT").setContentText(ctx.getString(R.string.notif_locked)).build())
+            .build()
+        NotificationManagerCompat.from(this).notify((d.toString()).hashCode(), n)
+    }
+}

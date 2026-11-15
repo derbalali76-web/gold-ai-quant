@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "605245533936",
+    "project_id": "ai-quant-4334e",
+    "storage_bucket": "ai-quant-4334e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:605245533936:android:3d4d5a29bf669234c61c35",
+        "android_client_info": {
+          "package_name": "com.goldaiquant.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAIx-0Mssl1E3iCnueUwhp-Gh7J7I58KGE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

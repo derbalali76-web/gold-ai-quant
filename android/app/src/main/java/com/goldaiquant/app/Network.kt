@@ -42,6 +42,25 @@ class ApiClient(private val baseUrl: String, private val token: String = "") {
         }
     }
 
+    /** Push registration: anonymous FCM token + followed assets + one-tap alerts. Returns true when the server can push. */
+    suspend fun pushRegister(body: String, unregister: Boolean = false): Boolean = withContext(Dispatchers.IO) {
+        if (UrlPolicy.check(baseUrl) != null) return@withContext false
+        try {
+            val path = if (unregister) "/push/unregister" else "/push/register"
+            val conn = (URI(baseUrl.trimEnd('/') + path).toURL().openConnection() as HttpURLConnection).apply {
+                connectTimeout = 20_000; readTimeout = 90_000; requestMethod = "POST"; doOutput = true
+                setRequestProperty("Content-Type", "application/json")
+                if (token.isNotBlank()) setRequestProperty("X-Goldquant-Token", token.trim())
+            }
+            try {
+                conn.outputStream.use { it.write(body.toByteArray(Charsets.UTF_8)) }
+                if (conn.responseCode != 200) return@withContext false
+                val r = conn.inputStream.bufferedReader(Charsets.UTF_8).use { it.readText() }.take(10_000)
+                org.json.JSONObject(r).optBoolean("configured", false)
+            } finally { conn.disconnect() }
+        } catch (e: Exception) { false }
+    }
+
     /** Live forward log (WEEK / MONTH). Best effort: any failure returns an empty list. */
     suspend fun track(): List<TrackItem> = withContext(Dispatchers.IO) {
         if (UrlPolicy.check(baseUrl) != null) return@withContext emptyList()

@@ -1,0 +1,18 @@
+name: push-tick
+# Wakes the free server every ~5 minutes so it checks phones' alerts and sends Firebase notifications.
+# /push/tick is public on purpose: throttled to one pass per 45 s, idempotent, returns counts only.
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+concurrency: { group: push-tick, cancel-in-progress: true }
+permissions: {}
+jobs:
+  tick:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - name: tick
+        env:
+          URL: ${{ vars.SERVER_URL || 'https://gold-ai-quant.onrender.com' }}
+        run: curl -sS -m 150 "$URL/push/tick" || true

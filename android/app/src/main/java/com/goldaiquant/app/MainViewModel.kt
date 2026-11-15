@@ -85,6 +85,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         }
         startPrefetchLoop()
         loadTrust()
+        syncPush()
     }
 
     /** Silent background refresh: the server keeps a fresh decision ready, so a later tap shows it at once. */
@@ -155,6 +156,12 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         _state.update { it.copy(notify = v) }
         prefs.edit().putBoolean("notify", v).apply()
         SignalWorker.schedule(getApplication(), v)
+        syncPush()
+    }
+
+    /** Keep the server's copy of this phone's alerts current (Firebase push); silent, best effort. */
+    fun syncPush() {
+        viewModelScope.launch { try { Push.sync(getApplication()) } catch (e: Exception) { } }
     }
 
     /** "Alert me": add or remove a one-shot price alert; alerts need notifications on (asked by the screen). */
@@ -162,6 +169,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         val next = PriceAlerts.toggle(_state.value.priceAlerts, a)
         PriceAlerts.save(prefs, next)
         _state.update { it.copy(priceAlerts = next) }
+        syncPush()
     }
 
     /** Which assets may send alerts (each trader follows only the markets they trade). */
@@ -170,6 +178,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         val next = if (a in cur) cur - a else cur + a
         prefs.edit().putString("alert_assets", next.joinToString(",")).apply()
         _state.update { it.copy(alertAssets = next) }
+        syncPush()
     }
 
     fun setLiveMode(v: Boolean) {

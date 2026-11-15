@@ -21,7 +21,7 @@ from typing import Optional
 
 import numpy as np
 import pandas as pd
-from fastapi import Depends, FastAPI, Header, HTTPException, Query
+from fastapi import Body, Depends, FastAPI, Header, HTTPException, Query
 
 from . import backtest as BT
 from . import cloud
@@ -339,6 +339,14 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
             live_cache.update(d=d, t=time.time())
             return d
 
+    from .push import PushService
+    push = PushService(st.data_dir)
+
+    def push_decision(a: str):
+        if a == "XAU":
+            return refresh_live() if live_provider is not None else None
+        return crypto_decision(a)
+
     def live_loop():
         time.sleep(20)
         while True:
@@ -346,6 +354,10 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
                 refresh_live(force=time.time() - live_cache["t"] >= LIVE_TTL)
             except Exception:  # noqa: BLE001 — the next request/loop pass reports the real state
                 pass
+            try:  # while the server is awake, phones get their alerts from here
+                push.tick(push_decision)
+            except Exception as exc:  # noqa: BLE001
+                logging.getLogger("goldquant.push").warning("push tick failed: %s", type(exc).__name__)
             time.sleep(max(30.0, LIVE_TTL / 2))
 
     if live_provider is not None and not mem and os.getenv("GOLDQUANT_BG_REFRESH", "1") == "1":
@@ -497,6 +509,30 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
         cut = (utcnow() - pd.Timedelta(days=days)).isoformat()
         return sum(1 for ln in crash_log.read_text(encoding="utf-8").splitlines()
                    if ln.strip() and _json.loads(ln).get("at", "") >= cut)
+
+    @app.post("/push/register", dependencies=[Depends(auth)])
+    def push_register(body: dict = Body(...)):
+        """Phone registers its anonymous FCM token, followed assets and one-tap alerts (no personal data)."""
+        try:
+            return push.register(str(body.get("token", "")), list(body.get("assets") or []),
+                                 list(body.get("alerts") or []), str(body.get("lang", "ar")))
+        except ValueError:
+            raise HTTPException(422, "bad token")
+
+    @app.post("/push/unregister", dependencies=[Depends(auth)])
+    def push_unregister(body: dict = Body(...)):
+        push.unregister(str(body.get("token", "")))
+        return {"ok": True}
+
+    @app.post("/push/tick")
+    @app.get("/push/tick")
+    def push_tick():
+        """Public on purpose (wake-up ping from GitHub Actions): throttled, idempotent, returns counts only."""
+        return push.tick(push_decision)
+
+    @app.get("/push/status", dependencies=[Depends(auth)])
+    def push_status():
+        return push.status()
 
     @app.post("/crash", dependencies=[Depends(auth)])
     def crash_report(payload: dict):
