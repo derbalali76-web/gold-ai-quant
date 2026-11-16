@@ -1,0 +1,148 @@
+{
+ "schema": 1,
+ "stage": "feasibility (descriptive)",
+ "updated_at": "2026-11-16T18:20:57.177683+00:00",
+ "coverage": {
+  "first_bar": "2020-08-28 12:00:00+00:00",
+  "last_bar": "2026-11-15 23:00:00+00:00",
+  "bars": 54473,
+  "missing_hours_pct": 0.035
+ },
+ "liquidity_by_year": {
+  "2020": {
+   "median_daily_quote_volume_usd": 304809.0,
+   "median_hourly_quote_volume_usd": 8518.0,
+   "zero_volume_hours_pct": 0.17
+  },
+  "2021": {
+   "median_daily_quote_volume_usd": 3893212.0,
+   "median_hourly_quote_volume_usd": 125545.0,
+   "zero_volume_hours_pct": 0.01
+  },
+  "2022": {
+   "median_daily_quote_volume_usd": 3175862.0,
+   "median_hourly_quote_volume_usd": 97728.0,
+   "zero_volume_hours_pct": 0.0
+  },
+  "2023": {
+   "median_daily_quote_volume_usd": 1595470.0,
+   "median_hourly_quote_volume_usd": 45867.0,
+   "zero_volume_hours_pct": 0.01
+  },
+  "2024": {
+   "median_daily_quote_volume_usd": 2222983.0,
+   "median_hourly_quote_volume_usd": 69522.0,
+   "zero_volume_hours_pct": 0.0
+  },
+  "2025": {
+   "median_daily_quote_volume_usd": 12766992.0,
+   "median_hourly_quote_volume_usd": 411599.0,
+   "zero_volume_hours_pct": 0.0
+  },
+  "2026": {
+   "median_daily_quote_volume_usd": 17679603.0,
+   "median_hourly_quote_volume_usd": 537284.0,
+   "zero_volume_hours_pct": 0.0
+  }
+ },
+ "liquidity_last_90_days": {
+  "median_daily_quote_volume_usd": 13128610.0,
+  "median_hourly_quote_volume_usd": 345360.0,
+  "p10_hourly_quote_volume_usd": 82227.0
+ },
+ "spread_estimate_pct_by_year": {
+  "2020": 0.2685,
+  "2021": 0.1659,
+  "2022": 0.0702,
+  "2023": 0.0858,
+  "2024": 0.149,
+  "2025": 0.0582,
+  "2026": 0.0
+ },
+ "spread_estimate_pct_last_90_days": 0.0069,
+ "order_book_snapshot": {
+  "at": "2026-11-16T18:20:57.677090+00:00",
+  "mid": 3834.6549999999997,
+  "spread_pct": 0.0003,
+  "buy_cost_pct": {
+   "1000": 0.0001,
+   "10000": 0.0006,
+   "100000": 0.0266
+  },
+  "sell_cost_pct": {
+   "1000": 0.0003,
+   "10000": 0.0101,
+   "100000": 0.0459
+  },
+  "depth_usd_within_0.1pct": 250218.0,
+  "note": "one snapshot; costs are half-spread plus walking the book, before the 0.1 % taker fee"
+ },
+ "fees_assumed": {
+  "binance_spot_taker_pct": 0.1,
+  "note": "standard tier; BNB / VIP discounts not assumed"
+ },
+ "premium_pct_vs_xau": {
+  "hours_compared": 36243,
+  "first": "2020-08-28 12:00:00+00:00",
+  "by_year": {
+   "2020": {
+    "n": 1946,
+    "mean": 0.6568,
+    "median": 0.6054,
+    "std": 0.3969,
+    "p5": 0.1567,
+    "p95": 1.4096
+   },
+   "2021": {
+    "n": 5852,
+    "mean": 0.4997,
+    "median": 0.3594,
+    "std": 0.6446,
+    "p5": -0.0069,
+    "p95": 1.3485
+   },
+   "2022": {
+    "n": 5869,
+    "mean": -0.0064,
+    "median": 0.0166,
+    "std": 0.4011,
+    "p5": -0.5368,
+    "p95": 0.516
+   },
+   "2023": {
+    "n": 5889,
+    "mean": -0.5004,
+    "median": -0.6421,
+    "std": 0.7137,
+    "p5": -1.5144,
+    "p95": 0.7342
+   },
+   "2024": {
+    "n": 5915,
+    "mean": -0.3352,
+    "median": -0.326,
+    "std": 0.6382,
+    "p5": -1.2462,
+    "p95": 0.6427
+   },
+   "2025": {
+    "n": 5752,
+    "mean": 0.259,
+    "median": 0.2511,
+    "std": 0.3142,
+    "p5": -0.2308,
+    "p95": 0.7805
+   },
+   "2026": {
+    "n": 5020,
+    "mean": 0.0291,
+    "median": -0.016,
+    "std": 0.212,
+    "p5": -0.2626,
+    "p95": 0.3902
+   }
+  },
+  "note": "PAXG is quoted in USDT and XAU in USD, so the premium also contains the USDT/USD deviation"
+ },
+ "weekends_with_both_series": 314
+}
