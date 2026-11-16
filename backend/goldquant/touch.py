@@ -160,7 +160,8 @@ def evaluate(df: pd.DataFrame, horizon: int, first_year: int = 2022) -> dict:
         folds.append({"from": str(a.date()), "n": int(len(te)), "skill": round(float(skill), 4),
                       "holdout": bool(a == cut)})
         blk = pd.Timedelta(hours=max(24, horizon)).value
-        P.append(p); B.append(base); Y.append(y); T.append(pd.DatetimeIndex(te["t"]).asi8 // blk)
+        # nanoseconds explicitly: bar indexes may be microsecond-resolution, and asi8 follows the index unit
+        P.append(p); B.append(base); Y.append(y); T.append(pd.DatetimeIndex(te["t"]).as_unit("ns").asi8 // blk)
     if not folds:
         return {"horizon": horizon, "qualified": False, "reason": "not enough data"}
     p, base, y, day = (np.concatenate(x) for x in (P, B, Y, T))

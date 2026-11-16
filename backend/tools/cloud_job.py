@@ -599,6 +599,26 @@ def scenario_history(hs) -> dict:
     return out
 
 
+def touch_models(hs) -> dict:
+    """Touch probability (goldquant/touch.py, pre-registered): validate per asset and horizon; export qualified ones."""
+    from goldquant import crypto_store as CS, touch as TO
+    out = {"schema": 1, "updated_at": datetime.now(timezone.utc).isoformat(), "assets": {}}
+    frames = {"XAU": hs.load_bars("Dukascopy", "XAUUSD", "H1", limit=10_000_000) if hs is not None else None}
+    for sym, a in (("BTCUSDT", "BTC"), ("ETHUSDT", "ETH"), ("SOLUSDT", "SOL")):
+        frames[a] = CS.load_bars(MD, sym, "1h")
+    for a, h1 in frames.items():
+        if h1 is None or len(h1) < 20000:
+            print(a, "touch: not enough hourly bars", 0 if h1 is None else len(h1), flush=True)
+            continue
+        rep = TO.evaluate_asset(h1)
+        out["assets"][a] = {h: {"report": r, "model": TO.export(h1, int(h)) if r.get("qualified") else None}
+                            for h, r in rep.items()}
+        for h, r in rep.items():
+            print(a, h, "touch", {k: r.get(k) for k in ("skill", "skill_ci99.9", "holdout_skill", "reason")}, flush=True)
+    (MODELS / "touch_models.json").write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    return out
+
+
 def activity_models() -> dict:
     """Weekly: re-validate the scalper activity forecast per coin (pre-registered rules in goldquant/activity.py) and
     export the model ONLY for coins that pass this week. A coin that stops passing disappears from the app."""
@@ -882,7 +902,8 @@ if __name__ == "__main__":
     sys.stdout.reconfigure(line_buffering=True)  # show progress live in the Actions log
     ap = argparse.ArgumentParser()
     ap.add_argument("cmd", choices=["collect", "train", "research", "backfill", "report", "crypto", "crypto_research",
-                                    "crypto_weekly", "scalp1m", "pooled", "scalp_feasibility", "scalp_ml", "scalp_book"])
+                                    "crypto_weekly", "scalp1m", "pooled", "scalp_feasibility", "scalp_ml", "scalp_book",
+                                    "touch"])
     ap.add_argument("--years", type=float, default=3.0)
     ap.add_argument("--first", type=date.fromisoformat, default=None, help="backfill range start (YYYY-MM-DD)")
     ap.add_argument("--last", type=date.fromisoformat, default=None, help="backfill range end (YYYY-MM-DD)")
@@ -912,6 +933,9 @@ if __name__ == "__main__":
         train(hs)
     elif a.cmd == "report":
         report(hs)
+    elif a.cmd == "touch":
+        MODELS.mkdir(parents=True, exist_ok=True)
+        touch_models(hs)
     elif a.cmd == "pooled":
         MODELS.mkdir(parents=True, exist_ok=True)
         pooled_research(hs)
