@@ -1,7 +1,7 @@
 {
  "schema": 1,
  "version": "range-har-0.1.0",
- "updated_at": "2026-11-16T17:35:45.402006+00:00",
+ "updated_at": "2026-11-16T18:00:12.296253+00:00",
  "events_source": {
   "fomc": 103,
   "bls": 135
