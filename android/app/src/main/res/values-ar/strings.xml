@@ -447,7 +447,7 @@
     <string name="r_fw_jump" formatted="false">قفزة سعرية شاذة ({0}×ATR) بين السعر الحالي وآخر شمعة — يُشتبه بخطأ بيانات</string>
     <string name="r_fw_frozen" formatted="false">تغذية الأسعار متجمدة (شموع متطابقة متتالية)</string>
     <string name="r_fw_spike" formatted="false">شمعة شاذة جداً في آخر 20 شمعة (z={0}) — يُشتبه بخطأ تغذية</string>
-    <string name="r_fw_bar_lag" formatted="false">شموع {0} متأخرة {1} — المصدر متوقف أو ناقص</string>
+    <string name="r_fw_bar_lag" formatted="false">شموع {0} متأخرة {1} ساعة من وقت التداول — المصدر متوقف أو ناقص</string>
     <string name="r_fw_no_context" formatted="false">مصادر السياق (التقويم/الأخبار) غير مفعّلة</string>
     <string name="r_fw_calendar_stale" formatted="false">تقويم الأحداث الاقتصادية غير محدّث</string>
     <string name="r_fw_price_conflict" formatted="false">تعارض بين مصدري السعر ({0}) — البيانات مشكوك فيها</string>

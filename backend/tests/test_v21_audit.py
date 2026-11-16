@@ -94,3 +94,40 @@ def test_ledger_needs_a_snapshot_at_most_20_minutes_old(tmp_path):
     assert not [e for e in led.entries if e["kind"] == "REC"]
     led.ingest(snap(T0, [BUY]), T0 + timedelta(minutes=15))
     assert [e for e in led.entries if e["kind"] == "REC"]
+
+
+# ---------------- gold: Monday morning was blocked as "H4 candles 2 days late" (screenshot 2026-11-16 05:42 UTC)
+def test_bar_lag_counts_trading_time_only():
+    from goldquant.reliability import firewall as FW
+    fri_close = pd.Timestamp("2026-11-14 00:00", tz="UTC")  # Friday 20:00 H4 bar closes Saturday 00:00
+    mon = pd.Timestamp("2026-11-16 05:42", tz="UTC")       # market reopened Sunday 23:00 UTC (winter)
+    lag = FW.open_time_between(fri_close, mon)
+    assert pd.Timedelta(hours=6) < lag < pd.Timedelta(hours=7)  # ~6.7 h of trading, not 2 days 5.7 h
+    idx = pd.date_range("2026-11-13 08:00", periods=4, freq="4h", tz="UTC")
+    h4 = pd.DataFrame({"open": 1.0, "high": 1.0, "low": 1.0, "close": 1.0}, index=idx)
+    ok = FW.check_market(None, {"H4": h4}, pd.Timestamp("2026-11-16 03:00", tz="UTC").to_pydatetime(), None, True)
+    assert ok.passed  # 4 h of trading behind: allowed (limit 10 h)
+    bad = FW.check_market(None, {"H4": h4}, pd.Timestamp("2026-11-16 12:00", tz="UTC").to_pydatetime(), None, True)
+    assert not bad.passed and "ساعة" in str(bad.blocking[0]) and "days" not in str(bad.blocking[0])
+
+
+def test_twelvedata_refetches_when_a_new_bar_has_closed():
+    from tests.test_phase_a_sources import _td_transport
+    from goldquant.providers.history import HistoryStore
+    from goldquant.providers.http import HttpClient
+    from goldquant.providers.twelvedata import TwelveDataProvider
+    calls = []
+    t0 = pd.Timestamp("2026-11-16 02:30", tz="UTC")
+    clock = [t0]
+
+    def transport(url, params, timeout):
+        calls.append(params["interval"])
+        return _td_transport(clock[0].floor("min"))(url, params, timeout)
+    p = TwelveDataProvider("KEY", HistoryStore(), HttpClient(transport=transport, sleep=lambda s: None),
+                           clock=lambda: clock[0].to_pydatetime())
+    p.refresh("H4", t0.to_pydatetime())
+    clock[0] = pd.Timestamp("2026-11-16 04:05", tz="UTC")  # the 00:00 bar closed at 04:00: fetch now
+    p.refresh("H4", clock[0].to_pydatetime())
+    clock[0] = pd.Timestamp("2026-11-16 05:40", tz="UTC")  # nothing new closed since 04:05: no call
+    p.refresh("H4", clock[0].to_pydatetime())
+    assert calls == ["4h", "4h"]

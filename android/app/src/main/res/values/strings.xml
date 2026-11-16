@@ -448,7 +448,7 @@
     <string name="r_fw_jump" formatted="false">Abnormal price jump ({0}×ATR) between the current price and the last candle — suspected data error</string>
     <string name="r_fw_frozen" formatted="false">Price feed is frozen (identical consecutive candles)</string>
     <string name="r_fw_spike" formatted="false">Extreme candle in the last 20 (z={0}) — suspected feed error</string>
-    <string name="r_fw_bar_lag" formatted="false">{0} candles are late by {1} — source stalled or incomplete</string>
+    <string name="r_fw_bar_lag" formatted="false">{0} candles are {1} trading hours late — source stalled or incomplete</string>
     <string name="r_fw_no_context" formatted="false">Context sources (calendar/news) are not enabled</string>
     <string name="r_fw_calendar_stale" formatted="false">The economic calendar is not up to date</string>
     <string name="r_fw_price_conflict" formatted="false">The two price sources disagree ({0}) — data is doubtful</string>

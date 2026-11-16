@@ -68,11 +68,23 @@ def check_market(quote, bars: dict, as_of: datetime, atr15: float | None, market
             if df is None or df.empty:
                 continue
             close_t = df.index[-1] + pd.Timedelta(minutes={"M15": 15, "H1": 60, "H4": 240}[tf])
-            behind = pd.Timestamp(as_of) - close_t
+            behind = open_time_between(close_t, pd.Timestamp(as_of))  # the weekly close is not a delay
             r.checks[f"{tf}_lag_min"] = round(behind.total_seconds() / 60, 1)
             if behind > lag:
-                r.blocking.append(M("fw.bar_lag", tf, behind))
+                r.blocking.append(M("fw.bar_lag", tf, f"{behind.total_seconds() / 3600:.1f}"))
     return r
+
+
+def open_time_between(start: pd.Timestamp, end: pd.Timestamp) -> pd.Timedelta:
+    """Market-open time between two instants (weekly close Fri 17:00 -> Sun 18:00 New York excluded).
+    Monday 05:40 UTC after a Friday 22:00 close is about 6.7 h behind, not 2 days."""
+    from ..providers.base import market_closed_mask
+    if end <= start:
+        return pd.Timedelta(0)
+    if end - start > pd.Timedelta(days=21):  # far behind anyway; no need to count
+        return end - start
+    grid = pd.date_range(start, end, freq="5min", inclusive="left")
+    return pd.Timedelta(minutes=5 * int((~market_closed_mask(grid)).sum()))
 
 
 def check_news(items: list, as_of: datetime) -> tuple[list, list]:

@@ -108,7 +108,10 @@ class TwelveDataProvider(MarketDataProvider):
     def refresh(self, tf: str, as_of: datetime) -> None:
         """Fetch new bars for tf if the cached copy is older than one bar; merge into history."""
         last = self._last_fetch.get(tf)
-        if last is not None and as_of - last < TTL[tf]:
+        step = pd.Timedelta(minutes={"M15": 15, "H1": 60, "H4": 240, "D1": 1440}[tf])
+        # re-fetch once a new bar has closed since the last download (not TTL after it: a 4-hour bar closing just
+        # after a download used to wait almost 4 more hours, e.g. Monday's first H4 bar until ~08:00 UTC)
+        if last is not None and as_of - last < TTL[tf] and pd.Timestamp(as_of).floor(step) + pd.Timedelta(minutes=2) <= pd.Timestamp(last):  # 2 min: bar finalised
             return
         have = self.history.count_bars(self.meta.name, SYMBOL, tf)
         size = 5000 if have < 1000 else (40 if tf == "D1" else 300)
