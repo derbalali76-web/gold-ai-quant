@@ -176,7 +176,9 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
                 "trade_execution": "disabled (signals and paper trading only)",
                 "cloud": {"enabled": cloud_on, "last_sync_ok": sync_state["ok"], "error": sync_state["error"],
                           "model": sync_state["model"],
-                          "last_sync_age_s": round(time.time() - sync_state["last"]) if sync_state["last"] else None}}
+                          "last_sync_age_s": round(time.time() - sync_state["last"]) if sync_state["last"] else None,
+                          "model_files": sorted(x.name for x in (repo_dir / "models").glob("*.json"))
+                          if (repo_dir / "models").exists() else []}}
 
     @app.get("/data-status", dependencies=[Depends(auth)])
     def data_status():
@@ -578,8 +580,10 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
             raise HTTPException(422, "prices must be positive")
         p = next((b / "touch_models.json" for b in (repo_dir / "models", st.data_dir)
                   if (b / "touch_models.json").exists()), None)
-        if p is None:
-            return {"asset": a, "available": False, "horizons": {}}
+        if p is None:  # the hourly sync has not brought the file yet: ask for one now (once per 5 min)
+            if cloud_on and not sync_state["running"] and time.time() - (sync_state["last"] or 0) > 300:
+                threading.Thread(target=cloud_sync, daemon=True).start()
+            return {"asset": a, "available": False, "reason": "NO_MODEL_FILE", "horizons": {}}
         mt = p.stat().st_mtime
         if touch_state["mtime"] != mt:
             import json as _json
@@ -611,7 +615,7 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
             out[h] = {"results": res, "weak": bool((rep.get("holdout_skill") or 0) < 0.005),
                       "skill": rep.get("skill"), "holdout_skill": rep.get("holdout_skill")}
         return {"asset": a, "available": bool(out), "price": None if q is None else round(float(q), 6),
-                "horizons": out}
+                "reason": None if out else ("NO_PRICE_DATA" if q is None else "NOT_VALIDATED"), "horizons": out}
 
     @app.get("/calendar", dependencies=[Depends(auth)])
     def calendar_endpoint():
