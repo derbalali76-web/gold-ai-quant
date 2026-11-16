@@ -460,6 +460,18 @@
     <string name="touch_retry">Tentar de novo</string>
     <string name="touch_at_least">Mais perto que as distâncias testadas: pelo menos isto (qualquer movimento até um nível mais longe passa primeiro aqui).</string>
     <string name="touch_at_most">Mais longe que as distâncias testadas: no máximo isto.</string>
+    <string name="hl_wait_watch">Aguarde e observe</string>
+    <string name="hl_sub2">Nenhuma oportunidade confirmada agora.</string>
+    <string name="card_sc_title">O que pode acontecer hoje?</string>
+    <string name="sc_down">Se o preço cair abaixo de %1$s → pode seguir até %2$s</string>
+    <string name="sc_up">Se subir acima de %1$s → pode seguir até %2$s</string>
+    <string name="sc_down_open">Se o preço cair abaixo de %1$s → a queda pode se acentuar</string>
+    <string name="sc_up_open">Se subir acima de %1$s → a alta pode se acentuar</string>
+    <string name="mine_hold">Como você tem %1$s: o número-chave para você é %2$s — cair abaixo dele significa mais fraqueza.</string>
+    <string name="mine_cash">Você não tem %1$s: o número-chave para você é %2$s — superá-lo significa mais força.</string>
+    <string name="lv_sup_hint">Preços onde o mercado costuma repicar</string>
+    <string name="lv_res_hint">Preços onde o mercado costuma travar</string>
+    <string name="card_foot">Apenas para observar e aprender — não é recomendação de compra ou venda</string>
     <string name="r_w_up" formatted="false">de alta</string>
     <string name="r_w_down" formatted="false">de baixa</string>
     <string name="r_w_neutral" formatted="false">neutra</string>

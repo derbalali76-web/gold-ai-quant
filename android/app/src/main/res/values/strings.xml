@@ -461,6 +461,18 @@
     <string name="touch_retry">Try again</string>
     <string name="touch_at_least">Closer than the tested distances: at least this (any move that reaches a farther level passes here first).</string>
     <string name="touch_at_most">Farther than the tested distances: at most this.</string>
+    <string name="hl_wait_watch">Wait and watch</string>
+    <string name="hl_sub2">No confirmed opportunity right now.</string>
+    <string name="card_sc_title">What could happen today?</string>
+    <string name="sc_down">If the price falls below %1$s → it may continue toward %2$s</string>
+    <string name="sc_up">If it rises above %1$s → it may continue toward %2$s</string>
+    <string name="sc_down_open">If the price falls below %1$s → the fall may strengthen</string>
+    <string name="sc_up_open">If it rises above %1$s → the rise may strengthen</string>
+    <string name="mine_hold">Because you own %1$s: the key number for you is %2$s — falling below it means more weakness.</string>
+    <string name="mine_cash">You don\'t own %1$s: the key number for you is %2$s — rising above it means more strength.</string>
+    <string name="lv_sup_hint">Prices the market often bounces from</string>
+    <string name="lv_res_hint">Prices where the market often stalls</string>
+    <string name="card_foot">For watching and learning only — not a buy or sell recommendation</string>
     <string name="r_w_up" formatted="false">up</string>
     <string name="r_w_down" formatted="false">down</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

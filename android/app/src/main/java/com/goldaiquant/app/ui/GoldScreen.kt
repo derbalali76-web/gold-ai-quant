@@ -6,6 +6,8 @@ import com.goldaiquant.app.Candles
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import com.goldaiquant.app.PriceAlerts
 import com.goldaiquant.app.PriceAlert
 import androidx.compose.runtime.CompositionLocalProvider
@@ -710,10 +712,9 @@ private fun DecisionCard(c: HorizonCard, s: UiState, d: Decision, compact: Boole
             val watch = if (c.action == Action.WAIT && c.plan?.recommendation != true && !d.marketClosed) watchPrice(c, d) else null
             Row(verticalAlignment = Alignment.CenterVertically) {
                 // a WAIT says what to do: watch the level that would change the picture (never a trade)
-                val title = watch?.let { stringResource(if (s.position == "HOLD") R.string.hl_hold_watch else R.string.hl_watch, ltr(it.p2())) }
-                    ?: actionTitle(c.action)
-                Text(title, color = color, fontSize = if (c.action == Action.UNAVAILABLE) 26.sp else if (watch != null) 26.sp else 30.sp,
-                    fontWeight = FontWeight.Black, maxLines = 1, modifier = Modifier.weight(1f))
+                val title = if (watch != null) stringResource(R.string.hl_wait_watch) else actionTitle(c.action)
+                Text(title, color = color, fontSize = if (c.action == Action.UNAVAILABLE) 26.sp else 28.sp, lineHeight = 36.sp,
+                    fontWeight = FontWeight.Black, maxLines = 2, modifier = Modifier.weight(1f))
                 val known = c.checklist.filter { it.ok != null }
                 if (c.plan?.recommendation != true && known.isNotEmpty()) Text(
                     stringResource(R.string.ck_chip, known.count { it.ok == true }, known.size) + " ›", color = WaitGold, fontSize = 11.sp,
@@ -721,33 +722,33 @@ private fun DecisionCard(c: HorizonCard, s: UiState, d: Decision, compact: Boole
                         .clickable(role = Role.Button) { showChecks = true }
                         .padding(horizontal = 8.dp, vertical = 2.dp))
             }
-            if (watch != null) Text(stringResource(R.string.hl_sub), color = TextDim, fontSize = 12.sp, maxLines = 1)
+            if (watch != null) Text(stringResource(R.string.hl_sub2), color = TextDim, fontSize = 13.sp)
             else if (why.isNotBlank()) Text(why, color = TextMain, fontSize = 12.sp, lineHeight = 16.sp, maxLines = 2,
                 overflow = TextOverflow.Ellipsis)
             if (s.decisionFromCache || expired) Text(stringResource(R.string.saved_decision), color = WaitGold, fontSize = 11.sp)
             if (c.action != Action.UNAVAILABLE) PositionChip(s.position) { onPosition(if (s.position == "HOLD") "CASH" else "HOLD") }
             Divider()
             val rec = c.plan?.recommendation == true && !d.isDemo
-            if (c.action != Action.UNAVAILABLE) PositionLine(c, d, s.position, rec)
+            if (rec) PositionLine(c, d, s.position, true)
             if (rec) {
                 if (!(c.plan!!.side == "SELL")) PlanLine(c.plan, d)  // a SELL plan is phrased by the position line
                 KV(stringResource(R.string.l_duration), durationText(c), 12.sp)
             } else {
-                c.plan?.takeIf { it.watchPrice != null }?.let { PlanLine(it, d) }
                 // today's scenarios are built from HOURLY levels: they belong to the hours horizon only
                 if (c.horizon == "HOURS") d.brief?.let { BriefLines(it, s, d.quote, onBell) }
-                if ((d.brief == null || c.horizon != "HOURS") && c.action == Action.WAIT) c.waitForPrice?.let { KV(stringResource(R.string.l_reeval), it.p2(), 12.sp) }
+                if (c.action != Action.UNAVAILABLE) MineLine(c, s)
             }
             Divider()
             val lv = c.levels
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 val rows = if (compact) 2 else 3
-                val bell = { l: Level, name: String -> onBell(PriceAlerts.make(s.asset, l.price, d.quote, name)) }
-                LevelPair(stringResource(R.string.lv_supports), BuyGreen, lv?.supports.orEmpty(), rows, Modifier.weight(1f),
-                    { l -> PriceAlerts.isOn(s.priceAlerts, s.asset, l.price) }, { l -> bell(l, l.name) }) { onLevel(it, true) }
-                LevelPair(stringResource(R.string.lv_resistances), SellRed, lv?.resistances.orEmpty(), rows, Modifier.weight(1f),
-                    { l -> PriceAlerts.isOn(s.priceAlerts, s.asset, l.price) }, { l -> bell(l, l.name) }) { onLevel(it, false) }
+                LevelPair(stringResource(R.string.lv_supports), stringResource(R.string.lv_sup_hint), BuyGreen,
+                    lv?.supports.orEmpty(), rows, Modifier.weight(1f)) { onLevel(it, true) }
+                LevelPair(stringResource(R.string.lv_resistances), stringResource(R.string.lv_res_hint), SellRed,
+                    lv?.resistances.orEmpty(), rows, Modifier.weight(1f)) { onLevel(it, false) }
             }
+            if (!rec) Text(stringResource(R.string.card_foot), color = TextDim, fontSize = 11.sp, textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth().padding(top = 4.dp))
         }
     }
 }
@@ -756,23 +757,19 @@ private fun DecisionCard(c: HorizonCard, s: UiState, d: Decision, compact: Boole
 private fun Divider() = Box(Modifier.fillMaxWidth().height(1.dp).background(Color(0xFF262118)))
 
 @Composable
-private fun LevelPair(title: String, color: Color, items: List<Level>, rows: Int, modifier: Modifier,
-                      isOn: (Level) -> Boolean = { false }, onBell: (Level) -> Unit = {}, onOpen: (Level) -> Unit) {
+private fun LevelPair(title: String, hint: String, color: Color, items: List<Level>, rows: Int, modifier: Modifier,
+                      onOpen: (Level) -> Unit) {
     Column(modifier) {
         Text(title, color = color, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+        Text(hint, color = TextDim, fontSize = 10.sp, lineHeight = 13.sp)
         if (items.isEmpty()) Text(stringResource(R.string.lv_none), color = TextDim, fontSize = 11.sp)
         items.take(rows).forEach { l ->
-            // one level per row: name, price, strength (tap = details)
+            // one level per row: price + strength bar (tap = details)
             Row(Modifier.fillMaxWidth().heightIn(min = 34.dp).clickable(role = Role.Button) { onOpen(l) },
                 verticalAlignment = Alignment.CenterVertically) {
-                Text(l.name, color = color, fontSize = 11.sp, fontWeight = FontWeight.Bold, modifier = Modifier.width(22.dp))
-                Text(ltr(l.price.p2()), color = TextMain, fontSize = 13.sp, fontWeight = FontWeight.Bold, maxLines = 1,
+                Text(ltr(l.price.p2()), color = TextMain, fontSize = 14.sp, fontWeight = FontWeight.Bold, maxLines = 1,
                     modifier = Modifier.weight(1f))
-                BellChip(isOn(l), compact = true) { onBell(l) }
-                Column(horizontalAlignment = Alignment.End) {
-                    Text(l.strength?.let { "$it" } ?: stringResource(strengthWord(l)), color = TextDim, fontSize = 9.sp, maxLines = 1)
-                    Segments(labelFill(l), color)
-                }
+                Segments(labelFill(l), color)
             }
         }
     }
@@ -810,11 +807,11 @@ private fun PlanLine(p: Plan, d: Decision) {
 }
 
 @Composable
-private fun briefLine(sc: Scenario): String = when {
-    sc.kind == "BULL" && sc.target != null -> stringResource(R.string.sc_bull, ltr(sc.trigger.p2()), sc.triggerLevel, ltr(sc.target.p2()), sc.targetLevel ?: "")
-    sc.kind == "BULL" -> stringResource(R.string.sc_bull_open, ltr(sc.trigger.p2()), sc.triggerLevel)
-    sc.target != null -> stringResource(R.string.sc_bear, ltr(sc.trigger.p2()), sc.triggerLevel, ltr(sc.target.p2()), sc.targetLevel ?: "")
-    else -> stringResource(R.string.sc_bear_open, ltr(sc.trigger.p2()), sc.triggerLevel)
+private fun briefLine(sc: Scenario): String = when {  // plain words, no level codes (S1/R1) for beginners
+    sc.kind == "BULL" && sc.target != null -> stringResource(R.string.sc_up, ltr(sc.trigger.p2()), ltr(sc.target.p2()))
+    sc.kind == "BULL" -> stringResource(R.string.sc_up_open, ltr(sc.trigger.p2()))
+    sc.target != null -> stringResource(R.string.sc_down, ltr(sc.trigger.p2()), ltr(sc.target.p2()))
+    else -> stringResource(R.string.sc_down_open, ltr(sc.trigger.p2()))
 }
 
 @Composable
@@ -877,20 +874,16 @@ private fun CheckSection(list: List<Check>) {
 
 @Composable
 private fun BriefLines(b: Brief, s: UiState? = null, price: Double? = null, onBell: (PriceAlert) -> Unit = {}) {
-    Text(stringResource(R.string.brief_title), color = Gold, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
-    Text(stringResource(when (b.bias) { "UP" -> R.string.brief_bias_up; "DOWN" -> R.string.brief_bias_down; else -> R.string.brief_bias_side }),
-        color = TextDim, fontSize = 11.sp)
+    Text(stringResource(R.string.card_sc_title), color = Gold, fontSize = 13.sp, fontWeight = FontWeight.Bold)
     b.scenarios.take(2).forEach { sc ->
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("• " + briefLine(sc), color = if (sc.kind == "BULL") BuyGreen else SellRed, fontSize = 12.sp, lineHeight = 16.sp,
+        val col = if (sc.kind == "BULL") BuyGreen else SellRed
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 2.dp)) {
+            Text(if (sc.kind == "BULL") "▲ " else "▼ ", color = col, fontSize = 13.sp)
+            Text(briefLine(sc), color = col, fontSize = 14.sp, fontWeight = FontWeight.SemiBold, lineHeight = 20.sp,
                 modifier = Modifier.weight(1f))
-            if (s != null) BellChip(PriceAlerts.isOn(s.priceAlerts, s.asset, sc.trigger)) {
+            if (s != null) BellChip(PriceAlerts.isOn(s.priceAlerts, s.asset, sc.trigger), compact = true) {
                 onBell(PriceAlerts.make(s.asset, sc.trigger, price, sc.triggerLevel))
             }
-        }
-        // descriptive history of similar breaks (not a forecast); hidden when there are too few cases
-        sc.histRate?.let { r ->
-            Text(stringResource(R.string.sc_hist, Math.round(r * 100).toInt(), sc.histN, sc.histDays), color = TextDim, fontSize = 10.sp)
         }
     }
 }
@@ -1064,7 +1057,7 @@ private fun LevelDialog(l: Level, isSupport: Boolean, c: HorizonCard, onTouch: (
     val color = if (isSupport) BuyGreen else SellRed
     val locale = LocalConfiguration.current.locales[0]
     val fmt = remember(locale) { DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(locale) }
-    DialogFrame("${l.name} · ${stringResource(if (isSupport) R.string.lv_support else R.string.lv_resistance)}", onClose) {
+    DialogFrame(stringResource(if (isSupport) R.string.lv_support else R.string.lv_resistance), onClose) {
         Text(l.price.p2(), color = color, fontSize = 26.sp, fontWeight = FontWeight.Black)
         Text(stringResource(R.string.touch_open), color = Color.Black, fontSize = 12.sp, fontWeight = FontWeight.Bold,
             modifier = Modifier.background(Gold, RoundedCornerShape(10.dp)).clickable(role = Role.Button, onClick = onTouch)
@@ -1461,6 +1454,24 @@ private fun PositionLine(c: HorizonCard, d: Decision, pos: String, rec: Boolean)
     Text(stringResource(R.string.pos_watch_note), color = TextDim, fontSize = 10.sp)
 }
 
+/** One plain line for the user's own situation: the number that matters to them (never a trade). */
+@Composable
+private fun MineLine(c: HorizonCard, s: UiState) {
+    val hold = s.position == "HOLD"
+    val key = if (hold) c.levels?.supports?.firstOrNull()?.price else c.levels?.resistances?.firstOrNull()?.price
+    if (key == null) return
+    val name = stringResource(when (s.asset) { "BTC" -> R.string.asset_btc; "ETH" -> R.string.asset_eth
+        "SOL" -> R.string.asset_sol; else -> R.string.asset_gold })
+    val txt = stringResource(if (hold) R.string.mine_hold else R.string.mine_cash, name, ltr(key.p2()))
+    val i = txt.indexOf(ltr(key.p2()))
+    Text(buildAnnotatedString {
+        append(txt)
+        if (i >= 0) addStyle(SpanStyle(color = Gold, fontWeight = FontWeight.Bold), i, i + ltr(key.p2()).length)
+    }, color = TextMain, fontSize = 13.sp, lineHeight = 19.sp,
+        modifier = Modifier.fillMaxWidth().padding(top = 4.dp).background(Color(0xFF1A1610), RoundedCornerShape(12.dp))
+            .padding(horizontal = 10.dp, vertical = 8.dp))
+}
+
 // ---------------------------------------------------------------- how it works / what's new
 @Composable
 private fun HowDialog(onClose: () -> Unit) {
@@ -1674,9 +1685,6 @@ private fun ChartDialog(s: UiState, card: HorizonCard?, d: Decision?, onTf: (Str
         where?.let { Text(it, color = TextMain, fontSize = 13.sp, lineHeight = 19.sp) }
         if (card?.horizon == "HOURS") d?.brief?.scenarios?.take(2)?.forEach { sc ->
             Text(briefLine(sc), color = if (sc.kind == "BULL") BuyGreen else SellRed, fontSize = 13.sp, lineHeight = 18.sp)
-            sc.histRate?.let { r ->
-                Text(stringResource(R.string.sc_hist, Math.round(r * 100).toInt(), sc.histN, sc.histDays), color = TextDim, fontSize = 11.sp)
-            }
         }
         if (card?.horizon == "HOURS") d?.brief?.firstTouch?.let { ft ->
             Spacer(Modifier.height(4.dp))
