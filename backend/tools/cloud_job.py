@@ -789,6 +789,24 @@ def paxg_study(hs) -> dict:
     return out
 
 
+def hilo_research(hs) -> dict:
+    """High / low bounds engine (goldquant/hilo.py, pre-registered): each asset and horizon separately. Research only."""
+    from goldquant import crypto_store as CS, hilo as HL
+    out = {"schema": 1, "version": HL.VERSION, "updated_at": datetime.now(timezone.utc).isoformat(), "assets": {}}
+    frames = {"XAU": ("gold", hs.load_bars("Dukascopy", "XAUUSD", "H1", limit=10_000_000))}
+    for sym, a in (("BTCUSDT", "BTC"), ("ETHUSDT", "ETH"), ("SOLUSDT", "SOL")):
+        frames[a] = ("crypto", CS.load_bars(MD, sym, "1h"))
+    for a, (kind, h1) in frames.items():
+        if h1 is None or len(h1) < 8000:
+            out["assets"][a] = {"reason": "not enough hourly bars"}
+            continue
+        out["assets"][a] = HL.evaluate_asset(h1.astype(float), kind)
+        for h, r in out["assets"][a].items():
+            print(a, h, r.get("reason"), r.get("diff_ci99"), (r.get("holdout") or {}).get("m"), flush=True)
+    (MODELS / "hilo_report.json").write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    return out
+
+
 def activity_models() -> dict:
     """Weekly: re-validate the scalper activity forecast per coin (pre-registered rules in goldquant/activity.py) and
     export the model ONLY for coins that pass this week. A coin that stops passing disappears from the app."""
@@ -1082,7 +1100,7 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("cmd", choices=["collect", "train", "research", "backfill", "report", "crypto", "crypto_research",
                                     "crypto_weekly", "scalp1m", "pooled", "scalp_feasibility", "scalp_ml", "scalp_book",
-                                    "touch", "range", "paxg", "paxg_study"])
+                                    "touch", "range", "paxg", "paxg_study", "hilo"])
     ap.add_argument("--years", type=float, default=3.0)
     ap.add_argument("--first", type=date.fromisoformat, default=None, help="backfill range start (YYYY-MM-DD)")
     ap.add_argument("--last", type=date.fromisoformat, default=None, help="backfill range end (YYYY-MM-DD)")
@@ -1115,6 +1133,9 @@ if __name__ == "__main__":
     elif a.cmd == "touch":
         MODELS.mkdir(parents=True, exist_ok=True)
         touch_models(hs)
+    elif a.cmd == "hilo":
+        MODELS.mkdir(parents=True, exist_ok=True)
+        hilo_research(hs)
     elif a.cmd == "paxg_study":
         MODELS.mkdir(parents=True, exist_ok=True)
         paxg_study(hs)
