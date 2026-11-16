@@ -443,6 +443,20 @@
     <string name="ft_title">Historical lean: which level came first</string>
     <string name="ft_line">Down to %1$s first: %2$d%% · up to %3$s first: %4$d%%</string>
     <string name="ft_note">From %1$d similar cases (same distances to two levels) over %2$d days, within %3$d h. Mostly reflects which level is closer; history, not a validated forecast.</string>
+    <string name="touch_open">Reach probability</string>
+    <string name="touch_title">Reach probability · %1$s</string>
+    <string name="touch_h4">4 hours</string>
+    <string name="touch_h24">24 hours</string>
+    <string name="touch_h120">Week</string>
+    <string name="touch_now">Price now %1$s</string>
+    <string name="touch_usual">Usual for this distance %1$d%%</string>
+    <string name="touch_out_of_range">Outside the tested range</string>
+    <string name="touch_custom">Type a price</string>
+    <string name="touch_custom_row">Your price</string>
+    <string name="touch_unavailable">Not available for this asset right now.</string>
+    <string name="touch_not_validated">This horizon did not pass this week\'s check for this asset.</string>
+    <string name="touch_weak">Passed the test, but accuracy has been weak over the last two years.</string>
+    <string name="touch_note">Chance that the price touches the level within the chosen time. Based on distance and expected movement; it does not know the direction. Tested out of sample and re-checked weekly; it disappears if it stops passing. Not a recommendation.</string>
     <string name="r_w_up" formatted="false">up</string>
     <string name="r_w_down" formatted="false">down</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

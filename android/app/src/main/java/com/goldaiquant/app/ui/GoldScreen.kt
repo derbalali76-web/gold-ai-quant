@@ -235,7 +235,7 @@ fun GoldScreen(vm: MainViewModel, lang: Lang, onLanguage: (Lang) -> Unit) {
             if (android.os.Build.VERSION.SDK_INT >= 33) askNotify.launch(android.Manifest.permission.POST_NOTIFICATIONS)
             else vm.setNotify(true)
         }, onBars = vm::loadBars, onCalendar = vm::loadCalendar, onOnboarded = vm::finishOnboarding,
-        onPollLive = { vm.pollLive() }) }
+        onPollLive = { vm.pollLive() }, onTouch = vm::loadTouch) }
 }
 
 private sealed interface Sheet {
@@ -250,6 +250,7 @@ private sealed interface Sheet {
     data object NewsSheet : Sheet
     data object ScalpSheet : Sheet
     data object ChartSheet : Sheet
+    data class TouchSheet(val focus: Double?) : Sheet
     data object CalendarSheet : Sheet
 }
 
@@ -260,7 +261,8 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
                 onNotify: (Boolean) -> Unit = {}, onAssetPick: (String) -> Unit = {}, onPosition: (String) -> Unit = {},
                 onAlertAsset: (String) -> Unit = {}, onPriceAlert: (PriceAlert) -> Unit = {},
                 onNeedNotify: () -> Unit = {}, onBars: (String, String) -> Unit = { _, _ -> },
-                onCalendar: () -> Unit = {}, onOnboarded: () -> Unit = {}, onPollLive: suspend () -> Unit = {}) {
+                onCalendar: () -> Unit = {}, onOnboarded: () -> Unit = {}, onPollLive: suspend () -> Unit = {},
+                onTouch: (String, List<Double>) -> Unit = { _, _ -> }) {
     var sheet by remember { mutableStateOf<Sheet?>(null) }
     val onBell: (PriceAlert) -> Unit = { a ->
         val adding = !PriceAlerts.isOn(s.priceAlerts, a.asset, a.price)
@@ -321,7 +323,9 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
     }
     val card = d?.let { HorizonModel.card(it, selected) }
     when (val sh = sheet) {
-        is Sheet.LevelSheet -> if (card != null) LevelDialog(sh.level, sh.isSupport, card) { sheet = null }
+        is Sheet.LevelSheet -> if (card != null) LevelDialog(sh.level, sh.isSupport, card,
+            onTouch = { sheet = Sheet.TouchSheet(sh.level.price) }) { sheet = null }
+        is Sheet.TouchSheet -> TouchDialog(s, card, sh.focus, onLoad = { ps -> onTouch(s.asset, ps) }) { sheet = null }
         Sheet.Probabilities -> if (card != null && d != null) ProbabilityDialog(card, d, s.track) { sheet = null }
         Sheet.TrendSheet -> if (card != null) TrendDialog(card) { sheet = null }
         Sheet.Details -> if (card != null && d != null) DetailsDialog(card, d) { sheet = null }
@@ -332,7 +336,8 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
         Sheet.HowSheet -> HowDialog { sheet = null }
         Sheet.ScalpSheet -> if (d != null) ScalpDialog(d) { sheet = null }
         Sheet.NewsSheet -> NewsDialog { sheet = null }
-        Sheet.ChartSheet -> ChartDialog(s, card, d, onTf = { tf -> onBars(s.asset, tf) }, onFollow = {
+        Sheet.ChartSheet -> ChartDialog(s, card, d, onTf = { tf -> onBars(s.asset, tf) },
+            onTouch = { sheet = Sheet.TouchSheet(null) }, onFollow = {
             val following = s.asset in s.alertAssets && s.notify
             if (!following) {
                 if (s.asset !in s.alertAssets) onAlertAsset(s.asset)
@@ -1055,12 +1060,15 @@ private fun Section(t: String) = Text(t, color = Gold, fontSize = 13.sp, fontWei
 private fun Body(t: String, color: Color = TextMain, size: TextUnit = 12.sp) = Text(t, color = color, fontSize = size)
 
 @Composable
-private fun LevelDialog(l: Level, isSupport: Boolean, c: HorizonCard, onClose: () -> Unit) {
+private fun LevelDialog(l: Level, isSupport: Boolean, c: HorizonCard, onTouch: () -> Unit = {}, onClose: () -> Unit) {
     val color = if (isSupport) BuyGreen else SellRed
     val locale = LocalConfiguration.current.locales[0]
     val fmt = remember(locale) { DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(locale) }
     DialogFrame("${l.name} · ${stringResource(if (isSupport) R.string.lv_support else R.string.lv_resistance)}", onClose) {
         Text(l.price.p2(), color = color, fontSize = 26.sp, fontWeight = FontWeight.Black)
+        Text(stringResource(R.string.touch_open), color = Color.Black, fontSize = 12.sp, fontWeight = FontWeight.Bold,
+            modifier = Modifier.background(Gold, RoundedCornerShape(10.dp)).clickable(role = Role.Button, onClick = onTouch)
+                .padding(horizontal = 10.dp, vertical = 4.dp))
         KV(stringResource(R.string.lv_zone), ltr("${l.zoneLow.p2()} – ${l.zoneHigh.p2()}"))
         // strength only when the engine validated it; otherwise it is explicitly "not validated"
         KV(stringResource(R.string.lv_strength), l.strength?.let { stringResource(R.string.lv_strength_val, it) }
@@ -1532,7 +1540,7 @@ private fun Sparkline(c: Candles?, modifier: Modifier) {
 /** Candlestick chart with the horizon's levels and today's scenario triggers drawn on it. Closed candles only. */
 @Composable
 private fun ChartDialog(s: UiState, card: HorizonCard?, d: Decision?, onTf: (String) -> Unit,
-                        onFollow: () -> Unit = {}, onClose: () -> Unit) {
+                        onTouch: () -> Unit = {}, onFollow: () -> Unit = {}, onClose: () -> Unit) {
     var tf by remember { mutableStateOf("H1") }
     LaunchedEffect(tf, s.asset) { onTf(tf) }
     val c = s.candles["${s.asset}/$tf"]
@@ -1574,7 +1582,10 @@ private fun ChartDialog(s: UiState, card: HorizonCard?, d: Decision?, onTf: (Str
         val measurer = androidx.compose.ui.text.rememberTextMeasurer()
         val wSup = stringResource(R.string.zone_support); val wRes = stringResource(R.string.zone_resistance)
         val live = c.c.last()
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End)) {
+            Text(stringResource(R.string.touch_open), color = Color.Black, fontSize = 12.sp, fontWeight = FontWeight.Bold,
+                modifier = Modifier.background(Gold, RoundedCornerShape(10.dp)).clickable(role = Role.Button, onClick = onTouch)
+                    .padding(horizontal = 10.dp, vertical = 3.dp))
             Text(stringResource(if (tall) R.string.chart_smaller else R.string.chart_bigger), color = Gold, fontSize = 12.sp,
                 modifier = Modifier.border(1.dp, Gold, RoundedCornerShape(10.dp)).clickable(role = Role.Button) { tall = !tall }
                     .padding(horizontal = 10.dp, vertical = 3.dp))
@@ -1687,6 +1698,69 @@ private fun ChartDialog(s: UiState, card: HorizonCard?, d: Decision?, onTf: (Str
                     .padding(horizontal = 10.dp, vertical = 4.dp))
         }
         Body(stringResource(R.string.chart_legend_zones), TextDim, 11.sp)
+    }
+}
+
+@Composable
+private fun TouchDialog(s: UiState, card: HorizonCard?, focus: Double?, onLoad: (List<Double>) -> Unit, onClose: () -> Unit) {
+    val lv = card?.levels
+    val levels = (lv?.resistances.orEmpty().take(2).reversed().map { Triple(it.price, it.name, false) } +
+        lv?.supports.orEmpty().take(2).map { Triple(it.price, it.name, true) })
+    var custom by remember { mutableStateOf(focus?.let { String.format(Locale.US, "%.2f", it) } ?: "") }
+    val customVal = custom.replace(',', '.').toDoubleOrNull()?.takeIf { it > 0 }
+    val prices = (levels.map { it.first } + listOfNotNull(customVal)).distinct()
+    LaunchedEffect(s.asset, prices.joinToString()) { if (prices.isNotEmpty()) onLoad(prices) }
+    var hz by remember { mutableStateOf("24") }
+    DialogFrame(stringResource(R.string.touch_title, ltr(assetPair(s.asset))), onClose) {
+        val t = s.touch?.takeIf { it.asset == s.asset }
+        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            listOf("4" to R.string.touch_h4, "24" to R.string.touch_h24, "120" to R.string.touch_h120).forEach { (k, label) ->
+                val on = hz == k
+                Text(stringResource(label), color = if (on) Color.Black else Gold, fontSize = 12.sp, fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center, modifier = Modifier.weight(1f)
+                        .background(if (on) Gold else Color.Transparent, RoundedCornerShape(10.dp))
+                        .border(1.dp, Gold, RoundedCornerShape(10.dp)).clickable(role = Role.Tab) { hz = k }
+                        .padding(vertical = 5.dp))
+            }
+        }
+        when {
+            t == null || s.touchLoading && t.horizons.isEmpty() -> { Body(stringResource(R.string.chart_loading), TextDim, 12.sp); return@DialogFrame }
+            !t.available -> { Body(stringResource(R.string.touch_unavailable), TextDim, 12.sp); return@DialogFrame }
+        }
+        val h = t!!.horizons[hz]
+        if (h == null) { Body(stringResource(R.string.touch_not_validated), TextDim, 12.sp) }
+        t.price?.let { Body(stringResource(R.string.touch_now, ltr(it.p2())), TextDim, 12.sp) }
+        @Composable
+        fun row(label: String, price: Double, isSup: Boolean) {
+            val r = h?.results?.firstOrNull { kotlin.math.abs(it.price - price) < 1e-6 * maxOf(1.0, price) } ?: return
+            val col = if (isSup) BuyGreen else SellRed
+            Column(Modifier.fillMaxWidth().padding(vertical = 3.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(label + " · " + ltr(price.p2()), color = col, fontSize = 13.sp, modifier = Modifier.weight(1f))
+                    Text(if (r.status == "OK" && r.probability != null) "${Math.round(r.probability * 100)}%" else "—",
+                        color = TextMain, fontSize = 15.sp, fontWeight = FontWeight.Bold)
+                }
+                if (r.status == "OK" && r.probability != null) {
+                    Bar(r.probability.toFloat(), col, Modifier.fillMaxWidth().padding(top = 3.dp))
+                    r.usual?.let { Text(stringResource(R.string.touch_usual, Math.round(it * 100).toInt()), color = TextDim, fontSize = 11.sp) }
+                } else Text(stringResource(R.string.touch_out_of_range), color = TextDim, fontSize = 11.sp)
+            }
+        }
+        levels.forEach { (p, name, sup) ->
+            row("${stringResource(if (sup) R.string.zone_support else R.string.zone_resistance)} $name", p, sup)
+        }
+        Divider()
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            OutlinedTextField(value = custom, onValueChange = { v -> custom = v.filter { it.isDigit() || it == '.' || it == ',' }.take(12) },
+                singleLine = true, label = { Text(stringResource(R.string.touch_custom)) },
+                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Decimal),
+                modifier = Modifier.weight(1f))
+        }
+        customVal?.takeIf { v -> levels.none { kotlin.math.abs(it.first - v) < 1e-9 } }?.let { v ->
+            row(stringResource(R.string.touch_custom_row), v, v < (t.price ?: v))
+        }
+        if (h?.weak == true) Body(stringResource(R.string.touch_weak), WaitGold, 11.sp)
+        Body(stringResource(R.string.touch_note), TextDim, 11.sp)
     }
 }
 

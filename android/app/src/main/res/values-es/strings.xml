@@ -442,6 +442,20 @@
     <string name="ft_title">Inclinación histórica: qué nivel primero</string>
     <string name="ft_line">Bajada a %1$s primero: %2$d%% · subida a %3$s primero: %4$d%%</string>
     <string name="ft_note">De %1$d casos similares (mismas distancias a dos niveles) en %2$d días, en %3$d h. Refleja sobre todo qué nivel está más cerca; historia, no un pronóstico validado.</string>
+    <string name="touch_open">Probabilidad de alcance</string>
+    <string name="touch_title">Probabilidad de alcance · %1$s</string>
+    <string name="touch_h4">4 horas</string>
+    <string name="touch_h24">24 horas</string>
+    <string name="touch_h120">Semana</string>
+    <string name="touch_now">Precio ahora %1$s</string>
+    <string name="touch_usual">Lo habitual a esta distancia %1$d%%</string>
+    <string name="touch_out_of_range">Fuera del rango probado</string>
+    <string name="touch_custom">Escribe un precio</string>
+    <string name="touch_custom_row">Tu precio</string>
+    <string name="touch_unavailable">No disponible para este activo por ahora.</string>
+    <string name="touch_not_validated">Este horizonte no superó el control semanal para este activo.</string>
+    <string name="touch_weak">Superó la prueba, pero su precisión fue débil en los últimos dos años.</string>
+    <string name="touch_note">Probabilidad de que el precio toque el nivel en el plazo elegido. Se basa en la distancia y el movimiento esperado; no conoce la dirección. Probada fuera de muestra y revisada cada semana; desaparece si deja de superar la prueba. No es una recomendación.</string>
     <string name="r_w_up" formatted="false">alcista</string>
     <string name="r_w_down" formatted="false">bajista</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

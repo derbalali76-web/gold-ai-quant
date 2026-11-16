@@ -30,6 +30,8 @@ data class UiState(
     val priceAlerts: List<PriceAlert> = emptyList(),  // one-tap "Alert me" alerts (phone only)
     val candles: Map<String, Candles> = emptyMap(),  // "ASSET/TF" -> closed candles for the chart
     val calendar: CalendarInfo? = null,
+    val touch: TouchInfo? = null,
+    val touchLoading: Boolean = false,
     val live: Map<String, LiveTick> = emptyMap(),  // crypto live price (Binance public ticker), display only
     val onboarded: Boolean = true,
 ) {
@@ -175,6 +177,15 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch {
             val c = MarketClient(s.serverUrl, s.token).bars(asset, tf) ?: return@launch
             _state.update { it.copy(candles = it.candles + ("$asset/$tf" to c)) }
+        }
+    }
+
+    fun loadTouch(asset: String, prices: List<Double>) {
+        val s = _state.value
+        _state.update { it.copy(touchLoading = true) }
+        viewModelScope.launch {
+            val t = MarketClient(s.serverUrl, s.token).touch(asset, prices.distinct())
+            _state.update { it.copy(touch = t ?: TouchInfo(asset, false, null, emptyMap()), touchLoading = false) }
         }
     }
 

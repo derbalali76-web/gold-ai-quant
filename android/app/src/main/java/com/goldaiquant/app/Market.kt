@@ -18,6 +18,11 @@ data class CalEvent(val time: Instant, val name: String, val importance: Int)
 data class CalendarInfo(val state: String, val updatedAt: Instant?, val events: List<CalEvent>)
 data class LiveTick(val price: Double, val at: Long)
 
+/** Touch probability (validated per asset and horizon; never a direction or a recommendation). */
+data class TouchResult(val price: Double, val side: Int, val status: String, val probability: Double?, val usual: Double?)
+data class TouchHorizon(val results: List<TouchResult>, val weak: Boolean)
+data class TouchInfo(val asset: String, val available: Boolean, val price: Double?, val horizons: Map<String, TouchHorizon>)
+
 object MarketParser {
     fun candles(body: String): Candles? = try {
         val o = JSONObject(body)
@@ -40,6 +45,26 @@ object MarketParser {
             try { Instant.parse(it.replace("+00:00", "Z")) } catch (x: Exception) { null }
         }
         CalendarInfo(o.optString("state", "NOT_CONFIGURED"), upd, list)
+    } catch (e: Exception) { null }
+
+    fun touch(body: String): TouchInfo? = try {
+        val o = JSONObject(body)
+        val hz = o.optJSONObject("horizons")
+        val map = mutableMapOf<String, TouchHorizon>()
+        hz?.keys()?.forEach { k ->
+            val h = hz.getJSONObject(k)
+            val a = h.optJSONArray("results")
+            val res = (0 until (a?.length() ?: 0)).mapNotNull { i ->
+                val e = a!!.optJSONObject(i) ?: return@mapNotNull null
+                val p = if (e.has("probability") && !e.isNull("probability")) e.getDouble("probability") else null
+                val u = if (e.has("usual") && !e.isNull("usual")) e.getDouble("usual") else null
+                if (p != null && p !in 0.0..1.0) return@mapNotNull null
+                TouchResult(e.getDouble("price"), e.optInt("side", 1), e.optString("status", "OK"), p, u?.takeIf { it in 0.0..1.0 })
+            }
+            map[k] = TouchHorizon(res, h.optBoolean("weak", false))
+        }
+        TouchInfo(o.optString("asset"), o.optBoolean("available", false),
+            if (o.has("price") && !o.isNull("price")) o.getDouble("price") else null, map)
     } catch (e: Exception) { null }
 
     /** Binance public ticker: {"symbol":"BTCUSDT","price":"91234.5"} */
@@ -65,6 +90,13 @@ class MarketClient(private val baseUrl: String, private val token: String = "") 
         if (UrlPolicy.check(baseUrl) != null) return@withContext null
         get(baseUrl.trimEnd('/') + "/bars?asset=" + URLEncoder.encode(asset, "UTF-8") + "&tf=" + tf + "&limit=" + limit,
             true, 90_000)?.let(MarketParser::candles)
+    }
+
+    suspend fun touch(asset: String, prices: List<Double>): TouchInfo? = withContext(Dispatchers.IO) {
+        if (UrlPolicy.check(baseUrl) != null || prices.isEmpty()) return@withContext null
+        val list = prices.take(8).joinToString(",") { String.format(java.util.Locale.US, "%.6f", it) }
+        get(baseUrl.trimEnd('/') + "/touch?asset=" + URLEncoder.encode(asset, "UTF-8") + "&prices=" +
+            URLEncoder.encode(list, "UTF-8"), true, 90_000)?.let(MarketParser::touch)
     }
 
     suspend fun calendar(): CalendarInfo? = withContext(Dispatchers.IO) {

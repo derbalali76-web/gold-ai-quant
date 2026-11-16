@@ -442,6 +442,20 @@
     <string name="ft_title">Tendance historique : quel niveau d\'abord</string>
     <string name="ft_line">Baisse vers %1$s d\'abord : %2$d%% · hausse vers %3$s d\'abord : %4$d%%</string>
     <string name="ft_note">Sur %1$d cas similaires (mêmes distances à deux niveaux) en %2$d jours, sous %3$d h. Reflète surtout le niveau le plus proche ; historique, pas une prévision validée.</string>
+    <string name="touch_open">Probabilité d\'atteinte</string>
+    <string name="touch_title">Probabilité d\'atteinte · %1$s</string>
+    <string name="touch_h4">4 heures</string>
+    <string name="touch_h24">24 heures</string>
+    <string name="touch_h120">Semaine</string>
+    <string name="touch_now">Prix actuel %1$s</string>
+    <string name="touch_usual">Habituel pour cette distance %1$d%%</string>
+    <string name="touch_out_of_range">Hors de la plage testée</string>
+    <string name="touch_custom">Saisissez un prix</string>
+    <string name="touch_custom_row">Votre prix</string>
+    <string name="touch_unavailable">Indisponible pour cet actif pour l\'instant.</string>
+    <string name="touch_not_validated">Cet horizon n\'a pas passé le contrôle de la semaine pour cet actif.</string>
+    <string name="touch_weak">Test réussi, mais précision faible ces deux dernières années.</string>
+    <string name="touch_note">Probabilité que le prix touche le niveau dans le délai choisi. Fondée sur la distance et le mouvement attendu ; elle ne connaît pas la direction. Testée hors échantillon et revérifiée chaque semaine ; elle disparaît si elle échoue. Pas une recommandation.</string>
     <string name="r_w_up" formatted="false">haussière</string>
     <string name="r_w_down" formatted="false">baissière</string>
     <string name="r_w_neutral" formatted="false">neutre</string>

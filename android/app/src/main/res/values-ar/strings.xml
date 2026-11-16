@@ -442,6 +442,20 @@
     <string name="ft_title">ترجيح تاريخي: أي المستويين لُمس أولاً</string>
     <string name="ft_line">الهبوط إلى %1$s أولاً: %2$d%% · الصعود إلى %3$s أولاً: %4$d%%</string>
     <string name="ft_note">من %1$d حالة مشابهة (نفس المسافة إلى مستويين) خلال %2$d يوماً، في غضون %3$d ساعة. يعكس أساساً أي المستويين أقرب؛ تاريخ وليس تنبؤاً معتمداً.</string>
+    <string name="touch_open">احتمال الوصول</string>
+    <string name="touch_title">احتمال الوصول · %1$s</string>
+    <string name="touch_h4">4 ساعات</string>
+    <string name="touch_h24">24 ساعة</string>
+    <string name="touch_h120">أسبوع</string>
+    <string name="touch_now">السعر الآن %1$s</string>
+    <string name="touch_usual">المعتاد لهذه المسافة %1$d%%</string>
+    <string name="touch_out_of_range">خارج نطاق ما اختُبر</string>
+    <string name="touch_custom">اكتب سعراً</string>
+    <string name="touch_custom_row">سعرك</string>
+    <string name="touch_unavailable">غير متاح لهذا الأصل حالياً.</string>
+    <string name="touch_not_validated">هذا الأفق لم يجتز فحص هذا الأسبوع لهذا الأصل.</string>
+    <string name="touch_weak">نجح في الاختبار لكن دقته ضعيفة في آخر سنتين.</string>
+    <string name="touch_note">احتمال أن يلمس السعر المستوى خلال المدة المختارة. يعتمد على المسافة وقوة الحركة المتوقعة، ولا يعرف الاتجاه. اختُبر خارج العينة ويُعاد فحصه أسبوعياً، ويختفي إذا توقف عن النجاح. ليس توصية.</string>
     <string name="r_w_up" formatted="false">صاعد</string>
     <string name="r_w_down" formatted="false">هابط</string>
     <string name="r_w_neutral" formatted="false">محايد</string>
