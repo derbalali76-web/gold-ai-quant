@@ -214,6 +214,18 @@ def _model():
     return make_pipeline(StandardScaler(), LogisticRegression(C=0.5, max_iter=500))
 
 
+def _auc(y: np.ndarray, s: np.ndarray) -> float:
+    """ROC AUC as the Mann-Whitney statistic with average ranks for ties: the same number as sklearn's
+    roc_auc_score for binary labels, without its per-call input checks (the bootstrap calls it 300 times, which on the
+    free server's 0.1 CPU took most of a minute per asset)."""
+    from scipy.stats import rankdata
+    y = np.asarray(y).astype(bool)
+    n1 = int(y.sum())
+    n0 = len(y) - n1
+    r = rankdata(np.asarray(s, dtype=float))
+    return float((r[y].sum() - n1 * (n1 + 1) / 2) / (n1 * n0))
+
+
 def validate(ev: pd.DataFrame, n_folds: int = 5, seed: int = 0) -> dict:
     """Purged walk-forward: every fold trains only on events whose label was known before the fold starts."""
     if len(ev) < MIN_EVENTS or ev["hold"].nunique() < 2:
@@ -249,7 +261,7 @@ def validate(ev: pd.DataFrame, n_folds: int = 5, seed: int = 0) -> dict:
     for _ in range(300):
         i = np.concatenate([groups[g] for g in rng.integers(0, len(groups), len(groups))])
         if len(np.unique(y[i])) == 2:
-            boots.append(roc_auc_score(y[i], p[i]))
+            boots.append(_auc(y[i], p[i]))
     lo, hi = float(np.percentile(boots, 2.5)), float(np.percentile(boots, 97.5))
     ok = len(y) >= MIN_EVENTS and lo > 0.5 and auc > auc_b and auc >= MIN_USEFUL_AUC
     cal = probability_calibration(p, y, np.concatenate(brs), groups, rng)
