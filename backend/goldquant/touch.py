@@ -199,7 +199,41 @@ def export(h1: pd.DataFrame, horizon: int) -> Optional[dict]:
     if m is None:
         return None
     sc, lr, iso = m
+    base = s.groupby(["side", "d"])["y"].mean()
     return {"features": list(FEATURES), "mean": sc.mean_.tolist(), "scale": sc.scale_.tolist(),
             "coef": lr.coef_[0].tolist(), "intercept": float(lr.intercept_[0]),
             "iso_x": iso.X_thresholds_.tolist(), "iso_y": iso.y_thresholds_.tolist(),
-            "dist_range": [min(DIST[horizon]), max(DIST[horizon])]}
+            "dist_range": [min(DIST[horizon]), max(DIST[horizon])],
+            "base": {str(int(sd)): {str(d): round(float(base[(sd, d)]), 4) for d in DIST[horizon]} for sd in (1.0, -1.0)}}
+
+
+def live(params: dict, h1: pd.DataFrame, price: float, now_price: float) -> Optional[dict]:
+    """P(touch `price` within the horizon) from now. None outside the tested distance range or without data.
+    Features come from the last CLOSED hourly bar; the distance is measured from the current price."""
+    if not params or h1 is None or len(h1) < 300 or not (now_price > 0) or price == now_price:
+        return None
+    f = origin_features(h1.dropna(subset=["open", "high", "low", "close"])).iloc[-1]
+    atr = float(f["atr"])
+    if not np.isfinite(atr) or atr <= 0:
+        return None
+    side = 1.0 if price > now_price else -1.0
+    d = abs(price - now_price) / atr
+    lo, hi = params["dist_range"]
+    if d < lo or d > hi:
+        return {"status": "OUT_OF_RANGE", "price": round(price, 6), "side": int(side), "d": round(d, 2)}
+    row = {"ld": np.log(d), "ld2": np.log(d) ** 2, "side": side, "s_r24": side * f["r24"], "s_r120": side * f["r120"]}
+    for k in ("rv4", "rv24", "rv168", "atrz", "hsin", "hcos", "wkend"):
+        row[k] = f[k]
+    x = np.array([row[k] for k in params["features"]], float)
+    if not np.isfinite(x).all():
+        return None
+    z = (x - np.asarray(params["mean"])) / np.asarray(params["scale"])
+    p = 1 / (1 + np.exp(-(float(z @ np.asarray(params["coef"])) + params["intercept"])))
+    p = float(np.interp(p, params["iso_x"], params["iso_y"]))
+    usual = None
+    b = (params.get("base") or {}).get(str(int(side)))
+    if b:
+        pts = sorted((float(k), float(v)) for k, v in b.items())
+        usual = float(np.interp(np.log(d), [np.log(k) for k, _ in pts], [v for _, v in pts]))
+    return {"status": "OK", "price": round(price, 6), "side": int(side), "d": round(d, 2),
+            "probability": round(p, 3), "usual": None if usual is None else round(usual, 3)}

@@ -746,6 +746,11 @@ def _macro_since(macro: dict):
 
 
 def research(hs: HistoryStore) -> None:
+    try:  # weekly re-validation of the touch-probability engine: a failing asset-horizon disappears from the app
+        MODELS.mkdir(parents=True, exist_ok=True)
+        touch_models(hs)
+    except Exception as exc:  # noqa: BLE001 — never block the rest of the weekly research
+        print("touch re-validation failed:", exc, flush=True)
     from goldquant import setups
     from goldquant.precision import promotion as PR
     from goldquant.precision.feature_upgrade import compare

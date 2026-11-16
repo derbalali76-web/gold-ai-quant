@@ -42,3 +42,31 @@ def test_block_bootstrap_uses_real_blocks_whatever_the_index_unit():
     t = pd.DatetimeIndex(_h1(200)["close"].index)
     blk = pd.Timedelta(hours=24).value
     assert len(np.unique(t.as_unit("ns").asi8 // blk)) >= 8  # 200 hours = 9 days
+
+
+def test_export_and_live_prediction():
+    df = _h1(14000)  # > 12 months: the isotonic step is fitted on the last 12 months
+    prm = TO.export(df, 24)
+    assert prm["base"]["1"] and prm["base"]["-1"]
+    q = float(df["close"].iloc[-1])
+    atr = float(TO.origin_features(df)["atr"].iloc[-1])
+    r = TO.live(prm, df, q + 3 * atr, q)
+    assert r["status"] == "OK" and 0 < r["probability"] < 1 and 0 < r["usual"] < 1 and r["side"] == 1
+    far = TO.live(prm, df, q - 50 * atr, q)
+    assert far["status"] == "OUT_OF_RANGE"
+    near = TO.live(prm, df, q + 1.5 * atr, q)
+    farther = TO.live(prm, df, q + 6 * atr, q)
+    assert near["probability"] > farther["probability"]  # closer levels are reached more often
+
+
+def test_touch_endpoint_only_serves_qualified_models(tmp_path, monkeypatch):
+    import json
+    from fastapi.testclient import TestClient
+    from goldquant.api import create_app
+    c = TestClient(create_app(":memory:"))
+    r = c.get("/touch", params={"asset": "XAU", "prices": "abc"})
+    assert r.status_code == 422
+    r = c.get("/touch", params={"asset": "XAU", "prices": "1000,99999"}).json()
+    assert set(r) >= {"asset", "available", "horizons"}
+    for h, v in r["horizons"].items():  # whatever the committed file says, only qualified horizons appear
+        assert "results" in v and "weak" in v

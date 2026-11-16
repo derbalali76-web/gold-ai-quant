@@ -562,6 +562,57 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
         bars_cache[key] = (time.time(), out)
         return out
 
+    touch_state = {"mtime": None, "data": {}}
+
+    @app.get("/touch", dependencies=[Depends(auth)])
+    def touch_endpoint(asset: str = Query("XAU"), prices: str = Query(..., max_length=200)):
+        """P(the price touches each level within 4 h / 24 h / 1 week), only for asset-horizons that passed the
+        pre-registered weekly validation (goldquant/touch.py). Not a direction; never a recommendation."""
+        from . import touch as TO
+        a = asset.upper()
+        try:
+            want = [float(x) for x in prices.split(",") if x.strip()][:8]
+        except ValueError:
+            raise HTTPException(422, "prices must be numbers")
+        if not want or any(not (x > 0) for x in want):
+            raise HTTPException(422, "prices must be positive")
+        p = next((b / "touch_models.json" for b in (repo_dir / "models", st.data_dir)
+                  if (b / "touch_models.json").exists()), None)
+        if p is None:
+            return {"asset": a, "available": False, "horizons": {}}
+        mt = p.stat().st_mtime
+        if touch_state["mtime"] != mt:
+            import json as _json
+            touch_state["data"] = _json.loads(p.read_text(encoding="utf-8")).get("assets", {})
+            touch_state["mtime"] = mt
+        models = touch_state["data"].get(a) or {}
+        now = utcnow()
+        if a == "XAU":
+            prov = live_provider if live_provider is not None else demo
+            b = prov.bars("H1", now, 1000)
+            h1 = b.df if b is not None else None
+            lq = live_cache["d"].quote if live_provider is not None and live_cache["d"] is not None else None
+            q = lq if lq else (float(h1["close"].iloc[-1]) if h1 is not None and len(h1) else None)
+        else:
+            from . import crypto_engine as CE
+            from .levels import LevelService
+            if a not in CE.ASSETS:
+                raise HTTPException(422, "asset must be XAU, BTC, ETH or SOL")
+            if crypto_state["feed"] is None:
+                crypto_state["feed"], crypto_state["levels"] = CE.CryptoFeed(), LevelService()
+            h1 = crypto_state["feed"].bars(CE.ASSETS[a], "H1", now, 1000)
+            q = float(h1["close"].iloc[-1]) if h1 is not None and len(h1) else None
+        out = {}
+        for h, x in models.items():
+            rep, prm = x.get("report") or {}, x.get("model")
+            if not rep.get("qualified") or not prm:
+                continue
+            res = [r for r in (TO.live(prm, h1, v, float(q or 0)) for v in want) if r is not None]
+            out[h] = {"results": res, "weak": bool((rep.get("holdout_skill") or 0) < 0.005),
+                      "skill": rep.get("skill"), "holdout_skill": rep.get("holdout_skill")}
+        return {"asset": a, "available": bool(out), "price": None if q is None else round(float(q), 6),
+                "horizons": out}
+
     @app.get("/calendar", dependencies=[Depends(auth)])
     def calendar_endpoint():
         """Economic calendar for the in-app screen: state, last successful update, events -12 h .. +7 days."""
