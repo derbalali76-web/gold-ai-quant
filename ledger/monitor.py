@@ -3,7 +3,7 @@
 
 Writes monitor.json (current status per asset) and prints ALERT lines; the workflow opens one GitHub issue
 "AI QUANT alert" while something is wrong (the repository owner gets it by e-mail) and closes it when all is well.
-Checks per asset: snapshot reachable, analysis fresh (gold: only while the market is open), data-quality gate.
+Checks per asset: snapshot reachable (alerted when unreachable in two runs in a row), analysis fresh (gold: only while the market is open), data-quality gate.
 Record checks (since 2026-11-16): an issue time of the live high / low validation or of a price range missed in the
 last 24 h (it can never be recorded later), a problem of the independent issuer (issue.py), or a disagreement between
 the issuer and the server on the same issue (crosscheck.json).
@@ -83,6 +83,11 @@ def main(argv: list[str]) -> int:
     files = argv
     now = datetime.now(timezone.utc)
     status, alerts = {}, []
+    root = Path(__file__).resolve().parent
+    try:  # the previous run's status: one slow answer from the free server is not an outage
+        before = json.loads((root / "monitor.json").read_text(encoding="utf-8")).get("assets", {})
+    except Exception:  # noqa: BLE001
+        before = {}
     for f in files:
         asset = Path(f).stem.split("_")[-1]
         try:
@@ -90,9 +95,9 @@ def main(argv: list[str]) -> int:
         except Exception:  # noqa: BLE001
             snap = {}
         a = check(asset, snap, now)
-        alerts += a
         status[asset] = {"ok": not a, "problems": a, "as_of": snap.get("as_of"), "health": snap.get("health")}
-    root = Path(__file__).resolve().parent
+        prev = (before.get(asset) or {}).get("problems") or []
+        alerts += [x for x in a if "unreachable" not in x or x in prev]  # unreachable twice in a row -> alert
     rec = record_checks(root, issuer_log)
     alerts += rec
     (root / "monitor.json").write_text(json.dumps({"checked_at": now.isoformat(timespec="seconds"),

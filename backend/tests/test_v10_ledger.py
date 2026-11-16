@@ -393,3 +393,20 @@ def test_monitor_alerts_on_missed_issue_and_issuer_problem(tmp_path):
     out = M.record_checks(tmp_path, str(log))
     assert any("HILO BTC 4h missed 1" in a for a in out) and any("independent issuer: ETH: timeout" in a for a in out)
     assert not any("RANGE ETH 4h" in a for a in out)
+
+
+def test_monitor_needs_two_unreachable_runs_before_alerting(tmp_path, monkeypatch):
+    import shutil
+    for f in ("monitor.py",):
+        shutil.copy(ROOT / "ledger" / f, tmp_path / f)
+    spec_m = importlib.util.spec_from_file_location("monitor_tmp", tmp_path / "monitor.py")
+    M = importlib.util.module_from_spec(spec_m)
+    spec_m.loader.exec_module(M)
+    (tmp_path / "snap_ETH.json").write_text("{}", encoding="utf-8")
+    out = []
+    monkeypatch.setattr("builtins.print", lambda *a, **k: out.append(" ".join(map(str, a))))
+    M.main([str(tmp_path / "snap_ETH.json")])
+    assert not [x for x in out if x.startswith("ALERT")]  # first miss: recorded in monitor.json, no e-mail
+    assert json.loads((tmp_path / "monitor.json").read_text())["assets"]["ETH"]["problems"]
+    M.main([str(tmp_path / "snap_ETH.json")])
+    assert [x for x in out if x.startswith("ALERT ETH: server unreachable")]
