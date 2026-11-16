@@ -45,7 +45,7 @@ jobs:
           cat files.txt
           [ -s files.txt ] || exit 0
           xargs git add < files.txt
-          git commit -m "data: backfill ${{ matrix.symbols || 'all' }} ${{ matrix.first }}..${{ matrix.last }}"
+          git commit -m "data: backfill ${{ matrix.symbols || 'all' }} ${{ matrix.first }}..${{ matrix.last }} [skip render]"
           git stash --include-untracked -q || true
           for i in 1 2 3 4 5 6 7 8; do
             # our commit only touches this chunk's months: on a conflict keep our (freshly fetched) version

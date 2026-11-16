@@ -326,3 +326,70 @@ def test_hilo_recorded_every_4h_then_scored_with_both_baselines(tmp_path):
     st = L.stats(led.entries, now)["hilo"]["BTC"]["4h"]
     assert st["settled"] == 1 and st["m"]["inside"] == 1.0 and st["b2"]["inside"] == 0.0
     assert L.Ledger(tmp_path).verify() == []
+
+
+# ---------------------------------------------------------------- completeness, provenance, cross-check (2026-11-16)
+def _hilo_snap(now, issued, src=None, up=110.0):
+    s = {"as_of": L.iso(now), "asset": "BTC", "price": None, "bars": {"H1": [], "D1": []}, "ranges": [],
+         "hilo": [{"horizon": "4h", "bars": 4, "issued_at": L.iso(issued), "close_at_issue": 100.0,
+                   "version": "hilo-har-0.1.0", "params_sha": "abc", "m_lower": 95.0, "m_upper": up,
+                   "b1_lower": 96.0, "b1_upper": 104.0, "b2_lower": 97.0, "b2_upper": 103.0}]}
+    if src:
+        s["source"] = src
+    return s
+
+
+def test_completeness_counts_missed_issue_times():
+    start = L.LIVE_START
+    now = start + timedelta(hours=9, minutes=20)  # slots 20:00, 00:00, 04:00 are past their recording window
+    e = {"kind": "HILO", "data": {"asset": "BTC", "horizon": "4h", "issued_at": L.iso(start), "source": "ledger-action"}}
+    c = L.completeness([e], now)["cases"]
+    assert c["HILO BTC 4h"] == {"expected": 3, "recorded": 1, "rate": 0.3333, "missed_24h": 2,
+                                "by_source": {"ledger-action": 1},
+                                "missed_last": [L.iso(start + timedelta(hours=4)), L.iso(start + timedelta(hours=8))]}
+    assert c["RANGE BTC 24h"]["expected"] == 1 and c["RANGE BTC 1w"]["expected"] == 0
+
+
+def test_gold_slots_only_when_the_market_was_open():
+    sat = datetime(2026, 11, 21, 0, tzinfo=timezone.utc)  # Friday 19:00 New York: closed
+    mon = datetime(2026, 11, 23, 0, tzinfo=timezone.utc)  # Sunday 19:00 New York: open
+    slots = L.expected_slots("RANGE", "XAU", "24h", mon + timedelta(hours=2), start=sat - timedelta(days=1))
+    assert sat not in slots and mon in slots and sat - timedelta(days=1) in slots
+
+
+def test_first_recorded_issue_stands_and_disagreement_is_reported(tmp_path):
+    led = L.Ledger(tmp_path)
+    issued = datetime(2026, 11, 16, 20, tzinfo=timezone.utc)
+    led.ingest(_hilo_snap(issued + timedelta(minutes=3), issued, "ledger-action"), issued + timedelta(minutes=3))
+    led.ingest(_hilo_snap(issued + timedelta(minutes=9), issued, None, up=112.0), issued + timedelta(minutes=9))
+    hl = [e for e in led.entries if e["kind"] == "HILO"]
+    assert len(hl) == 1 and hl[0]["data"]["source"] == "ledger-action" and hl[0]["data"]["params_sha"] == "abc"
+    assert hl[0]["data"]["m_upper"] == 110.0
+    assert len(led.checks) == 1 and not led.checks[0]["agree"] and led.checks[0]["other"] == "server"
+    led.ingest(_hilo_snap(issued + timedelta(minutes=12), issued, None), issued + timedelta(minutes=12))
+    assert led.checks[-1]["agree"] and led.checks[-1]["max_rel_diff"] == 0.0
+    assert led.verify() == []
+
+
+def test_server_issue_recorded_when_the_issuer_failed(tmp_path):
+    led = L.Ledger(tmp_path)
+    issued = datetime(2026, 11, 16, 20, tzinfo=timezone.utc)
+    led.ingest(_hilo_snap(issued + timedelta(minutes=50), issued), issued + timedelta(minutes=50))
+    assert [e["data"]["source"] for e in led.entries if e["kind"] == "HILO"] == ["server"]
+    led2 = L.Ledger(tmp_path / "late")
+    led2.ingest(_hilo_snap(issued + timedelta(minutes=80), issued), issued + timedelta(minutes=80))  # too late
+    assert not [e for e in led2.entries if e["kind"] == "HILO"]
+
+
+def test_monitor_alerts_on_missed_issue_and_issuer_problem(tmp_path):
+    spec_m = importlib.util.spec_from_file_location("monitor", ROOT / "ledger" / "monitor.py")
+    M = importlib.util.module_from_spec(spec_m)
+    spec_m.loader.exec_module(M)
+    (tmp_path / "stats.json").write_text(json.dumps({"completeness": {"cases": {
+        "HILO BTC 4h": {"expected": 6, "recorded": 5, "missed_24h": 1},
+        "RANGE ETH 4h": {"expected": 6, "recorded": 6, "missed_24h": 0}}}}), encoding="utf-8")
+    log = tmp_path / "issuer.txt"
+    log.write_text("BTC: 999 hourly bars\nISSUER-PROBLEM ETH: timeout\n", encoding="utf-8")
+    out = M.record_checks(tmp_path, str(log))
+    assert any("HILO BTC 4h missed 1" in a for a in out) and any("independent issuer: ETH: timeout" in a for a in out)
+    assert not any("RANGE ETH 4h" in a for a in out)

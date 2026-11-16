@@ -7,6 +7,13 @@ services:
     dockerfilePath: ./Dockerfile
     healthCheckPath: /health
     autoDeploy: true
+    # rebuild only when the server code changes: data / models arrive through the hourly repository sync, and every
+    # rebuild restarts the free instance and spends the monthly build minutes (bot data commits also carry [skip render])
+    buildFilter:
+      paths:
+        - backend/goldquant/**
+        - backend/requirements.txt
+        - Dockerfile
     envVars:
       - key: TWELVEDATA_API_KEY
         sync: false          # paste your free key in the Render dashboard

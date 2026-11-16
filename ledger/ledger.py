@@ -43,6 +43,7 @@ HILO_CASES = {"BTC": ("4h", "24h"), "ETH": ("4h", "24h")}  # live validation of 
 RANGE_FRESH = timedelta(minutes=75)  # a range is recorded only within this time of its issue (the hourly run)
 RANGE_CADENCE = {"4h": lambda t: t.hour % 4 == 0, "24h": lambda t: t.hour == 0,
                  "1w": lambda t: t.weekday() == 0 and t.hour == 0}
+CROSS_TOL = 0.002  # two independent computations of the same issue agree within 0.2 % (parameters of the same week)
 MAX_SNAPSHOT_AGE = timedelta(minutes=20)  # rule 2 (2026-11-15); was 2 h: entry must be tradable at recording
 
 
@@ -89,6 +90,7 @@ class Ledger:
             for raw in self.path.read_text(encoding="utf-8").splitlines():
                 if raw.strip():
                     self.entries.append(json.loads(raw))
+        self.checks: list[dict] = []  # cross-checks of this run (ledger-action vs server), not part of the chain
         self.bars = {}  # (asset, tf) -> {iso: row}
         for a in ASSETS:
             for tf in TF_MIN:
@@ -235,15 +237,19 @@ class Ledger:
             if h not in RANGE_CADENCE or not issued or r.get("low") is None or r.get("high") is None:
                 continue
             t = ts(issued)
-            if not (timedelta(0) <= now - t <= RANGE_FRESH) or not RANGE_CADENCE[h](t) or (asset, h, iso(t)) in have:
+            if (asset, h, iso(t)) in have:
+                self._crosscheck("RANGE", asset, h, iso(t), snap, r, ("low", "high"))
+                continue
+            if not (timedelta(0) <= now - t <= RANGE_FRESH) or not RANGE_CADENCE[h](t):
                 continue
             if not float(r["low"]) < float(r["close_at_issue"]) < float(r["high"]):
                 continue
-            self.append("RANGE", {"fid": forecast_id(asset, "RANGE", h, iso(t), r.get("version")), "asset": asset,
-                                  "horizon": h, "bars": int(r["bars"]), "issued_at": iso(t),
-                                  "close_at_issue": float(r["close_at_issue"]), "low": float(r["low"]),
-                                  "high": float(r["high"]), "version": r.get("version"),
-                                  "qualified": bool(r.get("qualified")), "experimental": True}, now)
+            self.append("RANGE", dict({"fid": forecast_id(asset, "RANGE", h, iso(t), r.get("version")), "asset": asset,
+                                       "horizon": h, "bars": int(r["bars"]), "issued_at": iso(t),
+                                       "close_at_issue": float(r["close_at_issue"]), "low": float(r["low"]),
+                                       "high": float(r["high"]), "version": r.get("version"),
+                                       "qualified": bool(r.get("qualified")), "experimental": True},
+                                      **provenance(snap, r)), now)
 
     def _record_hilo(self, snap, now, asset="XAU"):
         """High / low bounds, live validation (pre-registered in backend goldquant/hilo.py LIVE_PREREG): BTC / ETH,
@@ -256,7 +262,10 @@ class Ledger:
             if h not in HILO_CASES[asset] or not issued:
                 continue
             t = ts(issued)
-            if not (timedelta(0) <= now - t <= RANGE_FRESH) or t.hour % 4 or (asset, h, iso(t)) in have:
+            if (asset, h, iso(t)) in have:
+                self._crosscheck("HILO", asset, h, iso(t), snap, r, ("m_lower", "m_upper", "b2_lower", "b2_upper"))
+                continue
+            if not (timedelta(0) <= now - t <= RANGE_FRESH) or t.hour % 4:
                 continue
             c = float(r["close_at_issue"])
             keys = [f"{k}_{s}" for k in ("m", "b1", "b2") for s in ("lower", "upper")]
@@ -267,7 +276,21 @@ class Ledger:
                                       "horizon": h, "bars": int(r["bars"]), "issued_at": iso(t),
                                       "expires_at": iso(t + timedelta(hours=int(r["bars"]))), "close_at_issue": c,
                                       "version": r.get("version"), "experimental": True},
-                                     **{k: float(r[k]) for k in keys}), now)
+                                     **{k: float(r[k]) for k in keys}, **provenance(snap, r)), now)
+
+    def _crosscheck(self, kind, asset, h, issued, snap, r, keys):
+        """The same issue already recorded from the other source: compare (never overwrite). Kept for the monitor."""
+        e = next((x for x in reversed(self.entries) if x["kind"] == kind and asset_of(x) == asset
+                  and x["data"]["horizon"] == h and x["data"]["issued_at"] == issued), None)
+        src = snap.get("source") or "server"
+        if e is None or e["data"].get("source", "server") == src:
+            return
+        try:
+            diff = max(abs(float(r[k]) / float(e["data"][k]) - 1) for k in keys)
+        except (KeyError, TypeError, ValueError, ZeroDivisionError):
+            return
+        self.checks.append({"kind": kind, "asset": asset, "horizon": h, "issued_at": issued, "recorded": e["data"].get(
+            "source", "server"), "other": src, "max_rel_diff": round(diff, 8), "agree": diff <= CROSS_TOL})
 
     def _resolve_hilo(self, now):
         for e in self.open_items("HILO"):
@@ -342,6 +365,15 @@ class Ledger:
                 outcome = "NOT_SCORED"
             self.append("BRIEF_RESULT", {"ref": e["seq"], "outcome": outcome, "close": close,
                                          "baseline_up_correct": close > p}, now)
+
+
+def provenance(snap: dict, r: dict) -> dict:
+    """Who computed an issue (the ledger workflow itself or the app server) and from which published parameters."""
+    out = {"source": snap.get("source") or "server"}
+    for k in ("params_sha", "trained_until"):
+        if r.get(k):
+            out[k] = str(r[k])
+    return out
 
 
 def forecast_id(asset: str, kind: str, key: str, source_as_of: str, model: Optional[str]) -> str:
@@ -603,6 +635,54 @@ def range_stats(entries: list[dict]) -> dict:
     return out
 
 
+LIVE_START = datetime(2026, 11, 16, 20, tzinfo=timezone.utc)  # first issue time with the independent issuer
+RANGE_HORIZONS = {"XAU": ("4h", "24h", "1w"), "BTC": ("4h", "24h", "1w"), "ETH": ("4h", "24h", "1w"),
+                  "SOL": ("4h", "24h", "1w")}
+
+
+def gold_open(t: datetime) -> bool:
+    """Spot gold trades Sun 18:00 -> Fri 17:00 New York time with a daily break 17:00-18:00 (DST-aware)."""
+    n = t.astimezone(NY)
+    d, h = n.weekday(), n.hour
+    return not (d == 5 or (d == 4 and h >= 17) or (d == 6 and h < 18) or h == 17)
+
+
+def expected_slots(kind: str, asset: str, h: str, now: datetime, start: datetime = LIVE_START) -> list[datetime]:
+    """Issue times that SHOULD have a line by now (the recording window of RANGE_FRESH has passed)."""
+    out, t = [], start
+    while t <= now - RANGE_FRESH:
+        due = (t.hour % 4 == 0) if kind == "HILO" else RANGE_CADENCE[h](t)
+        if due and (asset != "XAU" or gold_open(t - timedelta(minutes=30))):
+            out.append(t)
+        t += timedelta(hours=1)
+    return out
+
+
+def completeness(entries: list[dict], now: datetime) -> dict:
+    """Recorded vs expected issues per case (derived). A missed issue can never be recorded later, so this is part of
+    every verdict: a sample with holes is reported with its completeness, never silently."""
+    have: dict = {}
+    for e in entries:
+        if e["kind"] in ("HILO", "RANGE"):
+            have.setdefault((e["kind"], asset_of(e), e["data"]["horizon"]), {})[e["data"]["issued_at"]] = \
+                e["data"].get("source", "server")
+    cases = [("HILO", a, h) for a, hs in HILO_CASES.items() for h in hs]
+    cases += [("RANGE", a, h) for a, hs in RANGE_HORIZONS.items() for h in hs]
+    out = {"since": iso(LIVE_START), "cases": {}}
+    for kind, a, h in cases:
+        exp = expected_slots(kind, a, h, now)
+        got = have.get((kind, a, h), {})
+        missed = [iso(t) for t in exp if iso(t) not in got]
+        day = [t for t in exp if t > now - timedelta(hours=24)]
+        out["cases"][f"{kind} {a} {h}"] = {
+            "expected": len(exp), "recorded": len(exp) - len(missed),
+            "rate": round((len(exp) - len(missed)) / len(exp), 4) if exp else None,
+            "missed_24h": sum(1 for t in day if iso(t) not in got),
+            "by_source": {s: sum(1 for v in got.values() if v == s) for s in sorted(set(got.values()))},
+            "missed_last": missed[-5:]}
+    return out
+
+
 def brief_rows(entries: list[dict]) -> list[dict]:
     """One row per recorded daily bias, newest first, for the app's results page. Derived only (the ledger lines are
     never changed): outcome is the recorded BRIEF_RESULT (CORRECT / WRONG / NOT_SCORED / NO_DATA) or PENDING."""
@@ -627,6 +707,7 @@ def stats(entries: list[dict], now: datetime) -> dict:
     out["briefs"] = brief_rows(entries)
     out["ranges"] = range_stats(entries)
     out["hilo"] = hilo_stats(entries)
+    out["completeness"] = completeness(entries, now)
     out["assets"] = {a: _stats(entries, now, a) for a in ASSETS}
     for v in out["assets"].values():
         for k in ("chain_head", "lines", "schema", "updated_at"):
@@ -702,6 +783,18 @@ def write_stats(led: Ledger, now: datetime) -> dict:
     return s
 
 
+def write_checks(led: Ledger, now: datetime, keep: int = 300) -> None:
+    """Operational cross-checks (ledger-action vs server on the same issue). Not part of the chain or of stats."""
+    p = led.root / "crosscheck.json"
+    try:
+        old = json.loads(p.read_text(encoding="utf-8")) if p.exists() else []
+    except ValueError:
+        old = []
+    new = [dict(c, run=iso(now)) for c in led.checks]
+    if new:
+        p.write_text(json.dumps((old + new)[-keep:], indent=0), encoding="utf-8")
+
+
 def main(argv):
     root = Path(__file__).resolve().parent
     now = datetime.now(timezone.utc)
@@ -731,6 +824,10 @@ def main(argv):
         led._resolve(now)
         led.save_bars()
         write_stats(led, now)
+        write_checks(led, now)
+        for c in led.checks:
+            print("CROSSCHECK", "agree" if c["agree"] else "DISAGREE", c["kind"], c["asset"], c["horizon"],
+                  c["issued_at"], c["max_rel_diff"])
         print(f"{n} new lines; head {led.head()[:16]}…")
         return 0
     print("usage: ledger.py update SNAPSHOT.json [SNAPSHOT2.json ...] | ledger.py verify")

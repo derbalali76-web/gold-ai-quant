@@ -59,3 +59,37 @@ def test_range_endpoint_shape_and_validation():
     assert set(r) >= {"asset", "available", "display", "horizons"}
     for h, v in r["horizons"].items():  # only qualified horizons, each with an interval around the issue close
         assert h in ("4h", "24h") and v["low"] < v["high"]
+
+
+def test_due_slot_is_the_latest_recordable_issue_time():
+    ts = pd.Timestamp
+    assert PR.due_slot(ts("2026-11-17T00:00:10Z")) == ts("2026-11-17T00:00Z")
+    assert PR.due_slot(ts("2026-11-17T01:05Z")) == ts("2026-11-17T00:00Z")  # the 00:00 run was missed: still open
+    assert PR.due_slot(ts("2026-11-17T01:16Z")) is None  # 76 minutes: closed
+    assert PR.due_slot(ts("2026-11-17T03:00Z")) is None
+    assert PR.due_slot(ts("2026-11-17T20:59Z")) == ts("2026-11-17T20:00Z")
+
+
+def test_late_issue_uses_only_bars_closed_at_the_issue_time():
+    h1 = _h1()
+    p = PR.export(h1, "crypto", "4h")
+    slot = h1.index[-3] + pd.Timedelta(hours=1)
+    on_time = PR.live(p, h1.iloc[:-2], now=slot)
+    late = PR.live(p, h1, now=slot)  # later bars exist but are not used
+    assert on_time == late and pd.Timestamp(late["issued_at"]) == slot
+
+
+def test_snapshot_adds_the_missed_issue_time_only_with_older_parameters():
+    h1 = _h1()
+    p = PR.export(h1, "crypto", "4h")
+    while (h1.index[-1] + pd.Timedelta(hours=1)).hour % 4 != 1:  # latest bar closes one hour after an issue time
+        h1 = h1.iloc[:-1]
+    last_close = h1.index[-1] + pd.Timedelta(hours=1)
+    slot, now = last_close - pd.Timedelta(hours=1), last_close + pd.Timedelta(minutes=2)
+    assert PR.due_slot(now) == slot
+    compute = lambda t: [r for r in [PR.live(p, h1, pd.Timestamp(t))] if r]  # noqa: E731
+    both = PR.with_due_slot(now, compute, slot - pd.Timedelta(days=2))
+    assert [pd.Timestamp(r["issued_at"]) for r in both] == [last_close, slot]
+    assert both[1] == PR.live(p, h1.iloc[:-1], slot)  # exactly the on-time computation
+    assert len(PR.with_due_slot(now, compute, slot + pd.Timedelta(minutes=1))) == 1  # newer parameters: not used
+    assert len(PR.with_due_slot(now, compute, None)) == 1

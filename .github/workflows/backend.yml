@@ -1,7 +1,7 @@
 name: backend-tests
 on:
   push:
-    paths: ["backend/**", "schema/**", "android/app/src/test/resources/**", ".github/workflows/backend.yml"]
+    paths: ["backend/**", "ledger/**", "models/range_models.json", "models/hilo_models.json", "schema/**", "android/app/src/test/resources/**", ".github/workflows/backend.yml"]
   workflow_dispatch:
 jobs:
   test:

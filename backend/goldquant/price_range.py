@@ -266,6 +266,29 @@ def live(params: dict, h1: pd.DataFrame, now: Optional[pd.Timestamp] = None) -> 
             "lo_pct": round(lo, 4), "hi_pct": round(hi, 4), "version": params["version"]}
 
 
+LEDGER_FRESH = pd.Timedelta(minutes=75)  # the public ledger records an issue only within this time of its issue time
+
+
+def due_slot(now) -> Optional[pd.Timestamp]:
+    """The latest issue time on the ledger's cadence (every 4 h on the hour; the 1-day / 1-week times are among them)
+    whose recording window is still open — or None. Lets a later run record a missed issue time, computed from the
+    bars closed AT that time (identical to an on-time computation)."""
+    t = pd.Timestamp(now).floor("h")
+    t = t - pd.Timedelta(hours=t.hour % 4)
+    return t if pd.Timedelta(0) <= pd.Timestamp(now) - t <= LEDGER_FRESH else None
+
+
+def with_due_slot(now, compute, published) -> list:
+    """compute(now) (the latest closed bar) plus, when the ledger's latest issue time is still recordable and was not
+    the latest bar, compute(issue time) — only with parameters exported (`published`) at or before that issue time."""
+    out = list(compute(now))
+    slot = due_slot(now)
+    if slot is not None and published is not None and pd.Timestamp(published) <= slot \
+            and not any(pd.Timestamp(r["issued_at"]) == slot for r in out):
+        out += [r for r in compute(slot.to_pydatetime()) if pd.Timestamp(r["issued_at"]) == slot]
+    return out
+
+
 def display_horizon(qualified: dict) -> Optional[str]:
     """The strip shows the day horizon when it qualified, else 4 h; None when neither did."""
     for h in ("24h", "4h"):

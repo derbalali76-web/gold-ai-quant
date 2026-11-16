@@ -4,12 +4,19 @@ This repository is the **public, append-only record** of every recommendation th
 gold (XAU/USD) and crypto (BTC, ETH, SOL — each with its own record in `stats.json` → `assets`), written **before** its outcome is known, and of every result — **losses included**.
 
 ## How it works
-- Every hour, `.github/workflows/record.yml` fetches the app server's public snapshot and runs `ledger.py`.
+- Every hour, `.github/workflows/record.yml` runs `issue.py` (independent computation, see below), fetches the app server's public snapshot and runs `ledger.py`.
 - A new validated recommendation becomes a `REC` line with its entry, stop, target, expiry, cost and model version.
 - The day's analysis (bias UP / DOWN / SIDEWAYS) becomes one `BRIEF` line per day, recorded before that day closes.
 - When the price later reaches the stop, the target or the time limit, a `RESULT` / `BRIEF_RESULT` line is appended.
 - Lines are never edited or deleted. Each line contains the SHA-256 of the previous line, so changing any old line
   breaks every hash after it. Each line also sits in a git commit whose time GitHub records independently.
+- **What the chain does not do by itself:** whoever controls this repository could rewrite the whole file and every
+  hash after it. So once a day the current head hash is written to `anchors/YYYY-MM-DD.txt` and timestamped with
+  [OpenTimestamps](https://opentimestamps.org) (anchored in the Bitcoin blockchain, outside GitHub). A rewritten
+  history would no longer match an anchor that already exists. Check an anchor: `pip install opentimestamps-client`
+  then `ots verify anchors/YYYY-MM-DD.txt.ots` (proofs become verifiable a few hours after stamping).
+- Since 2026-11-15 (rule 2) a snapshot is recorded only if it is at most 20 minutes old (was 2 hours): the recorded
+  price must be one that could still be traded at recording time. Older lines keep the rule they were written under.
 
 ## Check it yourself
 ```
@@ -48,3 +55,30 @@ With every daily analysis (`BRIEF`), three `SCENARIO` lines are written **in the
 - Every scenario ends `TRIGGERED` (with its result) or `NOT_TRIGGERED`; both are kept.
 - `stats.json → scenarios` is marked `experimental` and is never mixed with validated recommendations.
 - The user's own position choice stays on their phone; the ledger computes both sides for everyone.
+
+## Price ranges and high / low bounds (experimental, live validation)
+- `RANGE`: an 80 % interval for the **close** 4 h / 1 day / 1 week ahead (backend `goldquant/price_range.py`, pre-registered).
+  Issued on a fixed cadence (4 h: 00/04/08/12/16/20 UTC; 1 day: 00 UTC; 1 week: Monday 00 UTC) and recorded only within
+  75 minutes of its issue time, before any outcome. `RANGE_RESULT` = INSIDE / ABOVE / BELOW from the target bar's close.
+- `HILO`: how far above and below the price is likely to trade within 4 h / 24 h — BTC and ETH only, the four cases
+  that passed the backtest (backend `goldquant/hilo.py`, `LIVE_PREREG`). Each line carries the model bounds **and both
+  baselines** computed at the same moment. `HILO_RESULT` = the actual highest high and lowest low of the next H hourly
+  bars, each side exceeded or not, path inside or not, and the pinball / path scores of the model and the baselines.
+- Nothing here is a recommendation, a target or a stop. The verdict rules are fixed in advance (30 days and 150 settled
+  forecasts per case; day-block bootstrap; Holm across the four cases) and are not changed after seeing results.
+
+## Who computes an issue (since 2026-11-16 20:00 UTC)
+- The free app server sleeps, restarts and is redeployed, and a missed issue time can never be recorded later. So the
+  crypto ranges and the high / low bounds are computed **inside this workflow** by `issue.py` (standard library only):
+  the last 1000 closed hourly bars from Binance's public market-data mirror and the published weekly parameters
+  (`models/range_models.json`, `models/hilo_models.json` in the app repository). Same formulas as the server; the app
+  repository tests that both give identical numbers.
+- The server's snapshot is still read: gold (whose data feed needs the server's key), the daily analysis, and a second
+  computation of the same crypto issues. **The first recorded value stands** and is never overwritten; each line says
+  who computed it (`source`: `ledger-action` or `server`) and from which parameters (`params_sha`, `trained_until`).
+- `crosscheck.json` lists every case where both computed the same issue: they must agree within 0.2 %. A disagreement
+  opens the alert issue.
+- `stats.json → completeness`: expected vs recorded issue times per case since 2026-11-16 20:00 UTC (gold only when the
+  market was open). Every verdict reports it; any missed issue time in the last 24 h opens the alert issue.
+- If a push is rejected because another run pushed first, the run starts again from the fresh head with the same inputs
+  (`record.sh`). Triggers: an external scheduler at :00 every hour, GitHub's own schedule at :17 and :41 as a backup.

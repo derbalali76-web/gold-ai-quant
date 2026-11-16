@@ -810,21 +810,37 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
                 import json as _json
                 hilo_state["data"] = _json.loads(p.read_text(encoding="utf-8")).get("assets", {})
                 hilo_state["mtime"] = mt
-            now = utcnow()
-            h1 = range_h1(a, now)
-            out = []
-            for h in HL.LIVE_CASES[a]:
-                x = (hilo_state["data"].get(a) or {}).get(h) or {}
-                r = HL.live(x.get("params"), h1, pd.Timestamp(now)) if x.get("params") else None
-                if r is not None:
-                    out.append(r)
-            return out
+            def compute(now):
+                h1 = range_h1(a, now)
+                out = []
+                for h in HL.LIVE_CASES[a]:
+                    x = (hilo_state["data"].get(a) or {}).get(h) or {}
+                    r = HL.live(x.get("params"), h1, pd.Timestamp(now)) if x.get("params") else None
+                    if r is not None:
+                        out.append(r)
+                return out
+
+            return with_due_slot("hilo_models.json", utcnow(), compute)
         except Exception:  # noqa: BLE001
             return []
 
+    def models_updated(name: str):
+        p = next((b / name for b in (repo_dir / "models", st.data_dir) if (b / name).exists()), None)
+        try:
+            import json as _json
+            return pd.Timestamp(_json.loads(p.read_text(encoding="utf-8")).get("updated_at")) if p else None
+        except Exception:  # noqa: BLE001
+            return None
+
+    def with_due_slot(name: str, now, compute) -> list:
+        """Latest bar, plus the ledger's latest issue time if it is still recordable and was not the latest bar (a missed
+        hourly ledger run can then still record it) — only with parameters exported before that issue time."""
+        from . import price_range as PRG
+        return PRG.with_due_slot(now, compute, models_updated(name))
+
     def safe_ranges(a: str) -> list:
         try:  # experimental intervals for the public ledger; never a reason for the snapshot to fail
-            return range_all(a, utcnow())
+            return with_due_slot("range_models.json", utcnow(), lambda t: range_all(a, t))
         except Exception:  # noqa: BLE001
             return []
 

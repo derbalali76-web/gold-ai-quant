@@ -50,8 +50,10 @@ jobs:
           git config user.name "gold-ai-quant-bot"
           git config user.email "actions@users.noreply.github.com"
           # add each path separately: one missing path (e.g. reports/ before the first report) must not drop the rest
+          # [skip render]: data and models reach the server through its hourly repository sync, so a data commit must
+          # not rebuild and restart the free server (each restart is minutes offline; builds have a monthly quota)
           for p in market_data models reports; do [ -e "$p" ] && git add "$p"; done
-          git diff --cached --quiet || git commit -m "data: ${{ steps.job.outputs.name }} $(date -u +%FT%TZ)"
+          git diff --cached --quiet || git commit -m "data: ${{ steps.job.outputs.name }} $(date -u +%FT%TZ) [skip render]"
           git push || (git pull --rebase && git push)
       - name: open the weekly report as an issue
         if: ${{ steps.job.outputs.name == 'report' }}
