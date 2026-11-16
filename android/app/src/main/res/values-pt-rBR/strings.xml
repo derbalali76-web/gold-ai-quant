@@ -541,6 +541,24 @@
     <string name="rec_d_note">Isto avalia só a direção do preço, não uma operação. A previsão foi registrada antes do resultado e não pode ser alterada.</string>
     <string name="record_tile">%1$d de %2$d certas</string>
     <string name="record_tile_none">Ainda sem resultados</string>
+    <string name="rng_strip">Faixa de fechamento em %1$s: %2$s – %3$s</string>
+    <string name="rng_h4">4 horas</string>
+    <string name="rng_h24">24 horas</string>
+    <string name="rng_exp">Experimental</string>
+    <string name="rng_event_strip">Evento importante em breve — sem faixa agora</string>
+    <string name="rng_title">Onde o preço pode fechar?</string>
+    <string name="rng_after">Em %1$s, o preço deve fechar entre</string>
+    <string name="rng_between">%1$s e %2$s</string>
+    <string name="rng_now">agora %1$s</string>
+    <string name="rng_note">A faixa descreve o TAMANHO habitual do movimento agora, não a direção. O objetivo é o preço fechar dentro dela 8 de cada 10 vezes.</string>
+    <string name="rng_live">Acompanhamento ao vivo desde o lançamento: dentro da faixa %1$d de %2$d</string>
+    <string name="rng_live_note">Cada faixa é registrada no registro público antes do resultado.</string>
+    <string name="rng_disc">Não é recomendação de compra ou venda, nem alvo ou stop.</string>
+    <string name="rng_event_title">Evento importante em breve: %1$s %2$s</string>
+    <string name="rng_event_body">Os movimentos em torno de grandes eventos são maiores que o normal, por isso a faixa de 4 horas não é mostrada agora.</string>
+    <string name="rng_event_hist">No teste histórico, o preço fechou fora da faixa cerca de 1 em 3 vezes em torno desses eventos.</string>
+    <string name="rng_na">A faixa de %1$s para %2$s não superou o método simples no teste, por isso não é mostrada.</string>
+    <string name="rng_unavailable">A faixa não está disponível agora. Tente em um minuto.</string>
     <string name="r_w_up" formatted="false">de alta</string>
     <string name="r_w_down" formatted="false">de baixa</string>
     <string name="r_w_neutral" formatted="false">neutra</string>

@@ -7,6 +7,9 @@ import java.time.LocalDate
 data class BriefRow(val seq: Int, val asset: String, val date: String, val bias: String, val price: Double?,
                     val outcome: String, val close: Double?, val baselineUp: Boolean?)
 
+/** Live tracking of the experimental ranges (public ledger stats "ranges"): recorded, settled, inside. */
+data class RangeTrack(val recorded: Int, val settled: Int, val inside: Int)
+
 enum class RecStatus { CORRECT, WRONG, NEUTRAL, PENDING, NO_DATA }
 
 data class RecSummary(val correct: Int, val wrong: Int, val neutral: Int, val pending: Int, val baselineUp: Int) {
@@ -29,6 +32,18 @@ object Record {
                 o.optDouble("close").takeIf { !o.isNull("close") && it.isFinite() },
                 if (o.isNull("baseline_up_correct") || !o.has("baseline_up_correct")) null else o.optBoolean("baseline_up_correct"))
         }.sortedWith(compareByDescending<BriefRow> { it.date }.thenByDescending { it.seq })
+    }
+
+    fun rangeTracks(body: String?): Map<String, Map<String, RangeTrack>> {
+        val root = try { JSONObject(body ?: return emptyMap()) } catch (e: Exception) { return emptyMap() }
+        val r = root.optJSONObject("ranges") ?: return emptyMap()
+        return r.keys().asSequence().associateWith { a ->
+            val o = r.optJSONObject(a)
+            o?.keys()?.asSequence()?.associateWith { h ->
+                val b = o.optJSONObject(h)
+                RangeTrack(b?.optInt("recorded") ?: 0, b?.optInt("settled") ?: 0, b?.optInt("inside") ?: 0)
+            } ?: emptyMap()
+        }
     }
 
     /** The ledger's own outcome; a day without an UP/DOWN call is neutral whatever else was recorded. */

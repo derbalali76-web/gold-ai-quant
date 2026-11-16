@@ -18,6 +18,11 @@ data class CalEvent(val time: Instant, val name: String, val importance: Int)
 data class CalendarInfo(val state: String, val updatedAt: Instant?, val events: List<CalEvent>)
 data class LiveTick(val price: Double, val at: Long)
 
+/** Experimental 80 % interval for the CLOSE (price-range engine; qualified horizons only; never a recommendation). */
+data class RangeH(val horizon: String, val low: Double, val high: Double, val closeAtIssue: Double, val issuedAt: String,
+                  val eventName: String?, val eventTime: String?)
+data class RangeInfo(val asset: String, val available: Boolean, val display: String?, val horizons: Map<String, RangeH>)
+
 /** Touch probability (validated per asset and horizon; never a direction or a recommendation). */
 data class TouchResult(val price: Double, val side: Int, val status: String, val probability: Double?, val usual: Double?)
 data class TouchHorizon(val results: List<TouchResult>, val weak: Boolean)
@@ -67,6 +72,22 @@ object MarketParser {
             if (o.has("price") && !o.isNull("price")) o.getDouble("price") else null, map)
     } catch (e: Exception) { null }
 
+    fun range(body: String): RangeInfo? = try {
+        val o = JSONObject(body)
+        val hz = o.optJSONObject("horizons")
+        val map = mutableMapOf<String, RangeH>()
+        hz?.keys()?.forEach { k ->
+            val h = hz.getJSONObject(k)
+            val lo = h.getDouble("low"); val hi = h.getDouble("high")
+            if (!(lo < hi) || !lo.isFinite() || !hi.isFinite()) return@forEach
+            val ev = h.optJSONObject("event")
+            map[k] = RangeH(k, lo, hi, h.optDouble("close_at_issue"), h.optString("issued_at"),
+                ev?.optString("name")?.takeIf { it.isNotBlank() }, ev?.optString("time_utc")?.takeIf { it.isNotBlank() })
+        }
+        val disp = o.optString("display").takeIf { !o.isNull("display") && it in map }
+        RangeInfo(o.optString("asset"), o.optBoolean("available", false) && map.isNotEmpty(), disp, map)
+    } catch (e: Exception) { null }
+
     /** Binance public ticker: {"symbol":"BTCUSDT","price":"91234.5"} */
     fun tickerPrice(body: String): Double? = try {
         JSONObject(body).getString("price").toDouble().takeIf { it > 0 }
@@ -90,6 +111,11 @@ class MarketClient(private val baseUrl: String, private val token: String = "") 
         if (UrlPolicy.check(baseUrl) != null) return@withContext null
         get(baseUrl.trimEnd('/') + "/bars?asset=" + URLEncoder.encode(asset, "UTF-8") + "&tf=" + tf + "&limit=" + limit,
             true, 90_000)?.let(MarketParser::candles)
+    }
+
+    suspend fun range(asset: String): RangeInfo? = withContext(Dispatchers.IO) {
+        if (UrlPolicy.check(baseUrl) != null) return@withContext null
+        get(baseUrl.trimEnd('/') + "/range?asset=" + URLEncoder.encode(asset, "UTF-8"), true, 90_000)?.let(MarketParser::range)
     }
 
     suspend fun touch(asset: String, prices: List<Double>): TouchInfo? = withContext(Dispatchers.IO) {

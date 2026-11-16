@@ -541,6 +541,24 @@
     <string name="rec_d_note">Ceci évalue uniquement la direction du prix, pas une opération. La prévision a été enregistrée avant le résultat et ne peut pas être modifiée.</string>
     <string name="record_tile">%1$d sur %2$d justes</string>
     <string name="record_tile_none">Pas encore de résultats</string>
+    <string name="rng_strip">Fourchette de clôture sous %1$s : %2$s – %3$s</string>
+    <string name="rng_h4">4 heures</string>
+    <string name="rng_h24">24 heures</string>
+    <string name="rng_exp">Expérimental</string>
+    <string name="rng_event_strip">Événement majeur proche — pas de fourchette</string>
+    <string name="rng_title">Où le prix pourrait-il clôturer ?</string>
+    <string name="rng_after">Dans %1$s, le prix clôturera le plus souvent entre</string>
+    <string name="rng_between">%1$s et %2$s</string>
+    <string name="rng_now">maintenant %1$s</string>
+    <string name="rng_note">La fourchette décrit l\'AMPLEUR habituelle du mouvement, pas sa direction. Objectif : une clôture à l\'intérieur 8 fois sur 10.</string>
+    <string name="rng_live">Suivi en direct depuis le lancement : dans la fourchette %1$d sur %2$d</string>
+    <string name="rng_live_note">Chaque fourchette est inscrite au registre public avant le résultat.</string>
+    <string name="rng_disc">Ni une recommandation d\'achat ou de vente, ni un objectif ou un stop.</string>
+    <string name="rng_event_title">Événement majeur proche : %1$s %2$s</string>
+    <string name="rng_event_body">Les mouvements autour des grands événements sont plus amples : la fourchette 4 heures n\'est pas affichée.</string>
+    <string name="rng_event_hist">Dans le test historique, le prix a clôturé hors de la fourchette environ 1 fois sur 3 autour de ces événements.</string>
+    <string name="rng_na">La fourchette %1$s pour %2$s n\'a pas battu la méthode simple au test : elle n\'est pas affichée.</string>
+    <string name="rng_unavailable">La fourchette n\'est pas disponible pour le moment. Réessayez dans une minute.</string>
     <string name="r_w_up" formatted="false">haussière</string>
     <string name="r_w_down" formatted="false">baissière</string>
     <string name="r_w_neutral" formatted="false">neutre</string>

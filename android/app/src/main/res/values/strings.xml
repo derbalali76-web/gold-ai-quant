@@ -542,6 +542,24 @@
     <string name="rec_d_note">This rates the price direction only, not a trade. The call was recorded before the result and cannot be changed.</string>
     <string name="record_tile">%1$d of %2$d correct</string>
     <string name="record_tile_none">No results yet</string>
+    <string name="rng_strip">Closing range within %1$s: %2$s – %3$s</string>
+    <string name="rng_h4">4 hours</string>
+    <string name="rng_h24">24 hours</string>
+    <string name="rng_exp">Experimental</string>
+    <string name="rng_event_strip">Major event soon — no range now</string>
+    <string name="rng_title">Where could the price close?</string>
+    <string name="rng_after">In %1$s, the price will most likely close between</string>
+    <string name="rng_between">%1$s and %2$s</string>
+    <string name="rng_now">now %1$s</string>
+    <string name="rng_note">The range describes the usual SIZE of the move right now, not its direction. Its aim is that the price closes inside it 8 times out of 10.</string>
+    <string name="rng_live">Live tracking since launch: inside the range %1$d of %2$d</string>
+    <string name="rng_live_note">Every range is recorded in the public ledger before the result is known.</string>
+    <string name="rng_disc">Not a buy or sell recommendation, and not a target or a stop.</string>
+    <string name="rng_event_title">Major event soon: %1$s %2$s</string>
+    <string name="rng_event_body">Moves around major events are larger than usual, so the 4-hour range is not shown now.</string>
+    <string name="rng_event_hist">In the historical test the price closed outside the range about once in 3 times around these events.</string>
+    <string name="rng_na">The %1$s range for %2$s did not beat the simple method in testing, so it is not shown.</string>
+    <string name="rng_unavailable">The range is not available right now. Try again in a minute.</string>
     <string name="r_w_up" formatted="false">up</string>
     <string name="r_w_down" formatted="false">down</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

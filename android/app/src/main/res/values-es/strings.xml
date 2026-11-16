@@ -541,6 +541,24 @@
     <string name="rec_d_note">Esto evalúa solo la dirección del precio, no una operación. La previsión se registró antes del resultado y no puede cambiarse.</string>
     <string name="record_tile">%1$d de %2$d aciertos</string>
     <string name="record_tile_none">Aún sin resultados</string>
+    <string name="rng_strip">Rango de cierre en %1$s: %2$s – %3$s</string>
+    <string name="rng_h4">4 horas</string>
+    <string name="rng_h24">24 horas</string>
+    <string name="rng_exp">Experimental</string>
+    <string name="rng_event_strip">Evento importante cerca — sin rango ahora</string>
+    <string name="rng_title">¿Dónde podría cerrar el precio?</string>
+    <string name="rng_after">En %1$s, el precio cerrará lo más probable entre</string>
+    <string name="rng_between">%1$s y %2$s</string>
+    <string name="rng_now">ahora %1$s</string>
+    <string name="rng_note">El rango describe el TAMAÑO habitual del movimiento ahora, no su dirección. Su objetivo: que el precio cierre dentro 8 de cada 10 veces.</string>
+    <string name="rng_live">Seguimiento en vivo desde el lanzamiento: dentro del rango %1$d de %2$d</string>
+    <string name="rng_live_note">Cada rango se registra en el registro público antes del resultado.</string>
+    <string name="rng_disc">No es una recomendación de compra o venta, ni un objetivo o un stop.</string>
+    <string name="rng_event_title">Evento importante cerca: %1$s %2$s</string>
+    <string name="rng_event_body">Los movimientos alrededor de grandes eventos son mayores de lo habitual, así que el rango de 4 horas no se muestra ahora.</string>
+    <string name="rng_event_hist">En la prueba histórica, el precio cerró fuera del rango cerca de 1 de cada 3 veces en torno a estos eventos.</string>
+    <string name="rng_na">El rango de %1$s para %2$s no superó al método simple en la prueba, así que no se muestra.</string>
+    <string name="rng_unavailable">El rango no está disponible ahora. Inténtalo en un minuto.</string>
     <string name="r_w_up" formatted="false">alcista</string>
     <string name="r_w_down" formatted="false">bajista</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

@@ -110,6 +110,8 @@ import com.goldaiquant.app.ReasonStrings
 import com.goldaiquant.app.ReasonText
 import com.goldaiquant.app.Trend
 import com.goldaiquant.app.Trust
+import com.goldaiquant.app.RangeTrack
+import com.goldaiquant.app.RangeInfo
 import com.goldaiquant.app.BriefRow
 import com.goldaiquant.app.RecStatus
 import com.goldaiquant.app.Record
@@ -242,7 +244,7 @@ fun GoldScreen(vm: MainViewModel, lang: Lang, onLanguage: (Lang) -> Unit) {
             if (android.os.Build.VERSION.SDK_INT >= 33) askNotify.launch(android.Manifest.permission.POST_NOTIFICATIONS)
             else vm.setNotify(true)
         }, onBars = vm::loadBars, onCalendar = vm::loadCalendar, onOnboarded = vm::finishOnboarding,
-        onPollLive = { vm.pollLive() }, onTouch = vm::loadTouch) }
+        onPollLive = { vm.pollLive() }, onTouch = vm::loadTouch, onRange = vm::loadRange) }
 }
 
 private sealed interface Sheet {
@@ -260,6 +262,7 @@ private sealed interface Sheet {
     data object ChartSheet : Sheet
     data class TouchSheet(val focus: Double?) : Sheet
     data object CalendarSheet : Sheet
+    data object RangeSheet : Sheet
 }
 
 /** Stateless screen (also used by the UI tests on several screen sizes). */
@@ -270,7 +273,7 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
                 onAlertAsset: (String) -> Unit = {}, onPriceAlert: (PriceAlert) -> Unit = {},
                 onNeedNotify: () -> Unit = {}, onBars: (String, String) -> Unit = { _, _ -> },
                 onCalendar: () -> Unit = {}, onOnboarded: () -> Unit = {}, onPollLive: suspend () -> Unit = {},
-                onTouch: (String, List<Double>) -> Unit = { _, _ -> }) {
+                onTouch: (String, List<Double>) -> Unit = { _, _ -> }, onRange: (String) -> Unit = {}) {
     var sheet by remember { mutableStateOf<Sheet?>(null) }
     val onBell: (PriceAlert) -> Unit = { a ->
         val adding = !PriceAlerts.isOn(s.priceAlerts, a.asset, a.price)
@@ -293,6 +296,11 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
             Row(Modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(gap)) {
                 PriceCard(d, s, Modifier.weight(1.1f).fillMaxHeight()) { onBars(s.asset, "H1"); sheet = Sheet.ChartSheet }
                 Box(Modifier.weight(1f).fillMaxHeight()) { TrendCard(card?.trend) { sheet = Sheet.TrendSheet } }
+            }
+            // experimental closing range (qualified horizons only), as designed by Ali: one strip under the price
+            LaunchedEffect(s.asset, d?.decisionId) { if (d != null && !d.isDemo) onRange(s.asset) }
+            s.range?.takeIf { it.asset == s.asset && it.available && d?.isDemo != true }?.let { r ->
+                RangeStrip(r) { sheet = Sheet.RangeSheet }
             }
             if (d?.isDemo == true) Text(stringResource(R.string.demo_banner),
                 color = Color.Black, fontSize = 12.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center,
@@ -338,6 +346,7 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
         Sheet.Assets -> AssetDialog(s, { a -> sheet = null; onAssetPick(a) }) { sheet = null }
         Sheet.TrustSheet -> RecordPage(s.briefs, onMore = { sheet = Sheet.TrustDetails }) { sheet = null }
         Sheet.TrustDetails -> TrustDialog(s.trust, s.position) { sheet = Sheet.TrustSheet }
+        Sheet.RangeSheet -> RangeDialog(s, s.live[s.asset]?.price ?: s.decision?.quote) { sheet = null }
         Sheet.Settings -> SettingsDialog(s, lang, onNextDemo, onSave, onLive, onLanguage, onNotify, onAlertAsset,
             onHow = { sheet = Sheet.HowSheet }, onNews = { sheet = Sheet.NewsSheet }) { sheet = null }
         Sheet.HowSheet -> HowDialog { sheet = null }
@@ -2105,5 +2114,101 @@ private fun RecDetail(r: BriefRow, onClose: () -> Unit) {
         Text(why, color = TextMain, fontSize = 14.sp, lineHeight = 21.sp,
             modifier = Modifier.fillMaxWidth().padding(top = 6.dp).background(bg, RoundedCornerShape(12.dp)).padding(10.dp))
         Body(stringResource(R.string.rec_d_note), TextDim, 11.sp)
+    }
+}
+
+
+// ---------------------------------------------------------------- price range (experimental 80 % close interval)
+@Composable
+private fun rangeHorizonName(h: String): String = stringResource(if (h == "4h") R.string.rng_h4 else R.string.rng_h24)
+
+@Composable
+private fun RangeStrip(r: RangeInfo, onClick: () -> Unit) {
+    val h = r.display?.let { r.horizons[it] } ?: return
+    val shape = RoundedCornerShape(16.dp)
+    Row(Modifier.fillMaxWidth().background(Card, shape).border(1.5.dp, Gold, shape).clickable(role = Role.Button, onClick = onClick)
+        .padding(horizontal = 12.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text("▮▮", color = WaitGold, fontSize = 11.sp)
+        val txt = if (h.eventName != null) stringResource(R.string.rng_event_strip)
+                  else stringResource(R.string.rng_strip, rangeHorizonName(h.horizon), ltr(recPrice(h.low)), ltr(recPrice(h.high)))
+        Text(txt, color = TextMain, fontSize = 13.sp, fontWeight = FontWeight.Bold, maxLines = 1,
+            overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f))
+        Text("ⓘ", color = WaitGold, fontSize = 14.sp)
+        Text(stringResource(R.string.rng_exp), color = WaitGold, fontSize = 11.sp, fontWeight = FontWeight.Bold,
+            modifier = Modifier.background(Color(0xFF3D3010), RoundedCornerShape(10.dp)).padding(horizontal = 8.dp, vertical = 2.dp))
+    }
+}
+
+@Composable
+private fun RangeDialog(s: UiState, now: Double?, onClose: () -> Unit) {
+    val r = s.range?.takeIf { it.asset == s.asset }
+    var tab by remember { mutableStateOf(r?.display ?: "24h") }
+    DialogFrame(stringResource(R.string.rng_title), onClose) {
+        Text(stringResource(R.string.rng_exp), color = Color(0xFF7FA7FF), fontSize = 11.sp, fontWeight = FontWeight.Bold,
+            modifier = Modifier.background(Color(0xFF1D2A3D), RoundedCornerShape(8.dp)).padding(horizontal = 8.dp, vertical = 2.dp))
+        Row(Modifier.fillMaxWidth().border(1.dp, Track, RoundedCornerShape(18.dp)).padding(3.dp)) {
+            listOf("4h", "24h").forEach { k ->
+                val on = tab == k
+                Text(rangeHorizonName(k), color = if (on) Color.Black else TextMain, fontSize = 13.sp,
+                    fontWeight = if (on) FontWeight.Bold else FontWeight.Normal, textAlign = TextAlign.Center,
+                    modifier = Modifier.weight(1f).background(if (on) WaitGold else Color.Transparent, RoundedCornerShape(15.dp))
+                        .clickable(role = Role.Tab) { tab = k }.padding(vertical = 5.dp))
+            }
+        }
+        val h = r?.horizons?.get(tab)
+        when {
+            r == null -> Body(stringResource(R.string.rng_unavailable), TextDim, 13.sp)
+            h == null -> Text(stringResource(R.string.rng_na, rangeHorizonName(tab), recAssetName(s.asset)), color = TextDim,
+                fontSize = 13.sp, lineHeight = 19.sp, textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth().background(Color(0xFF16161B), RoundedCornerShape(12.dp)).padding(12.dp))
+            h.eventName != null -> {
+                val tm = h.eventTime?.let { t -> try { ltr(DateTimeFormatter.ofPattern("HH:mm").format(Instant.parse(t.replace("+00:00", "Z")).atZone(ZoneId.systemDefault()))) } catch (e: Exception) { "" } } ?: ""
+                Column(Modifier.fillMaxWidth().background(Color(0xFF3D3010), RoundedCornerShape(12.dp)).padding(12.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(stringResource(R.string.rng_event_title, ltr(h.eventName), tm), color = WaitGold, fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+                    Text(stringResource(R.string.rng_event_body), color = TextMain, fontSize = 13.sp, lineHeight = 19.sp, textAlign = TextAlign.Center)
+                }
+                Body(stringResource(R.string.rng_event_hist), TextDim, 11.sp)
+            }
+            else -> {
+                Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(stringResource(R.string.rng_after, rangeHorizonName(tab)), color = TextDim, fontSize = 13.sp)
+                    Text(stringResource(R.string.rng_between, ltr(recPrice(h.low)), ltr(recPrice(h.high))), color = WaitGold,
+                        fontSize = 24.sp, fontWeight = FontWeight.Black)
+                }
+                // the band (low..high) on a wider scale, with the current price marked
+                val p = now ?: h.closeAtIssue
+                val pad = (h.high - h.low) * 0.45
+                val lo0 = minOf(h.low - pad, p); val hi0 = maxOf(h.high + pad, p)
+                androidx.compose.foundation.Canvas(Modifier.fillMaxWidth().height(34.dp).padding(horizontal = 6.dp)) {
+                    val x = { v: Double -> (size.width * ((v - lo0) / (hi0 - lo0))).toFloat() }
+                    val cy = size.height * 0.62f
+                    val bh = 6.dp.toPx()
+                    drawRoundRect(Track, androidx.compose.ui.geometry.Offset(0f, cy - bh), androidx.compose.ui.geometry.Size(size.width, bh * 2),
+                        androidx.compose.ui.geometry.CornerRadius(bh, bh))
+                    drawRoundRect(Color(0xFF5A4A1C), androidx.compose.ui.geometry.Offset(x(h.low), cy - bh),
+                        androidx.compose.ui.geometry.Size(x(h.high) - x(h.low), bh * 2), androidx.compose.ui.geometry.CornerRadius(bh, bh))
+                    drawRoundRect(Gold, androidx.compose.ui.geometry.Offset(x(h.low), cy - bh),
+                        androidx.compose.ui.geometry.Size(x(h.high) - x(h.low), bh * 2), androidx.compose.ui.geometry.CornerRadius(bh, bh),
+                        style = androidx.compose.ui.graphics.drawscope.Stroke(width = 4f))
+                    drawLine(Color.White, androidx.compose.ui.geometry.Offset(x(p), 0f), androidx.compose.ui.geometry.Offset(x(p), size.height), 5f)
+                }
+                Row(Modifier.fillMaxWidth()) {
+                    Text(ltr(recPrice(h.low)), color = SellRed, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.rng_now, ltr(recPrice(p))), color = TextMain, fontSize = 11.sp,
+                        textAlign = TextAlign.Center, modifier = Modifier.weight(1f))
+                    Text(ltr(recPrice(h.high)), color = BuyGreen, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                }
+                Body(stringResource(R.string.rng_note), TextMain, 13.sp)
+                val tr = s.rangeTracks[s.asset]?.get(tab) ?: RangeTrack(0, 0, 0)
+                Column(Modifier.fillMaxWidth().background(Color(0xFF16161B), RoundedCornerShape(12.dp)).padding(10.dp)) {
+                    Text(stringResource(R.string.rng_live, tr.inside, tr.settled), color = WaitGold, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.rng_live_note), color = TextDim, fontSize = 12.sp)
+                }
+            }
+        }
+        Body(stringResource(R.string.rng_disc), TextDim, 11.sp)
     }
 }

@@ -541,6 +541,24 @@
     <string name="rec_d_note">هذا تقييم لاتجاه السعر فقط، وليس نتيجة صفقة. سُجّل التوقع قبل معرفة النتيجة ولا يمكن تعديله.</string>
     <string name="record_tile">صحيح %1$d من %2$d</string>
     <string name="record_tile_none">لا نتائج بعد</string>
+    <string name="rng_strip">نطاق الإغلاق خلال %1$s: %2$s – %3$s</string>
+    <string name="rng_h4">4 ساعات</string>
+    <string name="rng_h24">24 ساعة</string>
+    <string name="rng_exp">تجريبي</string>
+    <string name="rng_event_strip">حدث مهم قريب — لا نطاق الآن</string>
+    <string name="rng_title">إلى أين قد يصل السعر؟</string>
+    <string name="rng_after">بعد %1$s، السعر غالباً بين</string>
+    <string name="rng_between">%1$s و %2$s</string>
+    <string name="rng_now">الآن %1$s</string>
+    <string name="rng_note">النطاق يصف حجم الحركة المعتادة الآن، لا اتجاهها. هدفه أن يُغلق السعر داخله في 8 من كل 10 مرات.</string>
+    <string name="rng_live">التتبع الحي منذ إطلاقه: داخل النطاق %1$d من %2$d</string>
+    <string name="rng_live_note">يُسجَّل كل نطاق في السجل العام قبل معرفة النتيجة.</string>
+    <string name="rng_disc">ليس توصية شراء أو بيع، ولا يحدد هدفاً أو وقفاً.</string>
+    <string name="rng_event_title">حدث مهم قريب: %1$s %2$s</string>
+    <string name="rng_event_body">الحركة حول الأحداث الكبرى أكبر من المعتاد، لذلك لا نعرض نطاق 4 ساعات الآن.</string>
+    <string name="rng_event_hist">في الاختبار التاريخي، خرج السعر من النطاق في نحو مرة من كل 3 حول هذه الأحداث.</string>
+    <string name="rng_na">نطاق %1$s لـ%2$s لم يتفوق على الطريقة البسيطة في الاختبار، فلا نعرضه.</string>
+    <string name="rng_unavailable">النطاق غير متاح الآن. أعد المحاولة بعد دقيقة.</string>
     <string name="r_w_up" formatted="false">صاعد</string>
     <string name="r_w_down" formatted="false">هابط</string>
     <string name="r_w_neutral" formatted="false">محايد</string>
