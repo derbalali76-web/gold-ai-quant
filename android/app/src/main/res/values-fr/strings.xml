@@ -398,6 +398,33 @@
     <string name="ob_start">Commencer</string>
     <string name="widget_desc">Prix et niveau à surveiller</string>
     <string name="widget_empty">Ouvrez l\'app pour mettre à jour</string>
+    <string name="health_partial">Certaines données sont anciennes</string>
+    <string name="health_partial_hint">Données anciennes — touchez pour détails</string>
+    <string name="health_closed">Marché fermé</string>
+    <string name="src_title">Dernière mise à jour des données</string>
+    <string name="src_price">Prix en direct</string>
+    <string name="src_m15">Bougies 15 minutes</string>
+    <string name="src_h1">Bougies 1 heure</string>
+    <string name="src_h4">Bougies 4 heures</string>
+    <string name="src_d1">Bougies journalières</string>
+    <string name="src_calendar">Calendrier économique</string>
+    <string name="src_model">Modèle d\'activité (contrôle hebdo)</string>
+    <string name="src_other">Autre source</string>
+    <string name="src_ok">À jour</string>
+    <string name="src_stale">Ancienne</string>
+    <string name="src_closed">Marché fermé</string>
+    <string name="src_down">Aucune donnée</string>
+    <string name="src_note">Heures dans le fuseau de votre téléphone. Pour l\'or, seul le temps de cotation compte : le week-end n\'est pas un retard.</string>
+    <string name="ck_why_session">Hors séance, la liquidité est faible et le prix peut faire des écarts.</string>
+    <string name="ck_why_news">Les grandes annonces économiques font bouger le prix violemment : pas d\'entrée juste avant ni juste après.</string>
+    <string name="ck_why_volatility">Quand la volatilité est extrême, un stop normal est touché par le bruit.</string>
+    <string name="ck_why_trend">Entrer avec une tendance claire marche mieux que dans un marché hésitant.</string>
+    <string name="ck_why_level">Près d\'un support ou d\'une résistance, le stop peut être proche et bien placé.</string>
+    <string name="ck_why_rr">Le gain visé doit valoir au moins 1,5 fois la perte possible.</string>
+    <string name="ck_why_model">Ni achat ni vente tant que le modèle n\'a pas passé le test hors échantillon après coûts.</string>
+    <string name="ck_why_other">Condition vérifiée avant toute entrée.</string>
+    <string name="ck_unknown_note">\? = inconnu pour l\'instant. Inconnu ne compte jamais comme rempli.</string>
+    <string name="ck_dialog_note">Toutes les conditions doivent être remplies, et le modèle validé, avant toute recommandation. Des conditions remplies seules ne sont pas un signal.</string>
     <string name="r_w_up" formatted="false">haussière</string>
     <string name="r_w_down" formatted="false">baissière</string>
     <string name="r_w_neutral" formatted="false">neutre</string>

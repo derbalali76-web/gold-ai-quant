@@ -398,6 +398,33 @@
     <string name="ob_start">Começar</string>
     <string name="widget_desc">Preço e nível a observar</string>
     <string name="widget_empty">Abra o app para atualizar</string>
+    <string name="health_partial">Alguns dados estão desatualizados</string>
+    <string name="health_partial_hint">Dados antigos — toque para detalhes</string>
+    <string name="health_closed">Mercado fechado</string>
+    <string name="src_title">Última atualização dos dados</string>
+    <string name="src_price">Preço ao vivo</string>
+    <string name="src_m15">Velas de 15 minutos</string>
+    <string name="src_h1">Velas de 1 hora</string>
+    <string name="src_h4">Velas de 4 horas</string>
+    <string name="src_d1">Velas diárias</string>
+    <string name="src_calendar">Calendário econômico</string>
+    <string name="src_model">Modelo de atividade (verificação semanal)</string>
+    <string name="src_other">Outra fonte</string>
+    <string name="src_ok">Atualizado</string>
+    <string name="src_stale">Antiga</string>
+    <string name="src_closed">Mercado fechado</string>
+    <string name="src_down">Sem dados</string>
+    <string name="src_note">Horários no fuso do seu telefone. Para o ouro só conta o tempo de mercado: o fim de semana não é atraso.</string>
+    <string name="ck_why_session">Fora do horário a liquidez é baixa e o preço pode saltar.</string>
+    <string name="ck_why_news">Grandes dados econômicos movem o preço com força: não entrar logo antes nem logo depois.</string>
+    <string name="ck_why_volatility">Com volatilidade extrema, um stop normal é atingido pelo ruído.</string>
+    <string name="ck_why_trend">Entrar com tendência clara funciona melhor que num mercado sem rumo.</string>
+    <string name="ck_why_level">Perto de um suporte ou resistência o stop pode ser próximo e claro.</string>
+    <string name="ck_why_rr">O ganho esperado deve ser pelo menos 1,5 vez a perda possível.</string>
+    <string name="ck_why_model">Nem compra nem venda até o modelo passar no teste fora da amostra após custos.</string>
+    <string name="ck_why_other">Condição verificada antes de entrar.</string>
+    <string name="ck_unknown_note">\? = desconhecido agora. Desconhecido nunca conta como cumprido.</string>
+    <string name="ck_dialog_note">Todas as condições devem ser cumpridas, e o modelo validado, antes de qualquer recomendação. Cumpri-las não é um sinal por si só.</string>
     <string name="r_w_up" formatted="false">de alta</string>
     <string name="r_w_down" formatted="false">de baixa</string>
     <string name="r_w_neutral" formatted="false">neutra</string>

@@ -83,6 +83,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.goldaiquant.app.TrackItem
 import com.goldaiquant.app.Plan
 import com.goldaiquant.app.Brief
+import com.goldaiquant.app.SourceStatus
 import com.goldaiquant.app.Scenario
 import com.goldaiquant.app.Check
 import com.goldaiquant.app.Perf
@@ -186,7 +187,8 @@ private fun errorText(e: ApiException): String {
 
 private enum class Health(val label: Int, val color: Color) {
     LIVE(R.string.health_live, BuyGreen), STALE(R.string.health_stale, WaitGold), DEMO(R.string.health_demo, WaitGold),
-    NONE(R.string.health_none, SellRed), SAVED(R.string.health_saved, Grey)
+    NONE(R.string.health_none, SellRed), SAVED(R.string.health_saved, Grey),
+    PARTIAL(R.string.health_partial, WaitGold), CLOSED(R.string.health_closed, Grey)
 }
 
 private fun health(s: UiState): Health {
@@ -198,7 +200,9 @@ private fun health(s: UiState): Health {
         d.isDemo -> Health.DEMO
         d.action == Action.UNAVAILABLE && d.quote == null -> Health.NONE
         d.dataHealth?.status == "FAIL" -> Health.NONE
+        d.marketClosed -> Health.CLOSED
         !d.isFresh -> Health.STALE
+        d.hasStaleSource -> Health.PARTIAL  // price is live but an input of the analysis is old
         else -> Health.LIVE
     }
 }
@@ -360,14 +364,19 @@ private fun TopBar(s: UiState, compact: Boolean, onAsset: () -> Unit, onCalendar
     val cdA = stringResource(R.string.cd_asset) + " · " + stringResource(h.label)
     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         // asset selector; the dot keeps the data-health colour that this pill used to spell out
-        Row(Modifier.border(1.dp, Gold, RoundedCornerShape(50)).clickable(role = Role.Button, onClick = onAsset)
-            .semantics { contentDescription = cdA }.padding(horizontal = 10.dp, vertical = 6.dp),
-            verticalAlignment = Alignment.CenterVertically) {
-            Box(Modifier.size(8.dp).background(h.color, CircleShape))
-            Spacer(Modifier.width(6.dp))
-            Text(ltr(assetPair(s.asset)), color = TextMain, fontSize = 12.sp, fontWeight = FontWeight.SemiBold, maxLines = 1)
-            Spacer(Modifier.width(4.dp))
-            Text("▾", color = Gold, fontSize = 12.sp)
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Row(Modifier.border(1.dp, Gold, RoundedCornerShape(50)).clickable(role = Role.Button, onClick = onAsset)
+                .semantics { contentDescription = cdA }.padding(horizontal = 10.dp, vertical = 6.dp),
+                verticalAlignment = Alignment.CenterVertically) {
+                Box(Modifier.size(8.dp).background(h.color, CircleShape))
+                Spacer(Modifier.width(6.dp))
+                Text(ltr(assetPair(s.asset)), color = TextMain, fontSize = 12.sp, fontWeight = FontWeight.SemiBold, maxLines = 1)
+                Spacer(Modifier.width(4.dp))
+                Text("▾", color = Gold, fontSize = 12.sp)
+            }
+            // shown only when something is wrong: the analysis uses an input older than allowed
+            if (h == Health.PARTIAL) Text(stringResource(R.string.health_partial_hint), color = WaitGold, fontSize = 9.sp,
+                maxLines = 1, modifier = Modifier.clickable(role = Role.Button, onClick = onAsset).padding(top = 2.dp))
         }
         Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
             Text(stringResource(R.string.app_name), color = Gold, fontWeight = FontWeight.ExtraBold, fontSize = 18.sp, maxLines = 1)
@@ -411,8 +420,36 @@ private fun AssetDialog(s: UiState, onPick: (String) -> Unit, onClose: () -> Uni
                     color = if (on) Gold else TextDim, fontSize = 11.sp)
             }
         }
+        s.decision?.let { if (it.sources.isNotEmpty()) SourcesSection(it.sources) }
         s.decision?.dataHealth?.let { DataHealthSection(it) }
     }
+}
+
+@Composable
+private fun SourcesSection(list: List<SourceStatus>) {
+    Section(stringResource(R.string.src_title))
+    val zone = java.time.ZoneId.systemDefault()
+    val today = java.time.LocalDate.now(zone)
+    val hm = java.time.format.DateTimeFormatter.ofPattern("HH:mm")
+    val dm = java.time.format.DateTimeFormatter.ofPattern("dd/MM HH:mm")
+    list.forEach { x ->
+        val name = stringResource(when (x.source) {
+            "PRICE" -> R.string.src_price; "M15" -> R.string.src_m15; "H1" -> R.string.src_h1; "H4" -> R.string.src_h4
+            "D1" -> R.string.src_d1; "CALENDAR" -> R.string.src_calendar; "ACTIVITY_MODEL" -> R.string.src_model
+            else -> R.string.src_other
+        })
+        val (word, col) = when (x.state) {
+            "OK" -> R.string.src_ok to BuyGreen; "STALE" -> R.string.src_stale to WaitGold
+            "CLOSED" -> R.string.src_closed to Grey; else -> R.string.src_down to SellRed
+        }
+        val t = x.lastUpdate?.atZone(zone)?.let { z -> ltr((if (z.toLocalDate() == today) hm else dm).format(z)) } ?: "—"
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Text(name, color = TextMain, fontSize = 12.sp, modifier = Modifier.weight(1f))
+            Text(t, color = TextDim, fontSize = 11.sp, modifier = Modifier.padding(horizontal = 8.dp))
+            Text(stringResource(word), color = col, fontSize = 12.sp)
+        }
+    }
+    Body(stringResource(R.string.src_note), TextDim, 10.sp)
 }
 
 @Composable
@@ -640,6 +677,8 @@ private fun DecisionCard(c: HorizonCard, s: UiState, d: Decision, compact: Boole
                          onPosition: (String) -> Unit = {}, onBell: (PriceAlert) -> Unit = {},
                          onLevel: (Level, Boolean) -> Unit) {
     val expired = d.isExpired(Instant.now())
+    var showChecks by remember { mutableStateOf(false) }
+    if (showChecks) ChecklistDialog(c) { showChecks = false }
     val color = actionColor(c.action, c.tilt)
     val why = when {
         d.marketClosed -> stringResource(R.string.closed_last_session)
@@ -659,8 +698,9 @@ private fun DecisionCard(c: HorizonCard, s: UiState, d: Decision, compact: Boole
                     fontWeight = FontWeight.Black, maxLines = 1, modifier = Modifier.weight(1f))
                 val known = c.checklist.filter { it.ok != null }
                 if (c.plan?.recommendation != true && known.isNotEmpty()) Text(
-                    stringResource(R.string.ck_chip, known.count { it.ok == true }, known.size), color = WaitGold, fontSize = 11.sp,
+                    stringResource(R.string.ck_chip, known.count { it.ok == true }, known.size) + " ›", color = WaitGold, fontSize = 11.sp,
                     maxLines = 1, modifier = Modifier.border(1.dp, Color(0xFF5A4A1C), RoundedCornerShape(10.dp))
+                        .clickable(role = Role.Button) { showChecks = true }
                         .padding(horizontal = 8.dp, vertical = 2.dp))
             }
             if (watch != null) Text(stringResource(R.string.hl_sub), color = TextDim, fontSize = 12.sp, maxLines = 1)
@@ -782,6 +822,28 @@ private fun checkText(k: Check): String {
         "reward_risk" -> stringResource(if (k.ok == true) R.string.ck_rr_ok else R.string.ck_rr_no, ltr(a0))
         "model" -> stringResource(if (k.ok == true) R.string.ck_model_ok else R.string.ck_model_no)
         else -> k.code
+    }
+}
+
+@Composable
+private fun ChecklistDialog(c: HorizonCard, onClose: () -> Unit) {
+    DialogFrame(stringResource(R.string.ck_title) + " · " + horizonName(c.horizon), onClose) {
+        val known = c.checklist.filter { it.ok != null }
+        Body(stringResource(R.string.ck_count, known.count { it.ok == true }, known.size), TextMain, 13.sp)
+        c.checklist.forEach { k ->
+            val (mark, col) = when (k.ok) { true -> "✓" to BuyGreen; false -> "✗" to SellRed; else -> "?" to TextDim }
+            Spacer(Modifier.height(4.dp))
+            Body("$mark  " + checkText(k), col, 13.sp)
+            Body(stringResource(when (k.code) {
+                "session" -> R.string.ck_why_session; "news" -> R.string.ck_why_news
+                "volatility" -> R.string.ck_why_volatility; "trend" -> R.string.ck_why_trend
+                "level" -> R.string.ck_why_level; "reward_risk" -> R.string.ck_why_rr
+                "model" -> R.string.ck_why_model; else -> R.string.ck_why_other
+            }), TextDim, 11.sp)
+        }
+        Spacer(Modifier.height(6.dp))
+        if (c.checklist.any { it.ok == null }) Body(stringResource(R.string.ck_unknown_note), TextDim, 11.sp)
+        Body(stringResource(R.string.ck_dialog_note), WaitGold, 11.sp)
     }
 }
 

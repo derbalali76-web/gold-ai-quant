@@ -40,6 +40,9 @@ data class Outlook(
 )
 
 /** v1.7.3 live entry condition; ok == null: cannot be checked right now. */
+/** v1.14: when one input of the decision was last updated. state: OK | STALE | CLOSED | DOWN */
+data class SourceStatus(val source: String, val state: String, val lastUpdate: Instant?)
+
 data class Check(val code: String, val ok: Boolean?, val args: List<String>, val state: String? = null,
                  val updatedAt: Instant? = null)
 
@@ -151,8 +154,12 @@ data class Decision(
     val dataHealth: DataHealth? = null,
     val instrument: String = "XAU/USD",
     val scalpActivity: ScalpActivity? = null,
+    val sources: List<SourceStatus> = emptyList(),
 ) {
     val isDemo: Boolean get() = mode == "DEMO"
+
+    /** v1.14: any input of this decision older than allowed (or missing) — the screen must not look "live". */
+    val hasStaleSource: Boolean get() = sources.any { it.state == "STALE" || it.state == "DOWN" }
 
     /** Probability is shown ONLY when it is genuinely calibrated out-of-sample on real data. */
     val displayableProbability: Double?
@@ -238,6 +245,11 @@ object DecisionParser {
             dataHealth = o.optJSONObject("data_health")?.let { parseHealth(it) },
             instrument = o.optString("instrument", "XAU/USD"),
             scalpActivity = o.optJSONObject("scalp_activity")?.let { parseActivity(it) },
+            sources = o.optJSONArray("sources")?.let { a ->
+                (0 until a.length()).mapNotNull { i -> a.optJSONObject(i)?.let { e ->  // informative: never fails the decision
+                    SourceStatus(e.optString("source"), e.optString("state", "DOWN"),
+                        try { e.time("last_update_utc") } catch (x: ParseException) { null }) } }
+            } ?: emptyList(),
             reasonShort = o.reason("reason_short_ref"), waitFor = o.reason("wait_for_ref"), warning = o.reason("warning_ref"),
             invalidationRefs = o.reasons("invalidation_refs"), missingRefs = o.reasons("missing_refs"),
             alternativeEntryNote = o.reason("alternative_entry_note_ref"),

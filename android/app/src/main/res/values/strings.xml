@@ -399,6 +399,33 @@
     <string name="ob_start">Start</string>
     <string name="widget_desc">Price and the level to watch</string>
     <string name="widget_empty">Open the app to update</string>
+    <string name="health_partial">Some data is out of date</string>
+    <string name="health_partial_hint">Some data is old — tap for details</string>
+    <string name="health_closed">Market closed</string>
+    <string name="src_title">Last data update</string>
+    <string name="src_price">Live price</string>
+    <string name="src_m15">15-minute candles</string>
+    <string name="src_h1">1-hour candles</string>
+    <string name="src_h4">4-hour candles</string>
+    <string name="src_d1">Daily candles</string>
+    <string name="src_calendar">Economic calendar</string>
+    <string name="src_model">Activity model (weekly check)</string>
+    <string name="src_other">Other source</string>
+    <string name="src_ok">Up to date</string>
+    <string name="src_stale">Old</string>
+    <string name="src_closed">Market closed</string>
+    <string name="src_down">No data</string>
+    <string name="src_note">Times are in your phone\'s time zone. Gold ages count trading time only: the weekend is not a delay.</string>
+    <string name="ck_why_session">Outside market hours liquidity is thin and prices can gap.</string>
+    <string name="ck_why_news">Major economic releases move prices violently: no entry just before or right after them.</string>
+    <string name="ck_why_volatility">When volatility is extreme, a normal stop is hit by noise.</string>
+    <string name="ck_why_trend">Entering with a clear trend works better than in a choppy market.</string>
+    <string name="ck_why_level">Near a support or resistance the stop can be close and clearly placed.</string>
+    <string name="ck_why_rr">The expected gain must be at least 1.5 times the possible loss.</string>
+    <string name="ck_why_model">No buy or sell until the model passes out-of-sample testing after costs.</string>
+    <string name="ck_why_other">A condition checked before any entry.</string>
+    <string name="ck_unknown_note">\? = unknown right now. Unknown never counts as met.</string>
+    <string name="ck_dialog_note">All conditions must hold, and the model must be validated, before any recommendation. Conditions met alone are not a signal.</string>
     <string name="r_w_up" formatted="false">up</string>
     <string name="r_w_down" formatted="false">down</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

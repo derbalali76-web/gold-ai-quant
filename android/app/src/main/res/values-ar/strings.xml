@@ -398,6 +398,33 @@
     <string name="ob_start">ابدأ</string>
     <string name="widget_desc">السعر والمستوى الذي تراقبه</string>
     <string name="widget_empty">افتح التطبيق للتحديث</string>
+    <string name="health_partial">بعض البيانات قديمة</string>
+    <string name="health_partial_hint">بعض البيانات قديمة — اضغط للتفاصيل</string>
+    <string name="health_closed">السوق مغلق</string>
+    <string name="src_title">آخر تحديث للبيانات</string>
+    <string name="src_price">السعر الحي</string>
+    <string name="src_m15">شموع 15 دقيقة</string>
+    <string name="src_h1">شموع ساعة</string>
+    <string name="src_h4">شموع 4 ساعات</string>
+    <string name="src_d1">الشموع اليومية</string>
+    <string name="src_calendar">التقويم الاقتصادي</string>
+    <string name="src_model">نموذج النشاط (فحص أسبوعي)</string>
+    <string name="src_other">مصدر آخر</string>
+    <string name="src_ok">محدّث</string>
+    <string name="src_stale">قديمة</string>
+    <string name="src_closed">السوق مغلق</string>
+    <string name="src_down">لا بيانات</string>
+    <string name="src_note">الأوقات بتوقيت هاتفك. عمر بيانات الذهب يُحسب من وقت التداول، فعطلة نهاية الأسبوع ليست تأخيراً.</string>
+    <string name="ck_why_session">خارج ساعات السوق تكون السيولة ضعيفة وقد يقفز السعر فجأة.</string>
+    <string name="ck_why_news">الأخبار الاقتصادية القوية تحرك السعر بعنف: لا دخول قبلها بقليل ولا بعدها مباشرة.</string>
+    <string name="ck_why_volatility">عندما يكون التقلب مرتفعاً جداً، يُضرب الوقف العادي بسبب الضجيج.</string>
+    <string name="ck_why_trend">الدخول مع اتجاه واضح أفضل من الدخول في سوق متذبذب.</string>
+    <string name="ck_why_level">قرب دعم أو مقاومة يكون الوقف قريباً وواضح المكان.</string>
+    <string name="ck_why_rr">يجب أن يكون الربح المتوقع 1.5 ضعف الخسارة المحتملة على الأقل.</string>
+    <string name="ck_why_model">لا شراء ولا بيع قبل أن يجتاز النموذج الاختبار خارج العينة بعد التكاليف.</string>
+    <string name="ck_why_other">شرط يُفحص قبل أي دخول.</string>
+    <string name="ck_unknown_note">؟ = غير معروف الآن. غير المعروف لا يُحسب أبداً كشرط محقق.</string>
+    <string name="ck_dialog_note">يجب تحقق كل الشروط واعتماد النموذج قبل أي توصية. تحقق الشروط وحده ليس إشارة.</string>
     <string name="r_w_up" formatted="false">صاعد</string>
     <string name="r_w_down" formatted="false">هابط</string>
     <string name="r_w_neutral" formatted="false">محايد</string>
