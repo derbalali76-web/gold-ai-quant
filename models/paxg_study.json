@@ -1,0 +1,661 @@
+{
+ "schema": 1,
+ "version": "paxg-study-0.1.0",
+ "updated_at": "2026-11-16T18:27:58.582450+00:00",
+ "A_range": {
+  "4h": {
+   "version": "range-har-0.1.0",
+   "horizon": "4h",
+   "bars": 4,
+   "qualified": false,
+   "period": "2020-11-28 -> 2026-11-15",
+   "holdout_from": "2025-09-06",
+   "walk_forward": {
+    "m": {
+     "n": 5875,
+     "coverage": 0.7973,
+     "width_pct": 0.6595,
+     "median_width_pct": 0.607,
+     "interval_score": 1.0948
+    },
+    "b1": {
+     "n": 5875,
+     "coverage": 0.8029,
+     "width_pct": 0.6545,
+     "median_width_pct": 0.6547,
+     "interval_score": 1.1844
+    },
+    "b2": {
+     "n": 5875,
+     "coverage": 0.8608,
+     "width_pct": 0.8686,
+     "median_width_pct": 0.7493,
+     "interval_score": 1.1744
+    },
+    "best_baseline": "b2"
+   },
+   "holdout": {
+    "m": {
+     "n": 2614,
+     "coverage": 0.7552,
+     "width_pct": 0.9065,
+     "median_width_pct": 0.8633,
+     "interval_score": 1.8392
+    },
+    "b1": {
+     "n": 2614,
+     "coverage": 0.7536,
+     "width_pct": 0.9594,
+     "median_width_pct": 0.9948,
+     "interval_score": 2.0332
+    },
+    "b2": {
+     "n": 2614,
+     "coverage": 0.8252,
+     "width_pct": 1.25,
+     "median_width_pct": 1.1007,
+     "interval_score": 1.9218
+    },
+    "best_baseline": "b2"
+   },
+   "score_diff_vs_best": -0.0797,
+   "score_diff_ci99": [
+    -0.1217,
+    -0.0493
+   ],
+   "regimes": {
+    "low": {
+     "m": {
+      "n": 1959,
+      "coverage": 0.8081,
+      "width_pct": 0.5065,
+      "median_width_pct": 0.502,
+      "interval_score": 0.8186
+     },
+     "b1": {
+      "n": 1959,
+      "coverage": 0.8867,
+      "width_pct": 0.6574,
+      "median_width_pct": 0.6521,
+      "interval_score": 0.8823
+     },
+     "b2": {
+      "n": 1959,
+      "coverage": 0.8535,
+      "width_pct": 0.612,
+      "median_width_pct": 0.5994,
+      "interval_score": 0.8709
+     }
+    },
+    "mid": {
+     "m": {
+      "n": 1958,
+      "coverage": 0.7942,
+      "width_pct": 0.6041,
+      "median_width_pct": 0.6024,
+      "interval_score": 0.9751
+     },
+     "b1": {
+      "n": 1958,
+      "coverage": 0.8258,
+      "width_pct": 0.651,
+      "median_width_pct": 0.6484,
+      "interval_score": 1.0132
+     },
+     "b2": {
+      "n": 1958,
+      "coverage": 0.8616,
+      "width_pct": 0.7724,
+      "median_width_pct": 0.7506,
+      "interval_score": 1.0479
+     }
+    },
+    "high": {
+     "m": {
+      "n": 1958,
+      "coverage": 0.7896,
+      "width_pct": 0.8679,
+      "median_width_pct": 0.7902,
+      "interval_score": 1.4908
+     },
+     "b1": {
+      "n": 1958,
+      "coverage": 0.6961,
+      "width_pct": 0.6552,
+      "median_width_pct": 0.6703,
+      "interval_score": 1.6578
+     },
+     "b2": {
+      "n": 1958,
+      "coverage": 0.8672,
+      "width_pct": 1.2213,
+      "median_width_pct": 1.0058,
+      "interval_score": 1.6046
+     }
+    }
+   },
+   "folds": {
+    "2023": {
+     "m": {
+      "n": 2189,
+      "coverage": 0.8136,
+      "width_pct": 0.6007,
+      "median_width_pct": 0.5736,
+      "interval_score": 0.9859
+     },
+     "b2": {
+      "n": 2189,
+      "coverage": 0.8652,
+      "width_pct": 0.7611,
+      "median_width_pct": 0.688,
+      "interval_score": 1.0448
+     }
+    },
+    "2024": {
+     "m": {
+      "n": 2196,
+      "coverage": 0.781,
+      "width_pct": 0.6864,
+      "median_width_pct": 0.6172,
+      "interval_score": 1.1184
+     },
+     "b2": {
+      "n": 2196,
+      "coverage": 0.8666,
+      "width_pct": 0.9458,
+      "median_width_pct": 0.7812,
+      "interval_score": 1.2249
+     }
+    },
+    "2025": {
+     "m": {
+      "n": 1490,
+      "coverage": 0.7973,
+      "width_pct": 0.7062,
+      "median_width_pct": 0.6597,
+      "interval_score": 1.2199
+     },
+     "b2": {
+      "n": 1490,
+      "coverage": 0.8456,
+      "width_pct": 0.9126,
+      "median_width_pct": 0.8115,
+      "interval_score": 1.2905
+     }
+    }
+   },
+   "events": null,
+   "calibration_quantiles": [
+    -1.315,
+    1.438
+   ],
+   "gates": {
+    "G1 holdout coverage 77-83%": false,
+    "G2 beats best baseline (99% CI)": true,
+    "G3 holdout beats best baseline": true,
+    "G4 coverage >= 72% in every volatility tercile": true
+   },
+   "reason": "failed: G1 holdout coverage 77-83%"
+  },
+  "24h": {
+   "version": "range-har-0.1.0",
+   "horizon": "24h",
+   "bars": 24,
+   "qualified": false,
+   "period": "2020-11-28 -> 2026-11-15",
+   "holdout_from": "2025-09-05",
+   "walk_forward": {
+    "m": {
+     "n": 5872,
+     "coverage": 0.7977,
+     "width_pct": 1.6928,
+     "median_width_pct": 1.5829,
+     "interval_score": 2.7581
+    },
+    "b1": {
+     "n": 5872,
+     "coverage": 0.7939,
+     "width_pct": 1.6563,
+     "median_width_pct": 1.6525,
+     "interval_score": 2.85
+    },
+    "b2": {
+     "n": 5872,
+     "coverage": 0.8391,
+     "width_pct": 2.1275,
+     "median_width_pct": 1.835,
+     "interval_score": 2.9186
+    },
+    "best_baseline": "b1"
+   },
+   "holdout": {
+    "m": {
+     "n": 2612,
+     "coverage": 0.7221,
+     "width_pct": 2.3927,
+     "median_width_pct": 2.3292,
+     "interval_score": 5.0109
+    },
+    "b1": {
+     "n": 2612,
+     "coverage": 0.7561,
+     "width_pct": 2.6236,
+     "median_width_pct": 2.6867,
+     "interval_score": 5.3016
+    },
+    "b2": {
+     "n": 2612,
+     "coverage": 0.7695,
+     "width_pct": 3.0607,
+     "median_width_pct": 2.6945,
+     "interval_score": 5.081
+    },
+    "best_baseline": "b2"
+   },
+   "score_diff_vs_best": -0.0919,
+   "score_diff_ci99": [
+    -0.1594,
+    -0.021
+   ],
+   "regimes": {
+    "low": {
+     "m": {
+      "n": 1958,
+      "coverage": 0.8366,
+      "width_pct": 1.3492,
+      "median_width_pct": 1.3665,
+      "interval_score": 1.9348
+     },
+     "b1": {
+      "n": 1958,
+      "coverage": 0.8917,
+      "width_pct": 1.6696,
+      "median_width_pct": 1.6442,
+      "interval_score": 2.047
+     },
+     "b2": {
+      "n": 1958,
+      "coverage": 0.8539,
+      "width_pct": 1.4995,
+      "median_width_pct": 1.4689,
+      "interval_score": 2.018
+     }
+    },
+    "mid": {
+     "m": {
+      "n": 1957,
+      "coverage": 0.7772,
+      "width_pct": 1.5843,
+      "median_width_pct": 1.596,
+      "interval_score": 2.5886
+     },
+     "b1": {
+      "n": 1957,
+      "coverage": 0.789,
+      "width_pct": 1.6383,
+      "median_width_pct": 1.6414,
+      "interval_score": 2.6096
+     },
+     "b2": {
+      "n": 1957,
+      "coverage": 0.8242,
+      "width_pct": 1.8907,
+      "median_width_pct": 1.8378,
+      "interval_score": 2.6825
+     }
+    },
+    "high": {
+     "m": {
+      "n": 1957,
+      "coverage": 0.7793,
+      "width_pct": 2.1451,
+      "median_width_pct": 1.9556,
+      "interval_score": 3.7515
+     },
+     "b1": {
+      "n": 1957,
+      "coverage": 0.7011,
+      "width_pct": 1.661,
+      "median_width_pct": 1.6985,
+      "interval_score": 3.8939
+     },
+     "b2": {
+      "n": 1957,
+      "coverage": 0.839,
+      "width_pct": 2.9926,
+      "median_width_pct": 2.465,
+      "interval_score": 4.0559
+     }
+    }
+   },
+   "folds": {
+    "2023": {
+     "m": {
+      "n": 2189,
+      "coverage": 0.8543,
+      "width_pct": 1.7093,
+      "median_width_pct": 1.6335,
+      "interval_score": 2.3602
+     },
+     "b1": {
+      "n": 2189,
+      "coverage": 0.8479,
+      "width_pct": 1.6809,
+      "median_width_pct": 1.6894,
+      "interval_score": 2.412
+     }
+    },
+    "2024": {
+     "m": {
+      "n": 2196,
+      "coverage": 0.8001,
+      "width_pct": 1.6899,
+      "median_width_pct": 1.5354,
+      "interval_score": 2.7353
+     },
+     "b1": {
+      "n": 2196,
+      "coverage": 0.7709,
+      "width_pct": 1.52,
+      "median_width_pct": 1.5024,
+      "interval_score": 2.849
+     }
+    },
+    "2025": {
+     "m": {
+      "n": 1487,
+      "coverage": 0.7108,
+      "width_pct": 1.6729,
+      "median_width_pct": 1.5829,
+      "interval_score": 3.3777
+     },
+     "b1": {
+      "n": 1487,
+      "coverage": 0.7485,
+      "width_pct": 1.8213,
+      "median_width_pct": 1.8016,
+      "interval_score": 3.4963
+     }
+    }
+   },
+   "events": null,
+   "calibration_quantiles": [
+    -1.102,
+    1.388
+   ],
+   "gates": {
+    "G1 holdout coverage 77-83%": false,
+    "G2 beats best baseline (99% CI)": true,
+    "G3 holdout beats best baseline": true,
+    "G4 coverage >= 72% in every volatility tercile": true
+   },
+   "reason": "failed: G1 holdout coverage 77-83%"
+  },
+  "1w": {
+   "version": "range-har-0.1.0",
+   "horizon": "1w",
+   "bars": 168,
+   "qualified": false,
+   "period": "2020-12-05 -> 2026-11-08",
+   "holdout_from": "2025-09-02",
+   "walk_forward": {
+    "m": {
+     "n": 610,
+     "coverage": 0.7443,
+     "width_pct": 4.7914,
+     "median_width_pct": 4.5512,
+     "interval_score": 7.8129
+    },
+    "b1": {
+     "n": 610,
+     "coverage": 0.7672,
+     "width_pct": 4.7712,
+     "median_width_pct": 4.7985,
+     "interval_score": 8.0738
+    },
+    "b2": {
+     "n": 610,
+     "coverage": 0.777,
+     "width_pct": 5.9398,
+     "median_width_pct": 4.987,
+     "interval_score": 8.5317
+    },
+    "best_baseline": "b1"
+   },
+   "holdout": {
+    "m": {
+     "n": 433,
+     "coverage": 0.6744,
+     "width_pct": 6.6676,
+     "median_width_pct": 6.4121,
+     "interval_score": 13.2461
+    },
+    "b1": {
+     "n": 433,
+     "coverage": 0.739,
+     "width_pct": 7.3962,
+     "median_width_pct": 7.6233,
+     "interval_score": 13.083
+    },
+    "b2": {
+     "n": 433,
+     "coverage": 0.6905,
+     "width_pct": 7.966,
+     "median_width_pct": 6.9583,
+     "interval_score": 14.0586
+    },
+    "best_baseline": "b1"
+   },
+   "score_diff_vs_best": -0.2609,
+   "score_diff_ci99": [
+    -0.7326,
+    0.2202
+   ],
+   "regimes": {
+    "low": {
+     "m": {
+      "n": 204,
+      "coverage": 0.7696,
+      "width_pct": 3.9211,
+      "median_width_pct": 3.9616,
+      "interval_score": 6.7158
+     },
+     "b1": {
+      "n": 204,
+      "coverage": 0.848,
+      "width_pct": 4.8298,
+      "median_width_pct": 4.7985,
+      "interval_score": 6.848
+     },
+     "b2": {
+      "n": 204,
+      "coverage": 0.7451,
+      "width_pct": 4.027,
+      "median_width_pct": 4.0083,
+      "interval_score": 6.8656
+     }
+    },
+    "mid": {
+     "m": {
+      "n": 203,
+      "coverage": 0.7734,
+      "width_pct": 4.5621,
+      "median_width_pct": 4.5462,
+      "interval_score": 6.763
+     },
+     "b1": {
+      "n": 203,
+      "coverage": 0.8079,
+      "width_pct": 4.7491,
+      "median_width_pct": 4.7985,
+      "interval_score": 6.671
+     },
+     "b2": {
+      "n": 203,
+      "coverage": 0.7833,
+      "width_pct": 5.1904,
+      "median_width_pct": 5.027,
+      "interval_score": 7.3996
+     }
+    },
+    "high": {
+     "m": {
+      "n": 203,
+      "coverage": 0.6897,
+      "width_pct": 5.8953,
+      "median_width_pct": 5.4317,
+      "interval_score": 9.9653
+     },
+     "b1": {
+      "n": 203,
+      "coverage": 0.6453,
+      "width_pct": 4.7344,
+      "median_width_pct": 4.8145,
+      "interval_score": 10.7084
+     },
+     "b2": {
+      "n": 203,
+      "coverage": 0.803,
+      "width_pct": 8.6113,
+      "median_width_pct": 6.7029,
+      "interval_score": 11.3381
+     }
+    }
+   },
+   "folds": {
+    "2024": {
+     "m": {
+      "n": 366,
+      "coverage": 0.7814,
+      "width_pct": 4.8275,
+      "median_width_pct": 4.5566,
+      "interval_score": 7.3092
+     },
+     "b1": {
+      "n": 366,
+      "coverage": 0.7787,
+      "width_pct": 4.4753,
+      "median_width_pct": 4.5184,
+      "interval_score": 7.525
+     }
+    },
+    "2025": {
+     "m": {
+      "n": 244,
+      "coverage": 0.6885,
+      "width_pct": 4.7372,
+      "median_width_pct": 4.5289,
+      "interval_score": 8.5684
+     },
+     "b1": {
+      "n": 244,
+      "coverage": 0.75,
+      "width_pct": 5.2149,
+      "median_width_pct": 5.1672,
+      "interval_score": 8.897
+     }
+    }
+   },
+   "events": null,
+   "calibration_quantiles": [
+    -1.047,
+    1.434
+   ],
+   "gates": {
+    "G1 holdout coverage 77-83%": false,
+    "G2 beats best baseline (99% CI)": false,
+    "G3 holdout beats best baseline": false,
+    "G4 coverage >= 72% in every volatility tercile": false
+   },
+   "reason": "failed: G1 holdout coverage 77-83%, G2 beats best baseline (99% CI), G3 holdout beats best baseline, G4 coverage >= 72% in every volatility tercile"
+  }
+ },
+ "B_premium": {
+  "version": "paxg-study-0.1.0",
+  "test": "B premium signal",
+  "hours": 36031,
+  "qualified": false,
+  "period": "2020-09-10 -> 2026-11-13",
+  "holdout_from": "2025-08-13",
+  "development": {
+   "trades": 325,
+   "net_mean_pct": -0.1175,
+   "win_rate": 0.4246,
+   "baseline_net_mean_pct": -0.1976,
+   "net_ci99": [
+    -0.2411,
+    0.0285
+   ],
+   "diff_vs_baseline_pct": 0.0913,
+   "diff_ci99": [
+    0.0127,
+    0.1782
+   ]
+  },
+  "holdout": {
+   "trades": 68,
+   "net_mean_pct": -0.2407,
+   "win_rate": 0.3382,
+   "baseline_net_mean_pct": -0.2243,
+   "net_ci99": [
+    -0.7531,
+    0.3623
+   ],
+   "diff_vs_baseline_pct": 0.1463,
+   "diff_ci99": [
+    -0.1632,
+    0.5251
+   ]
+  },
+  "descriptive": {
+   "corr_z_next24_rel_return": -0.3721,
+   "mean_next24_paxg_after_z_ge_1.5_pct": -0.182
+  },
+  "gates": {
+   "B1 development net > 0 (99% CI)": false,
+   "B2 beats baseline (99% CI)": true,
+   "B3 holdout net > 0 and above baseline": false,
+   "B4 >= 100 development trades": true
+  },
+  "reason": "failed: B1, B3"
+ },
+ "C_weekend": {
+  "version": "paxg-study-0.1.0",
+  "test": "C weekend gap",
+  "weekends": 314,
+  "qualified": false,
+  "period": "2020-08-30 -> 2026-11-15",
+  "holdout_from": "2025-08-24",
+  "walk_forward": {
+   "n": 185,
+   "skill": 0.0396,
+   "hit_rate": 0.5459,
+   "baseline_hit_rate": 0.4757,
+   "mean_abs_gap_pct": 0.1186,
+   "corr_w_gap": 0.2938
+  },
+  "skill_ci99": [
+   -0.0958,
+   0.1307
+  ],
+  "holdout": {
+   "n": 63,
+   "skill": 0.1323,
+   "hit_rate": 0.7302,
+   "baseline_hit_rate": 0.4603,
+   "mean_abs_gap_pct": 0.3677,
+   "corr_w_gap": 0.7728
+  },
+  "final_fit": {
+   "a": 0.00574,
+   "b": 0.08378
+  },
+  "gates": {
+   "C1 walk-forward skill > 0 (99% CI)": false,
+   "C2 holdout skill > 0": true,
+   "C3 hit rate above baseline": true,
+   "C4 >= 150 walk-forward weekends": true
+  },
+  "reason": "failed: C1"
+ }
+}
