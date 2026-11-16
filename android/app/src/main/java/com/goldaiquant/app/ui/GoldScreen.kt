@@ -110,6 +110,11 @@ import com.goldaiquant.app.ReasonStrings
 import com.goldaiquant.app.ReasonText
 import com.goldaiquant.app.Trend
 import com.goldaiquant.app.Trust
+import com.goldaiquant.app.BriefRow
+import com.goldaiquant.app.RecStatus
+import com.goldaiquant.app.Record
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import com.goldaiquant.app.DataHealth
 import com.goldaiquant.app.TrustLedger
 import com.goldaiquant.app.UiState
@@ -248,6 +253,7 @@ private sealed interface Sheet {
     data object Settings : Sheet
     data object Assets : Sheet
     data object TrustSheet : Sheet
+    data object TrustDetails : Sheet
     data object HowSheet : Sheet
     data object NewsSheet : Sheet
     data object ScalpSheet : Sheet
@@ -305,8 +311,7 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
                 Row(Modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(gap)) {
                     if (d.instrument != "XAU/USD") ScalpTile(d, Modifier.weight(1f).fillMaxHeight()) { sheet = Sheet.ScalpSheet }
                     else ProbTile(card, Modifier.weight(1f).fillMaxHeight()) { sheet = Sheet.Probabilities }
-                    Tile(stringResource(R.string.trust_short),
-                        s.trust?.let { stringResource(R.string.trust_tile, it.all.completed) } ?: "…",
+                    Tile(stringResource(R.string.rec_title), recordTile(s.briefs),
                         WaitGold, Modifier.weight(1f).fillMaxHeight()) { sheet = Sheet.TrustSheet }
                     Tile(stringResource(R.string.details), stringResource(R.string.why_title), WaitGold,
                         Modifier.weight(1f).fillMaxHeight()) { sheet = Sheet.Details }
@@ -315,8 +320,7 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
                 if (s.error == null) Text(stringResource(R.string.prompt_ask), color = TextDim, fontSize = 14.sp,
                     textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth().padding(16.dp))
                 Spacer(Modifier.weight(1f))
-                Tile(stringResource(R.string.trust_short),
-                    s.trust?.let { stringResource(R.string.trust_tile, it.all.completed) } ?: "…",
+                Tile(stringResource(R.string.rec_title), recordTile(s.briefs),
                     WaitGold, Modifier.fillMaxWidth()) { sheet = Sheet.TrustSheet }
             }
             Text(stringResource(R.string.footer_disclaimer), color = TextDim, fontSize = 9.sp, lineHeight = 11.sp,
@@ -332,7 +336,8 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
         Sheet.TrendSheet -> if (card != null) TrendDialog(card) { sheet = null }
         Sheet.Details -> if (card != null && d != null) DetailsDialog(card, d) { sheet = null }
         Sheet.Assets -> AssetDialog(s, { a -> sheet = null; onAssetPick(a) }) { sheet = null }
-        Sheet.TrustSheet -> TrustDialog(s.trust, s.position) { sheet = null }
+        Sheet.TrustSheet -> RecordPage(s.briefs, onMore = { sheet = Sheet.TrustDetails }) { sheet = null }
+        Sheet.TrustDetails -> TrustDialog(s.trust, s.position) { sheet = Sheet.TrustSheet }
         Sheet.Settings -> SettingsDialog(s, lang, onNextDemo, onSave, onLive, onLanguage, onNotify, onAlertAsset,
             onHow = { sheet = Sheet.HowSheet }, onNews = { sheet = Sheet.NewsSheet }) { sheet = null }
         Sheet.HowSheet -> HowDialog { sheet = null }
@@ -1854,5 +1859,251 @@ private fun OnboardingDialog(onDone: () -> Unit) {
                         .padding(horizontal = 16.dp, vertical = 8.dp))
             }
         }
+    }
+}
+
+// ---------------------------------------------------------------- results record (daily direction calls vs outcome)
+@Composable
+private fun recordTile(rows: List<BriefRow>): String {
+    val sm = Record.summary(rows)
+    return if (sm.settled == 0) stringResource(R.string.record_tile_none)
+           else ltr(stringResource(R.string.record_tile, sm.correct, sm.settled))
+}
+
+private fun recPrice(v: Double?): String = when {
+    v == null -> "—"
+    v >= 10_000 -> String.format(Locale.US, "%,.0f", v)
+    else -> String.format(Locale.US, "%.2f", v)
+}
+
+@Composable
+private fun recAssetName(a: String): String = if (a == "XAU") stringResource(R.string.asset_gold) else a
+
+@Composable
+private fun RecAvatar(a: String) {
+    val (letter, bg, fg) = when (a) {
+        "BTC" -> Triple("B", Color(0xFFF7931A), Color(0xFF111111))
+        "ETH" -> Triple("E", Color(0xFF1A2033), Color(0xFF8FA8FF))
+        "SOL" -> Triple("S", Color(0xFF1D1430), Color(0xFFB28CFF))
+        else -> Triple("G", Color(0xFF2E260E), WaitGold)
+    }
+    Box(Modifier.size(40.dp).background(bg, RoundedCornerShape(20.dp)).border(1.dp, fg.copy(alpha = 0.7f), RoundedCornerShape(20.dp)),
+        contentAlignment = Alignment.Center) { Text(letter, color = fg, fontSize = 16.sp, fontWeight = FontWeight.Black) }
+}
+
+@Composable
+private fun RecBadge(st: RecStatus, short: Boolean = true) {
+    val (txt, bg, fg) = when (st) {
+        RecStatus.CORRECT -> Triple("✓ " + stringResource(R.string.rec_c), Color(0xFF1F8F4E), Color.White)
+        RecStatus.WRONG -> Triple("✕ " + stringResource(R.string.rec_w), Color(0xFFB3363B), Color.White)
+        RecStatus.NEUTRAL -> Triple("— " + stringResource(R.string.rec_n), Track, Color(0xFFC8CCD4))
+        RecStatus.NO_DATA -> Triple(stringResource(R.string.rec_nodata), Track, Color(0xFFC8CCD4))
+        RecStatus.PENDING -> Triple("⏱ " + stringResource(if (short) R.string.rec_wait else R.string.rec_p), Track, Color(0xFFC8CCD4))
+    }
+    Text(txt, color = fg, fontSize = 13.sp, fontWeight = FontWeight.Bold, maxLines = 1,
+        modifier = Modifier.background(bg, RoundedCornerShape(14.dp)).padding(horizontal = 12.dp, vertical = 4.dp))
+}
+
+@Composable
+private fun RecGauge(acc: Double?, enough: Boolean) {
+    val col = if (enough) BuyGreen else Grey
+    Box(Modifier.size(width = 130.dp, height = 92.dp), contentAlignment = Alignment.BottomCenter) {
+        Canvas(Modifier.fillMaxSize().padding(8.dp)) {
+            val stroke = androidx.compose.ui.graphics.drawscope.Stroke(width = 22f, cap = androidx.compose.ui.graphics.StrokeCap.Round)
+            val d = minOf(size.width, size.height * 2f)
+            val tl = androidx.compose.ui.geometry.Offset((size.width - d) / 2f, 0f)
+            val sz = androidx.compose.ui.geometry.Size(d, d)
+            drawArc(Track, 180f, 180f, false, tl, sz, style = stroke)
+            if (acc != null) drawArc(col, 180f, (180f * acc.toFloat()).coerceAtLeast(1f), false, tl, sz, style = stroke)
+        }
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(acc?.let { ltr("${Math.round(it * 100)}%") } ?: "—", color = TextMain, fontSize = 26.sp, fontWeight = FontWeight.Black)
+            Text(stringResource(if (enough) R.string.rec_acc else R.string.rec_small), color = TextDim, fontSize = 11.sp)
+        }
+    }
+}
+
+@Composable
+private fun RecDropdown(label: String, options: List<Pair<String, String>>, modifier: Modifier, onPick: (String) -> Unit) {
+    var open by remember { mutableStateOf(false) }
+    Box(modifier) {
+        Row(Modifier.fillMaxWidth().border(1.5.dp, Gold, RoundedCornerShape(22.dp)).clickable(role = Role.Button) { open = true }
+            .padding(horizontal = 14.dp, vertical = 9.dp), verticalAlignment = Alignment.CenterVertically) {
+            Text(label, color = TextMain, fontSize = 14.sp, fontWeight = FontWeight.Bold, maxLines = 1, modifier = Modifier.weight(1f))
+            Text("▾", color = Gold, fontSize = 14.sp)
+        }
+        DropdownMenu(expanded = open, onDismissRequest = { open = false }, modifier = Modifier.background(Card)) {
+            options.forEach { (k, v) ->
+                DropdownMenuItem(text = { Text(v, color = TextMain) }, onClick = { open = false; onPick(k) })
+            }
+        }
+    }
+}
+
+@Composable
+private fun RecordPage(rows: List<BriefRow>, onMore: () -> Unit, onClose: () -> Unit) {
+    val uri = LocalUriHandler.current
+    var days by remember { mutableStateOf(7) }
+    var asset by remember { mutableStateOf<String?>(null) }
+    var showAll by remember { mutableStateOf(false) }
+    var method by remember { mutableStateOf(false) }
+    var detail by remember { mutableStateOf<BriefRow?>(null) }
+    detail?.let { RecDetail(it) { detail = null } }
+    val today = java.time.LocalDate.now(java.time.ZoneOffset.UTC)
+    val shown = Record.filter(rows, asset, days, today)
+    val sm = Record.summary(shown)
+    val periods = listOf("1" to stringResource(R.string.rec_p_today), "7" to stringResource(R.string.rec_p_7),
+        "30" to stringResource(R.string.rec_p_30))
+    val assets = listOf("" to stringResource(R.string.rec_all_assets), "XAU" to stringResource(R.string.asset_gold),
+        "BTC" to "BTC", "ETH" to "ETH", "SOL" to "SOL")
+    Dialog(onDismissRequest = onClose, properties = DialogProperties(usePlatformDefaultWidth = false,
+        securePolicy = SecureDialog.securePolicy)) {
+        Column(Modifier.fillMaxSize().background(Bg).watermark(LocalWatermark.current).verticalScroll(rememberScrollState())
+            .padding(horizontal = 16.dp, vertical = 14.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                val circle = Modifier.size(40.dp).border(1.5.dp, Gold, RoundedCornerShape(20.dp))
+                Box(circle.clickable(role = Role.Button, onClickLabel = stringResource(R.string.rec_how)) { method = !method },
+                    contentAlignment = Alignment.Center) { Text("i", color = WaitGold, fontSize = 18.sp, fontWeight = FontWeight.Black) }
+                Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text("AI QUANT", color = WaitGold, fontSize = 20.sp, fontWeight = FontWeight.Black)
+                    Text(stringResource(R.string.rec_title), color = TextMain, fontSize = 14.sp)
+                }
+                Box(circle.clickable(role = Role.Button, onClickLabel = stringResource(R.string.close), onClick = onClose),
+                    contentAlignment = Alignment.Center) { Text("→", color = WaitGold, fontSize = 18.sp, fontWeight = FontWeight.Bold) }
+            }
+            Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(stringResource(R.string.rec_q), color = TextMain, fontSize = 22.sp, fontWeight = FontWeight.Black, textAlign = TextAlign.Center)
+                Text(stringResource(R.string.rec_sub), color = TextDim, fontSize = 13.sp, textAlign = TextAlign.Center)
+            }
+            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                RecDropdown(periods.first { it.first == "$days" }.second, periods, Modifier.weight(1f)) { days = it.toInt(); showAll = false }
+                RecDropdown(assets.first { it.first == (asset ?: "") }.second, assets, Modifier.weight(1f)) {
+                    asset = it.ifEmpty { null }; showAll = false
+                }
+            }
+            // summary: settled correct of settled, and the accuracy gauge (grey until enough settled calls)
+            Row(Modifier.fillMaxWidth().background(Color(0xFF0F0E0B), RoundedCornerShape(20.dp))
+                .border(1.dp, Color(0xFF6B5A22), RoundedCornerShape(20.dp)).padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(ltr(stringResource(R.string.rec_of, sm.correct, sm.settled)), color = WaitGold, fontSize = 34.sp, fontWeight = FontWeight.Black)
+                    Text(stringResource(R.string.rec_correct_lbl), color = TextMain, fontSize = 15.sp, fontWeight = FontWeight.Bold)
+                }
+                Box(Modifier.width(1.dp).height(80.dp).background(Track))
+                Box(Modifier.weight(1f), contentAlignment = Alignment.Center) { RecGauge(sm.accuracy, sm.settled >= Record.MIN_SETTLED) }
+            }
+            if (days == 1) Text(stringResource(R.string.rec_today_note), color = TextDim, fontSize = 12.sp)
+            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                @Composable
+                fun chip(t: String, n: Int, bg: Color, edge: Color, fg: Color) = Text("$t ${ltr("$n")}", color = fg, fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold, maxLines = 1, textAlign = TextAlign.Center,
+                    modifier = Modifier.weight(1f).background(bg, RoundedCornerShape(16.dp)).border(1.dp, edge, RoundedCornerShape(16.dp))
+                        .padding(vertical = 6.dp))
+                chip("✓ " + stringResource(R.string.rec_c), sm.correct, Color(0xFF0F3A22), Color(0xFF1F8F4E), Color(0xFF3FE08A))
+                chip("✕ " + stringResource(R.string.rec_w), sm.wrong, Color(0xFF3A1416), Color(0xFFB3363B), Color(0xFFFF7B80))
+                chip("— " + stringResource(R.string.rec_n), sm.neutral, Track, Grey, Color(0xFFD0D0D6))
+                chip("⏱ " + stringResource(R.string.rec_p), sm.pending, Track, Grey, Color(0xFFD0D0D6))
+            }
+            Text(stringResource(R.string.rec_latest), color = TextMain, fontSize = 17.sp, fontWeight = FontWeight.Black)
+            Column(Modifier.fillMaxWidth().background(Color(0xFF0C0C0F), RoundedCornerShape(18.dp))
+                .border(1.dp, Track, RoundedCornerShape(18.dp)).padding(horizontal = 12.dp)) {
+                if (shown.isEmpty()) Text(stringResource(R.string.rec_empty), color = TextDim, fontSize = 13.sp,
+                    modifier = Modifier.padding(vertical = 14.dp))
+                val list = if (showAll) shown else shown.take(3)
+                list.forEachIndexed { i, r ->
+                    if (i > 0) Box(Modifier.fillMaxWidth().height(1.dp).background(Color(0xFF222222)))
+                    RecRow(r) { detail = r }
+                }
+            }
+            if (shown.size > 3) Text(stringResource(if (showAll) R.string.rec_show_less else R.string.rec_show_all), color = WaitGold,
+                fontSize = 16.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth().background(Color(0xFF14120C), RoundedCornerShape(24.dp))
+                    .border(1.5.dp, Gold, RoundedCornerShape(24.dp)).clickable(role = Role.Button) { showAll = !showAll }
+                    .padding(vertical = 11.dp))
+            // optional methodology: how accuracy is measured, and the "always up" baseline on the same calls
+            Column(Modifier.fillMaxWidth().border(1.dp, Track, RoundedCornerShape(16.dp))) {
+                Row(Modifier.fillMaxWidth().clickable(role = Role.Button) { method = !method }.padding(12.dp)) {
+                    Text(stringResource(R.string.rec_how), color = TextMain, fontSize = 14.sp, fontWeight = FontWeight.Bold,
+                        modifier = Modifier.weight(1f))
+                    Text(if (method) "▴" else "▾", color = Gold)
+                }
+                if (method) Column(Modifier.padding(start = 12.dp, end = 12.dp, bottom = 12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    listOf(R.string.rec_how_1, R.string.rec_how_2, R.string.rec_how_3, R.string.rec_how_4).forEach {
+                        Text("• " + stringResource(it), color = TextMain, fontSize = 13.sp, lineHeight = 19.sp)
+                    }
+                    if (sm.settled > 0) Column(Modifier.fillMaxWidth().background(Color(0xFF1A1610), RoundedCornerShape(12.dp)).padding(10.dp)) {
+                        Text(stringResource(R.string.rec_base_title), color = WaitGold, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                        @Composable
+                        fun line(t: String, k: Int) = Row(Modifier.fillMaxWidth()) {
+                            Text(t, color = TextMain, fontSize = 13.sp, modifier = Modifier.weight(1f))
+                            Text(ltr(stringResource(R.string.rec_frac, k, sm.settled, Math.round(100.0 * k / sm.settled).toInt())),
+                                color = TextMain, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                        }
+                        line(stringResource(R.string.rec_base_ours), sm.correct)
+                        line(stringResource(R.string.rec_base_up), sm.baselineUp)
+                    }
+                    Text(stringResource(R.string.rec_verify), color = WaitGold, fontSize = 12.sp,
+                        modifier = Modifier.clickable(role = Role.Button) { uri.openUri(TrustLedger.REPO_URL) })
+                    Text(stringResource(R.string.rec_more), color = TextDim, fontSize = 12.sp,
+                        modifier = Modifier.clickable(role = Role.Button, onClick = onMore))
+                }
+            }
+            Text("ⓘ " + stringResource(R.string.rec_foot), color = TextDim, fontSize = 12.sp, textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth())
+        }
+    }
+}
+
+@Composable
+private fun recDay(r: BriefRow): String {
+    val locale = LocalConfiguration.current.locales[0]
+    val d = try { java.time.LocalDate.parse(r.date) } catch (e: Exception) { null }
+    return d?.let { DateTimeFormatter.ofPattern("d MMMM", locale).format(it) } ?: r.date
+}
+
+@Composable
+private fun RecRow(r: BriefRow, onClick: () -> Unit) {
+    val st = Record.status(r)
+    Row(Modifier.fillMaxWidth().clickable(role = Role.Button, onClick = onClick).padding(vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+        RecAvatar(r.asset)
+        Column(Modifier.weight(1f)) {
+            Text(recDay(r) + " · " + ltr(recAssetName(r.asset)), color = TextMain, fontSize = 14.sp, fontWeight = FontWeight.Bold, maxLines = 1)
+            if (st == RecStatus.NEUTRAL) Text(stringResource(R.string.rec_no_bias), color = TextDim, fontSize = 13.sp)
+            else Text(buildAnnotatedString {
+                val dir = stringResource(if (r.bias == "UP") R.string.rec_up else R.string.rec_down)
+                val full = stringResource(R.string.rec_pred, dir)
+                append(full)
+                val i = full.indexOf(dir)
+                if (i >= 0) addStyle(SpanStyle(color = if (r.bias == "UP") BuyGreen else SellRed), i, i + dir.length)
+            }, color = TextMain, fontSize = 13.sp)
+        }
+        RecBadge(st)
+    }
+}
+
+@Composable
+private fun RecDetail(r: BriefRow, onClose: () -> Unit) {
+    val st = Record.status(r)
+    val title = stringResource(when (st) {
+        RecStatus.CORRECT -> R.string.rec_why_ok; RecStatus.WRONG -> R.string.rec_why_bad
+        RecStatus.NEUTRAL -> R.string.rec_why_neutral; else -> R.string.rec_why_wait
+    })
+    DialogFrame(title, onClose) {
+        KV(stringResource(R.string.rec_d_asset), recDay(r) + " · " + ltr(recAssetName(r.asset)), 13.sp)
+        KV(stringResource(R.string.rec_d_pred), if (st == RecStatus.NEUTRAL) stringResource(R.string.rec_no_bias)
+            else stringResource(if (r.bias == "UP") R.string.rec_up else R.string.rec_down), 13.sp)
+        KV(stringResource(R.string.rec_d_price), ltr(recPrice(r.price)), 13.sp)
+        KV(stringResource(R.string.rec_d_close), ltr(recPrice(r.close)), 13.sp)
+        val why = stringResource(when (st) {
+            RecStatus.CORRECT -> if (r.bias == "UP") R.string.rec_x_ok_up else R.string.rec_x_ok_down
+            RecStatus.WRONG -> if (r.bias == "UP") R.string.rec_x_bad_up else R.string.rec_x_bad_down
+            RecStatus.NEUTRAL -> R.string.rec_x_neutral
+            RecStatus.NO_DATA -> R.string.rec_x_nodata
+            RecStatus.PENDING -> R.string.rec_x_wait
+        })
+        val bg = when (st) { RecStatus.CORRECT -> Color(0xFF0F3A22); RecStatus.WRONG -> Color(0xFF2A1214); else -> Track }
+        Text(why, color = TextMain, fontSize = 14.sp, lineHeight = 21.sp,
+            modifier = Modifier.fillMaxWidth().padding(top = 6.dp).background(bg, RoundedCornerShape(12.dp)).padding(10.dp))
+        Body(stringResource(R.string.rec_d_note), TextDim, 11.sp)
     }
 }

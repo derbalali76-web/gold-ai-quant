@@ -24,6 +24,7 @@ data class UiState(
     val notify: Boolean = false,
     val track: List<TrackItem> = emptyList(),
     val trustAll: Map<String, Trust> = emptyMap(),
+    val briefs: List<BriefRow> = emptyList(),
     val asset: String = "XAU",  // XAU | BTC | ETH | SOL
     val positions: Map<String, String> = emptyMap(),  // asset -> CASH | HOLD (stored on the phone only)
     val alertAssets: Set<String> = setOf("XAU"),  // alerts only for the assets this trader follows
@@ -84,6 +85,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                 decisionFromCache = cached != null,
                 receivedAt = prefs.getLong("last_received", 0L).takeIf { v -> v > 0 }?.let(Instant::ofEpochMilli),
                 trustAll = TrustParser.parseAll(prefs.getString("trust", null)),
+                briefs = Record.parse(prefs.getString("trust", null)),
                 asset = asset0,
                 alertAssets = SignalWorker.alertAssets(prefs),
                 priceAlerts = PriceAlerts.load(prefs),
@@ -146,7 +148,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             val body = TrustLedger.fetch() ?: return@launch
             val t = TrustParser.parseAll(body).takeIf { it.isNotEmpty() } ?: return@launch
             prefs.edit().putString("trust", body).apply()
-            _state.update { it.copy(trustAll = t) }
+            _state.update { it.copy(trustAll = t, briefs = Record.parse(body)) }
         }
     }
 
