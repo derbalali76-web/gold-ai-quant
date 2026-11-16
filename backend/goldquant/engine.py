@@ -678,6 +678,13 @@ class DecisionEngine:
         if dq and d.data_health is None:
             d.data_health = DataHealth(status=dq["status"], checks=[DQCheck(**c) for c in dq["checks"]])
         ctx = getattr(self, "_ctx", None)
+        try:  # v1.14: when each input was last updated (an old analysis is never shown as live)
+            from . import source_status as SS
+            d.sources = SS.build(d.analyzed_at_utc, d.quote_timestamp_utc, getattr(self, "_bars", None),
+                                 getattr(self, "_daily", None), ctx, gold_hours=True,
+                                 market_closed=bool(d.market_closed))
+        except Exception:  # noqa: BLE001 — informative only
+            pass
         PL.attach(d, getattr(self, "planners", None), getattr(self, "_daily", None),
                   getattr(ctx, "macro_frames", None) or None)  # plans are part of the audit
         from . import brief as BR

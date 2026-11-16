@@ -85,7 +85,7 @@ def _cards(daily: Optional[pd.DataFrame], as_of: datetime) -> list[HorizonOutloo
     """WEEK / MONTH context (trend + daily levels) from the coin's own daily bars; never validated here."""
     out = []
     try:
-        views = OL.compute(daily, as_of, synthetic=False) if daily is not None and len(daily) > 260 else []
+        views = OL.compute(daily, as_of, synthetic=False, gold_hours=False) if daily is not None and len(daily) > 260 else []
     except Exception:  # noqa: BLE001
         views = []
     for v in views:
@@ -124,6 +124,11 @@ def decide(asset: str, feed: CryptoFeed, as_of: Optional[datetime] = None,
     m15 = bars["M15"]
     price = float(m15["close"].iloc[-1])
     q_time = (m15.index[-1] + pd.Timedelta(minutes=15)).to_pydatetime()
+    try:  # v1.14: when each input was last updated
+        from . import source_status as SS
+        base["sources"] = SS.build(as_of, q_time, bars, daily, ctx, gold_hours=False)
+    except Exception:  # noqa: BLE001 — informative only
+        pass
     age = (as_of - q_time).total_seconds()
     dq = {}
     for tf in ("M15", "H1"):

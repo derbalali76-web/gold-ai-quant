@@ -333,15 +333,24 @@ def horizon_levels(daily: pd.DataFrame, px: float, hz: str) -> dict:
 
 
 def compute(daily: Optional[pd.DataFrame], as_of: datetime, synthetic: bool = False,
-            upcoming_events: Optional[list] = None, macro: Optional[dict] = None) -> list[HorizonView]:
-    """daily: OHLC indexed by day OPEN time (UTC); only days CLOSED at or before as_of are used."""
+            upcoming_events: Optional[list] = None, macro: Optional[dict] = None,
+            gold_hours: bool = True) -> list[HorizonView]:
+    """daily: OHLC indexed by day OPEN time (UTC); only days CLOSED at or before as_of are used.
+    A daily series whose last closed day is too old (source stalled) gives no week/month analysis at all: an old
+    analysis is never presented as current (gold: age in trading time; crypto: calendar time)."""
+    from . import source_status as SS
     out = []
     if daily is not None and len(daily):
         daily = daily[daily.index + pd.Timedelta(days=1) <= pd.Timestamp(as_of)]
     n = 0 if daily is None else len(daily)
+    stale = None
+    if n and not synthetic:
+        last = daily.index[-1] + pd.Timedelta(days=1)
+        if SS.age(last, pd.Timestamp(as_of), gold_hours) > SS.DAILY_STALE:
+            stale = M("va.daily_stale", (last - pd.Timedelta(days=1)).strftime("%Y-%m-%d"))
     for hz in ("WEEK", "MONTH"):
-        if n < MIN_DAILY_BARS:
-            msg = M("va.insufficient", n, MIN_DAILY_BARS)
+        if n < MIN_DAILY_BARS or stale is not None:
+            msg = stale if stale is not None else M("va.insufficient", n, MIN_DAILY_BARS)
             out.append(HorizonView(horizon=hz, action="UNAVAILABLE", tilt=0, stance_ar=str(M("st.na")), reason_ar=str(msg),
                                    validated=False, validation_ar=str(msg), stats=RuleStats(reason_ar=str(msg), reason_msg=msg),
                                    stance_msg=M("st.na"), reason_msg=msg, validation_msg=msg))

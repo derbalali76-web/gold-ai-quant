@@ -28,6 +28,7 @@ EN = {
     "fw.jump": "Abnormal price jump ({0}×ATR) between the current price and the last candle — suspected data error",
     "fw.frozen": "Price feed is frozen (identical consecutive candles)",
     "fw.spike": "Extreme candle in the last 20 (z={0}) — suspected feed error",
+    "va.daily_stale": "Daily candles are out of date (last complete day {0}) — no week/month analysis until they update",
     "fw.bar_lag": "{0} candles are {1} trading hours late — source stalled or incomplete",
     "fw.no_context": "Context sources (calendar/news) are not enabled", "fw.calendar_stale": "The economic calendar is not up to date",
     "fw.price_conflict": "The two price sources disagree ({0}) — data is doubtful",

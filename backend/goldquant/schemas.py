@@ -7,7 +7,7 @@ from typing import Any, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-SCHEMA_VERSION = "1.13.0"
+SCHEMA_VERSION = "1.14.0"
 
 
 class Action(str, Enum):
@@ -353,6 +353,17 @@ class DataHealth(BaseModel):
     checks: list[DQCheck] = Field(default_factory=list)
 
 
+class SourceStatus(BaseModel):
+    """v1.14: when each input of THIS decision was last updated, and whether that is recent enough to use.
+    state: OK | STALE (older than allowed in trading time) | CLOSED (market closed, nothing new expected) |
+    DOWN (no data). Times are when the data became available (a bar's close), not when it was downloaded."""
+    model_config = ConfigDict(extra="forbid")
+    source: str  # PRICE | M15 | H1 | H4 | D1 | CALENDAR | ACTIVITY_MODEL
+    state: str
+    last_update_utc: Optional[datetime] = None
+    max_age_minutes: Optional[float] = None  # allowed age, in trading time for gold
+
+
 class ScalpActivity(BaseModel):
     """v1.10: will price move at least target_pct (either way) within `hours`? NOT a direction, never a BUY/SELL.
     Present only for assets whose forecast passed the weekly pre-registered validation (goldquant/activity.py)."""
@@ -423,6 +434,7 @@ class Decision(BaseModel):
     market_closed: bool = False
     daily_brief: Optional[DailyBrief] = None
     data_health: Optional[DataHealth] = None  # v1.8
+    sources: list[SourceStatus] = Field(default_factory=list)  # v1.14
     scalp_activity: Optional[ScalpActivity] = None  # v1.10
     audit_hash: Optional[str] = None
 

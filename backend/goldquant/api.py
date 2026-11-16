@@ -408,6 +408,14 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
             prm = activity_state["params"].get(asset)
             if not prm or not prm.get("qualified"):
                 return
+            try:  # the model is retrained weekly: show how recent its data is
+                from . import source_status as SS
+                end = str(prm.get("period") or "").split("->")[-1].strip()
+                if end:
+                    d.sources.append(SS.build(d.analyzed_at_utc, model_updated_at=pd.Timestamp(end, tz="UTC")
+                                              + pd.Timedelta(days=1))[-1])
+            except Exception:  # noqa: BLE001 — informative only
+                pass
             m15 = crypto_state["feed"].bars(CE_SYMBOL(asset), "M15", utcnow())
             r = ACT.predict(prm, m15)
             if r is None:
