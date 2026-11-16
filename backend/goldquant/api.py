@@ -618,6 +618,65 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
         return {"asset": a, "available": bool(out), "price": None if q is None else round(float(q), 6),
                 "reason": None if out else ("NO_PRICE_DATA" if q is None else "NOT_VALIDATED"), "horizons": out}
 
+    range_state = {"mtime": None, "data": {}}
+
+    @app.get("/range", dependencies=[Depends(auth)])
+    def range_endpoint(asset: str = Query("XAU")):
+        """80 % interval for the CLOSE 4 h / 1 day ahead (goldquant/price_range.py, pre-registered). Only horizons that
+        passed are returned; a 4 h interval with a high-impact event inside its window is withheld. Experimental:
+        never a direction, a target or a recommendation."""
+        from . import price_range as PRG
+        a = asset.upper()
+        if a not in ("XAU", "BTC", "ETH", "SOL"):
+            raise HTTPException(422, "asset must be XAU, BTC, ETH or SOL")
+        p = next((b / "range_models.json" for b in (repo_dir / "models", st.data_dir)
+                  if (b / "range_models.json").exists()), None)
+        if p is None:
+            if cloud_on and not sync_state["running"] and time.time() - (sync_state["last"] or 0) > 300:
+                threading.Thread(target=cloud_sync, daemon=True).start()
+            return {"asset": a, "available": False, "reason": "NO_MODEL_FILE", "display": None, "horizons": {}}
+        mt = p.stat().st_mtime
+        if range_state["mtime"] != mt:
+            import json as _json
+            range_state["data"] = _json.loads(p.read_text(encoding="utf-8")).get("assets", {})
+            range_state["mtime"] = mt
+        models = range_state["data"].get(a) or {}
+        now = utcnow()
+        if a == "XAU":
+            prov = live_provider if live_provider is not None else demo
+            b = prov.bars("H1", now, 1000)
+            h1 = b.df if b is not None else None
+        else:
+            from . import crypto_engine as CE
+            from .levels import LevelService
+            if crypto_state["feed"] is None:
+                crypto_state["feed"], crypto_state["levels"] = CE.CryptoFeed(), LevelService()
+            h1 = crypto_state["feed"].bars(CE.ASSETS[a], "H1", now, 1000)
+        events = []
+        if context is not None:
+            cal = context.calendar_status(now).get("cal")
+            if cal is not None:
+                events = [e for e in cal.events if (e.importance or 0) >= 3]
+        out = {}
+        for h in ("4h", "24h"):
+            x = models.get(h) or {}
+            if not x.get("qualified") or not x.get("params"):
+                continue
+            r = PRG.live(x["params"], h1, pd.Timestamp(now))
+            if r is None:
+                continue
+            ev = None
+            if h == "4h":
+                t0 = pd.Timestamp(r["issued_at"])
+                hit = [e for e in events if t0 < pd.Timestamp(e.time_utc) <= t0 + pd.Timedelta(hours=4)]
+                if hit:
+                    ev = {"name": hit[0].name, "time_utc": hit[0].time_utc.isoformat()}
+            out[h] = dict(r, event=ev, holdout_coverage=x.get("holdout_coverage"))
+        disp = PRG.display_horizon({h: h in out for h in ("4h", "24h")})
+        return {"asset": a, "available": bool(out), "experimental": True, "display": disp,
+                "reason": None if out else ("NO_PRICE_DATA" if h1 is None or not len(h1) else "NOT_VALIDATED"),
+                "horizons": out}
+
     @app.get("/calendar", dependencies=[Depends(auth)])
     def calendar_endpoint():
         """Economic calendar for the in-app screen: state, last successful update, events -12 h .. +7 days."""

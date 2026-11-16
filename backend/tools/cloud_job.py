@@ -636,6 +636,7 @@ def range_research(hs) -> dict:
             ev_src[name] = f"unavailable: {str(exc)[:80]}"
     out = {"schema": 1, "version": PR.VERSION, "updated_at": datetime.now(timezone.utc).isoformat(),
            "events_source": ev_src, "events_n": len(events), "assets": {}}
+    models = {"schema": 1, "version": PR.VERSION, "updated_at": out["updated_at"], "assets": {}}
     frames = {"XAU": ("gold", hs.load_bars("Dukascopy", "XAUUSD", "H1", limit=10_000_000))}
     for sym, a in (("BTCUSDT", "BTC"), ("ETHUSDT", "ETH"), ("SOLUSDT", "SOL")):
         frames[a] = ("crypto", CS.load_bars(MD, sym, "1h"))
@@ -644,10 +645,15 @@ def range_research(hs) -> dict:
             out["assets"][a] = {"reason": "not enough hourly bars"}
             continue
         out["assets"][a] = PR.evaluate_asset(h1, kind, events)
+        models["assets"][a] = {h: {"qualified": bool(r.get("qualified")), "reason": r.get("reason"),
+                                   "holdout_coverage": (r.get("holdout") or {}).get("m", {}).get("coverage"),
+                                   "params": PR.export(h1, kind, h)} for h, r in out["assets"][a].items()}
         for h, r in out["assets"][a].items():
             print(a, h, r.get("reason"), {k: r.get(k) for k in ("score_diff_vs_best", "score_diff_ci99")},
                   (r.get("holdout") or {}).get("m"), flush=True)
     (MODELS / "range_report.json").write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    # live parameters for every asset x horizon (the ledger records all of them; the app shows qualified ones only)
+    (MODELS / "range_models.json").write_text(json.dumps(models, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
     return out
 
 
@@ -783,6 +789,10 @@ def research(hs: HistoryStore) -> None:
         touch_models(hs)
     except Exception as exc:  # noqa: BLE001 — never block the rest of the weekly research
         print("touch re-validation failed:", exc, flush=True)
+    try:  # weekly re-validation of the price-range engine (same pre-registered rules; nothing is re-tuned)
+        range_research(hs)
+    except Exception as exc:  # noqa: BLE001
+        print("range re-validation failed:", exc, flush=True)
     from goldquant import setups
     from goldquant.precision import promotion as PR
     from goldquant.precision.feature_upgrade import compare

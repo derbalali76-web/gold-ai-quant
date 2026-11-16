@@ -225,3 +225,50 @@ def evaluate(h1: pd.DataFrame, kind: str, name: str, events: Optional[list] = No
 
 def evaluate_asset(h1: pd.DataFrame, kind: str, events: Optional[list] = None) -> dict:
     return {name: evaluate(h1, kind, name, events) for name in HORIZONS[kind]}
+
+
+# ---------------------------------------------------------------- export + live (same model as validated, all data)
+def export(h1: pd.DataFrame, kind: str, name: str) -> Optional[dict]:
+    """Scale model + calibration quantiles fitted on all history (calibration = its last CAL_MONTHS)."""
+    H, step = HORIZONS[kind][name], STEPS[kind][name]
+    cols = _features(kind, H)
+    df = frame(h1.dropna(subset=["close"]), kind, H).iloc[::step].dropna(subset=["y", "known"])
+    if len(df) < 2000:
+        return None
+    m = _fit(df, cols, df["t"].iloc[-1] - pd.DateOffset(months=CAL_MONTHS))
+    if m is None:
+        return None
+    beta, q10, q90 = m
+    return {"version": VERSION, "kind": kind, "horizon": name, "bars": H, "cols": cols,
+            "beta": [float(b) for b in beta], "q10": q10, "q90": q90, "trained_until": str(df["t"].iloc[-1])}
+
+
+def live(params: dict, h1: pd.DataFrame, now: Optional[pd.Timestamp] = None) -> Optional[dict]:
+    """80 % interval for the close `bars` hourly bars after the last CLOSED bar. None without enough data."""
+    if not params or h1 is None:
+        return None
+    d = h1.dropna(subset=["close"])
+    if now is not None:
+        d = d[d.index + pd.Timedelta(hours=1) <= now]  # only closed bars
+    kind, H = params["kind"], int(params["bars"])
+    if len(d) < WINDOWS[kind][-1] + 5:
+        return None
+    f = frame(d, kind, H).iloc[-1]
+    cols = params["cols"]
+    if any(not np.isfinite(f[c]) for c in cols):
+        return None
+    x = np.array([1.0] + [float(f[c]) for c in cols])
+    s = float(np.exp(x @ np.array(params["beta"]) / 2))
+    c = float(d["close"].iloc[-1])
+    lo, hi = params["q10"] * s, params["q90"] * s
+    return {"horizon": params["horizon"], "bars": H, "issued_at": str(f["t"]), "close_at_issue": c,
+            "low": c * float(np.exp(lo / 100)), "high": c * float(np.exp(hi / 100)),
+            "lo_pct": round(lo, 4), "hi_pct": round(hi, 4), "version": params["version"]}
+
+
+def display_horizon(qualified: dict) -> Optional[str]:
+    """The strip shows the day horizon when it qualified, else 4 h; None when neither did."""
+    for h in ("24h", "4h"):
+        if qualified.get(h):
+            return h
+    return None
