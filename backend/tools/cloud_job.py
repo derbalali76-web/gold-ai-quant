@@ -607,7 +607,7 @@ def touch_models(hs) -> dict:
     for sym, a in (("BTCUSDT", "BTC"), ("ETHUSDT", "ETH"), ("SOLUSDT", "SOL")):
         frames[a] = CS.load_bars(MD, sym, "1h")
     for a, h1 in frames.items():
-        if h1 is None or len(h1) < 20000:
+        if h1 is None or len(h1) < 8000:  # ~1.5 years of gold trading hours: enough for at least two yearly folds
             print(a, "touch: not enough hourly bars", 0 if h1 is None else len(h1), flush=True)
             continue
         rep = TO.evaluate_asset(h1)
