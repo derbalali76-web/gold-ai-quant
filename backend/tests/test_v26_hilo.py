@@ -39,3 +39,13 @@ def test_pinball_and_evaluate():
     assert HL.pinball(np.array([1.0]), np.array([2.0]), 0.9)[0] == 0.9
     r = HL.evaluate(_h1(), "crypto", "24h")
     assert "gates" in r and 0.0 < r["holdout"]["m"]["upper_exceeded"] < 0.3
+
+
+def test_export_and_live_bounds():
+    h = _h1()
+    p = HL.export(h, "crypto", "4h")
+    assert p and p["qu"] > 0 > p["qd"] and p["b1_up"] > 0 > p["b1_down"]
+    r = HL.live(p, h, now=h.index[-1] + pd.Timedelta(hours=1))
+    for k in ("m", "b1", "b2"):
+        assert r[f"{k}_lower"] < r["close_at_issue"] < r[f"{k}_upper"]
+    assert "Holm" in HL.LIVE_PREREG and set(HL.LIVE_CASES) == {"BTC", "ETH"}

@@ -804,6 +804,15 @@ def hilo_research(hs) -> dict:
         for h, r in out["assets"][a].items():
             print(a, h, r.get("reason"), r.get("diff_ci99"), (r.get("holdout") or {}).get("m"), flush=True)
     (MODELS / "hilo_report.json").write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    # live validation: parameters for the four pre-registered cases only (HL.LIVE_CASES), refitted on all history
+    live = {"schema": 1, "version": HL.VERSION, "updated_at": out["updated_at"], "prereg": HL.LIVE_PREREG, "assets": {}}
+    for a, hs_ in HL.LIVE_CASES.items():
+        kind, h1 = frames[a]
+        if h1 is None or len(h1) < 8000:
+            continue
+        live["assets"][a] = {h: {"backtest_qualified": bool((out["assets"][a].get(h) or {}).get("qualified")),
+                                 "params": HL.export(h1.astype(float), kind, h)} for h in hs_}
+    (MODELS / "hilo_models.json").write_text(json.dumps(live, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
     return out
 
 
@@ -943,6 +952,10 @@ def research(hs: HistoryStore) -> None:
         range_research(hs)
     except Exception as exc:  # noqa: BLE001
         print("range re-validation failed:", exc, flush=True)
+    try:  # weekly refit of the high / low live-validation parameters (same rules; backtest report kept)
+        hilo_research(hs)
+    except Exception as exc:  # noqa: BLE001
+        print("hilo refit failed:", exc, flush=True)
     from goldquant import setups
     from goldquant.precision import promotion as PR
     from goldquant.precision.feature_upgrade import compare

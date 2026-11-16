@@ -302,3 +302,27 @@ def test_range_recorded_on_cadence_then_resolved_on_the_target_close(tmp_path):
     st = L.stats(led.entries, now)["ranges"]["XAU"]["4h"]
     assert st["recorded"] == 1 and st["settled"] == 1 and st["inside"] == 0
     assert L.Ledger(tmp_path).verify() == []
+
+
+def test_hilo_recorded_every_4h_then_scored_with_both_baselines(tmp_path):
+    led = L.Ledger(tmp_path)
+    issued = datetime(2026, 11, 17, 8, tzinfo=timezone.utc)
+    r = {"horizon": "4h", "bars": 4, "issued_at": L.iso(issued), "close_at_issue": 100.0, "version": "hilo-har-0.1.0",
+         "m_lower": 98.0, "m_upper": 102.0, "b1_lower": 97.0, "b1_upper": 103.0, "b2_lower": 99.0, "b2_upper": 101.0}
+    s = dict(snap(issued + timedelta(minutes=17)), asset="BTC", hilo=[r, dict(r, horizon="1w")])
+    led.ingest(s, issued + timedelta(minutes=17))
+    h = [e for e in led.entries if e["kind"] == "HILO"]
+    assert len(h) == 1 and h[0]["data"]["expires_at"] == L.iso(issued + timedelta(hours=4))
+    led.ingest(dict(snap(issued), asset="XAU", hilo=[r]), issued + timedelta(minutes=18))  # gold is not a live case
+    assert len([e for e in led.entries if e["kind"] == "HILO"]) == 1
+    bars = h1(datetime(2026, 11, 17, 7, tzinfo=timezone.utc),
+              [[100, 100.5, 99.5, 100], [100, 101.5, 99.6, 101], [101, 101.2, 100.2, 100.8],
+               [100.8, 100.9, 98.5, 99], [99, 99.8, 98.9, 99.5]])
+    now = issued + timedelta(hours=5, minutes=17)
+    led.ingest(dict(snap(now, bars={"H1": bars, "D1": []}), asset="BTC"), now)
+    res = [e for e in led.entries if e["kind"] == "HILO_RESULT"][0]["data"]
+    assert res["high"] == 101.5 and res["low"] == 98.5
+    assert res["m"]["inside"] and not res["b2"]["inside"] and res["b2"]["upper_exceeded"]
+    st = L.stats(led.entries, now)["hilo"]["BTC"]["4h"]
+    assert st["settled"] == 1 and st["m"]["inside"] == 1.0 and st["b2"]["inside"] == 0.0
+    assert L.Ledger(tmp_path).verify() == []

@@ -163,3 +163,67 @@ def evaluate(h1: pd.DataFrame, kind: str, name: str) -> dict:
 
 def evaluate_asset(h1: pd.DataFrame, kind: str) -> dict:
     return {name: evaluate(h1, kind, name) for name in PR.HORIZONS[kind]}
+
+
+# ---------------------------------------------------------------- live validation (BTC / ETH, 4 h and 24 h only)
+LIVE_PREREG = """PRE-REGISTERED 2026-11-16 (live validation of hilo-har-0.1.0), written before any live forecast exists.
+Cases: exactly the four that qualified in the backtest — BTC 4h, BTC 24h, ETH 4h, ETH 24h. Nothing else is recorded.
+Issue: every 4 hours (00, 04, 08, 12, 16, 20 UTC) for BOTH horizons, from the last closed hourly bar; the public
+  ledger records it within 75 minutes of issue (before any outcome): issue and expiry time, model version, close,
+  model upper / lower, and both baselines at the same moment (B1 = 90 % / 10 % of U / D over the 365 days before the
+  weekly export; B2 = +/- 1.645 * EWMA sigma * sqrt(H) from the live bars).
+Result: from the next H hourly bars: actual highest high and lowest low, each side exceeded or not, whole path inside or
+  not, and the pinball losses and path score of the model and of both baselines on the same window.
+Evaluation: not before 30 days AND 150 settled forecasts per case (until then the app shows nothing). Per case:
+  L1 each side exceeded between 5 % and 15 % of the time
+  L2 mean path score below the better baseline ON THE SAME WINDOWS (the better one chosen after the fact = the
+     conservative choice); one-sided p-value from a day-block bootstrap of the paired differences (blocks of whole
+     days, at least the horizon long, because 24 h windows issued every 4 h overlap); Holm-Bonferroni across the four
+     cases at family alpha 0.05
+  L3 mean pinball loss below the better baseline on BOTH sides (point estimates)
+A case is approved only if L1, L2 and L3 hold. Failing cases stay experimental; the thresholds are not changed."""
+
+LIVE_CASES = {"BTC": ("4h", "24h"), "ETH": ("4h", "24h")}
+
+
+def export(h1: pd.DataFrame, kind: str, name: str):
+    """Scale model + side quantiles on all history, plus the B1 quantiles of the last 365 days at export time."""
+    H, step = PR.HORIZONS[kind][name], PR.STEPS[kind][name]
+    cols = PR._features(kind, H)
+    df = frame(h1.dropna(subset=["close", "high", "low"]), kind, H).iloc[::step].dropna(subset=["U", "D", "known"])
+    if len(df) < 2000:
+        return None
+    m = _fit(df, cols, df["t"].iloc[-1] - pd.DateOffset(months=PR.CAL_MONTHS))
+    if m is None:
+        return None
+    last = df[df["t"] >= df["t"].iloc[-1] - pd.Timedelta(days=365)]
+    beta, qu, qd = m
+    return {"version": VERSION, "kind": kind, "horizon": name, "bars": H, "cols": cols, "beta": [float(b) for b in beta],
+            "qu": qu, "qd": qd, "b1_up": float(np.quantile(last["U"], QU)), "b1_down": float(np.quantile(last["D"], QD)),
+            "trained_until": str(df["t"].iloc[-1])}
+
+
+def live(params: dict, h1: pd.DataFrame, now=None):
+    """Model and baseline bounds (percent and price) for the window starting at the last CLOSED hourly bar."""
+    if not params or h1 is None:
+        return None
+    d = h1.dropna(subset=["close", "high", "low"])
+    if now is not None:
+        d = d[d.index + pd.Timedelta(hours=1) <= now]
+    kind, H = params["kind"], int(params["bars"])
+    if len(d) < PR.WINDOWS[kind][-1] + 5:
+        return None
+    f = PR.frame(d, kind, H).iloc[-1]
+    cols = params["cols"]
+    if any(not np.isfinite(f[c]) for c in cols) or not np.isfinite(f["b2_hi"]):
+        return None
+    x = np.array([1.0] + [float(f[c]) for c in cols])
+    s = float(np.exp(x @ np.array(params["beta"]) / 2))
+    c = float(d["close"].iloc[-1])
+    sig = float(f["b2_hi"]) / PR.Z90
+    pct = {"m": (params["qd"] * s, params["qu"] * s), "b1": (params["b1_down"], params["b1_up"]), "b2": (-Z95 * sig, Z95 * sig)}
+    out = {"horizon": params["horizon"], "bars": H, "issued_at": str(f["t"]),
+           "expires_at": str(f["t"] + pd.Timedelta(hours=H)), "close_at_issue": c, "version": params["version"]}
+    for k, (lo, hi) in pct.items():
+        out[f"{k}_lower"], out[f"{k}_upper"] = c * float(np.exp(lo / 100)), c * float(np.exp(hi / 100))
+    return out

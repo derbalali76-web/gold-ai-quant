@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -38,6 +39,7 @@ TF_MIN = {"H1": 60, "D1": 1440}
 KEEP = {"H1": 3000, "D1": 600}
 DEFAULT_LIFE = {"HOURS": timedelta(hours=8), "WEEK": timedelta(days=7), "MONTH": timedelta(days=31)}
 RES_TF = {"HOURS": "H1", "WEEK": "D1", "MONTH": "D1"}
+HILO_CASES = {"BTC": ("4h", "24h"), "ETH": ("4h", "24h")}  # live validation of the high / low bounds engine
 RANGE_FRESH = timedelta(minutes=75)  # a range is recorded only within this time of its issue (the hourly run)
 RANGE_CADENCE = {"4h": lambda t: t.hour % 4 == 0, "24h": lambda t: t.hour == 0,
                  "1w": lambda t: t.weekday() == 0 and t.hour == 0}
@@ -130,7 +132,7 @@ class Ledger:
                 errs.append(f"line {i}: prev hash does not match line {i - 1}")
             if line_hash(e) != e.get("hash"):
                 errs.append(f"line {i}: content does not match its hash (edited?)")
-            if e["kind"] in ("REC", "BRIEF", "RANGE"):
+            if e["kind"] in ("REC", "BRIEF", "RANGE", "HILO"):
                 recs[e["seq"]] = e
             elif e["kind"] == "SCENARIO":
                 ref = recs.get(e["data"].get("ref"))
@@ -139,7 +141,7 @@ class Ledger:
                 elif e["recorded_at"] != ref["recorded_at"]:
                     errs.append(f"line {i}: scenario not registered together with its forecast")
                 recs[e["seq"]] = e
-            elif e["kind"] in ("RESULT", "BRIEF_RESULT", "SCENARIO_RESULT", "RANGE_RESULT"):
+            elif e["kind"] in ("RESULT", "BRIEF_RESULT", "SCENARIO_RESULT", "RANGE_RESULT", "HILO_RESULT"):
                 ref = recs.get(e["data"].get("ref"))
                 if ref is None:
                     errs.append(f"line {i}: result for unknown line {e['data'].get('ref')}")
@@ -151,7 +153,7 @@ class Ledger:
     # -------- queries
     def open_items(self, kind: str) -> list[dict]:
         done = {e["data"]["ref"] for e in self.entries
-                if e["kind"] in ("RESULT", "BRIEF_RESULT", "SCENARIO_RESULT", "RANGE_RESULT")}
+                if e["kind"] in ("RESULT", "BRIEF_RESULT", "SCENARIO_RESULT", "RANGE_RESULT", "HILO_RESULT")}
         return [e for e in self.entries if e["kind"] == kind and e["seq"] not in done]
 
     def sorted_bars(self, tf: str, asset: str = "XAU") -> list[tuple[datetime, float, float, float, float]]:
@@ -178,6 +180,7 @@ class Ledger:
             self._record_recs(snap, now, asset)
             self._record_brief(snap, now, asset)
         self._record_ranges(snap, now, asset)
+        self._record_hilo(snap, now, asset)
         self._resolve(now)
         self.save_bars()
         return self.entries[before:]
@@ -242,6 +245,55 @@ class Ledger:
                                   "high": float(r["high"]), "version": r.get("version"),
                                   "qualified": bool(r.get("qualified")), "experimental": True}, now)
 
+    def _record_hilo(self, snap, now, asset="XAU"):
+        """High / low bounds, live validation (pre-registered in backend goldquant/hilo.py LIVE_PREREG): BTC / ETH,
+        4 h and 24 h, issued every 4 h; model and both baselines recorded together before any outcome."""
+        if asset not in HILO_CASES:
+            return
+        have = {(asset_of(e), e["data"]["horizon"], e["data"]["issued_at"]) for e in self.entries if e["kind"] == "HILO"}
+        for r in snap.get("hilo") or []:
+            h, issued = r.get("horizon"), r.get("issued_at")
+            if h not in HILO_CASES[asset] or not issued:
+                continue
+            t = ts(issued)
+            if not (timedelta(0) <= now - t <= RANGE_FRESH) or t.hour % 4 or (asset, h, iso(t)) in have:
+                continue
+            c = float(r["close_at_issue"])
+            keys = [f"{k}_{s}" for k in ("m", "b1", "b2") for s in ("lower", "upper")]
+            if any(r.get(k) is None for k in keys) or not all(float(r[f"{k}_lower"]) < c < float(r[f"{k}_upper"])
+                                                                for k in ("m", "b1", "b2")):
+                continue
+            self.append("HILO", dict({"fid": forecast_id(asset, "HILO", h, iso(t), r.get("version")), "asset": asset,
+                                      "horizon": h, "bars": int(r["bars"]), "issued_at": iso(t),
+                                      "expires_at": iso(t + timedelta(hours=int(r["bars"]))), "close_at_issue": c,
+                                      "version": r.get("version"), "experimental": True},
+                                     **{k: float(r[k]) for k in keys}), now)
+
+    def _resolve_hilo(self, now):
+        for e in self.open_items("HILO"):
+            d, a = e["data"], asset_of(e)
+            bars = self.sorted_bars("H1", a)
+            issue_open = ts(d["issued_at"]) - timedelta(hours=1)
+            idx = next((i for i, b in enumerate(bars) if b[0] == issue_open), None)
+            if idx is not None and len(bars) > idx + d["bars"]:
+                win = bars[idx + 1: idx + 1 + d["bars"]]
+                if win[-1][0] != issue_open + timedelta(hours=d["bars"]):  # a gap inside the window: cannot score
+                    self.append("HILO_RESULT", {"ref": e["seq"], "outcome": "NO_DATA", "reason": "gap"}, now)
+                    continue
+                hi, lo, c0 = max(b[2] for b in win), min(b[3] for b in win), d["close_at_issue"]
+                out = {"ref": e["seq"], "outcome": "SCORED", "high": hi, "low": lo}
+                U, D = 100 * math.log(hi / c0), 100 * math.log(lo / c0)
+                for k in ("m", "b1", "b2"):
+                    u, l = 100 * math.log(d[f"{k}_upper"] / c0), 100 * math.log(d[f"{k}_lower"] / c0)
+                    out[k] = {"upper_exceeded": hi > d[f"{k}_upper"], "lower_exceeded": lo < d[f"{k}_lower"],
+                              "inside": hi <= d[f"{k}_upper"] and lo >= d[f"{k}_lower"],
+                              "pinball_up": round(max(0.9 * (U - u), -0.1 * (U - u)), 6),
+                              "pinball_down": round(max(0.1 * (D - l), -0.9 * (D - l)), 6),
+                              "path_score": round((u - l) + 10 * (max(U - u, 0) + max(l - D, 0)), 6)}
+                self.append("HILO_RESULT", out, now)
+            elif now - ts(d["issued_at"]) > timedelta(days=12):
+                self.append("HILO_RESULT", {"ref": e["seq"], "outcome": "NO_DATA"}, now)
+
     def _resolve_ranges(self, now):
         for e in self.open_items("RANGE"):
             d, a = e["data"], asset_of(e)
@@ -259,6 +311,7 @@ class Ledger:
 
     def _resolve(self, now):
         self._resolve_ranges(now)
+        self._resolve_hilo(now)
         for e in self.open_items("SCENARIO"):
             out = simulate_scenario(e["data"], ts(e["recorded_at"]), self.sorted_bars("H1", e["data"]["asset"]), now)
             if out is not None:
@@ -501,6 +554,36 @@ def _res(outcome, entry, exit_, d, risk, cost, when):
 
 
 # ---------------------------------------------------------------- stats
+def hilo_stats(entries: list[dict]) -> dict:
+    """Live validation summary per case (derived): exceedances, path inside, mean scores of model and baselines on the
+    SAME windows. The formal verdict (day-block bootstrap, Holm) is computed by the backend after 30 days."""
+    res = {x["data"]["ref"]: x["data"] for x in entries if x["kind"] == "HILO_RESULT"}
+    out: dict = {}
+    for e in entries:
+        if e["kind"] != "HILO":
+            continue
+        b = out.setdefault(asset_of(e), {}).setdefault(e["data"]["horizon"], {"recorded": 0, "settled": 0, "rows": []})
+        b["recorded"] += 1
+        r = res.get(e["seq"])
+        if r and r.get("outcome") == "SCORED":
+            b["settled"] += 1
+            b["rows"].append(r)
+    for a in out.values():
+        for b in a.values():
+            rows = b.pop("rows")
+            if not rows:
+                continue
+            n = len(rows)
+            for k in ("m", "b1", "b2"):
+                b[k] = {"upper_exceeded": round(sum(r[k]["upper_exceeded"] for r in rows) / n, 4),
+                        "lower_exceeded": round(sum(r[k]["lower_exceeded"] for r in rows) / n, 4),
+                        "inside": round(sum(r[k]["inside"] for r in rows) / n, 4),
+                        "path_score": round(sum(r[k]["path_score"] for r in rows) / n, 4),
+                        "pinball_up": round(sum(r[k]["pinball_up"] for r in rows) / n, 5),
+                        "pinball_down": round(sum(r[k]["pinball_down"] for r in rows) / n, 5)}
+    return out
+
+
 def range_stats(entries: list[dict]) -> dict:
     """Live tracking of the experimental price ranges per asset and horizon: recorded, settled, inside (derived)."""
     res = {x["data"]["ref"]: x["data"] for x in entries if x["kind"] == "RANGE_RESULT"}
@@ -543,6 +626,7 @@ def stats(entries: list[dict], now: datetime) -> dict:
     out["scenarios"] = scenario_stats(entries)
     out["briefs"] = brief_rows(entries)
     out["ranges"] = range_stats(entries)
+    out["hilo"] = hilo_stats(entries)
     out["assets"] = {a: _stats(entries, now, a) for a in ASSETS}
     for v in out["assets"].values():
         for k in ("chain_head", "lines", "schema", "updated_at"):

@@ -787,10 +787,40 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
             snap.update(asset=a, symbol=CE.ASSETS[a], bars=bars,
                         cost=round(float(d.quote or 0) * ASSET_COST.get(CE.ASSETS[a], 0.0022), 4))
             snap["ranges"] = safe_ranges(a)
+            snap["hilo"] = safe_hilo(a)
             return snap
         if live_provider is None:
             raise HTTPException(503, "no live data source")
         return dict(public_snapshot(refresh_live()), asset="XAU", ranges=safe_ranges("XAU"))
+
+    hilo_state = {"mtime": None, "data": {}}
+
+    def safe_hilo(a: str) -> list:
+        """Live high / low bounds (model + both baselines) for the public ledger only — never shown in the app."""
+        try:
+            from . import hilo as HL
+            if a not in HL.LIVE_CASES:
+                return []
+            p = next((b / "hilo_models.json" for b in (repo_dir / "models", st.data_dir)
+                      if (b / "hilo_models.json").exists()), None)
+            if p is None:
+                return []
+            mt = p.stat().st_mtime
+            if hilo_state["mtime"] != mt:
+                import json as _json
+                hilo_state["data"] = _json.loads(p.read_text(encoding="utf-8")).get("assets", {})
+                hilo_state["mtime"] = mt
+            now = utcnow()
+            h1 = range_h1(a, now)
+            out = []
+            for h in HL.LIVE_CASES[a]:
+                x = (hilo_state["data"].get(a) or {}).get(h) or {}
+                r = HL.live(x.get("params"), h1, pd.Timestamp(now)) if x.get("params") else None
+                if r is not None:
+                    out.append(r)
+            return out
+        except Exception:  # noqa: BLE001
+            return []
 
     def safe_ranges(a: str) -> list:
         try:  # experimental intervals for the public ledger; never a reason for the snapshot to fail
