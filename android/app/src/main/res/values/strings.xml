@@ -457,6 +457,10 @@
     <string name="touch_not_validated">This horizon did not pass this week\'s check for this asset.</string>
     <string name="touch_weak">Passed the test, but accuracy has been weak over the last two years.</string>
     <string name="touch_note">Chance that the price touches the level within the chosen time. Based on distance and expected movement; it does not know the direction. Tested out of sample and re-checked weekly; it disappears if it stops passing. Not a recommendation.</string>
+    <string name="touch_failed">Could not reach the server (it may be waking up or updating). Try again in a minute.</string>
+    <string name="touch_retry">Try again</string>
+    <string name="touch_at_least">Closer than the tested distances: at least this (any move that reaches a farther level passes here first).</string>
+    <string name="touch_at_most">Farther than the tested distances: at most this.</string>
     <string name="r_w_up" formatted="false">up</string>
     <string name="r_w_down" formatted="false">down</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

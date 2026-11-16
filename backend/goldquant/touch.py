@@ -217,10 +217,14 @@ def live(params: dict, h1: pd.DataFrame, price: float, now_price: float) -> Opti
     if not np.isfinite(atr) or atr <= 0:
         return None
     side = 1.0 if price > now_price else -1.0
-    d = abs(price - now_price) / atr
+    d_true = abs(price - now_price) / atr
     lo, hi = params["dist_range"]
-    if d < lo or d > hi:
-        return {"status": "OUT_OF_RANGE", "price": round(price, 6), "side": int(side), "d": round(d, 2)}
+    # outside the tested distances a number is not invented, but a BOUND is exact logic: any path that reaches a
+    # farther level has reached every nearer one, so P(nearer) >= P(lo) and P(farther) <= P(hi)
+    status = "OK" if lo <= d_true <= hi else ("AT_LEAST" if d_true < lo else "AT_MOST")
+    if d_true > hi * 3:  # far beyond the tested range: say nothing rather than a near-zero bound
+        return {"status": "OUT_OF_RANGE", "price": round(price, 6), "side": int(side), "d": round(d_true, 2)}
+    d = min(max(d_true, lo), hi)
     row = {"ld": np.log(d), "ld2": np.log(d) ** 2, "side": side, "s_r24": side * f["r24"], "s_r120": side * f["r120"]}
     for k in ("rv4", "rv24", "rv168", "atrz", "hsin", "hcos", "wkend"):
         row[k] = f[k]
@@ -235,5 +239,5 @@ def live(params: dict, h1: pd.DataFrame, price: float, now_price: float) -> Opti
     if b:
         pts = sorted((float(k), float(v)) for k, v in b.items())
         usual = float(np.interp(np.log(d), [np.log(k) for k, _ in pts], [v for _, v in pts]))
-    return {"status": "OK", "price": round(price, 6), "side": int(side), "d": round(d, 2),
-            "probability": round(p, 3), "usual": None if usual is None else round(usual, 3)}
+    return {"status": status, "price": round(price, 6), "side": int(side), "d": round(d_true, 2),
+            "probability": round(p, 3), "usual": None if usual is None or status != "OK" else round(usual, 3)}

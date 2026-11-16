@@ -32,6 +32,7 @@ data class UiState(
     val calendar: CalendarInfo? = null,
     val touch: TouchInfo? = null,
     val touchLoading: Boolean = false,
+    val touchFailed: Boolean = false,
     val live: Map<String, LiveTick> = emptyMap(),  // crypto live price (Binance public ticker), display only
     val onboarded: Boolean = true,
 ) {
@@ -185,7 +186,8 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         _state.update { it.copy(touchLoading = true) }
         viewModelScope.launch {
             val t = MarketClient(s.serverUrl, s.token).touch(asset, prices.distinct())
-            _state.update { it.copy(touch = t ?: TouchInfo(asset, false, null, emptyMap()), touchLoading = false) }
+            // a failed request (server asleep, updating or old) is not "not available": the dialog says which
+            _state.update { it.copy(touch = t ?: it.touch, touchLoading = false, touchFailed = t == null) }
         }
     }
 

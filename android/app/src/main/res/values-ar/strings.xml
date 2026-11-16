@@ -456,6 +456,10 @@
     <string name="touch_not_validated">هذا الأفق لم يجتز فحص هذا الأسبوع لهذا الأصل.</string>
     <string name="touch_weak">نجح في الاختبار لكن دقته ضعيفة في آخر سنتين.</string>
     <string name="touch_note">احتمال أن يلمس السعر المستوى خلال المدة المختارة. يعتمد على المسافة وقوة الحركة المتوقعة، ولا يعرف الاتجاه. اختُبر خارج العينة ويُعاد فحصه أسبوعياً، ويختفي إذا توقف عن النجاح. ليس توصية.</string>
+    <string name="touch_failed">تعذر الوصول إلى الخادم (قد يكون في طور التشغيل أو التحديث). أعد المحاولة بعد دقيقة.</string>
+    <string name="touch_retry">أعد المحاولة</string>
+    <string name="touch_at_least">أقرب من المسافات المختبرة: على الأقل هذه النسبة (أي حركة تصل لمستوى أبعد تمرّ من هنا أولاً).</string>
+    <string name="touch_at_most">أبعد من المسافات المختبرة: على الأكثر هذه النسبة.</string>
     <string name="r_w_up" formatted="false">صاعد</string>
     <string name="r_w_down" formatted="false">هابط</string>
     <string name="r_w_neutral" formatted="false">محايد</string>

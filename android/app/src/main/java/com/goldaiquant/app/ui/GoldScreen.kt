@@ -1724,7 +1724,15 @@ private fun TouchDialog(s: UiState, card: HorizonCard?, focus: Double?, onLoad: 
             }
         }
         when {
-            t == null || s.touchLoading && t.horizons.isEmpty() -> { Body(stringResource(R.string.chart_loading), TextDim, 12.sp); return@DialogFrame }
+            s.touchLoading && t == null -> { Body(stringResource(R.string.chart_loading), TextDim, 12.sp); return@DialogFrame }
+            s.touchFailed && t == null -> {
+                Body(stringResource(R.string.touch_failed), WaitGold, 12.sp)
+                Text(stringResource(R.string.touch_retry), color = Color.Black, fontSize = 12.sp, fontWeight = FontWeight.Bold,
+                    modifier = Modifier.background(Gold, RoundedCornerShape(10.dp)).clickable(role = Role.Button) { onLoad(prices) }
+                        .padding(horizontal = 12.dp, vertical = 5.dp))
+                return@DialogFrame
+            }
+            t == null -> { Body(stringResource(R.string.chart_loading), TextDim, 12.sp); return@DialogFrame }
             !t.available -> { Body(stringResource(R.string.touch_unavailable), TextDim, 12.sp); return@DialogFrame }
         }
         val h = t!!.horizons[hz]
@@ -1737,12 +1745,21 @@ private fun TouchDialog(s: UiState, card: HorizonCard?, focus: Double?, onLoad: 
             Column(Modifier.fillMaxWidth().padding(vertical = 3.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(label + " · " + ltr(price.p2()), color = col, fontSize = 13.sp, modifier = Modifier.weight(1f))
-                    Text(if (r.status == "OK" && r.probability != null) "${Math.round(r.probability * 100)}%" else "—",
-                        color = TextMain, fontSize = 15.sp, fontWeight = FontWeight.Bold)
+                    val pct = r.probability?.let { Math.round(it * 100).toInt() }
+                    Text(when {
+                        pct == null -> "—"
+                        r.status == "AT_LEAST" -> ltr("≥ $pct%")
+                        r.status == "AT_MOST" -> ltr("≤ $pct%")
+                        else -> "$pct%"
+                    }, color = TextMain, fontSize = 15.sp, fontWeight = FontWeight.Bold)
                 }
-                if (r.status == "OK" && r.probability != null) {
+                if (r.probability != null && r.status != "OUT_OF_RANGE") {
                     Bar(r.probability.toFloat(), col, Modifier.fillMaxWidth().padding(top = 3.dp))
-                    r.usual?.let { Text(stringResource(R.string.touch_usual, Math.round(it * 100).toInt()), color = TextDim, fontSize = 11.sp) }
+                    when (r.status) {
+                        "AT_LEAST" -> Text(stringResource(R.string.touch_at_least), color = TextDim, fontSize = 11.sp)
+                        "AT_MOST" -> Text(stringResource(R.string.touch_at_most), color = TextDim, fontSize = 11.sp)
+                        else -> r.usual?.let { Text(stringResource(R.string.touch_usual, Math.round(it * 100).toInt()), color = TextDim, fontSize = 11.sp) }
+                    }
                 } else Text(stringResource(R.string.touch_out_of_range), color = TextDim, fontSize = 11.sp)
             }
         }

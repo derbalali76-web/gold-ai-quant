@@ -54,6 +54,11 @@ def test_export_and_live_prediction():
     assert r["status"] == "OK" and 0 < r["probability"] < 1 and 0 < r["usual"] < 1 and r["side"] == 1
     far = TO.live(prm, df, q - 50 * atr, q)
     assert far["status"] == "OUT_OF_RANGE"
+    close = TO.live(prm, df, q + 0.3 * atr, q)  # nearer than the tested 1 ATR: a lower bound, exact by logic
+    edge = TO.live(prm, df, q + 1.0 * atr, q)
+    assert close["status"] == "AT_LEAST" and close["probability"] == edge["probability"] and close["usual"] is None
+    beyond = TO.live(prm, df, q + 12 * atr, q)  # farther than the tested 8 ATR: an upper bound
+    assert beyond["status"] == "AT_MOST"
     near = TO.live(prm, df, q + 1.5 * atr, q)
     farther = TO.live(prm, df, q + 6 * atr, q)
     assert near["probability"] > farther["probability"]  # closer levels are reached more often

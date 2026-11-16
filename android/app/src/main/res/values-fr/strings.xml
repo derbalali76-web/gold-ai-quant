@@ -456,6 +456,10 @@
     <string name="touch_not_validated">Cet horizon n\'a pas passé le contrôle de la semaine pour cet actif.</string>
     <string name="touch_weak">Test réussi, mais précision faible ces deux dernières années.</string>
     <string name="touch_note">Probabilité que le prix touche le niveau dans le délai choisi. Fondée sur la distance et le mouvement attendu ; elle ne connaît pas la direction. Testée hors échantillon et revérifiée chaque semaine ; elle disparaît si elle échoue. Pas une recommandation.</string>
+    <string name="touch_failed">Serveur injoignable (réveil ou mise à jour en cours). Réessayez dans une minute.</string>
+    <string name="touch_retry">Réessayer</string>
+    <string name="touch_at_least">Plus proche que les distances testées : au moins ce chiffre (tout mouvement vers un niveau plus loin passe d\'abord ici).</string>
+    <string name="touch_at_most">Plus loin que les distances testées : au plus ce chiffre.</string>
     <string name="r_w_up" formatted="false">haussière</string>
     <string name="r_w_down" formatted="false">baissière</string>
     <string name="r_w_neutral" formatted="false">neutre</string>

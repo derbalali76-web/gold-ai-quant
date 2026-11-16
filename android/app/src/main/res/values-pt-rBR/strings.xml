@@ -456,6 +456,10 @@
     <string name="touch_not_validated">Este horizonte não passou na verificação semanal para este ativo.</string>
     <string name="touch_weak">Passou no teste, mas a precisão foi fraca nos últimos dois anos.</string>
     <string name="touch_note">Probabilidade de o preço tocar o nível no prazo escolhido. Baseada na distância e no movimento esperado; não conhece a direção. Testada fora da amostra e reverificada semanalmente; desaparece se deixar de passar. Não é recomendação.</string>
+    <string name="touch_failed">Não foi possível contactar o servidor (pode estar a iniciar ou a atualizar). Tente daqui a um minuto.</string>
+    <string name="touch_retry">Tentar de novo</string>
+    <string name="touch_at_least">Mais perto que as distâncias testadas: pelo menos isto (qualquer movimento até um nível mais longe passa primeiro aqui).</string>
+    <string name="touch_at_most">Mais longe que as distâncias testadas: no máximo isto.</string>
     <string name="r_w_up" formatted="false">de alta</string>
     <string name="r_w_down" formatted="false">de baixa</string>
     <string name="r_w_neutral" formatted="false">neutra</string>
