@@ -619,6 +619,38 @@ def touch_models(hs) -> dict:
     return out
 
 
+def range_research(hs) -> dict:
+    """Price-range engine (goldquant/price_range.py, pre-registered): each asset and horizon separately.
+    Event windows use FOMC decisions + BLS releases fetched now (descriptive only; not a gate)."""
+    from goldquant import crypto_store as CS, price_range as PR
+    from goldquant.sources import calendar_auto as CA
+    from goldquant.providers.http import HttpClient, RateLimiter
+    events, ev_src = [], {}
+    http = HttpClient(limiter=RateLimiter(calls=4, period=10.0))
+    for name, url, parse in (("fomc", CA.FOMC_URL, CA.parse_fomc_html), ("bls", CA.BLS_ICS, CA.parse_bls_ics)):
+        try:
+            got = parse(http.get(url).text)
+            events += [e["time_utc"] for e in got if e.get("importance", 0) >= 3]
+            ev_src[name] = len(got)
+        except Exception as exc:  # noqa: BLE001 — events are descriptive; their absence is reported, not hidden
+            ev_src[name] = f"unavailable: {str(exc)[:80]}"
+    out = {"schema": 1, "version": PR.VERSION, "updated_at": datetime.now(timezone.utc).isoformat(),
+           "events_source": ev_src, "events_n": len(events), "assets": {}}
+    frames = {"XAU": ("gold", hs.load_bars("Dukascopy", "XAUUSD", "H1", limit=10_000_000))}
+    for sym, a in (("BTCUSDT", "BTC"), ("ETHUSDT", "ETH"), ("SOLUSDT", "SOL")):
+        frames[a] = ("crypto", CS.load_bars(MD, sym, "1h"))
+    for a, (kind, h1) in frames.items():
+        if h1 is None or len(h1) < 8000:
+            out["assets"][a] = {"reason": "not enough hourly bars"}
+            continue
+        out["assets"][a] = PR.evaluate_asset(h1, kind, events)
+        for h, r in out["assets"][a].items():
+            print(a, h, r.get("reason"), {k: r.get(k) for k in ("score_diff_vs_best", "score_diff_ci99")},
+                  (r.get("holdout") or {}).get("m"), flush=True)
+    (MODELS / "range_report.json").write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    return out
+
+
 def activity_models() -> dict:
     """Weekly: re-validate the scalper activity forecast per coin (pre-registered rules in goldquant/activity.py) and
     export the model ONLY for coins that pass this week. A coin that stops passing disappears from the app."""
@@ -908,7 +940,7 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("cmd", choices=["collect", "train", "research", "backfill", "report", "crypto", "crypto_research",
                                     "crypto_weekly", "scalp1m", "pooled", "scalp_feasibility", "scalp_ml", "scalp_book",
-                                    "touch"])
+                                    "touch", "range"])
     ap.add_argument("--years", type=float, default=3.0)
     ap.add_argument("--first", type=date.fromisoformat, default=None, help="backfill range start (YYYY-MM-DD)")
     ap.add_argument("--last", type=date.fromisoformat, default=None, help="backfill range end (YYYY-MM-DD)")
@@ -941,6 +973,9 @@ if __name__ == "__main__":
     elif a.cmd == "touch":
         MODELS.mkdir(parents=True, exist_ok=True)
         touch_models(hs)
+    elif a.cmd == "range":
+        MODELS.mkdir(parents=True, exist_ok=True)
+        range_research(hs)
     elif a.cmd == "pooled":
         MODELS.mkdir(parents=True, exist_ok=True)
         pooled_research(hs)
