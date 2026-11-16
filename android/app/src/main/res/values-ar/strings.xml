@@ -425,6 +425,17 @@
     <string name="ck_why_other">شرط يُفحص قبل أي دخول.</string>
     <string name="ck_unknown_note">؟ = غير معروف الآن. غير المعروف لا يُحسب أبداً كشرط محقق.</string>
     <string name="ck_dialog_note">يجب تحقق كل الشروط واعتماد النموذج قبل أي توصية. تحقق الشروط وحده ليس إشارة.</string>
+    <string name="zone_support">دعم</string>
+    <string name="zone_resistance">مقاومة</string>
+    <string name="zone_between">السعر الآن %1$s بين الدعم %2$s والمقاومة %3$s.</string>
+    <string name="zone_in_support">السعر الآن %1$s داخل منطقة الدعم %2$s.</string>
+    <string name="zone_in_resistance">السعر الآن %1$s داخل منطقة المقاومة %2$s.</string>
+    <string name="zone_follow">نبّهني عند المناطق</string>
+    <string name="zone_follow_on">تنبيه المناطق مفعّل ✓</string>
+    <string name="chart_legend_zones">الأشرطة الرمادية: مناطق الدعم والمقاومة من القمم والقيعان السابقة. الخط المتقطع: السعر الحالي.</string>
+    <string name="notif_zone_title">تحديث %1$s</string>
+    <string name="notif_zone_sup_text">دخل السعر منطقة الدعم %1$s. إغلاق ساعة تحتها يفتح الطريق نحو %2$s، والثبات فوقها يُبقي اختبار %3$s ممكناً. للمراقبة — ليست توصية.</string>
+    <string name="notif_zone_res_text">وصل السعر منطقة المقاومة %1$s. إغلاق ساعة فوقها يفتح الطريق نحو %2$s، والفشل في اختراقها قد يعيده لاختبار %3$s. للمراقبة — ليست توصية.</string>
     <string name="r_w_up" formatted="false">صاعد</string>
     <string name="r_w_down" formatted="false">هابط</string>
     <string name="r_w_neutral" formatted="false">محايد</string>

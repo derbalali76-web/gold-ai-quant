@@ -47,6 +47,12 @@ class FcmService : FirebaseMessagingService() {
                         p2(d["level"]), d["level_name"].orEmpty(), p2(d["target"]), d["target_name"].orEmpty()) +
                         "\n" + ctx.getString(R.string.pos_watch_note))
             }
+            "zone" -> {  // the price entered a support / resistance zone: what breaks it, what holds it (watch only)
+                val sup = d["side"] == "SUPPORT"
+                ctx.getString(R.string.notif_zone_title, label) to
+                    ctx.getString(if (sup) R.string.notif_zone_sup_text else R.string.notif_zone_res_text,
+                        p2(d["low"]) + "–" + p2(d["high"]), p2(d["next"]), p2(d["other"]))
+            }
             "signal" -> {
                 val h = ctx.getString(when (d["horizon"]) { "WEEK" -> R.string.h_week; "MONTH" -> R.string.h_month; else -> R.string.h_hours })
                 val a = ctx.getString(if (d["side"] == "BUY") R.string.a_buy else R.string.a_sell)

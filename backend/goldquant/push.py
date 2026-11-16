@@ -28,6 +28,30 @@ TICK_MIN_INTERVAL = 45.0
 DEDUPE_HOURS = 30
 
 
+ZONE_MAX_PER_DAY = 4  # per asset and phone: an update, not a stream
+
+
+def zone_update(d) -> Optional[dict]:
+    """The price is inside a support / resistance ZONE of the hourly levels: what breaks it and what holds it.
+    Conditional watch text only (built on the phone); sent once per zone per day. None without a full picture."""
+    lv = getattr(d, "levels", None)
+    q = getattr(d, "quote", None)
+    if lv is None or q is None:
+        return None
+    sup = sorted(lv.supports, key=lambda l: -l.price)
+    res = sorted(lv.resistances, key=lambda l: l.price)
+    for side, own, opp in (("SUPPORT", sup, res), ("RESISTANCE", res, sup)):
+        for i, l in enumerate(own):
+            if l.zone_low <= q <= l.zone_high:
+                nxt = own[i + 1].price if i + 1 < len(own) else None
+                other = next((x.price for x in opp if (x.price > q if side == "SUPPORT" else x.price < q)), None)
+                if nxt is None or other is None:
+                    return None
+                return {"side": side, "name": l.name, "low": round(l.zone_low, 2), "high": round(l.zone_high, 2),
+                        "next": round(nxt, 2), "other": round(other, 2), "price": round(float(q), 2)}
+    return None
+
+
 class PushService:
     def __init__(self, data_dir: Path, creds_json: Optional[str] = None, sender: Optional[Callable] = None):
         self.db_path = Path(data_dir) / "push.sqlite"
@@ -167,6 +191,13 @@ class PushService:
                             msgs.append((key, {"type": "event", "asset": a, "kind": e.kind, "level": e.level,
                                                "level_name": e.level_name, "target": e.target or "",
                                                "target_name": e.target_name or ""}))
+                    z = zone_update(d) if not getattr(d, "market_closed", False) else None  # 2b) price entered a zone
+                    if z is not None:
+                        key = f"zone|{a}|{day}|{z['name']}|{z['low']}"
+                        n_today = c.execute("select count(*) from sent where token=? and key like ?",
+                                            (tok, f"zone|{a}|{day}|%")).fetchone()[0]
+                        if n_today < ZONE_MAX_PER_DAY and not self._seen(c, tok, key):
+                            msgs.append((key, dict(z, type="zone", asset=a)))
                     for o in getattr(d, "outlooks", None) or []:  # 3) a VALIDATED recommendation (if ever)
                         p = o.plan
                         if p is not None and p.recommendation and p.side in ("BUY", "SELL"):

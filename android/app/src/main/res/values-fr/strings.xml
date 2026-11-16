@@ -425,6 +425,17 @@
     <string name="ck_why_other">Condition vérifiée avant toute entrée.</string>
     <string name="ck_unknown_note">\? = inconnu pour l\'instant. Inconnu ne compte jamais comme rempli.</string>
     <string name="ck_dialog_note">Toutes les conditions doivent être remplies, et le modèle validé, avant toute recommandation. Des conditions remplies seules ne sont pas un signal.</string>
+    <string name="zone_support">Support</string>
+    <string name="zone_resistance">Résistance</string>
+    <string name="zone_between">Prix actuel %1$s, entre le support %2$s et la résistance %3$s.</string>
+    <string name="zone_in_support">Prix actuel %1$s, dans la zone de support %2$s.</string>
+    <string name="zone_in_resistance">Prix actuel %1$s, dans la zone de résistance %2$s.</string>
+    <string name="zone_follow">Alertez-moi aux zones</string>
+    <string name="zone_follow_on">Alertes de zones activées ✓</string>
+    <string name="chart_legend_zones">Bandes grises : zones de support et de résistance issues des anciens sommets et creux. Ligne pointillée : prix actuel.</string>
+    <string name="notif_zone_title">Mise à jour %1$s</string>
+    <string name="notif_zone_sup_text">Le prix est entré dans la zone de support %1$s. Une clôture horaire en dessous ouvre la voie vers %2$s ; tenir au-dessus garde possible un test de %3$s. À surveiller — pas une recommandation.</string>
+    <string name="notif_zone_res_text">Le prix a atteint la zone de résistance %1$s. Une clôture horaire au-dessus ouvre la voie vers %2$s ; un échec peut ramener un test de %3$s. À surveiller — pas une recommandation.</string>
     <string name="r_w_up" formatted="false">haussière</string>
     <string name="r_w_down" formatted="false">baissière</string>
     <string name="r_w_neutral" formatted="false">neutre</string>

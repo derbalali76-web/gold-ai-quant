@@ -118,6 +118,7 @@ val Bg = Color(0xFF07070A)
 val Card = Color(0xFF111014)
 val CardEdge = Color(0xFF3A3018)
 val Gold = Color(0xFFD4AF37)
+val Teal = Color(0xFF3BA6A0)
 val GoldLight = Color(0xFFF3D46B)
 val TextMain = Color(0xFFF4F4F4)
 val TextDim = Color(0xFFA3A3A8)
@@ -136,6 +137,7 @@ fun GoldTheme(content: @Composable () -> Unit) {
 private val clock = DateTimeFormatter.ofPattern("HH:mm:ss", Locale.US)
 private fun Instant.hms(): String = clock.format(atZone(ZoneId.systemDefault()))
 private fun Double.p2(): String = String.format(Locale.US, "%.2f", this)
+private fun Double.p0(): String = String.format(Locale.US, "%.0f", this)
 
 /** Keeps numbers, signs and ranges in reading order inside any layout direction. */
 fun ltr(s: String): String = "⁦$s⁩"
@@ -325,7 +327,13 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
         Sheet.HowSheet -> HowDialog { sheet = null }
         Sheet.ScalpSheet -> if (d != null) ScalpDialog(d) { sheet = null }
         Sheet.NewsSheet -> NewsDialog { sheet = null }
-        Sheet.ChartSheet -> ChartDialog(s, card, d, onTf = { tf -> onBars(s.asset, tf) }) { sheet = null }
+        Sheet.ChartSheet -> ChartDialog(s, card, d, onTf = { tf -> onBars(s.asset, tf) }, onFollow = {
+            val following = s.asset in s.alertAssets && s.notify
+            if (!following) {
+                if (s.asset !in s.alertAssets) onAlertAsset(s.asset)
+                if (!s.notify) onNeedNotify()  // the activity asks for permission and turns notifications on
+            } else onAlertAsset(s.asset)
+        }) { sheet = null }
         Sheet.CalendarSheet -> CalendarDialog(s.calendar) { sheet = null }
         null -> Unit
     }
@@ -1518,7 +1526,8 @@ private fun Sparkline(c: Candles?, modifier: Modifier) {
 
 /** Candlestick chart with the horizon's levels and today's scenario triggers drawn on it. Closed candles only. */
 @Composable
-private fun ChartDialog(s: UiState, card: HorizonCard?, d: Decision?, onTf: (String) -> Unit, onClose: () -> Unit) {
+private fun ChartDialog(s: UiState, card: HorizonCard?, d: Decision?, onTf: (String) -> Unit,
+                        onFollow: () -> Unit = {}, onClose: () -> Unit) {
     var tf by remember { mutableStateOf("H1") }
     LaunchedEffect(tf, s.asset) { onTf(tf) }
     val c = s.candles["${s.asset}/$tf"]
@@ -1536,46 +1545,76 @@ private fun ChartDialog(s: UiState, card: HorizonCard?, d: Decision?, onTf: (Str
             Body(stringResource(R.string.chart_loading), TextDim, 12.sp)
             return@DialogFrame
         }
-        val sup = card?.levels?.supports.orEmpty().map { it.price }
-        val res = card?.levels?.resistances.orEmpty().map { it.price }
-        val trig = if (card?.horizon == "HOURS") d?.brief?.scenarios.orEmpty().map { it.trigger } else emptyList()
+        val sup = card?.levels?.supports.orEmpty()
+        val res = card?.levels?.resistances.orEmpty()
         val n = c.size
         val lo0 = c.l.min(); val hi0 = c.h.max()
         val pad = (hi0 - lo0) * 0.06
-        // levels are drawn only when they are near the visible range (a far level would squash the candles)
+        // zones are drawn only when they are near the visible range (a far zone would squash the candles)
         val near = { p: Double -> p in (lo0 - (hi0 - lo0) * 0.5)..(hi0 + (hi0 - lo0) * 0.5) }
-        val all = (sup + res + trig).filter(near)
-        val lo = minOf(lo0, all.minOrNull() ?: lo0) - pad
-        val hi = maxOf(hi0, all.maxOrNull() ?: hi0) + pad
+        val shown = (sup.map { it to true } + res.map { it to false }).filter { near(it.first.price) }
+        val edges = shown.flatMap { listOf(it.first.zoneLow, it.first.zoneHigh) }
+        val lo = minOf(lo0, edges.minOrNull() ?: lo0) - pad
+        val hi = maxOf(hi0, edges.maxOrNull() ?: hi0) + pad
         val measurer = androidx.compose.ui.text.rememberTextMeasurer()
+        val wSup = stringResource(R.string.zone_support); val wRes = stringResource(R.string.zone_resistance)
         androidx.compose.foundation.Canvas(Modifier.fillMaxWidth().height(300.dp).background(Bg, RoundedCornerShape(10.dp))
             .semantics { contentDescription = "chart" }) {
             val w = size.width - 120f
             val y = { p: Double -> (size.height * (1 - (p - lo) / (hi - lo))).toFloat() }
+            val O = { x: Float, yy: Float -> androidx.compose.ui.geometry.Offset(x, yy) }
+            // zones first (behind the candles): grey band, gold edges, the word in the middle
+            shown.forEach { (l, isSup) ->
+                val top = y(l.zoneHigh); val bot = y(l.zoneLow)
+                drawRect(Color(0xFF5A5A5A).copy(alpha = 0.45f), O(0f, top), androidx.compose.ui.geometry.Size(w, maxOf(2f, bot - top)))
+                drawLine(Gold, O(0f, top), O(w, top), 1.5f); drawLine(Gold, O(0f, bot), O(w, bot), 1.5f)
+                val word = measurer.measure(if (isSup) wSup else wRes, TextStyle(color = if (isSup) BuyGreen else SellRed, fontSize = 12.sp))
+                drawText(word, topLeft = O(w / 2 - word.size.width / 2, (top + bot) / 2 - word.size.height / 2))
+                drawText(measurer, String.format(Locale.US, "%.2f", l.zoneHigh), O(w + 8f, top - 16f), TextStyle(color = TextDim, fontSize = 10.sp))
+                drawText(measurer, String.format(Locale.US, "%.2f", l.zoneLow), O(w + 8f, bot - 2f), TextStyle(color = TextDim, fontSize = 10.sp))
+            }
             val cw = w / n
             for (i in 0 until n) {
                 val up = c.c[i] >= c.o[i]
                 val col = if (up) BuyGreen else SellRed
                 val cx = cw * i + cw / 2
-                drawLine(col, androidx.compose.ui.geometry.Offset(cx, y(c.h[i])), androidx.compose.ui.geometry.Offset(cx, y(c.l[i])), 1.5f)
+                drawLine(col, O(cx, y(c.h[i])), O(cx, y(c.l[i])), 1.5f)
                 val top = y(maxOf(c.o[i], c.c[i])); val bot = y(minOf(c.o[i], c.c[i]))
-                drawRect(col, androidx.compose.ui.geometry.Offset(cx - cw * 0.35f, top),
-                    androidx.compose.ui.geometry.Size(cw * 0.7f, maxOf(1.5f, bot - top)))
+                drawRect(col, O(cx - cw * 0.35f, top), androidx.compose.ui.geometry.Size(cw * 0.7f, maxOf(1.5f, bot - top)))
             }
-            fun level(p: Double, col: Color, dash: Boolean) {
-                if (!near(p)) return
-                val yy = y(p)
-                drawLine(col.copy(alpha = 0.8f), androidx.compose.ui.geometry.Offset(0f, yy), androidx.compose.ui.geometry.Offset(w, yy), 2f,
-                    pathEffect = if (dash) androidx.compose.ui.graphics.PathEffect.dashPathEffect(floatArrayOf(12f, 8f)) else null)
-                drawText(measurer, String.format(Locale.US, "%.2f", p), androidx.compose.ui.geometry.Offset(w + 8f, yy - 16f),
-                    TextStyle(color = col, fontSize = 10.sp))
-            }
-            sup.forEach { level(it, BuyGreen, true) }
-            res.forEach { level(it, SellRed, true) }
-            trig.forEach { level(it, Gold, false) }
-            level(c.c.last(), TextMain, false)
+            val last = c.c.last(); val yl = y(last)
+            drawLine(Teal, O(0f, yl), O(w, yl), 1.5f, pathEffect = androidx.compose.ui.graphics.PathEffect.dashPathEffect(floatArrayOf(10f, 8f)))
+            drawText(measurer, String.format(Locale.US, "%.2f", last), O(w + 8f, yl - 16f),
+                TextStyle(color = Teal, fontSize = 11.sp, fontWeight = FontWeight.Bold))
         }
-        Body(stringResource(R.string.chart_legend), TextDim, 11.sp)
+        // three lines: where the price is, then the two conditional scenarios with their history (hours only)
+        val q = d?.quote ?: c.c.last()
+        val inZone = (sup.map { it to true } + res.map { it to false }).firstOrNull { q in it.first.zoneLow..it.first.zoneHigh }
+        val s1 = sup.filter { it.zoneHigh < q }.maxByOrNull { it.price }
+        val r1 = res.filter { it.zoneLow > q }.minByOrNull { it.price }
+        val z = { l: Level -> ltr(l.zoneLow.p0()) + "–" + ltr(l.zoneHigh.p0()) }
+        val where = when {
+            inZone != null -> stringResource(if (inZone.second) R.string.zone_in_support else R.string.zone_in_resistance,
+                ltr(q.p0()), z(inZone.first))
+            s1 != null && r1 != null -> stringResource(R.string.zone_between, ltr(q.p0()), z(s1), z(r1))
+            else -> null
+        }
+        where?.let { Text(it, color = TextMain, fontSize = 13.sp, lineHeight = 19.sp) }
+        if (card?.horizon == "HOURS") d?.brief?.scenarios?.take(2)?.forEach { sc ->
+            Text(briefLine(sc), color = if (sc.kind == "BULL") BuyGreen else SellRed, fontSize = 13.sp, lineHeight = 18.sp)
+            sc.histRate?.let { r ->
+                Text(stringResource(R.string.sc_hist, Math.round(r * 100).toInt(), sc.histN, sc.histDays), color = TextDim, fontSize = 11.sp)
+            }
+        }
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Text(stringResource(R.string.pos_watch_note), color = TextDim, fontSize = 11.sp, modifier = Modifier.weight(1f))
+            val on = s.asset in s.alertAssets && s.notify
+            Text(stringResource(if (on) R.string.zone_follow_on else R.string.zone_follow), color = if (on) Color.Black else Gold,
+                fontSize = 11.sp, maxLines = 1, modifier = Modifier.background(if (on) Gold else Color.Transparent, RoundedCornerShape(10.dp))
+                    .border(1.dp, Gold, RoundedCornerShape(10.dp)).clickable(role = Role.Button, onClick = onFollow)
+                    .padding(horizontal = 10.dp, vertical = 4.dp))
+        }
+        Body(stringResource(R.string.chart_legend_zones), TextDim, 11.sp)
     }
 }
 

@@ -426,6 +426,17 @@
     <string name="ck_why_other">A condition checked before any entry.</string>
     <string name="ck_unknown_note">\? = unknown right now. Unknown never counts as met.</string>
     <string name="ck_dialog_note">All conditions must hold, and the model must be validated, before any recommendation. Conditions met alone are not a signal.</string>
+    <string name="zone_support">Support</string>
+    <string name="zone_resistance">Resistance</string>
+    <string name="zone_between">Price now %1$s, between support %2$s and resistance %3$s.</string>
+    <string name="zone_in_support">Price now %1$s, inside the support zone %2$s.</string>
+    <string name="zone_in_resistance">Price now %1$s, inside the resistance zone %2$s.</string>
+    <string name="zone_follow">Alert me at the zones</string>
+    <string name="zone_follow_on">Zone alerts on ✓</string>
+    <string name="chart_legend_zones">Grey bands: support and resistance zones from past highs and lows. Dashed line: current price.</string>
+    <string name="notif_zone_title">%1$s update</string>
+    <string name="notif_zone_sup_text">Price entered the support zone %1$s. An hourly close below it opens the way to %2$s; holding above keeps a test of %3$s possible. To watch — not a recommendation.</string>
+    <string name="notif_zone_res_text">Price reached the resistance zone %1$s. An hourly close above it opens the way to %2$s; failing to break it may bring a test of %3$s. To watch — not a recommendation.</string>
     <string name="r_w_up" formatted="false">up</string>
     <string name="r_w_down" formatted="false">down</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

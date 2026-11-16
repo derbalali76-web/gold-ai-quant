@@ -84,3 +84,41 @@ def test_gold_demo_decision_lists_its_sources():
     r = TestClient(create_app(":memory:")).get("/decision", params={"mode": "DEMO"}).json()
     names = {s["source"] for s in r["sources"]}
     assert {"PRICE", "M15", "H1", "H4"} <= names
+
+
+# ---------------- "update" push when the price enters a support / resistance zone
+def _lv(name, price, w=3.0):
+    from types import SimpleNamespace as NS
+    return NS(name=name, price=price, zone_low=price - w, zone_high=price + w)
+
+
+def _zdec(q):
+    from types import SimpleNamespace as NS
+    levels = NS(supports=[_lv("S1", 3855), _lv("S2", 3832)], resistances=[_lv("R1", 3891), _lv("R2", 3911)])
+    return NS(quote=q, market_closed=False, levels=levels, daily_brief=NS(events=[]),
+              outlooks=[NS(horizon="HOURS", plan=None)])
+
+
+def test_zone_update_text_parts():
+    from goldquant.push import zone_update
+    assert zone_update(_zdec(3871)) is None  # between zones: nothing
+    z = zone_update(_zdec(3856))
+    assert z["side"] == "SUPPORT" and (z["low"], z["high"], z["next"], z["other"]) == (3852, 3858, 3832, 3891)
+    r = zone_update(_zdec(3890))
+    assert r["side"] == "RESISTANCE" and (r["next"], r["other"]) == (3911, 3855)
+    assert zone_update(_zdec(3833)) is None  # S2 has no further level: no half message
+
+
+def test_zone_push_once_per_zone_and_capped(tmp_path):
+    import json as _j
+    from goldquant.push import PushService
+    sent = []
+    s = PushService(tmp_path, creds_json=_j.dumps({"project_id": "t"}), sender=lambda t, p: (sent.append(p["message"]["data"]), True)[1])
+    s.register("f" * 40, ["XAU"], [], "ar")
+    assert s.tick(lambda a: _zdec(3856), force=True)["sent"] == 1 and sent[-1]["type"] == "zone"
+    assert s.tick(lambda a: _zdec(3855), force=True)["sent"] == 0  # same zone, same day
+    assert s.tick(lambda a: _zdec(3890), force=True)["sent"] == 1  # another zone
+    closed = _zdec(3856); closed.market_closed = True
+    s2 = PushService(tmp_path / "b", creds_json=_j.dumps({"project_id": "t"}), sender=lambda t, p: True)
+    s2.register("g" * 40, ["XAU"], [], "ar")
+    assert s2.tick(lambda a: closed, force=True)["sent"] == 0
