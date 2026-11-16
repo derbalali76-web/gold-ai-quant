@@ -41,6 +41,7 @@ jobs:
       - name: run
         env:
           TWELVEDATA_API_KEY: ${{ secrets.TWELVEDATA_API_KEY }}
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
           GOLDQUANT_REPO_ROOT: ${{ github.workspace }}
         run: timeout 100m python backend/tools/cloud_job.py ${{ steps.job.outputs.name }} --years "${{ inputs.years || '3' }}"
       - name: commit

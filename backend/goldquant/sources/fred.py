@@ -16,6 +16,10 @@ import pandas as pd
 from ..providers.http import HttpClient, HttpError, RateLimiter
 
 URL = "https://fred.stlouisfed.org/graph/fredgraph.csv"
+# Official API (free key; FRED's terms allow automated access only through it). With a key, revisable series come
+# from ALFRED as FIRST RELEASES (output_type=4) and published_at is the real vintage date: no revision leakage.
+API_URL = "https://api.stlouisfed.org/fred/series/observations"
+RELEASE_HOUR_UTC = 16  # US data are released 08:30-10:00 ET; 16:00 UTC is a conservative "available by" time
 
 
 @dataclass(frozen=True)
@@ -54,15 +58,52 @@ def parse_fredgraph_csv(text: str, spec: SeriesSpec, fetched_at: datetime) -> li
     return out
 
 
+def parse_api_json(text: str, spec: SeriesSpec, fetched_at: datetime, vintages: bool) -> list[dict]:
+    """FRED API observations. With vintages (ALFRED first release) published_at = realtime_start at RELEASE_HOUR_UTC
+    (the day the value first became public); otherwise the conservative lag of the series."""
+    import json
+    rows = json.loads(text).get("observations")
+    if not isinstance(rows, list):
+        raise ValueError("unexpected FRED API payload")
+    out = []
+    for o in rows:
+        try:
+            v = float(o["value"])
+        except (KeyError, TypeError, ValueError):
+            continue  # '.' = missing
+        d = pd.Timestamp(o["date"], tz="UTC")
+        if vintages and o.get("realtime_start"):
+            pub = pd.Timestamp(o["realtime_start"], tz="UTC") + pd.Timedelta(hours=RELEASE_HOUR_UTC)
+            meta = {"revision_risk": False, "publication_time": "vintage (ALFRED first release)", "source": "FRED API"}
+        else:
+            pub = d + spec.lag
+            meta = {"revision_risk": spec.revisable, "publication_time": "approximate", "source": "FRED API"}
+        out.append({"observed_at": d.isoformat(), "published_at": pub.to_pydatetime().isoformat(),
+                    "fetched_at": fetched_at.isoformat(), "value": v, "meta": meta})
+    return out
+
+
 class FredSource:
-    def __init__(self, http: HttpClient | None = None):
+    def __init__(self, http: HttpClient | None = None, api_key: str | None = None):
+        import os
         self.http = http or HttpClient(limiter=RateLimiter(calls=20, period=60.0))
+        self.api_key = api_key if api_key is not None else os.environ.get("FRED_API_KEY", "").strip()
         self.last_error: str | None = None
+        self.last_source: str | None = None  # "FRED API" or "fredgraph.csv" — recorded with every fetch
 
     def fetch(self, series: str, start: str = "2015-01-01") -> list[dict]:
         spec = SERIES[series]
         try:
+            if self.api_key:
+                q = {"series_id": series, "api_key": self.api_key, "file_type": "json", "observation_start": start}
+                if spec.revisable:
+                    q.update(output_type="4", realtime_start="1776-07-04", realtime_end="9999-12-31")
+                r = self.http.get(API_URL, q)
+                self.last_source = "FRED API"
+                return parse_api_json(r.text, spec, datetime.now(timezone.utc), vintages=spec.revisable)
+            # fallback without a key (FRED's terms ask for the API: documented, used only in the experimental phase)
             r = self.http.get(URL, {"id": series, "cosd": start})
+            self.last_source = "fredgraph.csv"
             return parse_fredgraph_csv(r.text, spec, datetime.now(timezone.utc))
         except (HttpError, ValueError) as exc:
             self.last_error = str(exc)

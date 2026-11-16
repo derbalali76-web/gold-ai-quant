@@ -251,3 +251,29 @@ def test_download_repo_falls_back_without_token(monkeypatch, tmp_path):
     cloud.download_repo("owner/repo", "expired", tmp_path / "repo")
     assert calls == [True, False]
     assert (tmp_path / "repo" / "models" / "touch_models.json").exists()
+
+
+def test_fred_api_vintage_publication_dates():
+    from datetime import datetime, timezone
+    from goldquant.sources import fred as F
+    txt = '{"observations":[{"date":"2026-09-01","realtime_start":"2026-10-15","value":"3.1"},' \
+          '{"date":"2026-10-01","realtime_start":"2026-11-13","value":"."}]}'
+    rows = F.parse_api_json(txt, F.SERIES["CPIAUCSL"], datetime(2026, 11, 16, tzinfo=timezone.utc), vintages=True)
+    assert len(rows) == 1 and rows[0]["value"] == 3.1
+    assert rows[0]["published_at"].startswith("2026-10-15T16:00")  # the real first-release day, not a guess
+    assert rows[0]["meta"]["revision_risk"] is False
+
+
+def test_fred_uses_api_when_key_present():
+    from goldquant.sources import fred as F
+    calls = []
+
+    class H:
+        def get(self, url, params=None):
+            calls.append((url, dict(params or {})))
+            return type("R", (), {"text": '{"observations":[{"date":"2026-11-13","value":"4.1"}]}'})()
+    src = F.FredSource(http=H(), api_key="k")
+    rows = src.fetch("DGS10")
+    assert calls[0][0] == F.API_URL and "output_type" not in calls[0][1] and src.last_source == "FRED API"
+    src.fetch("CPIAUCSL")
+    assert calls[1][1]["output_type"] == "4" and len(rows) == 1
