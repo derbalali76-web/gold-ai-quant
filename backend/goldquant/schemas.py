@@ -7,7 +7,7 @@ from typing import Any, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-SCHEMA_VERSION = "1.15.0"
+SCHEMA_VERSION = "1.16.0"
 
 
 class Action(str, Enum):
@@ -117,6 +117,7 @@ class MarketTrend(BaseModel):
     label_ar: str
     agreement: Optional[float] = None
     per_timeframe: dict[str, str] = Field(default_factory=dict)
+    per_timeframe_code: dict[str, str] = Field(default_factory=dict)  # UP / DOWN / SIDEWAYS (1.16): language-free
     note_ar: Optional[str] = None
 
 

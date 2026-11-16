@@ -26,7 +26,7 @@ def tf_score(row: pd.Series) -> float:
 def market_trend(last_rows: dict, vol_regime: str) -> dict:
     per = {tf: tf_score(r) for tf, r in last_rows.items() if tf in WEIGHTS}
     if not per:
-        return {"direction": "UNKNOWN", "strength": None, "label_ar": "غير متاح", "per_timeframe": {}}
+        return {"direction": "UNKNOWN", "strength": None, "label_ar": "غير متاح", "per_timeframe": {}, "per_timeframe_code": {}}
     w = sum(WEIGHTS[k] for k in per)
     combined = sum(WEIGHTS[k] * v for k, v in per.items()) / w
     signs = [np.sign(v) for v in per.values() if abs(v) > 0.1]
@@ -37,4 +37,5 @@ def market_trend(last_rows: dict, vol_regime: str) -> dict:
     tf_lbl = {k: ("صاعد" if v > 0.1 else "هابط" if v < -0.1 else "محايد") for k, v in per.items()}
     return {"direction": direction, "strength": int(round(100 * min(1.0, strength))), "label_ar": label,
             "agreement": round(float(agreement), 2), "per_timeframe": tf_lbl,
+            "per_timeframe_code": {k: ("UP" if v > 0.1 else "DOWN" if v < -0.1 else "SIDEWAYS") for k, v in per.items()},
             "note_ar": "درجة تحليلية لحالة الاتجاه وليست احتمالاً لاستمراره"}

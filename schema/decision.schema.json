@@ -790,6 +790,13 @@
           "title": "Per Timeframe",
           "type": "object"
         },
+        "per_timeframe_code": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Per Timeframe Code",
+          "type": "object"
+        },
         "strength": {
           "anyOf": [
             {
@@ -2204,7 +2211,7 @@
       "default": null
     },
     "schema_version": {
-      "default": "1.15.0",
+      "default": "1.16.0",
       "title": "Schema Version",
       "type": "string"
     },

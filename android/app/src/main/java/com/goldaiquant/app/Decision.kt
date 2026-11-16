@@ -264,7 +264,8 @@ object DecisionParser {
     }
 
     private fun parseTrend(t: JSONObject): Trend {
-        val per = t.optJSONObject("per_timeframe")
+        // v1.16: language-free codes per timeframe; older servers only sent words in "per_timeframe"
+        val per = t.optJSONObject("per_timeframe_code")?.takeIf { it.length() > 0 } ?: t.optJSONObject("per_timeframe")
         return Trend(t.getString("direction"), if (t.isNull("strength")) null else t.getInt("strength"),
             t.getString("label_ar"), per?.keys()?.asSequence()?.associateWith { per.getString(it) } ?: emptyMap(),
             if (t.isNull("agreement") || !t.has("agreement")) null else t.getDouble("agreement"))

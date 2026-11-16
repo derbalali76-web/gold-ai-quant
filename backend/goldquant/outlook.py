@@ -310,7 +310,8 @@ def daily_trend_block(daily: pd.DataFrame, horizon: str) -> dict:
     strength = int(round(100 * agreement)) if direction != "SIDEWAYS" else int(round(50 * agreement))
     label = {"UP": "صاعد", "DOWN": "هابط", "SIDEWAYS": "عرضي"}[direction]
     return {"direction": direction, "strength": strength, "label_ar": label, "agreement": agreement,
-            "per_timeframe": {k: ("UP" if bool(checks[k]) else "DOWN") for k in names}}
+            "per_timeframe": {k: ("UP" if bool(checks[k]) else "DOWN") for k in names},
+            "per_timeframe_code": {k: ("UP" if bool(checks[k]) else "DOWN") for k in names}}
 
 
 def horizon_levels(daily: pd.DataFrame, px: float, hz: str) -> dict:

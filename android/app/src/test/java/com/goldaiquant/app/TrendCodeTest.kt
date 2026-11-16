@@ -6,12 +6,10 @@ import org.junit.Assert.assertNull
 import org.junit.Test
 
 class TrendCodeTest {
-    @Test fun perFrameArabicWordsAreRecognised() {
-        // the server sends per-timeframe trends as Arabic words; they must not show as "unknown"
-        assertEquals("DOWN", trendCode("هابط"))
-        assertEquals("UP", trendCode("صاعد"))
-        assertEquals("SIDEWAYS", trendCode("محايد"))
+    @Test fun codesAreRecognised() {
         assertEquals("DOWN", trendCode("DOWN"))
+        assertEquals("UP", trendCode("UP"))
+        assertEquals("SIDEWAYS", trendCode("SIDEWAYS"))
         assertNull(trendCode("UNKNOWN"))
     }
 }

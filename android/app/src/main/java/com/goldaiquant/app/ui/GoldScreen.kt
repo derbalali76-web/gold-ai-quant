@@ -525,9 +525,9 @@ private fun trendLabel(dir: String?): String = stringResource(when (trendCode(di
     "UP" -> R.string.tr_up; "DOWN" -> R.string.tr_down; "SIDEWAYS" -> R.string.tr_sideways; else -> R.string.tr_unknown
 })
 
-/** The server sends codes for the overall trend but Arabic words per timeframe ("صاعد" / "هابط" / "محايد"). */
+/** Trend codes (the server sends per-timeframe codes since schema 1.16 in "per_timeframe_code"). */
 internal fun trendCode(dir: String?): String? = when (dir) {
-    "UP", "صاعد" -> "UP"; "DOWN", "هابط" -> "DOWN"; "SIDEWAYS", "عرضي", "محايد", "NEUTRAL" -> "SIDEWAYS"; else -> null
+    "UP" -> "UP"; "DOWN" -> "DOWN"; "SIDEWAYS", "NEUTRAL" -> "SIDEWAYS"; else -> null
 }
 
 private fun trendColor(dir: String?): Color = when (trendCode(dir)) {
