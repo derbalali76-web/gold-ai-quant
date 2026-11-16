@@ -59,6 +59,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
@@ -1580,14 +1582,14 @@ private fun ChartDialog(s: UiState, card: HorizonCard?, d: Decision?, onTf: (Str
         androidx.compose.foundation.Canvas(Modifier.fillMaxWidth().height(if (tall) 520.dp else 300.dp)
             .background(Bg, RoundedCornerShape(10.dp))
             .pointerInput(tf, s.asset, c.size) {
-                androidx.compose.foundation.gestures.detectTransformGestures { _, panXY, zoom, _ ->
+                detectTransformGestures { _, panXY, zoom, _ ->
                     shownBars = (shownBars / zoom).coerceIn(20f, c.size.toFloat().coerceAtLeast(20f))
                     val perBar = size.width / shownBars
                     back = (back + panXY.x / perBar).coerceIn(0f, (c.size - 20).toFloat().coerceAtLeast(0f))
                 }
             }
             .pointerInput(tf, s.asset) {
-                androidx.compose.foundation.gestures.detectTapGestures(onDoubleTap = { shownBars = CHART_BARS.toFloat(); back = 0f })
+                detectTapGestures(onDoubleTap = { shownBars = CHART_BARS.toFloat(); back = 0f })
             }
             .semantics { contentDescription = "chart" }) {
             val small = TextStyle(fontSize = 10.sp)
