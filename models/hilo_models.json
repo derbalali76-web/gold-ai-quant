@@ -1,0 +1,136 @@
+{
+ "schema": 1,
+ "version": "hilo-har-0.1.0",
+ "updated_at": "2026-11-16T18:40:13.343628+00:00",
+ "prereg": "PRE-REGISTERED 2026-11-16 (live validation of hilo-har-0.1.0), written before any live forecast exists.\nCases: exactly the four that qualified in the backtest — BTC 4h, BTC 24h, ETH 4h, ETH 24h. Nothing else is recorded.\nIssue: every 4 hours (00, 04, 08, 12, 16, 20 UTC) for BOTH horizons, from the last closed hourly bar; the public\n  ledger records it within 75 minutes of issue (before any outcome): issue and expiry time, model version, close,\n  model upper / lower, and both baselines at the same moment (B1 = 90 % / 10 % of U / D over the 365 days before the\n  weekly export; B2 = +/- 1.645 * EWMA sigma * sqrt(H) from the live bars).\nResult: from the next H hourly bars: actual highest high and lowest low, each side exceeded or not, whole path inside or\n  not, and the pinball losses and path score of the model and of both baselines on the same window.\nEvaluation: not before 30 days AND 150 settled forecasts per case (until then the app shows nothing). Per case:\n  L1 each side exceeded between 5 % and 15 % of the time\n  L2 mean path score below the better baseline ON THE SAME WINDOWS (the better one chosen after the fact = the\n     conservative choice); one-sided p-value from a day-block bootstrap of the paired differences (blocks of whole\n     days, at least the horizon long, because 24 h windows issued every 4 h overlap); Holm-Bonferroni across the four\n     cases at family alpha 0.05\n  L3 mean pinball loss below the better baseline on BOTH sides (point estimates)\nA case is approved only if L1, L2 and L3 hold. Failing cases stay experimental; the thresholds are not changed.",
+ "assets": {
+  "BTC": {
+   "4h": {
+    "backtest_qualified": true,
+    "params": {
+     "version": "hilo-har-0.1.0",
+     "kind": "crypto",
+     "horizon": "4h",
+     "bars": 4,
+     "cols": [
+      "rv4",
+      "rvd",
+      "rvw",
+      "rvm",
+      "hs",
+      "hc",
+      "wk"
+     ],
+     "beta": [
+      -0.49198923382838977,
+      0.1509870677877824,
+      0.306524150377553,
+      0.40205827788907433,
+      0.11913273735413854,
+      -0.17251860033416652,
+      -0.19179393027154265,
+      -0.41318389249581283
+     ],
+     "qu": 2.181786526101079,
+     "qd": -2.4374971007195856,
+     "b1_up": 1.3821221880411712,
+     "b1_down": -1.4882196750683678,
+     "trained_until": "2026-11-14 17:00:00+00:00"
+    }
+   },
+   "24h": {
+    "backtest_qualified": true,
+    "params": {
+     "version": "hilo-har-0.1.0",
+     "kind": "crypto",
+     "horizon": "24h",
+     "bars": 24,
+     "cols": [
+      "rv4",
+      "rvd",
+      "rvw",
+      "rvm",
+      "wk"
+     ],
+     "beta": [
+      0.10153427863917297,
+      0.13167691965163145,
+      0.15880887479451672,
+      0.43651790957697406,
+      0.17680641271997447,
+      -0.266773915004813
+     ],
+     "qu": 1.7965052396283532,
+     "qd": -2.057301731236663,
+     "b1_up": 3.390099880171811,
+     "b1_down": -3.8088763150596754,
+     "trained_until": "2026-11-13 21:00:00+00:00"
+    }
+   }
+  },
+  "ETH": {
+   "4h": {
+    "backtest_qualified": true,
+    "params": {
+     "version": "hilo-har-0.1.0",
+     "kind": "crypto",
+     "horizon": "4h",
+     "bars": 4,
+     "cols": [
+      "rv4",
+      "rvd",
+      "rvw",
+      "rvm",
+      "hs",
+      "hc",
+      "wk"
+     ],
+     "beta": [
+      -0.4763529087728404,
+      0.10608735110641859,
+      0.3942199680762104,
+      0.3655558306942992,
+      0.12060517100787443,
+      -0.18081586957661233,
+      -0.16253046669653487,
+      -0.28841420452824756
+     ],
+     "qu": 2.2076126966569163,
+     "qd": -2.472921589194056,
+     "b1_up": 1.8762650398243268,
+     "b1_down": -2.0546975446826745,
+     "trained_until": "2026-11-14 17:00:00+00:00"
+    }
+   },
+   "24h": {
+    "backtest_qualified": true,
+    "params": {
+     "version": "hilo-har-0.1.0",
+     "kind": "crypto",
+     "horizon": "24h",
+     "bars": 24,
+     "cols": [
+      "rv4",
+      "rvd",
+      "rvw",
+      "rvm",
+      "wk"
+     ],
+     "beta": [
+      0.22457639634654963,
+      0.11649019595230208,
+      0.22535309780064156,
+      0.39386609776428244,
+      0.1439994794031036,
+      -0.1645937376324068
+     ],
+     "qu": 1.809173353675274,
+     "qd": -2.1173263853266606,
+     "b1_up": 4.71927224607705,
+     "b1_down": -5.5220228724338325,
+     "trained_until": "2026-11-13 21:00:00+00:00"
+    }
+   }
+  }
+ }
+}
