@@ -50,7 +50,11 @@ data class Check(val code: String, val ok: Boolean?, val args: List<String>, val
 data class Scenario(val kind: String, val trigger: Double, val triggerLevel: String, val target: Double?, val targetLevel: String?,
                     val histRate: Double? = null, val histN: Int = 0, val histDays: Int = 0)
 data class Brief(val date: String, val bias: String, val scenarios: List<Scenario>,
-                 val events: List<ScenarioEvent> = emptyList())
+                 val events: List<ScenarioEvent> = emptyList(), val firstTouch: FirstTouch? = null)
+
+/** v1.15: descriptive history (not a forecast): which of the two levels was reached first from a similar distance. */
+data class FirstTouch(val downFirst: Double, val upFirst: Double, val n: Int, val days: Int, val windowHours: Int,
+                      val downLevel: Double, val upLevel: Double)
 
 /** v1.9: the last closed hour broke a level — a fact to watch, not a recommendation. */
 data class ScenarioEvent(val kind: String, val level: Double, val levelName: String, val target: Double?,
@@ -428,7 +432,13 @@ object DecisionParser {
             if (kind != "BULL" && kind != "BEAR") return@mapNotNull null
             ScenarioEvent(kind, lvl, e.optString("level_name"), e.dbl("target"), e.str("target_name"), e.optString("hour_utc"))
         }
-        return Brief(b.optString("date"), b.optString("bias", "UNKNOWN"), sc, ev)
+        val ft = b.optJSONObject("first_touch")?.let { f ->
+            val dn = f.dbl("down_first"); val up = f.dbl("up_first")
+            val lo = f.dbl("down_level"); val hi = f.dbl("up_level")
+            if (dn == null || up == null || lo == null || hi == null || dn !in 0.0..1.0 || up !in 0.0..1.0) null
+            else FirstTouch(dn, up, f.optInt("n", 0), f.optInt("days", 0), f.optInt("window_hours", 48), lo, hi)
+        }
+        return Brief(b.optString("date"), b.optString("bias", "UNKNOWN"), sc, ev, ft)
     }
 
     private fun parsePlan(p: JSONObject): Plan? {

@@ -436,6 +436,12 @@
     <string name="notif_zone_title">تحديث %1$s</string>
     <string name="notif_zone_sup_text">دخل السعر منطقة الدعم %1$s. إغلاق ساعة تحتها يفتح الطريق نحو %2$s، والثبات فوقها يُبقي اختبار %3$s ممكناً. للمراقبة — ليست توصية.</string>
     <string name="notif_zone_res_text">وصل السعر منطقة المقاومة %1$s. إغلاق ساعة فوقها يفتح الطريق نحو %2$s، والفشل في اختراقها قد يعيده لاختبار %3$s. للمراقبة — ليست توصية.</string>
+    <string name="chart_bigger">تكبير ⤢</string>
+    <string name="chart_smaller">تصغير ⤡</string>
+    <string name="chart_gestures">قرّب بإصبعين · اسحب للرجوع في الزمن · نقرتان للعودة</string>
+    <string name="ft_title">ترجيح تاريخي: أي المستويين لُمس أولاً</string>
+    <string name="ft_line">الهبوط إلى %1$s أولاً: %2$d%% · الصعود إلى %3$s أولاً: %4$d%%</string>
+    <string name="ft_note">من %1$d حالة مشابهة (نفس المسافة إلى مستويين) خلال %2$d يوماً، في غضون %3$d ساعة. يعكس أساساً أي المستويين أقرب؛ تاريخ وليس تنبؤاً معتمداً.</string>
     <string name="r_w_up" formatted="false">صاعد</string>
     <string name="r_w_down" formatted="false">هابط</string>
     <string name="r_w_neutral" formatted="false">محايد</string>

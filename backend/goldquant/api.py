@@ -451,6 +451,9 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
                 hist_state["table"] = _json.loads(p.read_text(encoding="utf-8")).get("assets", {})
                 hist_state["mtime"] = mt
             BR.attach_history(d.daily_brief, hist_state["table"].get(asset), d.levels.atr_h1)
+            sc = {x.kind: x.trigger for x in d.daily_brief.scenarios}
+            BR.attach_first_touch(d.daily_brief, hist_state["table"].get(asset), float(d.quote or 0),
+                                  sc.get("BEAR"), sc.get("BULL"), d.levels.atr_h1)
         except Exception:  # noqa: BLE001 — descriptive extra
             return
 

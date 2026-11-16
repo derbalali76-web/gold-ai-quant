@@ -122,3 +122,41 @@ def test_zone_push_once_per_zone_and_capped(tmp_path):
     s2 = PushService(tmp_path / "b", creds_json=_j.dumps({"project_id": "t"}), sender=lambda t, p: True)
     s2.register("g" * 40, ["XAU"], [], "ar")
     assert s2.tick(lambda a: closed, force=True)["sent"] == 0
+
+
+# ---------------- first touch: descriptive history of which level is reached first
+def _walk(n=6000, seed=4):
+    rng = np.random.default_rng(seed)
+    idx = pd.date_range("2024-01-01", periods=n, freq="h", tz="UTC")
+    c = 2000 * np.exp(np.cumsum(rng.normal(0, 0.002, n)))
+    o = np.r_[c[0], c[:-1]]
+    return pd.DataFrame({"open": o, "high": np.maximum(o, c) * 1.0008, "low": np.minimum(o, c) * 0.9992, "close": c},
+                        index=idx)
+
+
+def test_first_touch_reflects_distance_and_is_checked_out_of_sample():
+    from goldquant import brief as BR
+    t = BR.first_touch_table(_walk())
+    near_dn = t["cells"]["0.5|3.0"]  # lower level much closer
+    near_up = t["cells"]["3.0|0.5"]
+    assert near_dn[0] > 0.75 and near_up[0] < 0.25  # random walk: the closer level is usually first
+    assert all(len(v) == 5 for v in t["cells"].values())
+    usable = [v for v in t["cells"].values() if v[4]]
+    assert usable and all(v[1] >= BR.FT_MIN_N and v[3] >= BR.FT_MIN_N_HOLD for v in usable)
+
+
+def test_attach_first_touch_only_from_usable_cells():
+    from goldquant import brief as BR
+    from goldquant.schemas import DailyBrief, Scenario
+    b = DailyBrief(date="2026-11-16", bias="DOWN", price=3863.0,
+                   scenarios=[Scenario(kind="BEAR", trigger=3853.27, trigger_level="S1"),
+                              Scenario(kind="BULL", trigger=3884.65, trigger_level="R1")])
+    table = {"first_touch": {"window_hours": 48, "days": 728,
+                             "cells": {"1.0|2.0": [0.66, 900, 0.64, 180, True], "1.0|1.5": [0.6, 50, 0.5, 9, False]}}}
+    BR.attach_first_touch(b, table, 3863.0, 3853.27, 3884.65, 10.0)  # a = 0.97 ATR, b = 2.17 ATR
+    assert b.first_touch.down_first == 0.66 and b.first_touch.up_first == 0.34 and b.first_touch.n == 900
+    b2 = b.model_copy(update={"first_touch": None})
+    BR.attach_first_touch(b2, table, 3863.0, 3853.27, 3878.0, 10.0)  # b = 1.5: cell not usable -> nothing
+    assert b2.first_touch is None
+    BR.attach_first_touch(b2, table, 3863.0, 3853.27, 3884.65, None)
+    assert b2.first_touch is None

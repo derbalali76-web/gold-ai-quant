@@ -7,7 +7,7 @@ from typing import Any, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-SCHEMA_VERSION = "1.14.0"
+SCHEMA_VERSION = "1.15.0"
 
 
 class Action(str, Enum):
@@ -269,6 +269,20 @@ class ScenarioEvent(BaseModel):
     hour_utc: datetime  # open time of the hour that closed across the level
 
 
+class FirstTouch(BaseModel):
+    """v1.15: descriptive history, NOT a forecast: from a similar distance to the two levels, how often the lower /
+    upper one was reached first within window_hours. Mostly reflects the distances; shown only when the rate held
+    out of sample (brief.first_touch_table)."""
+    model_config = ConfigDict(extra="forbid")
+    down_first: float = Field(ge=0.0, le=1.0)
+    up_first: float = Field(ge=0.0, le=1.0)
+    n: int
+    days: int
+    window_hours: int
+    down_level: float
+    up_level: float
+
+
 class DailyBrief(BaseModel):
     """Every day, even when no trade is validated: today's bias and the two levels that would change the picture."""
     model_config = ConfigDict(extra="forbid")
@@ -278,6 +292,7 @@ class DailyBrief(BaseModel):
     scenarios: list[Scenario] = Field(default_factory=list)
     events: list[ScenarioEvent] = Field(default_factory=list)  # v1.9
     source: str = "H1_LEVELS"  # H1_LEVELS | DAILY_LEVELS
+    first_touch: Optional[FirstTouch] = None  # v1.15
 
 
 class HorizonOutlook(BaseModel):

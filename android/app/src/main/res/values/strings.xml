@@ -437,6 +437,12 @@
     <string name="notif_zone_title">%1$s update</string>
     <string name="notif_zone_sup_text">Price entered the support zone %1$s. An hourly close below it opens the way to %2$s; holding above keeps a test of %3$s possible. To watch — not a recommendation.</string>
     <string name="notif_zone_res_text">Price reached the resistance zone %1$s. An hourly close above it opens the way to %2$s; failing to break it may bring a test of %3$s. To watch — not a recommendation.</string>
+    <string name="chart_bigger">Enlarge ⤢</string>
+    <string name="chart_smaller">Reduce ⤡</string>
+    <string name="chart_gestures">Pinch to zoom · drag to go back in time · double tap to reset</string>
+    <string name="ft_title">Historical lean: which level came first</string>
+    <string name="ft_line">Down to %1$s first: %2$d%% · up to %3$s first: %4$d%%</string>
+    <string name="ft_note">From %1$d similar cases (same distances to two levels) over %2$d days, within %3$d h. Mostly reflects which level is closer; history, not a validated forecast.</string>
     <string name="r_w_up" formatted="false">up</string>
     <string name="r_w_down" formatted="false">down</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

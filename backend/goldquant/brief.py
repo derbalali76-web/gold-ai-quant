@@ -116,18 +116,95 @@ def history_rate(h1, kind: str, k_atr: float) -> tuple:
     return (round(hits / tot, 3) if tot >= HIST_MIN_N else None), tot, days
 
 
-K_GRID = [round(0.25 * i, 2) for i in range(1, 17)]  # 0.25 .. 4.0 ATR
+K_GRID = [round(0.25 * i, 2) for i in range(1, 33)]  # 0.25 .. 8.0 ATR (gold levels are often 4-8 ATR apart)
 
 
 def history_table(h1) -> dict:
-    """Pre-computed in CI over the last two years of hourly bars: {kind: {k: [rate, n]}}."""
+    """Pre-computed in CI over the last two years of hourly bars: {kind: {k: [rate, n]}} + the first-touch table."""
     out = {"days": 0, "BULL": {}, "BEAR": {}}
     for kind in ("BULL", "BEAR"):
         for k in K_GRID:
             r, n, days = history_rate(h1, kind, k)
             out[kind][str(k)] = [r, n]
             out["days"] = days
+    out["first_touch"] = first_touch_table(h1)
     return out
+
+
+# ---------------------------------------------------------------- which level is touched first (descriptive)
+FT_WINDOW = 48  # hours
+FT_GRID = [round(0.5 * i, 1) for i in range(1, 13)]  # 0.5 .. 6.0 ATR
+FT_STRIDE = 6  # one case every 6 hours
+FT_MIN_N, FT_MIN_N_HOLD, FT_MAX_GAP = 300, 80, 0.05
+
+
+def first_touch_table(h1) -> dict:
+    """With the price `a` ATR above a level and `b` ATR below another, how often was the LOWER one reached first
+    within 48 h (cases where one of them was reached; same-hour touches are left out)? Pure price history: it does
+    not know about support / resistance, so it mostly reflects the two distances. A cell is usable only with >= 300
+    cases AND the same rate within 5 points on the last 20 % of the period (checked out of sample, never tuned)."""
+    import numpy as np
+    from numpy.lib.stride_tricks import sliding_window_view as win
+    if h1 is None or len(h1) < 2000:
+        return {"window_hours": FT_WINDOW, "cells": {}}
+    h, lo, c = (h1[x].to_numpy(float) for x in ("high", "low", "close"))
+    pc = np.r_[c[0], c[:-1]]
+    tr = np.maximum(h - lo, np.maximum(np.abs(h - pc), np.abs(lo - pc)))
+    atr = pd_rolling_mean(tr, 14)
+    idx = np.arange(20, len(c) - FT_WINDOW - 1, FT_STRIDE)
+    idx = idx[np.isfinite(atr[idx]) & (atr[idx] > 0)]
+    H = win(h[1:], FT_WINDOW)[idx]  # bars t+1 .. t+48
+    L = win(lo[1:], FT_WINDOW)[idx]
+    up = (np.maximum.accumulate(H, axis=1) - c[idx, None]) / atr[idx, None]
+    dn = (c[idx, None] - np.minimum.accumulate(L, axis=1)) / atr[idx, None]
+    inf = FT_WINDOW + 1
+
+    def first(m, g):
+        hit = m >= g
+        return np.where(hit.any(axis=1), hit.argmax(axis=1), inf)
+    fu = {g: first(up, g) for g in FT_GRID}
+    fd = {g: first(dn, g) for g in FT_GRID}
+    split = int(len(idx) * 0.8)
+    cells = {}
+    for a in FT_GRID:  # a = distance DOWN to the lower level
+        for b in FT_GRID:  # b = distance UP to the upper level
+            d_, u_ = fd[a], fu[b]
+            ok = (np.minimum(d_, u_) < inf) & (d_ != u_)
+            down = d_ < u_
+            n, n_h = int(ok.sum()), int(ok[split:].sum())
+            if n == 0:
+                continue
+            p = float(down[ok].mean())
+            p_tr = float(down[:split][ok[:split]].mean()) if ok[:split].any() else None
+            p_h = float(down[split:][ok[split:]].mean()) if n_h else None
+            usable = (n >= FT_MIN_N and n_h >= FT_MIN_N_HOLD and p_tr is not None and p_h is not None
+                      and abs(p_tr - p_h) <= FT_MAX_GAP)
+            cells[f"{a}|{b}"] = [round(p, 3), n, round(p_h, 3) if p_h is not None else None, n_h, usable]
+    return {"window_hours": FT_WINDOW, "days": int((h1.index[-1] - h1.index[0]).days), "cells": cells}
+
+
+def pd_rolling_mean(x, n):
+    import numpy as np
+    import pandas as pd
+    return pd.Series(x).rolling(n).mean().to_numpy(dtype=float) if len(x) else np.array([])
+
+
+def attach_first_touch(brief, table: dict | None, price: float, s1: float | None, r1: float | None, atr_now) -> None:
+    """Fill brief.first_touch for the two scenario levels, only from a usable cell (see first_touch_table)."""
+    from .schemas import FirstTouch
+    if brief is None or not table or not atr_now or s1 is None or r1 is None or not (s1 < price < r1):
+        return
+    ft = table.get("first_touch") or {}
+    a, b = (price - s1) / float(atr_now), (r1 - price) / float(atr_now)
+    ga, gb = min(FT_GRID, key=lambda g: abs(g - a)), min(FT_GRID, key=lambda g: abs(g - b))
+    if abs(ga - a) > 0.25 or abs(gb - b) > 0.25:
+        return
+    cell = (ft.get("cells") or {}).get(f"{ga}|{gb}")
+    if not cell or not cell[4]:
+        return
+    brief.first_touch = FirstTouch(down_first=cell[0], up_first=round(1 - cell[0], 3), n=cell[1],
+                                   days=ft.get("days") or 0, window_hours=ft.get("window_hours") or FT_WINDOW,
+                                   down_level=round(s1, 2), up_level=round(r1, 2))
 
 
 def attach_history(brief, table: dict | None, atr_now) -> None:

@@ -58,6 +58,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
@@ -1548,11 +1550,16 @@ private fun ChartDialog(s: UiState, card: HorizonCard?, d: Decision?, onTf: (Str
         }
         val sup = card?.levels?.supports.orEmpty()
         val res = card?.levels?.resistances.orEmpty()
-        // zoom on the recent part: ~5 days of hours / ~4 months of days, so zones and candles stay readable
-        val from = maxOf(0, c.size - CHART_BARS)
-        val n = c.size - from
-        val o = c.o.subList(from, c.size); val hh = c.h.subList(from, c.size)
-        val ll = c.l.subList(from, c.size); val cc = c.c.subList(from, c.size)
+        // pinch to zoom, drag to scroll back in time, double tap to reset; the size button makes it taller
+        var shownBars by remember(tf, s.asset) { mutableStateOf(CHART_BARS.toFloat()) }
+        var back by remember(tf, s.asset) { mutableStateOf(0f) }
+        var tall by remember { mutableStateOf(false) }
+        val nb = shownBars.toInt().coerceIn(20, maxOf(20, c.size))
+        val end = (c.size - back.toInt()).coerceIn(minOf(nb, c.size), c.size)
+        val from = maxOf(0, end - nb)
+        val n = end - from
+        val o = c.o.subList(from, end); val hh = c.h.subList(from, end)
+        val ll = c.l.subList(from, end); val cc = c.c.subList(from, end)
         val lo0 = ll.min(); val hi0 = hh.max()
         val span0 = (hi0 - lo0).coerceAtLeast(1e-9)
         // at most the two nearest zones on each side, and only those close to the visible prices
@@ -1564,19 +1571,42 @@ private fun ChartDialog(s: UiState, card: HorizonCard?, d: Decision?, onTf: (Str
         val hi = maxOf(hi0, edges.maxOrNull() ?: hi0) + pad
         val measurer = androidx.compose.ui.text.rememberTextMeasurer()
         val wSup = stringResource(R.string.zone_support); val wRes = stringResource(R.string.zone_resistance)
-        androidx.compose.foundation.Canvas(Modifier.fillMaxWidth().height(300.dp).background(Bg, RoundedCornerShape(10.dp))
+        val live = c.c.last()
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+            Text(stringResource(if (tall) R.string.chart_smaller else R.string.chart_bigger), color = Gold, fontSize = 12.sp,
+                modifier = Modifier.border(1.dp, Gold, RoundedCornerShape(10.dp)).clickable(role = Role.Button) { tall = !tall }
+                    .padding(horizontal = 10.dp, vertical = 3.dp))
+        }
+        androidx.compose.foundation.Canvas(Modifier.fillMaxWidth().height(if (tall) 520.dp else 300.dp)
+            .background(Bg, RoundedCornerShape(10.dp))
+            .pointerInput(tf, s.asset, c.size) {
+                androidx.compose.foundation.gestures.detectTransformGestures { _, panXY, zoom, _ ->
+                    shownBars = (shownBars / zoom).coerceIn(20f, c.size.toFloat().coerceAtLeast(20f))
+                    val perBar = size.width / shownBars
+                    back = (back + panXY.x / perBar).coerceIn(0f, (c.size - 20).toFloat().coerceAtLeast(0f))
+                }
+            }
+            .pointerInput(tf, s.asset) {
+                androidx.compose.foundation.gestures.detectTapGestures(onDoubleTap = { shownBars = CHART_BARS.toFloat(); back = 0f })
+            }
             .semantics { contentDescription = "chart" }) {
-            val w = size.width - 130f
+            val small = TextStyle(fontSize = 10.sp)
+            // the right-hand price column is as wide as its longest label: labels never wrap
+            val sample = (shown.map { it.first.price } + live).maxByOrNull { String.format(Locale.US, "%.2f", it).length } ?: live
+            val gutter = measurer.measure(String.format(Locale.US, "%.2f", sample), small, softWrap = false, maxLines = 1).size.width + 16f
+            val w = size.width - gutter
             val y = { p: Double -> (size.height * (1 - (p - lo) / (hi - lo))).toFloat() }
             val O = { x: Float, yy: Float -> androidx.compose.ui.geometry.Offset(x, yy) }
             val minBand = 14f  // a one-touch level has no width: draw it as a thin band, not a hairline
             val labels = mutableListOf<Float>()  // right-side price labels already placed (no overlap)
-            val last = cc.last(); val yl = y(last)
+            val clampY = { yy: Float, hgt: Int -> yy.coerceIn(0f, size.height - hgt) }
+            val yl = y(live)
             labels += yl
             fun priceLabel(p: Double, yy: Float, col: Color) {
-                if (labels.any { kotlin.math.abs(it - yy) < 30f }) return
+                val t = measurer.measure(String.format(Locale.US, "%.2f", p), small.copy(color = col), softWrap = false, maxLines = 1)
+                if (labels.any { kotlin.math.abs(it - yy) < t.size.height + 4 }) return
                 labels += yy
-                drawText(measurer, String.format(Locale.US, "%.2f", p), O(w + 10f, yy - 15f), TextStyle(color = col, fontSize = 11.sp))
+                drawText(t, topLeft = O(w + 8f, clampY(yy - t.size.height / 2f, t.size.height)))
             }
             val words = mutableListOf<Float>()
             shown.forEach { (l, isSup) ->
@@ -1586,8 +1616,9 @@ private fun ChartDialog(s: UiState, card: HorizonCard?, d: Decision?, onTf: (Str
                 drawLine(Gold, O(0f, top), O(w, top), 1.5f); drawLine(Gold, O(0f, bot), O(w, bot), 1.5f)
                 val word = measurer.measure(if (isSup) wSup else wRes, TextStyle(color = if (isSup) BuyGreen else SellRed, fontSize = 11.sp))
                 // inside the band when it fits, otherwise just outside it (above a resistance, below a support)
-                val wy = if (bot - top >= word.size.height) (top + bot) / 2 - word.size.height / 2
-                         else if (isSup) bot + 2f else top - word.size.height - 2f
+                val wy0 = if (bot - top >= word.size.height) (top + bot) / 2 - word.size.height / 2
+                          else if (isSup) bot + 2f else top - word.size.height - 2f
+                val wy = clampY(wy0, word.size.height)
                 if (words.none { kotlin.math.abs(it - wy) < word.size.height }) {
                     words += wy
                     drawText(word, topLeft = O(8f, wy))
@@ -1603,11 +1634,16 @@ private fun ChartDialog(s: UiState, card: HorizonCard?, d: Decision?, onTf: (Str
                 val top = y(maxOf(o[i], cc[i])); val bot = y(minOf(o[i], cc[i]))
                 drawRect(col, O(cx - cw * 0.35f, top), androidx.compose.ui.geometry.Size(cw * 0.7f, maxOf(1.5f, bot - top)))
             }
-            drawLine(Teal, O(0f, yl), O(w, yl), 1.5f, pathEffect = androidx.compose.ui.graphics.PathEffect.dashPathEffect(floatArrayOf(10f, 8f)))
-            drawRect(Teal, O(w + 4f, yl - 17f), androidx.compose.ui.geometry.Size(122f, 34f))
-            drawText(measurer, String.format(Locale.US, "%.2f", last), O(w + 10f, yl - 15f),
-                TextStyle(color = Color.Black, fontSize = 11.sp, fontWeight = FontWeight.Bold))
+            if (yl in 0f..size.height) {
+                drawLine(Teal, O(0f, yl), O(w, yl), 1.5f, pathEffect = androidx.compose.ui.graphics.PathEffect.dashPathEffect(floatArrayOf(10f, 8f)))
+                val t = measurer.measure(String.format(Locale.US, "%.2f", live), small.copy(color = Color.Black, fontWeight = FontWeight.Bold),
+                    softWrap = false, maxLines = 1)
+                val ty = clampY(yl - t.size.height / 2f, t.size.height)
+                drawRect(Teal, O(w + 2f, ty - 2f), androidx.compose.ui.geometry.Size(gutter - 4f, t.size.height + 4f))
+                drawText(t, topLeft = O(w + 8f, ty))
+            }
         }
+        Text(stringResource(R.string.chart_gestures), color = TextDim, fontSize = 10.sp)
         // three lines: where the price is, then the two conditional scenarios with their history (hours only)
         val q = d?.quote ?: cc.last()
         val inZone = (sup.map { it to true } + res.map { it to false }).firstOrNull { q in it.first.zoneLow..it.first.zoneHigh }
@@ -1628,6 +1664,17 @@ private fun ChartDialog(s: UiState, card: HorizonCard?, d: Decision?, onTf: (Str
             sc.histRate?.let { r ->
                 Text(stringResource(R.string.sc_hist, Math.round(r * 100).toInt(), sc.histN, sc.histDays), color = TextDim, fontSize = 11.sp)
             }
+        }
+        if (card?.horizon == "HOURS") d?.brief?.firstTouch?.let { ft ->
+            Spacer(Modifier.height(4.dp))
+            Text(stringResource(R.string.ft_title), color = Gold, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+            Row(Modifier.fillMaxWidth().height(8.dp).clip(RoundedCornerShape(4.dp))) {
+                Box(Modifier.weight(ft.downFirst.toFloat().coerceAtLeast(0.01f)).fillMaxHeight().background(SellRed))
+                Box(Modifier.weight(ft.upFirst.toFloat().coerceAtLeast(0.01f)).fillMaxHeight().background(BuyGreen))
+            }
+            Text(stringResource(R.string.ft_line, ltr(pz(ft.downLevel)), Math.round(ft.downFirst * 100).toInt(),
+                ltr(pz(ft.upLevel)), Math.round(ft.upFirst * 100).toInt()), color = TextMain, fontSize = 12.sp, lineHeight = 17.sp)
+            Text(stringResource(R.string.ft_note, ft.n, ft.days, ft.windowHours), color = TextDim, fontSize = 10.sp, lineHeight = 14.sp)
         }
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Text(stringResource(R.string.pos_watch_note), color = TextDim, fontSize = 11.sp, modifier = Modifier.weight(1f))

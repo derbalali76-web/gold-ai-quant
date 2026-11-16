@@ -165,6 +165,17 @@
           "title": "Events",
           "type": "array"
         },
+        "first_touch": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FirstTouch"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
         "price": {
           "title": "Price",
           "type": "number"
@@ -284,6 +295,55 @@
         "weight"
       ],
       "title": "Evidence",
+      "type": "object"
+    },
+    "FirstTouch": {
+      "additionalProperties": false,
+      "description": "v1.15: descriptive history, NOT a forecast: from a similar distance to the two levels, how often the lower /\nupper one was reached first within window_hours. Mostly reflects the distances; shown only when the rate held\nout of sample (brief.first_touch_table).",
+      "properties": {
+        "days": {
+          "title": "Days",
+          "type": "integer"
+        },
+        "down_first": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Down First",
+          "type": "number"
+        },
+        "down_level": {
+          "title": "Down Level",
+          "type": "number"
+        },
+        "n": {
+          "title": "N",
+          "type": "integer"
+        },
+        "up_first": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Up First",
+          "type": "number"
+        },
+        "up_level": {
+          "title": "Up Level",
+          "type": "number"
+        },
+        "window_hours": {
+          "title": "Window Hours",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "down_first",
+        "up_first",
+        "n",
+        "days",
+        "window_hours",
+        "down_level",
+        "up_level"
+      ],
+      "title": "FirstTouch",
       "type": "object"
     },
     "HorizonOutlook": {
@@ -2144,7 +2204,7 @@
       "default": null
     },
     "schema_version": {
-      "default": "1.14.0",
+      "default": "1.15.0",
       "title": "Schema Version",
       "type": "string"
     },

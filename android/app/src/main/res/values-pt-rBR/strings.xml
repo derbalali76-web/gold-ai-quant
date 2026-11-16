@@ -436,6 +436,12 @@
     <string name="notif_zone_title">Atualização %1$s</string>
     <string name="notif_zone_sup_text">O preço entrou na zona de suporte %1$s. Um fechamento horário abaixo abre caminho para %2$s; manter-se acima deixa possível um teste de %3$s. Para observar — não é recomendação.</string>
     <string name="notif_zone_res_text">O preço chegou à zona de resistência %1$s. Um fechamento horário acima abre caminho para %2$s; se falhar, pode voltar a testar %3$s. Para observar — não é recomendação.</string>
+    <string name="chart_bigger">Ampliar ⤢</string>
+    <string name="chart_smaller">Reduzir ⤡</string>
+    <string name="chart_gestures">Pince para ampliar · arraste para voltar no tempo · toque duplo para redefinir</string>
+    <string name="ft_title">Tendência histórica: qual nível primeiro</string>
+    <string name="ft_line">Queda para %1$s primeiro: %2$d%% · alta para %3$s primeiro: %4$d%%</string>
+    <string name="ft_note">De %1$d casos semelhantes (mesmas distâncias a dois níveis) em %2$d dias, em %3$d h. Reflete sobretudo qual nível está mais perto; histórico, não previsão validada.</string>
     <string name="r_w_up" formatted="false">de alta</string>
     <string name="r_w_down" formatted="false">de baixa</string>
     <string name="r_w_neutral" formatted="false">neutra</string>
