@@ -91,8 +91,11 @@ def import_tree(history: HistoryStore, root: Path) -> dict:
 def download_repo(repo: str, token: str, dest: Path, http: HttpClient | None = None, ref: str = "main") -> Path:
     """Fetch the repository snapshot (GitHub REST tarball) and extract only market_data/, models/ and config/."""
     import httpx
-    r = httpx.get(f"https://api.github.com/repos/{repo}/tarball/{ref}", follow_redirects=True, timeout=60,
-                  headers={"Authorization": f"Bearer {token}", "Accept": "application/vnd.github+json"})
+    url = f"https://api.github.com/repos/{repo}/tarball/{ref}"
+    head = {"Accept": "application/vnd.github+json"}
+    r = httpx.get(url, follow_redirects=True, timeout=60, headers=dict(head, Authorization=f"Bearer {token}") if token else head)
+    if token and getattr(r, "status_code", 200) in (401, 403):  # expired / revoked token: a public repository still downloads
+        r = httpx.get(url, follow_redirects=True, timeout=60, headers=head)
     r.raise_for_status()
     dest.mkdir(parents=True, exist_ok=True)
     with tarfile.open(fileobj=io.BytesIO(r.content), mode="r:gz") as tar:
@@ -127,5 +130,11 @@ def load_path_state(root: Path):
     return pickle.loads(p.read_bytes()), meta
 
 
+DEFAULT_REPO = "derbalali76-web/gold-ai-quant"  # public: models and data download without a token
+
+
 def cloud_settings() -> dict:
-    return {"repo": os.environ.get("GOLDQUANT_DATA_REPO", ""), "token": os.environ.get("GOLDQUANT_REPO_TOKEN", "")}
+    # On Render (RENDER=true is set by the platform) the public repository is the default source;
+    # locally and in tests nothing is downloaded unless GOLDQUANT_DATA_REPO is set explicitly.
+    return {"repo": os.environ.get("GOLDQUANT_DATA_REPO", "").strip() or (DEFAULT_REPO if os.environ.get("RENDER") else ""),
+            "token": os.environ.get("GOLDQUANT_REPO_TOKEN", "").strip()}

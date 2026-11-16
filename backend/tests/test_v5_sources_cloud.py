@@ -221,3 +221,33 @@ def test_cloud_job_train_and_server_sync(tmp_path, demo_bars, monkeypatch):
         time.sleep(0.2)
     assert h["enabled"] and h["last_sync_ok"], h
     assert h["model"]["trained_until"] == meta["trained_until"]
+
+
+def test_cloud_settings_default_public_repo_on_render(monkeypatch):
+    from goldquant import cloud
+    monkeypatch.delenv("GOLDQUANT_DATA_REPO", raising=False)
+    monkeypatch.delenv("GOLDQUANT_REPO_TOKEN", raising=False)
+    monkeypatch.delenv("RENDER", raising=False)
+    assert cloud.cloud_settings()["repo"] == ""
+    monkeypatch.setenv("RENDER", "true")
+    assert cloud.cloud_settings() == {"repo": cloud.DEFAULT_REPO, "token": ""}
+
+
+def test_download_repo_falls_back_without_token(monkeypatch, tmp_path):
+    import io, tarfile, httpx
+    from goldquant import cloud
+    buf = io.BytesIO()
+    with tarfile.open(fileobj=buf, mode="w:gz") as tf:
+        data = b"{}"
+        ti = tarfile.TarInfo("owner-repo-abc/models/touch_models.json"); ti.size = len(data)
+        tf.addfile(ti, io.BytesIO(data))
+    calls = []
+
+    def fake_get(url, **kw):
+        calls.append("Authorization" in kw["headers"])
+        req = httpx.Request("GET", url)
+        return httpx.Response(401, request=req) if kw["headers"].get("Authorization") else httpx.Response(200, content=buf.getvalue(), request=req)
+    monkeypatch.setattr(httpx, "get", fake_get)
+    cloud.download_repo("owner/repo", "expired", tmp_path / "repo")
+    assert calls == [True, False]
+    assert (tmp_path / "repo" / "models" / "touch_models.json").exists()

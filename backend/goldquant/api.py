@@ -86,7 +86,7 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
     if live_provider is None and st.td_key:
         live_provider = LiveProvider(TwelveDataProvider(st.td_key, history), XausSpot() if st.xaus_check else None)
     cs = cloud.cloud_settings()
-    cloud_on = bool(cs["repo"] and cs["token"]) and not mem
+    cloud_on = bool(cs["repo"]) and not mem  # the repository is public: the token is optional
     repo_dir = st.data_dir / "repo"
     if context is None and st.context_enabled and not mem:
         context = ContextService(history, (repo_dir / "config" / "calendar.json") if cloud_on else st.data_dir / "calendar.json",
@@ -123,6 +123,7 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
             sync_state.update(ok=True, error=None)
         except Exception as exc:  # noqa: BLE001 — reported in /health, decisions fall back to UNAVAILABLE/WAIT
             sync_state.update(ok=False, error=str(exc)[:300])
+            logging.getLogger("goldquant.cloud").warning("repo sync failed: %s", str(exc)[:200])
         finally:
             sync_state["last"] = time.time()
             sync_state["running"] = False
