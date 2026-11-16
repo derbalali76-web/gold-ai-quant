@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
     inputs:
       job:
-        description: "collect | train | research | backfill | report | crypto | crypto_research | touch | range | paxg"
+        description: "collect | train | research | backfill | report | crypto | crypto_research | touch | range | paxg | paxg_study"
         default: "collect"
       years:
         description: "backfill years (Dukascopy)"

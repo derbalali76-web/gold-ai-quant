@@ -772,6 +772,23 @@ def paxg_feasibility(hs) -> dict:
     return out
 
 
+def paxg_study(hs) -> dict:
+    """PAXG stage 2 (goldquant/paxg_study.py, pre-registered): A range engine on PAXG alone, B premium signal after
+    costs, C weekend gap. Each test separately; nothing here reaches the app."""
+    from goldquant import crypto_store as CS, paxg_study as PS, price_range as PR
+    paxg_download(15)
+    p = CS.load_bars(MD, PAXG, "1h").astype(float)
+    x = hs.load_bars("Dukascopy", "XAUUSD", "H1", limit=10_000_000)
+    out = {"schema": 1, "version": PS.VERSION, "updated_at": datetime.now(timezone.utc).isoformat(),
+           "A_range": PR.evaluate_asset(p, "crypto"), "B_premium": PS.premium_test(p, x), "C_weekend": PS.weekend_test(p, x)}
+    (MODELS / "paxg_study.json").write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    for h, r in out["A_range"].items():
+        print("A", h, r.get("reason"), (r.get("holdout") or {}).get("m"), flush=True)
+    print("B", out["B_premium"].get("reason"), out["B_premium"].get("development"), flush=True)
+    print("C", out["C_weekend"].get("reason"), out["C_weekend"].get("walk_forward"), flush=True)
+    return out
+
+
 def activity_models() -> dict:
     """Weekly: re-validate the scalper activity forecast per coin (pre-registered rules in goldquant/activity.py) and
     export the model ONLY for coins that pass this week. A coin that stops passing disappears from the app."""
@@ -1065,7 +1082,7 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("cmd", choices=["collect", "train", "research", "backfill", "report", "crypto", "crypto_research",
                                     "crypto_weekly", "scalp1m", "pooled", "scalp_feasibility", "scalp_ml", "scalp_book",
-                                    "touch", "range", "paxg"])
+                                    "touch", "range", "paxg", "paxg_study"])
     ap.add_argument("--years", type=float, default=3.0)
     ap.add_argument("--first", type=date.fromisoformat, default=None, help="backfill range start (YYYY-MM-DD)")
     ap.add_argument("--last", type=date.fromisoformat, default=None, help="backfill range end (YYYY-MM-DD)")
@@ -1098,6 +1115,9 @@ if __name__ == "__main__":
     elif a.cmd == "touch":
         MODELS.mkdir(parents=True, exist_ok=True)
         touch_models(hs)
+    elif a.cmd == "paxg_study":
+        MODELS.mkdir(parents=True, exist_ok=True)
+        paxg_study(hs)
     elif a.cmd == "paxg":
         MODELS.mkdir(parents=True, exist_ok=True)
         paxg_feasibility(hs)
