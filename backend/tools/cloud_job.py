@@ -657,6 +657,121 @@ def range_research(hs) -> dict:
     return out
 
 
+PAXG = "PAXGUSDT"
+PAXG_START = (2019, 9)
+
+
+def paxg_download(budget_min: float = 40) -> None:
+    """Binance public archive -> market_data/crypto/PAXGUSDT (1h + 1d spot klines). Separate from CRYPTO_START so no
+    existing crypto research picks it up before its own pre-registration."""
+    import time
+    from goldquant import crypto_store as CS
+    from goldquant.providers.binance_archive import BinanceArchive, months
+    t0, arc = time.monotonic(), BinanceArchive()
+    today = date.today()
+    last_full = today.replace(day=1) - timedelta(days=1)
+    for tf, rows in (("1h", 600), ("1d", 25)):
+        for y, m in months(date(*PAXG_START, 1), last_full):
+            if time.monotonic() - t0 > budget_min * 60:
+                print("paxg: time budget reached")
+                return
+            if CS.have_month(MD, PAXG, tf, y, m, rows):
+                continue
+            df = arc.klines_month(PAXG, tf, y, m)
+            if len(df):
+                print(PAXG, tf, f"{y}-{m:02d}", len(df), CS.save_bars(MD, PAXG, tf, df), flush=True)
+        d, parts = today.replace(day=1), []
+        while d < today:
+            parts.append(arc.klines_day(PAXG, tf, d))
+            d += timedelta(days=1)
+        parts = [x for x in parts if len(x)]
+        if parts:
+            CS.save_bars(MD, PAXG, tf, pd.concat(parts))
+    print("paxg archive errors:", len(arc.errors), arc.errors[-3:])
+
+
+def paxg_feasibility(hs) -> dict:
+    """Stage 1 (descriptive only, no predictive test): data coverage, liquidity, spread estimates, a live order-book
+    snapshot for slippage, and the PAXG-vs-XAU premium. Predictive questions wait for their own pre-registration."""
+    import numpy as np
+    from goldquant import crypto_store as CS
+    paxg_download()
+    h1 = CS.load_bars(MD, PAXG, "1h")
+    out = {"schema": 1, "stage": "feasibility (descriptive)", "updated_at": datetime.now(timezone.utc).isoformat()}
+    if h1 is None or len(h1) < 1000:
+        out["reason"] = "no PAXG history"
+        (MODELS / "paxg_feasibility.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
+        return out
+    h1 = h1.astype(float)
+    full = pd.date_range(h1.index[0], h1.index[-1], freq="h")
+    qv = h1["volume"] * h1["close"]
+    out["coverage"] = {"first_bar": str(h1.index[0]), "last_bar": str(h1.index[-1]), "bars": int(len(h1)),
+                       "missing_hours_pct": round(100 * (1 - len(h1) / len(full)), 3)}
+    yr = h1.index.year
+    out["liquidity_by_year"] = {str(y): {
+        "median_daily_quote_volume_usd": round(float(qv[yr == y].resample("D").sum().median()), 0),
+        "median_hourly_quote_volume_usd": round(float(qv[yr == y].median()), 0),
+        "zero_volume_hours_pct": round(100 * float((h1["volume"][yr == y] <= 0).mean()), 2)} for y in sorted(set(yr))}
+    last90 = h1[h1.index >= h1.index[-1] - pd.Timedelta(days=90)]
+    q90 = last90["volume"] * last90["close"]
+    out["liquidity_last_90_days"] = {"median_daily_quote_volume_usd": round(float(q90.resample("D").sum().median()), 0),
+                                     "median_hourly_quote_volume_usd": round(float(q90.median()), 0),
+                                     "p10_hourly_quote_volume_usd": round(float(q90.quantile(0.1)), 0)}
+
+    def abdi_ranaldo(d: pd.DataFrame) -> float:
+        """Close-high-low effective spread estimator (Abdi & Ranaldo 2017), in percent of price."""
+        c, eta = np.log(d["close"]), (np.log(d["high"]) + np.log(d["low"])) / 2
+        v = 4 * ((c - eta) * (c - eta.shift(-1))).mean()
+        return round(100 * float(np.sqrt(max(v, 0.0))), 4)
+    out["spread_estimate_pct_by_year"] = {str(y): abdi_ranaldo(h1[yr == y]) for y in sorted(set(yr))}
+    out["spread_estimate_pct_last_90_days"] = abdi_ranaldo(last90)
+    # live order book snapshot (one moment only): spread and the cost of crossing for given order sizes
+    try:
+        from goldquant.providers.http import HttpClient
+        book = json.loads(HttpClient().get("https://data-api.binance.vision/api/v3/depth", {"symbol": PAXG, "limit": 100}).text)
+        bids = [(float(p), float(q)) for p, q in book["bids"]]
+        asks = [(float(p), float(q)) for p, q in book["asks"]]
+        mid = (bids[0][0] + asks[0][0]) / 2
+
+        def cross(levels, usd):
+            left, cost = usd, 0.0
+            for p, q in levels:
+                take = min(left, p * q)
+                cost += take * abs(p / mid - 1)
+                left -= take
+                if left <= 0:
+                    return round(100 * cost / usd, 4)
+            return None  # deeper than the 100 visible levels
+        out["order_book_snapshot"] = {
+            "at": datetime.now(timezone.utc).isoformat(), "mid": mid,
+            "spread_pct": round(100 * (asks[0][0] - bids[0][0]) / mid, 4),
+            "buy_cost_pct": {str(u): cross(asks, u) for u in (1_000, 10_000, 100_000)},
+            "sell_cost_pct": {str(u): cross(bids, u) for u in (1_000, 10_000, 100_000)},
+            "depth_usd_within_0.1pct": round(sum(p * q for p, q in bids + asks if abs(p / mid - 1) <= 0.001), 0),
+            "note": "one snapshot; costs are half-spread plus walking the book, before the 0.1 % taker fee"}
+    except Exception as exc:  # noqa: BLE001
+        out["order_book_snapshot"] = {"error": str(exc)[:150]}
+    out["fees_assumed"] = {"binance_spot_taker_pct": 0.1, "note": "standard tier; BNB / VIP discounts not assumed"}
+    # premium vs spot gold on the hours both trade (XAU = Dukascopy H1 close, same bar open time)
+    xau = hs.load_bars("Dukascopy", "XAUUSD", "H1", limit=10_000_000)
+    j = pd.concat([h1["close"].rename("paxg"), xau["close"].astype(float).rename("xau")], axis=1, join="inner").dropna()
+    prem = 100 * (j["paxg"] / j["xau"] - 1)
+    py = prem.index.year
+    out["premium_pct_vs_xau"] = {
+        "hours_compared": int(len(prem)), "first": str(prem.index[0]) if len(prem) else None,
+        "by_year": {str(y): {"n": int((py == y).sum()), "mean": round(float(prem[py == y].mean()), 4),
+                             "median": round(float(prem[py == y].median()), 4), "std": round(float(prem[py == y].std()), 4),
+                             "p5": round(float(prem[py == y].quantile(0.05)), 4),
+                             "p95": round(float(prem[py == y].quantile(0.95)), 4)} for y in sorted(set(py))},
+        "note": "PAXG is quoted in USDT and XAU in USD, so the premium also contains the USDT/USD deviation"}
+    # weekends available for a later (pre-registered) weekend-gap study: counted only, not analysed here
+    fri = xau.index[(xau.index.dayofweek == 4)]
+    out["weekends_with_both_series"] = int(len(set(fri.normalize()) & set(h1.index.normalize())))
+    (MODELS / "paxg_feasibility.json").write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    print(json.dumps({k: out[k] for k in ("coverage", "liquidity_last_90_days", "spread_estimate_pct_last_90_days")}, default=str))
+    return out
+
+
 def activity_models() -> dict:
     """Weekly: re-validate the scalper activity forecast per coin (pre-registered rules in goldquant/activity.py) and
     export the model ONLY for coins that pass this week. A coin that stops passing disappears from the app."""
@@ -950,7 +1065,7 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("cmd", choices=["collect", "train", "research", "backfill", "report", "crypto", "crypto_research",
                                     "crypto_weekly", "scalp1m", "pooled", "scalp_feasibility", "scalp_ml", "scalp_book",
-                                    "touch", "range"])
+                                    "touch", "range", "paxg"])
     ap.add_argument("--years", type=float, default=3.0)
     ap.add_argument("--first", type=date.fromisoformat, default=None, help="backfill range start (YYYY-MM-DD)")
     ap.add_argument("--last", type=date.fromisoformat, default=None, help="backfill range end (YYYY-MM-DD)")
@@ -983,6 +1098,9 @@ if __name__ == "__main__":
     elif a.cmd == "touch":
         MODELS.mkdir(parents=True, exist_ok=True)
         touch_models(hs)
+    elif a.cmd == "paxg":
+        MODELS.mkdir(parents=True, exist_ok=True)
+        paxg_feasibility(hs)
     elif a.cmd == "range":
         MODELS.mkdir(parents=True, exist_ok=True)
         range_research(hs)
