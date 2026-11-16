@@ -620,62 +620,79 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
 
     range_state = {"mtime": None, "data": {}}
 
-    @app.get("/range", dependencies=[Depends(auth)])
-    def range_endpoint(asset: str = Query("XAU")):
-        """80 % interval for the CLOSE 4 h / 1 day ahead (goldquant/price_range.py, pre-registered). Only horizons that
-        passed are returned; a 4 h interval with a high-impact event inside its window is withheld. Experimental:
-        never a direction, a target or a recommendation."""
-        from . import price_range as PRG
-        a = asset.upper()
-        if a not in ("XAU", "BTC", "ETH", "SOL"):
-            raise HTTPException(422, "asset must be XAU, BTC, ETH or SOL")
+    def range_models() -> Optional[dict]:
         p = next((b / "range_models.json" for b in (repo_dir / "models", st.data_dir)
                   if (b / "range_models.json").exists()), None)
         if p is None:
             if cloud_on and not sync_state["running"] and time.time() - (sync_state["last"] or 0) > 300:
                 threading.Thread(target=cloud_sync, daemon=True).start()
-            return {"asset": a, "available": False, "reason": "NO_MODEL_FILE", "display": None, "horizons": {}}
+            return None
         mt = p.stat().st_mtime
         if range_state["mtime"] != mt:
             import json as _json
             range_state["data"] = _json.loads(p.read_text(encoding="utf-8")).get("assets", {})
             range_state["mtime"] = mt
-        models = range_state["data"].get(a) or {}
-        now = utcnow()
+        return range_state["data"]
+
+    def range_h1(a: str, now):
         if a == "XAU":
             prov = live_provider if live_provider is not None else demo
             b = prov.bars("H1", now, 1000)
-            h1 = b.df if b is not None else None
-        else:
-            from . import crypto_engine as CE
-            from .levels import LevelService
-            if crypto_state["feed"] is None:
-                crypto_state["feed"], crypto_state["levels"] = CE.CryptoFeed(), LevelService()
-            h1 = crypto_state["feed"].bars(CE.ASSETS[a], "H1", now, 1000)
+            return b.df if b is not None else None
+        from . import crypto_engine as CE
+        from .levels import LevelService
+        if crypto_state["feed"] is None:
+            crypto_state["feed"], crypto_state["levels"] = CE.CryptoFeed(), LevelService()
+        return crypto_state["feed"].bars(CE.ASSETS[a], "H1", now, 1000)
+
+    def range_all(a: str, now, horizons=("4h", "24h", "1w")) -> list:
+        """Live intervals for every horizon that has parameters (qualified or not: the public ledger records all)."""
+        from . import price_range as PRG
+        models = (range_models() or {}).get(a) or {}
+        h1 = None
+        out = []
+        for h in horizons:
+            x = models.get(h) or {}
+            if not x.get("params"):
+                continue
+            if h1 is None:
+                h1 = range_h1(a, now)
+            r = PRG.live(x["params"], h1, pd.Timestamp(now))
+            if r is not None:
+                out.append(dict(r, qualified=bool(x.get("qualified")), holdout_coverage=x.get("holdout_coverage")))
+        return out
+
+    @app.get("/range", dependencies=[Depends(auth)])
+    def range_endpoint(asset: str = Query("XAU")):
+        """80 % interval for the CLOSE 4 h / 1 day ahead (goldquant/price_range.py, pre-registered). Only horizons that
+        passed are returned; a 4 h interval with a high-impact event inside its window carries that event (the app
+        then withholds it). Experimental: never a direction, a target or a recommendation."""
+        from . import price_range as PRG
+        a = asset.upper()
+        if a not in ("XAU", "BTC", "ETH", "SOL"):
+            raise HTTPException(422, "asset must be XAU, BTC, ETH or SOL")
+        if range_models() is None:
+            return {"asset": a, "available": False, "reason": "NO_MODEL_FILE", "display": None, "horizons": {}}
+        now = utcnow()
         events = []
         if context is not None:
             cal = context.calendar_status(now).get("cal")
             if cal is not None:
                 events = [e for e in cal.events if (e.importance or 0) >= 3]
         out = {}
-        for h in ("4h", "24h"):
-            x = models.get(h) or {}
-            if not x.get("qualified") or not x.get("params"):
-                continue
-            r = PRG.live(x["params"], h1, pd.Timestamp(now))
-            if r is None:
+        for r in range_all(a, now, ("4h", "24h")):
+            if not r["qualified"]:
                 continue
             ev = None
-            if h == "4h":
+            if r["horizon"] == "4h":
                 t0 = pd.Timestamp(r["issued_at"])
                 hit = [e for e in events if t0 < pd.Timestamp(e.time_utc) <= t0 + pd.Timedelta(hours=4)]
                 if hit:
                     ev = {"name": hit[0].name, "time_utc": hit[0].time_utc.isoformat()}
-            out[h] = dict(r, event=ev, holdout_coverage=x.get("holdout_coverage"))
+            out[r["horizon"]] = dict(r, event=ev)
         disp = PRG.display_horizon({h: h in out for h in ("4h", "24h")})
         return {"asset": a, "available": bool(out), "experimental": True, "display": disp,
-                "reason": None if out else ("NO_PRICE_DATA" if h1 is None or not len(h1) else "NOT_VALIDATED"),
-                "horizons": out}
+                "reason": None if out else "NOT_VALIDATED", "horizons": out}
 
     @app.get("/calendar", dependencies=[Depends(auth)])
     def calendar_endpoint():
@@ -769,10 +786,17 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
             from .planner import ASSET_COST
             snap.update(asset=a, symbol=CE.ASSETS[a], bars=bars,
                         cost=round(float(d.quote or 0) * ASSET_COST.get(CE.ASSETS[a], 0.0022), 4))
+            snap["ranges"] = safe_ranges(a)
             return snap
         if live_provider is None:
             raise HTTPException(503, "no live data source")
-        return dict(public_snapshot(refresh_live()), asset="XAU")
+        return dict(public_snapshot(refresh_live()), asset="XAU", ranges=safe_ranges("XAU"))
+
+    def safe_ranges(a: str) -> list:
+        try:  # experimental intervals for the public ledger; never a reason for the snapshot to fail
+            return range_all(a, utcnow())
+        except Exception:  # noqa: BLE001
+            return []
 
     @app.get("/history", dependencies=[Depends(auth)])
     def history_ep(limit: int = Query(50, ge=1, le=500)):

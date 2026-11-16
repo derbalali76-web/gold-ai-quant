@@ -38,6 +38,9 @@ TF_MIN = {"H1": 60, "D1": 1440}
 KEEP = {"H1": 3000, "D1": 600}
 DEFAULT_LIFE = {"HOURS": timedelta(hours=8), "WEEK": timedelta(days=7), "MONTH": timedelta(days=31)}
 RES_TF = {"HOURS": "H1", "WEEK": "D1", "MONTH": "D1"}
+RANGE_FRESH = timedelta(minutes=75)  # a range is recorded only within this time of its issue (the hourly run)
+RANGE_CADENCE = {"4h": lambda t: t.hour % 4 == 0, "24h": lambda t: t.hour == 0,
+                 "1w": lambda t: t.weekday() == 0 and t.hour == 0}
 MAX_SNAPSHOT_AGE = timedelta(minutes=20)  # rule 2 (2026-11-15); was 2 h: entry must be tradable at recording
 
 
@@ -127,7 +130,7 @@ class Ledger:
                 errs.append(f"line {i}: prev hash does not match line {i - 1}")
             if line_hash(e) != e.get("hash"):
                 errs.append(f"line {i}: content does not match its hash (edited?)")
-            if e["kind"] in ("REC", "BRIEF"):
+            if e["kind"] in ("REC", "BRIEF", "RANGE"):
                 recs[e["seq"]] = e
             elif e["kind"] == "SCENARIO":
                 ref = recs.get(e["data"].get("ref"))
@@ -136,7 +139,7 @@ class Ledger:
                 elif e["recorded_at"] != ref["recorded_at"]:
                     errs.append(f"line {i}: scenario not registered together with its forecast")
                 recs[e["seq"]] = e
-            elif e["kind"] in ("RESULT", "BRIEF_RESULT", "SCENARIO_RESULT"):
+            elif e["kind"] in ("RESULT", "BRIEF_RESULT", "SCENARIO_RESULT", "RANGE_RESULT"):
                 ref = recs.get(e["data"].get("ref"))
                 if ref is None:
                     errs.append(f"line {i}: result for unknown line {e['data'].get('ref')}")
@@ -147,7 +150,8 @@ class Ledger:
 
     # -------- queries
     def open_items(self, kind: str) -> list[dict]:
-        done = {e["data"]["ref"] for e in self.entries if e["kind"] in ("RESULT", "BRIEF_RESULT", "SCENARIO_RESULT")}
+        done = {e["data"]["ref"] for e in self.entries
+                if e["kind"] in ("RESULT", "BRIEF_RESULT", "SCENARIO_RESULT", "RANGE_RESULT")}
         return [e for e in self.entries if e["kind"] == kind and e["seq"] not in done]
 
     def sorted_bars(self, tf: str, asset: str = "XAU") -> list[tuple[datetime, float, float, float, float]]:
@@ -173,6 +177,7 @@ class Ledger:
         if fresh:
             self._record_recs(snap, now, asset)
             self._record_brief(snap, now, asset)
+        self._record_ranges(snap, now, asset)
         self._resolve(now)
         self.save_bars()
         return self.entries[before:]
@@ -218,7 +223,42 @@ class Ledger:
         for sc in build_scenarios(br, float(snap.get("cost") or 0.0), now):
             self.append("SCENARIO", sc, now)
 
+    def _record_ranges(self, snap, now, asset="XAU"):
+        """Price-range engine (experimental): one 80 % close interval per horizon on a fixed cadence, recorded within
+        RANGE_FRESH of its issue time (before any outcome) with its bounds and model version."""
+        have = {(asset_of(e), e["data"]["horizon"], e["data"]["issued_at"]) for e in self.entries if e["kind"] == "RANGE"}
+        for r in snap.get("ranges") or []:
+            h, issued = r.get("horizon"), r.get("issued_at")
+            if h not in RANGE_CADENCE or not issued or r.get("low") is None or r.get("high") is None:
+                continue
+            t = ts(issued)
+            if not (timedelta(0) <= now - t <= RANGE_FRESH) or not RANGE_CADENCE[h](t) or (asset, h, iso(t)) in have:
+                continue
+            if not float(r["low"]) < float(r["close_at_issue"]) < float(r["high"]):
+                continue
+            self.append("RANGE", {"fid": forecast_id(asset, "RANGE", h, iso(t), r.get("version")), "asset": asset,
+                                  "horizon": h, "bars": int(r["bars"]), "issued_at": iso(t),
+                                  "close_at_issue": float(r["close_at_issue"]), "low": float(r["low"]),
+                                  "high": float(r["high"]), "version": r.get("version"),
+                                  "qualified": bool(r.get("qualified")), "experimental": True}, now)
+
+    def _resolve_ranges(self, now):
+        for e in self.open_items("RANGE"):
+            d, a = e["data"], asset_of(e)
+            bars = self.sorted_bars("H1", a)
+            issue_open = ts(d["issued_at"]) - timedelta(hours=1)
+            idx = next((i for i, b in enumerate(bars) if b[0] == issue_open), None)
+            if idx is not None and len(bars) > idx + d["bars"]:
+                tb = bars[idx + d["bars"]]
+                c = tb[4]
+                self.append("RANGE_RESULT", {"ref": e["seq"], "outcome": "INSIDE" if d["low"] <= c <= d["high"] else
+                                             ("ABOVE" if c > d["high"] else "BELOW"), "close": c,
+                                             "target_bar": iso(tb[0])}, now)
+            elif now - ts(d["issued_at"]) > timedelta(days=12):
+                self.append("RANGE_RESULT", {"ref": e["seq"], "outcome": "NO_DATA"}, now)
+
     def _resolve(self, now):
+        self._resolve_ranges(now)
         for e in self.open_items("SCENARIO"):
             out = simulate_scenario(e["data"], ts(e["recorded_at"]), self.sorted_bars("H1", e["data"]["asset"]), now)
             if out is not None:
@@ -461,6 +501,25 @@ def _res(outcome, entry, exit_, d, risk, cost, when):
 
 
 # ---------------------------------------------------------------- stats
+def range_stats(entries: list[dict]) -> dict:
+    """Live tracking of the experimental price ranges per asset and horizon: recorded, settled, inside (derived)."""
+    res = {x["data"]["ref"]: x["data"] for x in entries if x["kind"] == "RANGE_RESULT"}
+    out: dict = {}
+    for e in entries:
+        if e["kind"] != "RANGE":
+            continue
+        b = out.setdefault(asset_of(e), {}).setdefault(e["data"]["horizon"],
+                                                         {"recorded": 0, "settled": 0, "inside": 0, "last": None})
+        b["recorded"] += 1
+        r = res.get(e["seq"])
+        if r and r["outcome"] in ("INSIDE", "ABOVE", "BELOW"):
+            b["settled"] += 1
+            b["inside"] += r["outcome"] == "INSIDE"
+        b["last"] = {"issued_at": e["data"]["issued_at"], "low": e["data"]["low"], "high": e["data"]["high"],
+                     "outcome": (r or {}).get("outcome", "PENDING")}
+    return out
+
+
 def brief_rows(entries: list[dict]) -> list[dict]:
     """One row per recorded daily bias, newest first, for the app's results page. Derived only (the ledger lines are
     never changed): outcome is the recorded BRIEF_RESULT (CORRECT / WRONG / NOT_SCORED / NO_DATA) or PENDING."""
@@ -483,6 +542,7 @@ def stats(entries: list[dict], now: datetime) -> dict:
     out = _stats(entries, now, "XAU")
     out["scenarios"] = scenario_stats(entries)
     out["briefs"] = brief_rows(entries)
+    out["ranges"] = range_stats(entries)
     out["assets"] = {a: _stats(entries, now, a) for a in ASSETS}
     for v in out["assets"].values():
         for k in ("chain_head", "lines", "schema", "updated_at"):

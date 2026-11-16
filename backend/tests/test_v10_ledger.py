@@ -274,3 +274,31 @@ def test_old_ledger_still_verifies_byte_for_byte(tmp_path):
     led2.ingest(_brief_snap(T0 + timedelta(minutes=30)), T0 + timedelta(minutes=30))
     assert (tmp_path / "ledger.jsonl").read_text().startswith(before)  # append-only: old lines untouched
     assert L.Ledger(tmp_path).verify() == []
+
+
+def test_range_recorded_on_cadence_then_resolved_on_the_target_close(tmp_path):
+    led = L.Ledger(tmp_path)
+    issued = datetime(2026, 11, 17, 8, tzinfo=timezone.utc)  # Tuesday 08:00 = a 4 h cadence point
+    rng = {"horizon": "4h", "bars": 4, "issued_at": L.iso(issued), "close_at_issue": 2000.0, "low": 1990.0,
+           "high": 2010.0, "version": "range-har-0.1.0", "qualified": True}
+    off = dict(rng, horizon="24h", issued_at=L.iso(issued))  # 08:00 is not a 24 h cadence point
+    s = dict(snap(issued + timedelta(minutes=17)), ranges=[rng, off])
+    led.ingest(s, issued + timedelta(minutes=17))
+    r = [e for e in led.entries if e["kind"] == "RANGE"]
+    assert len(r) == 1 and r[0]["data"]["horizon"] == "4h"
+    led.ingest(s, issued + timedelta(minutes=30))  # never twice
+    assert len([e for e in led.entries if e["kind"] == "RANGE"]) == 1
+    late = dict(rng, issued_at=L.iso(issued - timedelta(hours=4)))  # too old to be a pre-recorded forecast
+    led.ingest(dict(snap(issued + timedelta(minutes=20)), ranges=[late]), issued + timedelta(minutes=20))
+    assert len([e for e in led.entries if e["kind"] == "RANGE"]) == 1
+    # issue bar 07:00, then 4 more bars; the 4th bar after the issue bar closes at 2012 -> ABOVE
+    bars = h1(datetime(2026, 11, 17, 7, tzinfo=timezone.utc),
+              [[2000, 2001, 1999, 2000], [2000, 2004, 1998, 2003], [2003, 2006, 2001, 2005],
+               [2005, 2009, 2004, 2008], [2008, 2013, 2007, 2012]])
+    now = issued + timedelta(hours=5, minutes=17)
+    led.ingest(dict(snap(now, bars={"H1": bars, "D1": []})), now)
+    res = [e for e in led.entries if e["kind"] == "RANGE_RESULT"]
+    assert len(res) == 1 and res[0]["data"]["outcome"] == "ABOVE" and res[0]["data"]["close"] == 2012.0
+    st = L.stats(led.entries, now)["ranges"]["XAU"]["4h"]
+    assert st["recorded"] == 1 and st["settled"] == 1 and st["inside"] == 0
+    assert L.Ledger(tmp_path).verify() == []
