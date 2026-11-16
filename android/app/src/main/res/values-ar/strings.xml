@@ -472,6 +472,19 @@
     <string name="lv_sup_hint">أسعار يرتد منها السعر غالباً</string>
     <string name="lv_res_hint">أسعار يتوقف عندها السعر غالباً</string>
     <string name="card_foot">للمراقبة والتعلّم فقط — ليست توصية بالشراء أو البيع</string>
+    <string name="chart_hint2">قرّب بإصبعين للتكبير · نقرتان للعودة</string>
+    <string name="now_price">السعر الآن</string>
+    <string name="lad_far_ceiling">سقف بعيد</string>
+    <string name="lad_near_ceiling">السقف القريب — قد يتوقف عنده الصعود</string>
+    <string name="lad_here">أنت هنا</string>
+    <string name="lad_near_floor">الأرضية القريبة — قد يرتد منها السعر</string>
+    <string name="lad_far_floor">أرضية بعيدة</string>
+    <string name="what_next">ماذا قد يحدث؟</string>
+    <string name="ft_title2">أيهما يصل إليه السعر أولاً غالباً؟</string>
+    <string name="ft_down">النزول إلى %1$s: %2$d%%</string>
+    <string name="ft_up">الصعود إلى %1$s: %2$d%%</string>
+    <string name="zone_follow2">🔔 نبّهني عندما يقترب السعر من هذه الأرقام</string>
+    <string name="zone_follow2_on">✓ التنبيه مفعّل عند هذه الأرقام</string>
     <string name="r_w_up" formatted="false">صاعد</string>
     <string name="r_w_down" formatted="false">هابط</string>
     <string name="r_w_neutral" formatted="false">محايد</string>

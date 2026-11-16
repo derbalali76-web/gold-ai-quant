@@ -472,6 +472,19 @@
     <string name="lv_sup_hint">Prix où le marché rebondit souvent</string>
     <string name="lv_res_hint">Prix où le marché bute souvent</string>
     <string name="card_foot">Pour observer et apprendre — pas une recommandation d\'achat ou de vente</string>
+    <string name="chart_hint2">Pincez à deux doigts pour zoomer · double-touchez pour revenir</string>
+    <string name="now_price">Prix actuel</string>
+    <string name="lad_far_ceiling">Plafond éloigné</string>
+    <string name="lad_near_ceiling">Plafond proche — la hausse peut s\'y arrêter</string>
+    <string name="lad_here">Vous êtes ici</string>
+    <string name="lad_near_floor">Plancher proche — le prix peut y rebondir</string>
+    <string name="lad_far_floor">Plancher éloigné</string>
+    <string name="what_next">Que pourrait-il se passer ?</string>
+    <string name="ft_title2">Lequel le prix atteint-il d\'abord, en général ?</string>
+    <string name="ft_down">Baisse vers %1$s : %2$d%%</string>
+    <string name="ft_up">Hausse vers %1$s : %2$d%%</string>
+    <string name="zone_follow2">🔔 M\'alerter quand le prix approche de ces chiffres</string>
+    <string name="zone_follow2_on">✓ Alertes activées pour ces chiffres</string>
     <string name="r_w_up" formatted="false">haussière</string>
     <string name="r_w_down" formatted="false">baissière</string>
     <string name="r_w_neutral" formatted="false">neutre</string>

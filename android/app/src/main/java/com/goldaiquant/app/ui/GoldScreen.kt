@@ -521,11 +521,16 @@ private fun PriceCard(d: Decision?, s: UiState, modifier: Modifier, onChart: () 
 }
 
 @Composable
-private fun trendLabel(dir: String?): String = stringResource(when (dir) {
+private fun trendLabel(dir: String?): String = stringResource(when (trendCode(dir)) {
     "UP" -> R.string.tr_up; "DOWN" -> R.string.tr_down; "SIDEWAYS" -> R.string.tr_sideways; else -> R.string.tr_unknown
 })
 
-private fun trendColor(dir: String?): Color = when (dir) {
+/** The server sends codes for the overall trend but Arabic words per timeframe ("صاعد" / "هابط" / "محايد"). */
+internal fun trendCode(dir: String?): String? = when (dir) {
+    "UP", "صاعد" -> "UP"; "DOWN", "هابط" -> "DOWN"; "SIDEWAYS", "عرضي", "محايد", "NEUTRAL" -> "SIDEWAYS"; else -> null
+}
+
+private fun trendColor(dir: String?): Color = when (trendCode(dir)) {
     "UP" -> BuyGreen; "DOWN" -> SellRed; "SIDEWAYS" -> WaitGold; else -> Grey
 }
 
@@ -1571,10 +1576,10 @@ private fun ChartDialog(s: UiState, card: HorizonCard?, d: Decision?, onTf: (Str
         }
         val sup = card?.levels?.supports.orEmpty()
         val res = card?.levels?.resistances.orEmpty()
-        // pinch to zoom, drag to scroll back in time, double tap to reset; the size button makes it taller
+        // pinch to zoom (fewer candles AND a taller chart), drag to scroll back in time, double tap to reset
         var shownBars by remember(tf, s.asset) { mutableStateOf(CHART_BARS.toFloat()) }
         var back by remember(tf, s.asset) { mutableStateOf(0f) }
-        var tall by remember { mutableStateOf(false) }
+        var grow by remember(tf, s.asset) { mutableStateOf(1f) }
         val nb = shownBars.toInt().coerceIn(20, maxOf(20, c.size))
         val end = (c.size - back.toInt()).coerceIn(minOf(nb, c.size), c.size)
         val from = maxOf(0, end - nb)
@@ -1591,63 +1596,49 @@ private fun ChartDialog(s: UiState, card: HorizonCard?, d: Decision?, onTf: (Str
         val lo = minOf(lo0, edges.minOrNull() ?: lo0) - pad
         val hi = maxOf(hi0, edges.maxOrNull() ?: hi0) + pad
         val measurer = androidx.compose.ui.text.rememberTextMeasurer()
-        val wSup = stringResource(R.string.zone_support); val wRes = stringResource(R.string.zone_resistance)
         val live = c.c.last()
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End)) {
             Text(stringResource(R.string.touch_open), color = Color.Black, fontSize = 12.sp, fontWeight = FontWeight.Bold,
                 modifier = Modifier.background(Gold, RoundedCornerShape(10.dp)).clickable(role = Role.Button, onClick = onTouch)
                     .padding(horizontal = 10.dp, vertical = 3.dp))
-            Text(stringResource(if (tall) R.string.chart_smaller else R.string.chart_bigger), color = Gold, fontSize = 12.sp,
-                modifier = Modifier.border(1.dp, Gold, RoundedCornerShape(10.dp)).clickable(role = Role.Button) { tall = !tall }
-                    .padding(horizontal = 10.dp, vertical = 3.dp))
         }
-        androidx.compose.foundation.Canvas(Modifier.fillMaxWidth().height(if (tall) 520.dp else 300.dp)
+        androidx.compose.foundation.Canvas(Modifier.fillMaxWidth().height((300 * grow).dp)
             .background(Bg, RoundedCornerShape(10.dp))
             .pointerInput(tf, s.asset, c.size) {
                 detectTransformGestures { _, panXY, zoom, _ ->
                     shownBars = (shownBars / zoom).coerceIn(20f, c.size.toFloat().coerceAtLeast(20f))
+                    grow = (grow * zoom).coerceIn(1f, 1.8f)
                     val perBar = size.width / shownBars
                     back = (back + panXY.x / perBar).coerceIn(0f, (c.size - 20).toFloat().coerceAtLeast(0f))
                 }
             }
             .pointerInput(tf, s.asset) {
-                detectTapGestures(onDoubleTap = { shownBars = CHART_BARS.toFloat(); back = 0f })
+                detectTapGestures(onDoubleTap = { shownBars = CHART_BARS.toFloat(); back = 0f; grow = 1f })
             }
             .semantics { contentDescription = "chart" }) {
-            val small = TextStyle(fontSize = 10.sp)
+            val small = TextStyle(fontSize = 11.sp, fontWeight = FontWeight.Bold)
+            val fmtP = { p: Double -> if (live >= 1000) String.format(Locale.US, "%.0f", p) else String.format(Locale.US, "%.2f", p) }
             // the right-hand price column is as wide as its longest label: labels never wrap
-            val sample = (shown.map { it.first.price } + live).maxByOrNull { String.format(Locale.US, "%.2f", it).length } ?: live
-            val gutter = measurer.measure(String.format(Locale.US, "%.2f", sample), small, softWrap = false, maxLines = 1).size.width + 16f
+            val sample = (shown.map { it.first.price } + live).maxByOrNull { fmtP(it).length } ?: live
+            val gutter = measurer.measure(fmtP(sample), small, softWrap = false, maxLines = 1).size.width + 16f
             val w = size.width - gutter
             val y = { p: Double -> (size.height * (1 - (p - lo) / (hi - lo))).toFloat() }
             val O = { x: Float, yy: Float -> androidx.compose.ui.geometry.Offset(x, yy) }
-            val minBand = 14f  // a one-touch level has no width: draw it as a thin band, not a hairline
             val labels = mutableListOf<Float>()  // right-side price labels already placed (no overlap)
             val clampY = { yy: Float, hgt: Int -> yy.coerceIn(0f, size.height - hgt) }
             val yl = y(live)
             labels += yl
             fun priceLabel(p: Double, yy: Float, col: Color) {
-                val t = measurer.measure(String.format(Locale.US, "%.2f", p), small.copy(color = col), softWrap = false, maxLines = 1)
+                val t = measurer.measure(fmtP(p), small.copy(color = col), softWrap = false, maxLines = 1)
                 if (labels.any { kotlin.math.abs(it - yy) < t.size.height + 4 }) return
                 labels += yy
                 drawText(t, topLeft = O(w + 8f, clampY(yy - t.size.height / 2f, t.size.height)))
             }
-            val words = mutableListOf<Float>()
+            // one clean line per level (red = ceiling, green = floor); no overlapping grey bands
             shown.forEach { (l, isSup) ->
-                var top = y(l.zoneHigh); var bot = y(l.zoneLow)
-                if (bot - top < minBand) { val m = (top + bot) / 2; top = m - minBand / 2; bot = m + minBand / 2 }
-                drawRect(Color(0xFF5A5A5A).copy(alpha = 0.45f), O(0f, top), androidx.compose.ui.geometry.Size(w, bot - top))
-                drawLine(Gold, O(0f, top), O(w, top), 1.5f); drawLine(Gold, O(0f, bot), O(w, bot), 1.5f)
-                val word = measurer.measure(if (isSup) wSup else wRes, TextStyle(color = if (isSup) BuyGreen else SellRed, fontSize = 11.sp))
-                // inside the band when it fits, otherwise just outside it (above a resistance, below a support)
-                val wy0 = if (bot - top >= word.size.height) (top + bot) / 2 - word.size.height / 2
-                          else if (isSup) bot + 2f else top - word.size.height - 2f
-                val wy = clampY(wy0, word.size.height)
-                if (words.none { kotlin.math.abs(it - wy) < word.size.height }) {
-                    words += wy
-                    drawText(word, topLeft = O(8f, wy))
-                }
-                priceLabel(l.price, y(l.price), if (isSup) BuyGreen else SellRed)
+                val col = if (isSup) BuyGreen else SellRed
+                drawLine(col.copy(alpha = 0.9f), O(0f, y(l.price)), O(w, y(l.price)), 3f)
+                priceLabel(l.price, y(l.price), col)
             }
             val cw = w / n
             for (i in 0 until n) {
@@ -1659,53 +1650,68 @@ private fun ChartDialog(s: UiState, card: HorizonCard?, d: Decision?, onTf: (Str
                 drawRect(col, O(cx - cw * 0.35f, top), androidx.compose.ui.geometry.Size(cw * 0.7f, maxOf(1.5f, bot - top)))
             }
             if (yl in 0f..size.height) {
-                drawLine(Teal, O(0f, yl), O(w, yl), 1.5f, pathEffect = androidx.compose.ui.graphics.PathEffect.dashPathEffect(floatArrayOf(10f, 8f)))
-                val t = measurer.measure(String.format(Locale.US, "%.2f", live), small.copy(color = Color.Black, fontWeight = FontWeight.Bold),
+                drawLine(Color.White, O(0f, yl), O(w, yl), 1.5f, pathEffect = androidx.compose.ui.graphics.PathEffect.dashPathEffect(floatArrayOf(10f, 8f)))
+                val t = measurer.measure(fmtP(live), small.copy(color = Color.Black, fontWeight = FontWeight.Black),
                     softWrap = false, maxLines = 1)
                 val ty = clampY(yl - t.size.height / 2f, t.size.height)
-                drawRect(Teal, O(w + 2f, ty - 2f), androidx.compose.ui.geometry.Size(gutter - 4f, t.size.height + 4f))
+                drawRect(Gold, O(w + 2f, ty - 2f), androidx.compose.ui.geometry.Size(gutter - 4f, t.size.height + 4f))
                 drawText(t, topLeft = O(w + 8f, ty))
             }
         }
-        Text(stringResource(R.string.chart_gestures), color = TextDim, fontSize = 10.sp)
-        // three lines: where the price is, then the two conditional scenarios with their history (hours only)
+        Text(stringResource(R.string.chart_hint2), color = TextDim, fontSize = 10.sp, textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth())
         val q = d?.quote ?: cc.last()
-        val inZone = (sup.map { it to true } + res.map { it to false }).firstOrNull { q in it.first.zoneLow..it.first.zoneHigh }
-        val s1 = sup.filter { it.zoneHigh < q }.maxByOrNull { it.price }
-        val r1 = res.filter { it.zoneLow > q }.minByOrNull { it.price }
         val pz = { v: Double -> if (q >= 1000) v.p0() else v.p2() }  // whole dollars for gold / BTC / ETH
-        val z = { l: Level -> if (pz(l.zoneLow) == pz(l.zoneHigh)) ltr(pz(l.price))
-                              else ltr(pz(l.zoneLow)) + "–" + ltr(pz(l.zoneHigh)) }
-        val where = when {
-            inZone != null -> stringResource(if (inZone.second) R.string.zone_in_support else R.string.zone_in_resistance,
-                ltr(pz(q)), z(inZone.first))
-            s1 != null && r1 != null -> stringResource(R.string.zone_between, ltr(pz(q)), z(s1), z(r1))
-            else -> null
+        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(stringResource(R.string.now_price), color = TextDim, fontSize = 13.sp)
+            Text(ltr(pz(q)), color = Gold, fontSize = 28.sp, fontWeight = FontWeight.Black)
         }
-        where?.let { Text(it, color = TextMain, fontSize = 13.sp, lineHeight = 19.sp) }
-        if (card?.horizon == "HOURS") d?.brief?.scenarios?.take(2)?.forEach { sc ->
-            Text(briefLine(sc), color = if (sc.kind == "BULL") BuyGreen else SellRed, fontSize = 13.sp, lineHeight = 18.sp)
+        // a five-step ladder: two ceilings above, the price, two floors below (plain words, no codes)
+        val ceil = res.filter { it.price > q }.sortedBy { it.price }.take(2)
+        val floor = sup.filter { it.price < q }.sortedByDescending { it.price }.take(2)
+        Column(Modifier.fillMaxWidth().border(1.dp, Color(0xFF262118), RoundedCornerShape(12.dp)).clip(RoundedCornerShape(12.dp))) {
+            @Composable
+            fun step(price: String, label: String, col: Color, here: Boolean = false) =
+                Row(Modifier.fillMaxWidth().background(if (here) Color(0xFF2A230F) else Color.Transparent)
+                    .padding(horizontal = 12.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Text(price, color = col, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    Spacer(Modifier.width(12.dp))
+                    Text(label, color = if (here) Gold else TextDim, fontSize = 12.sp, lineHeight = 16.sp, modifier = Modifier.weight(1f))
+                }
+            ceil.getOrNull(1)?.let { step(ltr(pz(it.price)), stringResource(R.string.lad_far_ceiling), SellRed) }
+            ceil.getOrNull(0)?.let { step(ltr(pz(it.price)), stringResource(R.string.lad_near_ceiling), SellRed) }
+            step("● " + ltr(pz(q)), stringResource(R.string.lad_here), Gold, here = true)
+            floor.getOrNull(0)?.let { step(ltr(pz(it.price)), stringResource(R.string.lad_near_floor), BuyGreen) }
+            floor.getOrNull(1)?.let { step(ltr(pz(it.price)), stringResource(R.string.lad_far_floor), BuyGreen) }
+        }
+        if (card?.horizon == "HOURS") d?.brief?.scenarios?.take(2)?.takeIf { it.isNotEmpty() }?.let { list ->
+            Text(stringResource(R.string.what_next), color = Gold, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+            list.forEach { sc ->
+                Text((if (sc.kind == "BULL") "▲ " else "▼ ") + briefLine(sc), color = if (sc.kind == "BULL") BuyGreen else SellRed,
+                    fontSize = 14.sp, fontWeight = FontWeight.SemiBold, lineHeight = 20.sp)
+            }
         }
         if (card?.horizon == "HOURS") d?.brief?.firstTouch?.let { ft ->
-            Spacer(Modifier.height(4.dp))
-            Text(stringResource(R.string.ft_title), color = Gold, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
-            Row(Modifier.fillMaxWidth().height(8.dp).clip(RoundedCornerShape(4.dp))) {
+            Text(stringResource(R.string.ft_title2), color = Gold, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+            Row(Modifier.fillMaxWidth().height(10.dp).clip(RoundedCornerShape(5.dp))) {
                 Box(Modifier.weight(ft.downFirst.toFloat().coerceAtLeast(0.01f)).fillMaxHeight().background(SellRed))
                 Box(Modifier.weight(ft.upFirst.toFloat().coerceAtLeast(0.01f)).fillMaxHeight().background(BuyGreen))
             }
-            Text(stringResource(R.string.ft_line, ltr(pz(ft.downLevel)), Math.round(ft.downFirst * 100).toInt(),
-                ltr(pz(ft.upLevel)), Math.round(ft.upFirst * 100).toInt()), color = TextMain, fontSize = 12.sp, lineHeight = 17.sp)
-            Text(stringResource(R.string.ft_note, ft.n, ft.days, ft.windowHours), color = TextDim, fontSize = 10.sp, lineHeight = 14.sp)
+            Row(Modifier.fillMaxWidth()) {
+                Text(stringResource(R.string.ft_down, ltr(pz(ft.downLevel)), Math.round(ft.downFirst * 100).toInt()),
+                    color = SellRed, fontSize = 13.sp, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+                Text(stringResource(R.string.ft_up, ltr(pz(ft.upLevel)), Math.round(ft.upFirst * 100).toInt()),
+                    color = BuyGreen, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+            }
         }
-        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            Text(stringResource(R.string.pos_watch_note), color = TextDim, fontSize = 11.sp, modifier = Modifier.weight(1f))
-            val on = s.asset in s.alertAssets && s.notify
-            Text(stringResource(if (on) R.string.zone_follow_on else R.string.zone_follow), color = if (on) Color.Black else Gold,
-                fontSize = 11.sp, maxLines = 1, modifier = Modifier.background(if (on) Gold else Color.Transparent, RoundedCornerShape(10.dp))
-                    .border(1.dp, Gold, RoundedCornerShape(10.dp)).clickable(role = Role.Button, onClick = onFollow)
-                    .padding(horizontal = 10.dp, vertical = 4.dp))
-        }
-        Body(stringResource(R.string.chart_legend_zones), TextDim, 11.sp)
+        val on = s.asset in s.alertAssets && s.notify
+        Text(stringResource(if (on) R.string.zone_follow2_on else R.string.zone_follow2), color = if (on) Color.Black else Gold,
+            fontSize = 13.sp, textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth().padding(top = 4.dp).background(if (on) Gold else Color.Transparent, RoundedCornerShape(12.dp))
+                .border(1.dp, Gold, RoundedCornerShape(12.dp)).clickable(role = Role.Button, onClick = onFollow)
+                .padding(vertical = 9.dp))
+        Text(stringResource(R.string.card_foot), color = TextDim, fontSize = 11.sp, textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth())
     }
 }
 

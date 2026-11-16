@@ -473,6 +473,19 @@
     <string name="lv_sup_hint">Prices the market often bounces from</string>
     <string name="lv_res_hint">Prices where the market often stalls</string>
     <string name="card_foot">For watching and learning only — not a buy or sell recommendation</string>
+    <string name="chart_hint2">Pinch with two fingers to zoom · double-tap to reset</string>
+    <string name="now_price">Price now</string>
+    <string name="lad_far_ceiling">Far ceiling</string>
+    <string name="lad_near_ceiling">Near ceiling — the rise may stall here</string>
+    <string name="lad_here">You are here</string>
+    <string name="lad_near_floor">Near floor — the price may bounce here</string>
+    <string name="lad_far_floor">Far floor</string>
+    <string name="what_next">What could happen?</string>
+    <string name="ft_title2">Which does the price usually reach first?</string>
+    <string name="ft_down">Down to %1$s: %2$d%%</string>
+    <string name="ft_up">Up to %1$s: %2$d%%</string>
+    <string name="zone_follow2">🔔 Alert me when the price nears these numbers</string>
+    <string name="zone_follow2_on">✓ Alerts on for these numbers</string>
     <string name="r_w_up" formatted="false">up</string>
     <string name="r_w_down" formatted="false">down</string>
     <string name="r_w_neutral" formatted="false">neutral</string>
