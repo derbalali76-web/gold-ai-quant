@@ -461,10 +461,28 @@ def _res(outcome, entry, exit_, d, risk, cost, when):
 
 
 # ---------------------------------------------------------------- stats
+def brief_rows(entries: list[dict]) -> list[dict]:
+    """One row per recorded daily bias, newest first, for the app's results page. Derived only (the ledger lines are
+    never changed): outcome is the recorded BRIEF_RESULT (CORRECT / WRONG / NOT_SCORED / NO_DATA) or PENDING."""
+    res = {x["data"]["ref"]: x["data"] for x in entries if x["kind"] == "BRIEF_RESULT"}
+    rows = []
+    for e in entries:
+        if e["kind"] != "BRIEF":
+            continue
+        d, r = e["data"], res.get(e["seq"], {})
+        rows.append({"seq": e["seq"], "asset": asset_of(e), "date": d.get("date"), "bias": d.get("bias"),
+                     "price": d.get("price_at_record"), "recorded_at": e["recorded_at"],
+                     "outcome": r.get("outcome", "PENDING"), "close": r.get("close"),
+                     "baseline_up_correct": r.get("baseline_up_correct")})
+    rows.sort(key=lambda x: (x["date"] or "", x["seq"]), reverse=True)
+    return rows
+
+
 def stats(entries: list[dict], now: datetime) -> dict:
     """Gold at the top level (unchanged layout), every asset under "assets", strategy scenarios under "scenarios"."""
     out = _stats(entries, now, "XAU")
     out["scenarios"] = scenario_stats(entries)
+    out["briefs"] = brief_rows(entries)
     out["assets"] = {a: _stats(entries, now, a) for a in ASSETS}
     for v in out["assets"].values():
         for k in ("chain_head", "lines", "schema", "updated_at"):
