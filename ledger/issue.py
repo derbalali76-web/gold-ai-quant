@@ -191,7 +191,7 @@ def issue(asset: str, h1: list, d1: list, ranges: dict, hilo: dict, now: datetim
 
 
 # ---------------------------------------------------------------- gold (Twelve Data, same feed as the app server)
-TWELVE = "https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=1h&outputsize=1100&timezone=UTC&order=asc"
+TWELVE = "https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=1h&outputsize=1500&timezone=UTC&order=asc"
 NY = ZoneInfo("America/New_York")
 
 
@@ -233,7 +233,7 @@ def issue_gold(h1: list, ranges: dict, now: datetime, published: dict | None = N
            "bars": {"H1": [[iso(b[0]), *(round(v, 4) for v in b[1:])] for b in h1[-120:]], "D1": []},
            "ranges": [], "hilo": []}
     slot = due_slot(h1, now) if h1 else None
-    upto = [b for b in h1 if b[0] + HOUR <= slot] if slot else []
+    upto = [b for b in h1 if b[0] + HOUR <= slot][-1000:] if slot else []  # the server's bars(): last 1000
     if not upto or upto[-1][0] + HOUR != slot:
         return out  # the hour before the issue time did not trade (weekend, daily break): no gold issue
     p = (published or {}).get("range")
