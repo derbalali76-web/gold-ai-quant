@@ -73,8 +73,11 @@ With every daily analysis (`BRIEF`), three `SCENARIO` lines are written **in the
   the last 1000 closed hourly bars from Binance's public market-data mirror and the published weekly parameters
   (`models/range_models.json`, `models/hilo_models.json` in the app repository). Same formulas as the server; the app
   repository tests that both give identical numbers.
-- The server's snapshot is still read: gold (whose data feed needs the server's key), the daily analysis, and a second
-  computation of the same crypto issues. **The first recorded value stands** and is never overwritten; each line says
+- Gold ranges (since 2026-11-17): computed here too when the repository secret `TWELVEDATA_API_KEY` is set — the same
+  Twelve Data hourly feed as the server, one request at a gold issue time that is due and not yet recorded (the key's
+  daily quota is shared with the server). The key travels in a request header and never appears in a log or an alert.
+- The server's snapshot is still read: the daily analysis, gold when the secret is missing, and a second computation
+  of the same issues. **The first recorded value stands** and is never overwritten; each line says
   who computed it (`source`: `ledger-action` or `server`) and from which parameters (`params_sha`, `trained_until`).
 - `crosscheck.json` lists every case where both computed the same issue: they must agree within 0.2 %. A disagreement
   opens the alert issue.

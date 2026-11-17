@@ -17,6 +17,10 @@ latest issue time whose 75-minute recording window is still open, from the bars 
 of that hour was missed, the next one records exactly what an on-time run would have (deterministic: no choice is
 involved, and parameters published after the issue time are never used for it).
 
+Gold (since 2026-11-17): the same Twelve Data hourly feed as the server (the TWELVEDATA_API_KEY secret of this
+repository), one request at a gold issue time that is due and not yet recorded; without the secret, gold ranges
+come from the server only.
+
 Standard library only (anyone can re-run it). Writes issue_<ASSET>.json, shaped like a server snapshot, which
 `ledger.py update` ingests FIRST (the server's snapshot is the backup; the first recorded issue wins). It carries
 closed bars, `ranges` and `hilo` — and "price": null, so it can never create a recommendation or a daily analysis:
@@ -29,17 +33,19 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+import os
 import sys
 import time
 import urllib.request
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 KLINES = "https://data-api.binance.vision/api/v3/klines"
 MODELS = "https://raw.githubusercontent.com/derbalali76-web/gold-ai-quant/main/models/"
 SYMBOLS = {"BTC": "BTCUSDT", "ETH": "ETHUSDT", "SOL": "SOLUSDT"}
 HILO_CASES = {"BTC": ("4h", "24h"), "ETH": ("4h", "24h")}  # hilo.LIVE_CASES (pre-registered)
-WINDOWS = (4, 24, 168, 672)  # crypto: 4 bars / day / week / 4 weeks
+WINDOWS = {"crypto": (4, 24, 168, 672), "gold": (4, 23, 115, 460)}  # 4 bars / day / week / 4 weeks (gold: trading h)
 LAMBDA = 0.94
 Z90, Z95 = 1.2816, 1.6449
 SOURCE = "ledger-action"
@@ -75,14 +81,15 @@ def closed_bars(rows: list, step: timedelta, now: datetime) -> list[tuple[dateti
     return out
 
 
-def features(bars: list, H: int) -> dict | None:
+def features(bars: list, H: int, kind: str = "crypto") -> dict | None:
     """Features of the decision at the close of the last bar (price_range.frame, last row)."""
-    if len(bars) < WINDOWS[-1] + 5:
+    win = WINDOWS[kind]
+    if len(bars) < win[-1] + 5:
         return None
     c = [b[4] for b in bars]
     r2 = [None] + [(math.log(c[i]) - math.log(c[i - 1])) ** 2 for i in range(1, len(c))]
     f = {}
-    for k, w in zip(("rv4", "rvd", "rvw", "rvm"), WINDOWS):
+    for k, w in zip(("rv4", "rvd", "rvw", "rvm"), win):
         f[k] = math.log(sum(r2[-w:]) * 1e4 * H / w + 1e-6)
     t = bars[-1][0] + HOUR
     f["hs"], f["hc"] = math.sin(2 * math.pi * t.hour / 24), math.cos(2 * math.pi * t.hour / 24)
@@ -108,7 +115,7 @@ def params_sha(params: dict) -> str:
 
 def range_live(params: dict, bars: list) -> dict | None:
     H = int(params["bars"])
-    f = features(bars, H)
+    f = features(bars, H, params.get("kind", "crypto"))
     s = scale(params, f) if f else None
     if s is None:
         return None
@@ -183,6 +190,86 @@ def issue(asset: str, h1: list, d1: list, ranges: dict, hilo: dict, now: datetim
     return out
 
 
+# ---------------------------------------------------------------- gold (Twelve Data, same feed as the app server)
+TWELVE = "https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=1h&outputsize=1100&timezone=UTC&order=asc"
+NY = ZoneInfo("America/New_York")
+
+
+def weekend_print(t: datetime) -> bool:
+    """Bar OPEN inside the weekly close, Fri 17:00 -> Sun 18:00 New York (the server's market_closed_mask)."""
+    n = t.astimezone(NY)
+    return n.weekday() == 5 or (n.weekday() == 4 and n.hour >= 17) or (n.weekday() == 6 and n.hour < 18)
+
+
+def gold_open(t: datetime) -> bool:
+    n = t.astimezone(NY)
+    return not (weekend_print(t) or n.hour == 17)
+
+
+def twelve_bars(payload: dict, now: datetime) -> list:
+    """/time_series (timezone=UTC) -> closed hourly bars without weekend prints, as the server keeps them."""
+    if payload.get("status") == "error" or not isinstance(payload.get("values"), list):
+        raise RuntimeError(f"twelvedata: {str(payload.get('code', ''))} {str(payload.get('message', ''))[:80]}")
+    out = {}
+    for v in payload["values"]:
+        t = datetime.fromisoformat(v["datetime"]).replace(tzinfo=timezone.utc)
+        if t + HOUR <= now and not weekend_print(t):
+            out[t] = (t, float(v["open"]), float(v["high"]), float(v["low"]), float(v["close"]))
+    return [out[t] for t in sorted(out)]
+
+
+def recorded(root: Path, kind: str, asset: str, issued: str) -> bool:
+    try:
+        with open(root / "ledger.jsonl", encoding="utf-8") as fh:
+            return any(f'"kind":"{kind}"' in ln.replace(" ", "") and f'"asset":"{asset}"' in ln.replace(" ", "")
+                       and f'"issued_at":"{issued}"' in ln.replace(" ", "") for ln in fh)
+    except OSError:
+        return False
+
+
+def issue_gold(h1: list, ranges: dict, now: datetime, published: dict | None = None) -> dict:
+    """Gold price ranges at the due issue time, from the bars closed at that time (only when that hour traded)."""
+    out = {"schema": 1, "asset": "XAU", "symbol": "XAU/USD", "as_of": iso(now), "price": None, "source": SOURCE,
+           "bars": {"H1": [[iso(b[0]), *(round(v, 4) for v in b[1:])] for b in h1[-120:]], "D1": []},
+           "ranges": [], "hilo": []}
+    slot = due_slot(h1, now) if h1 else None
+    upto = [b for b in h1 if b[0] + HOUR <= slot] if slot else []
+    if not upto or upto[-1][0] + HOUR != slot:
+        return out  # the hour before the issue time did not trade (weekend, daily break): no gold issue
+    p = (published or {}).get("range")
+    if upto[-1][0] + HOUR < h1[-1][0] + HOUR and not (p and datetime.fromisoformat(p.replace("Z", "+00:00")) <= slot):
+        return out
+    for h, x in (ranges.get("XAU") or {}).items():
+        r = range_live(x["params"], upto) if x.get("params") else None
+        if r is not None:
+            out["ranges"].append(dict(r, qualified=bool(x.get("qualified")), holdout_coverage=x.get("holdout_coverage")))
+    return out
+
+
+def gold(out_dir: Path, ranges: dict, published: dict, now: datetime) -> str:
+    """One Twelve Data request, and only at a gold issue time not yet recorded (the key's daily quota is shared with
+    the app server). The key travels in a header, never in a URL, so no error message can carry it."""
+    key = os.environ.get("TWELVEDATA_API_KEY", "").strip()
+    slot = now.replace(minute=0, second=0, microsecond=0)
+    slot -= timedelta(hours=slot.hour % 4)
+    if not key:
+        return "XAU: no TWELVEDATA_API_KEY secret (gold ranges come from the server only)"
+    if not (now - slot <= FRESH and gold_open(slot - timedelta(minutes=30))):
+        return "XAU: no gold issue time due"
+    if recorded(Path(__file__).resolve().parent, "RANGE", "XAU", iso(slot)):
+        return f"XAU: {iso(slot)} already recorded"
+    try:
+        req = urllib.request.Request(TWELVE, headers={"Authorization": f"apikey {key}", "User-Agent": "ai-quant-ledger/1.0"})
+        with urllib.request.urlopen(req, timeout=40) as r:
+            payload = json.loads(r.read().decode("utf-8"))
+        h1 = twelve_bars(payload, now)
+    except Exception as exc:  # noqa: BLE001
+        raise RuntimeError(str(exc).replace(key, "***")) from None
+    snap = issue_gold(h1, ranges, now, published)
+    (out_dir / "issue_XAU.json").write_text(json.dumps(snap, separators=(",", ":")), encoding="utf-8")
+    return f"XAU: {len(h1)} hourly bars to {iso(h1[-1][0] + HOUR) if h1 else '-'}; {len(snap['ranges'])} ranges"
+
+
 def main(argv: list[str]) -> int:
     out_dir = Path(argv[0] if argv else ".")
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -209,6 +296,10 @@ def main(argv: list[str]) -> int:
                   f"{iso(slot) if slot else 'none due'}: {len(snap['ranges'])} ranges, {len(snap['hilo'])} high/low")
         except Exception as exc:  # noqa: BLE001 — the server snapshot is still tried afterwards
             problems.append(f"{asset}: {exc}")
+    try:
+        print(gold(out_dir, ranges, published, datetime.now(timezone.utc)))
+    except Exception as exc:  # noqa: BLE001
+        problems.append(f"XAU: {exc}")
     for p in problems:
         print("ISSUER-PROBLEM", p)
     return 0
