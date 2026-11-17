@@ -421,7 +421,21 @@ private fun TopBar(s: UiState, compact: Boolean, onAsset: () -> Unit, onCalendar
         val cdc = stringResource(R.string.cal_title)
         Box(Modifier.size(40.dp).border(1.dp, Gold, CircleShape)
             .clickable(role = Role.Button, onClick = onCalendar).semantics { contentDescription = cdc },
-            contentAlignment = Alignment.Center) { Text("📅", fontSize = 16.sp) }
+            contentAlignment = Alignment.Center) {
+            // drawn icon: the calendar emoji shows a fixed "July 17" on many phones
+            androidx.compose.foundation.Canvas(Modifier.size(18.dp)) {
+                val w = 1.6.dp.toPx(); val st = androidx.compose.ui.graphics.drawscope.Stroke(width = w)
+                drawRoundRect(Gold, androidx.compose.ui.geometry.Offset(w, size.height * 0.18f),
+                    androidx.compose.ui.geometry.Size(size.width - 2 * w, size.height * 0.78f),
+                    androidx.compose.ui.geometry.CornerRadius(3.dp.toPx()), style = st)
+                drawLine(Gold, androidx.compose.ui.geometry.Offset(w, size.height * 0.42f),
+                    androidx.compose.ui.geometry.Offset(size.width - w, size.height * 0.42f), w)
+                drawLine(Gold, androidx.compose.ui.geometry.Offset(size.width * 0.32f, 0f),
+                    androidx.compose.ui.geometry.Offset(size.width * 0.32f, size.height * 0.28f), w)
+                drawLine(Gold, androidx.compose.ui.geometry.Offset(size.width * 0.68f, 0f),
+                    androidx.compose.ui.geometry.Offset(size.width * 0.68f, size.height * 0.28f), w)
+            }
+        }
         Spacer(Modifier.width(6.dp))
         val cd = stringResource(R.string.cd_settings)
         Box(Modifier.size(40.dp).border(1.dp, Gold, CircleShape)
@@ -656,33 +670,55 @@ private fun Tile(title: String, value: String, valueColor: Color, modifier: Modi
 }
 
 @Composable
+private fun actWord(level: String?): String = stringResource(when (level) {
+    "HIGH" -> R.string.act_big_high; "LOW" -> R.string.act_big_low; else -> R.string.act_big_normal })
+
+@Composable
 private fun ScalpTile(d: Decision, modifier: Modifier, onClick: () -> Unit) {
     val a = d.scalpActivity
     val color = when (a?.level) { "HIGH" -> BuyGreen; "LOW" -> TextDim; else -> WaitGold }
-    Tile(stringResource(R.string.scalp_tile),
-        if (a != null) stringResource(R.string.scalp_tile_act, Math.round(a.probability * 100).toInt())
-        else stringResource(R.string.scalp_engine_off), if (a != null) color else WaitGold, modifier, onClick)
+    Tile(stringResource(R.string.act_title), if (a != null) actWord(a.level) else stringResource(R.string.act_none_tile),
+        if (a != null) color else WaitGold, modifier, onClick)
 }
 
 @Composable
 private fun ScalpDialog(d: Decision, onClose: () -> Unit) {
-    DialogFrame(stringResource(R.string.scalp_tile), onClose) {
+    DialogFrame(stringResource(R.string.act_title), onClose) {
         val a = d.scalpActivity
         if (a != null) {
             val hrs = if (a.hours % 1.0 == 0.0) a.hours.toInt().toString() else a.hours.toString()
-            Text(stringResource(R.string.scalp_activity_head, hrs), color = TextMain, fontSize = 14.sp, fontWeight = FontWeight.Bold)
-            Text(stringResource(when (a.level) { "HIGH" -> R.string.scalp_level_high; "LOW" -> R.string.scalp_level_low
-                else -> R.string.scalp_level_normal }),
-                color = when (a.level) { "HIGH" -> BuyGreen; "LOW" -> TextDim; else -> WaitGold }, fontSize = 15.sp,
-                fontWeight = FontWeight.Bold)
-            Body(stringResource(R.string.scalp_activity_prob, String.format(java.util.Locale.US, "%.2f", a.targetPct),
-                Math.round(a.probability * 100).toInt(), Math.round(a.usual * 100).toInt()), TextMain, 13.sp)
-            Body(stringResource(R.string.scalp_activity_note), TextDim, 12.sp)
-            if (a.skill != null && a.holdoutSkill != null) Body(stringResource(R.string.scalp_activity_valid,
-                Math.round(a.skill * 100).toInt(), Math.round(a.holdoutSkill * 100).toInt()), TextDim, 11.sp)
+            Text(stringResource(R.string.act_next, hrs), color = TextMain, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+            Text(actWord(a.level), color = when (a.level) { "HIGH" -> BuyGreen; "LOW" -> TextDim; else -> WaitGold },
+                fontSize = 22.sp, fontWeight = FontWeight.Black)
+            Row(horizontalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.fillMaxWidth()) {
+                listOf("LOW" to R.string.act_g_low, "NORMAL" to R.string.act_g_normal, "HIGH" to R.string.act_g_high).forEach { (k, r) ->
+                    val on = (a.level == k) || (k == "NORMAL" && a.level != "LOW" && a.level != "HIGH")
+                    Text(stringResource(r), color = if (on) Gold else TextDim, fontSize = 13.sp, fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center, modifier = Modifier.weight(1f)
+                            .background(if (on) Gold.copy(alpha = 0.15f) else Track, RoundedCornerShape(12.dp))
+                            .border(1.dp, if (on) Gold else Track, RoundedCornerShape(12.dp)).padding(vertical = 6.dp))
+                }
+            }
+            val pct = String.format(java.util.Locale.US, "%.2f", a.targetPct)
+            val amt = d.quote?.takeIf { it > 0 }?.let { ltr(String.format(java.util.Locale.US, "%.2f", it * a.targetPct / 100)) }
+            Body(stringResource(if (a.probability >= 0.5) R.string.act_move_likely else R.string.act_move_unlikely,
+                amt ?: ltr("$pct%"), ltr(pct)), TextMain, 14.sp)
+            Body(stringResource(R.string.act_note), TextDim, 12.sp)
+            var open by remember { mutableStateOf(false) }
+            Row(Modifier.fillMaxWidth().border(1.dp, Track, RoundedCornerShape(12.dp)).clickable(role = Role.Button) { open = !open }
+                .padding(horizontal = 12.dp, vertical = 8.dp)) {
+                Text(stringResource(R.string.act_how), color = TextMain, fontSize = 14.sp, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+                Text(if (open) "▴" else "▾", color = Gold, fontSize = 14.sp)
+            }
+            if (open) {
+                Body(stringResource(R.string.scalp_activity_prob, pct,
+                    Math.round(a.probability * 100).toInt(), Math.round(a.usual * 100).toInt()), TextDim, 12.sp)
+                if (a.skill != null && a.holdoutSkill != null) Body(stringResource(R.string.scalp_activity_valid,
+                    Math.round(a.skill * 100).toInt(), Math.round(a.holdoutSkill * 100).toInt()), TextDim, 11.sp)
+            }
         } else Body(stringResource(R.string.scalp_activity_none), TextDim, 12.sp)
         Spacer(Modifier.height(4.dp))
-        Body(stringResource(R.string.scalp_engine_status), WaitGold, 12.sp)
+        Body(stringResource(R.string.act_engine), WaitGold, 12.sp)
     }
 }
 

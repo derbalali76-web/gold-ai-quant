@@ -86,12 +86,12 @@ fun Modifier.watermark(text: String?): Modifier {
     if (text.isNullOrBlank()) return this
     val measurer = rememberTextMeasurer()
     val layout = remember(text) {
-        measurer.measure(text, TextStyle(color = Color(0x12FFFFFF), fontSize = 12.sp))
+        measurer.measure(text, TextStyle(color = Color(0x09FFFFFF), fontSize = 12.sp))
     }
     return this.testTag("watermark").drawWithContent {
         drawContent()
-        val stepX = layout.size.width + 110f
-        val stepY = layout.size.height + 170f
+        val stepX = layout.size.width + 160f
+        val stepY = layout.size.height + 230f
         // only the disc that stays visible after rotating around the centre (keeps it to ~100 draws per frame)
         val r = kotlin.math.hypot(size.width, size.height) / 2
         val cx = size.width / 2
