@@ -263,6 +263,7 @@ private sealed interface Sheet {
     data class TouchSheet(val focus: Double?) : Sheet
     data object CalendarSheet : Sheet
     data object RangeSheet : Sheet
+    data object PositionSheet : Sheet
 }
 
 /** Stateless screen (also used by the UI tests on several screen sizes). */
@@ -314,7 +315,8 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
                 HorizonTabs(d, selected, s.loading, onHorizon)
                 Crossfade(targetState = card, animationSpec = tween(240), label = "horizon",
                     modifier = Modifier.weight(1f).fillMaxWidth()) { c ->
-                    DecisionCard(c, s, d, compact, Modifier.fillMaxSize(), onPosition, onBell) { l, sup -> sheet = Sheet.LevelSheet(l, sup) }
+                    DecisionCard(c, s, d, compact, Modifier.fillMaxSize(), onPosition, onBell,
+                        onCalc = { sheet = Sheet.PositionSheet }) { l, sup -> sheet = Sheet.LevelSheet(l, sup) }
                 }
                 Row(Modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(gap)) {
                     if (d.instrument != "XAU/USD") ScalpTile(d, Modifier.weight(1f).fillMaxHeight()) { sheet = Sheet.ScalpSheet }
@@ -347,6 +349,11 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
         Sheet.TrustSheet -> RecordPage(s.briefs, onMore = { sheet = Sheet.TrustDetails }) { sheet = null }
         Sheet.TrustDetails -> TrustDialog(s.trust, s.position) { sheet = Sheet.TrustSheet }
         Sheet.RangeSheet -> RangeDialog(s, s.live[s.asset]?.price ?: s.decision?.quote) { sheet = null }
+        Sheet.PositionSheet -> PositionDialog(s.asset, stringResource(when (s.asset) { "BTC" -> R.string.asset_btc
+            "ETH" -> R.string.asset_eth; "SOL" -> R.string.asset_sol; else -> R.string.asset_gold }),
+            s.live[s.asset]?.price ?: d?.quote?.takeIf { d?.isDemo != true },
+            card?.levels?.supports?.firstOrNull()?.price, card?.levels?.resistances?.firstOrNull()?.price,
+            s.position == "HOLD") { sheet = null }
         Sheet.Settings -> SettingsDialog(s, lang, onNextDemo, onSave, onLive, onLanguage, onNotify, onAlertAsset,
             onHow = { sheet = Sheet.HowSheet }, onNews = { sheet = Sheet.NewsSheet }) { sheet = null }
         Sheet.HowSheet -> HowDialog { sheet = null }
@@ -750,7 +757,7 @@ private fun durationText(c: HorizonCard): String {
 @Composable
 private fun DecisionCard(c: HorizonCard, s: UiState, d: Decision, compact: Boolean, modifier: Modifier,
                          onPosition: (String) -> Unit = {}, onBell: (PriceAlert) -> Unit = {},
-                         onLevel: (Level, Boolean) -> Unit) {
+                         onCalc: () -> Unit = {}, onLevel: (Level, Boolean) -> Unit) {
     val expired = d.isExpired(Instant.now())
     var showChecks by remember { mutableStateOf(false) }
     if (showChecks) ChecklistDialog(c) { showChecks = false }
@@ -793,6 +800,11 @@ private fun DecisionCard(c: HorizonCard, s: UiState, d: Decision, compact: Boole
                 if (c.horizon == "HOURS") d.brief?.let { BriefLines(it, s, d.quote, onBell) }
                 if (c.action != Action.UNAVAILABLE) MineLine(c, s)
             }
+            // «وضعي» calculator: the user's own numbers, arithmetic only
+            if (c.action != Action.UNAVAILABLE) Text(stringResource(R.string.pc_open), color = Gold, fontSize = 13.sp,
+                fontWeight = FontWeight.Bold, textAlign = TextAlign.Center, maxLines = 1,
+                modifier = Modifier.fillMaxWidth().padding(top = 2.dp).border(1.dp, Gold.copy(alpha = 0.6f), RoundedCornerShape(10.dp))
+                    .clickable(role = Role.Button, onClick = onCalc).padding(vertical = 6.dp))
             Divider()
             val lv = c.levels
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -1138,7 +1150,7 @@ internal val SecureDialog: DialogProperties
                              else SecureFlagPolicy.SecureOff)
 
 @Composable
-private fun DialogFrame(title: String, onClose: () -> Unit, content: @Composable () -> Unit) {
+internal fun DialogFrame(title: String, onClose: () -> Unit, content: @Composable () -> Unit) {
     Dialog(onDismissRequest = onClose, properties = SecureDialog) {
         Column(Modifier.fillMaxWidth().heightIn(max = 620.dp).background(Card, RoundedCornerShape(16.dp))
             .watermark(LocalWatermark.current)
