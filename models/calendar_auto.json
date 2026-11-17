@@ -1,5 +1,5 @@
 {
- "updated_at": "2026-11-17T15:54:28.365398Z",
+ "updated_at": "2026-11-17T23:28:39.150112Z",
  "sources": {
   "bls": "ok",
   "fomc": "ok"
@@ -54,6 +54,12 @@
   },
   {
    "time_utc": "2027-01-27T19:00:00Z",
+   "name": "FOMC rate decision",
+   "importance": 3,
+   "source": "federalreserve.gov"
+  },
+  {
+   "time_utc": "2027-03-17T18:00:00Z",
    "name": "FOMC rate decision",
    "importance": 3,
    "source": "federalreserve.gov"
