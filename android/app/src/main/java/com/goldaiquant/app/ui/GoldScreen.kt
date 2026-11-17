@@ -362,7 +362,7 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
             onHow = { sheet = Sheet.HowSheet }, onNews = { sheet = Sheet.NewsSheet }) { sheet = null }
         Sheet.HowSheet -> HowDialog { sheet = null }
         Sheet.ScalpSheet -> if (d != null) ScalpDialog(d) { sheet = null }
-        Sheet.WhatSheet -> if (card != null && d != null) WhatDialog(card, d, s, onPosition) { sheet = null }
+        Sheet.WhatSheet -> if (d != null) WhatDialog(d, s, onPosition) { sheet = null }
         Sheet.NewsSheet -> NewsDialog { sheet = null }
         Sheet.ChartSheet -> ChartDialog(s, card, d, onTf = { tf -> onBars(s.asset, tf) },
             onTouch = { sheet = Sheet.TouchSheet(null) }, onFollow = {
@@ -2411,10 +2411,11 @@ private fun WhatButton(compact: Boolean, onClick: () -> Unit) {
 }
 
 @Composable
-private fun WhatDialog(c: HorizonCard, d: Decision, s: UiState, onPosition: (String) -> Unit, onClose: () -> Unit) {
-    val v = HorizonScenarios.of(c, d.brief, d.isDemo)
+private fun WhatDialog(d: Decision, s: UiState, onPosition: (String) -> Unit, onClose: () -> Unit) {
     val hold = s.position == "HOLD"
-    val (advice, at) = HorizonScenarios.advice(v, hold)
+    val hours = HorizonScenarios.of(HorizonModel.card(d, "HOURS"), d.brief, d.isDemo)
+    val week = d.outlooks.firstOrNull { it.horizon == "WEEK" }?.let { HorizonScenarios.of(HorizonModel.card(d, "WEEK"), d.brief, d.isDemo) }
+    val plan = HorizonScenarios.decide(hours, week, hold)
     val now = s.live[s.asset]?.price ?: d.quote
     val assetName = stringResource(when (s.asset) { "BTC" -> R.string.asset_btc; "ETH" -> R.string.asset_eth
         "SOL" -> R.string.asset_sol; else -> R.string.asset_gold })
@@ -2428,13 +2429,16 @@ private fun WhatDialog(c: HorizonCard, d: Decision, s: UiState, onPosition: (Str
                         .clickable(role = Role.Tab) { if (!on) onPosition(if (h) "HOLD" else "CASH") }.padding(vertical = 8.dp))
             }
         }
-        val p = at?.let { ltr(it.p2()) }
-        val (big, sub, color) = when (advice) {
-            HorizonScenarios.Advice.SELL_NOW -> Triple(R.string.wd_sell_now, stringResource(R.string.wd_sell_now_sub, p!!), SellRed)
-            HorizonScenarios.Advice.WAIT_BUY_LOWER -> Triple(R.string.wd_wait, stringResource(R.string.wd_wait_sub, p!!), SellRed)
-            HorizonScenarios.Advice.KEEP_SELL_HIGHER -> Triple(R.string.wd_keep, stringResource(R.string.wd_keep_sub, p!!), BuyGreen)
+        val p = plan.at?.let { ltr(it.p2()) } ?: "—"
+        val dip = plan.mix == HorizonScenarios.Mix.DIP_IN_UPTREND
+        val (big, sub, color) = when (plan.advice) {
+            HorizonScenarios.Advice.SELL_NOW -> Triple(R.string.wd_sell_now,
+                stringResource(if (dip) R.string.wd_buy_back_sub else R.string.wd_sell_now_sub, p), SellRed)
+            HorizonScenarios.Advice.WAIT_BUY_LOWER -> Triple(R.string.wd_wait, stringResource(R.string.wd_wait_sub, p), SellRed)
+            HorizonScenarios.Advice.KEEP_SELL_HIGHER -> Triple(R.string.wd_keep, stringResource(R.string.wd_keep_sub, p), BuyGreen)
             HorizonScenarios.Advice.BUY_NOW -> Triple(R.string.wd_buy,
                 now?.let { stringResource(R.string.wd_buy_sub, ltr(it.p2())) } ?: "", BuyGreen)
+            HorizonScenarios.Advice.DONT_BUY -> Triple(R.string.wd_dont_buy, stringResource(R.string.wd_dont_buy_sub), Grey)
             HorizonScenarios.Advice.NOTHING -> Triple(R.string.wd_nothing, stringResource(R.string.wd_nothing_sub), Grey)
         }
         val shape = RoundedCornerShape(16.dp)
@@ -2442,9 +2446,42 @@ private fun WhatDialog(c: HorizonCard, d: Decision, s: UiState, onPosition: (Str
             horizontalAlignment = Alignment.CenterHorizontally) {
             Text(stringResource(big), color = TextMain, fontSize = 26.sp, fontWeight = FontWeight.Black, textAlign = TextAlign.Center)
             if (sub.isNotEmpty()) Text(sub, color = TextMain, fontSize = 16.sp, textAlign = TextAlign.Center)
+            if (dip && hold) Text(stringResource(R.string.wd_hold_week), color = TextDim, fontSize = 13.sp, textAlign = TextAlign.Center)
         }
-        Text(stringResource(R.string.wd_basis, scHorizon(c.horizon)), color = TextDim, fontSize = 11.sp,
-            textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+        // the exit line: what to do if the price goes the other way first (never omitted when there is a level)
+        val exit = plan.exit?.let { ltr(it.p2()) }
+        val exitText = when {
+            plan.advice == HorizonScenarios.Advice.DONT_BUY -> stringResource(R.string.wd_agree_auto)
+            exit == null -> null
+            plan.advice == HorizonScenarios.Advice.SELL_NOW -> stringResource(R.string.wd_exit_rebuy, exit)
+            plan.advice == HorizonScenarios.Advice.WAIT_BUY_LOWER -> stringResource(R.string.wd_exit_buy, exit)
+            plan.advice == HorizonScenarios.Advice.KEEP_SELL_HIGHER -> stringResource(R.string.wd_exit_sell, exit)
+            plan.advice == HorizonScenarios.Advice.BUY_NOW -> stringResource(R.string.wd_exit_sell_after, exit)
+            else -> null
+        }
+        exitText?.let {
+            Text(it, color = TextMain, fontSize = 14.sp, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth()
+                .border(1.dp, Gold.copy(alpha = 0.7f), RoundedCornerShape(12.dp)).padding(9.dp))
+        }
+        if (plan.mix != null) {
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                val hDown = dip
+                listOf(Triple(R.string.h_hours, if (hDown) R.string.wd_short_down else R.string.wd_short_up, if (hDown) SellRed else BuyGreen),
+                    Triple(R.string.h_week, if (hDown) R.string.wd_w_up else R.string.wd_w_down, if (hDown) BuyGreen else SellRed))
+                    .forEach { (name, word, c) ->
+                        Column(Modifier.weight(1f).border(1.dp, CardEdge, RoundedCornerShape(10.dp)).padding(5.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(stringResource(name), color = TextMain, fontSize = 12.sp)
+                            Text(stringResource(word), color = c, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        }
+                    }
+            }
+            Text(stringResource(if (dip) R.string.wd_mix_dip else R.string.wd_mix_bounce), color = TextDim, fontSize = 11.sp,
+                textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+        } else plan.basis?.let {
+            Text(stringResource(R.string.wd_basis, scHorizon(it)), color = TextDim, fontSize = 11.sp,
+                textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+        }
         if (d.isDemo) Text(stringResource(R.string.demo_banner), color = WaitGold, fontSize = 11.sp, textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth())
     }

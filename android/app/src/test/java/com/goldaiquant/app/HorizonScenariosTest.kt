@@ -50,17 +50,39 @@ class HorizonScenariosTest {
         assertEquals(Likely.NONE, HorizonScenarios.of(card("WEEK"), brief("DOWN"), false).likely)  // hours only
     }
 
-    @Test fun adviceForEachCase() {
-        val down = HorizonScenarios.of(card(a = Action.SELL), null, false)
-        assertEquals(Advice.SELL_NOW to 69.0, HorizonScenarios.advice(down, hold = true))
-        assertEquals(Advice.WAIT_BUY_LOWER to 69.0, HorizonScenarios.advice(down, hold = false))
-        val up = HorizonScenarios.of(card(a = Action.BUY), null, false)
-        assertEquals(Advice.KEEP_SELL_HIGHER to 75.0, HorizonScenarios.advice(up, hold = true))
-        assertEquals(Advice.BUY_NOW to null, HorizonScenarios.advice(up, hold = false))
-        val none = HorizonScenarios.of(card(), null, false)
-        assertEquals(Advice.NOTHING to null, HorizonScenarios.advice(none, true))
-        val between = HorizonScenarios.of(card("HOURS"), brief("NONE"), false)
-        assertEquals(Advice.NOTHING to null, HorizonScenarios.advice(between, false))
+    private val P = HorizonScenarios
+    private fun hv(a: Action) = P.of(card("HOURS", a), null, false)      // hours: down 70→69, up 74→75
+    private fun wv(a: Action) = P.of(card("WEEK", a).copy(levels = Levels(listOf(lv(64.0), lv(58.0)),
+        listOf(lv(80.0), lv(88.0)), true, null)), null, false)                    // week: down 64→58, up 80→88
+
+    @Test fun adviceSingleHorizon() {
+        assertEquals(HorizonScenarios.Plan(Advice.SELL_NOW, 69.0, 74.0, null, "HOURS"), P.decide(hv(Action.SELL), wv(Action.WAIT), true))
+        assertEquals(HorizonScenarios.Plan(Advice.WAIT_BUY_LOWER, 69.0, 74.0, null, "HOURS"), P.decide(hv(Action.SELL), wv(Action.WAIT), false))
+        assertEquals(HorizonScenarios.Plan(Advice.KEEP_SELL_HIGHER, 75.0, 70.0, null, "HOURS"), P.decide(hv(Action.BUY), wv(Action.WAIT), true))
+        assertEquals(HorizonScenarios.Plan(Advice.BUY_NOW, null, 70.0, null, "HOURS"), P.decide(hv(Action.BUY), wv(Action.WAIT), false))
+        // hours agree with the week: hours drive
+        assertEquals(HorizonScenarios.Plan(Advice.SELL_NOW, 69.0, 74.0, null, "HOURS"), P.decide(hv(Action.SELL), wv(Action.SELL), true))
+        // hours have no direction: the week drives with its own levels
+        assertEquals(HorizonScenarios.Plan(Advice.KEEP_SELL_HIGHER, 88.0, 64.0, null, "WEEK"), P.decide(hv(Action.WAIT), wv(Action.BUY), true))
+        assertEquals(HorizonScenarios.Plan(Advice.WAIT_BUY_LOWER, 58.0, 80.0, null, "WEEK"), P.decide(hv(Action.WAIT), wv(Action.SELL), false))
+        assertEquals(HorizonScenarios.Plan(Advice.NOTHING, null, null, null, null), P.decide(hv(Action.WAIT), wv(Action.WAIT), true))
+        assertEquals(Advice.NOTHING, P.decide(null, null, false).advice)
+    }
+
+    @Test fun adviceMixedHorizons() {
+        // a dip inside a weekly rise: sell now, buy back lower; exit above the hours up trigger
+        assertEquals(HorizonScenarios.Plan(Advice.SELL_NOW, 69.0, 74.0, HorizonScenarios.Mix.DIP_IN_UPTREND, "HOURS"), P.decide(hv(Action.SELL), wv(Action.BUY), true))
+        assertEquals(HorizonScenarios.Plan(Advice.WAIT_BUY_LOWER, 69.0, 74.0, HorizonScenarios.Mix.DIP_IN_UPTREND, "HOURS"), P.decide(hv(Action.SELL), wv(Action.BUY), false))
+        // a bounce inside a weekly fall: holder sells higher, cash does not buy
+        assertEquals(HorizonScenarios.Plan(Advice.KEEP_SELL_HIGHER, 75.0, 70.0, HorizonScenarios.Mix.BOUNCE_IN_DOWNTREND, "HOURS"), P.decide(hv(Action.BUY), wv(Action.SELL), true))
+        assertEquals(HorizonScenarios.Plan(Advice.DONT_BUY, null, null, HorizonScenarios.Mix.BOUNCE_IN_DOWNTREND, "HOURS"), P.decide(hv(Action.BUY), wv(Action.SELL), false))
+    }
+
+    @Test fun staysBetweenIsNoDirection() {
+        val between = P.of(card("HOURS"), brief("NONE"), false)
+        assertEquals(Likely.BETWEEN, between.likely)
+        assertEquals(Advice.NOTHING, P.decide(between, wv(Action.WAIT), true).advice)
+        assertEquals("WEEK", P.decide(between, wv(Action.BUY), true).basis)
     }
 
     @Test fun noLevelsNoLikely() {

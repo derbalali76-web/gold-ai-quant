@@ -675,6 +675,21 @@
     <string name="wd_nothing">Ne faites rien pour l\'instant</string>
     <string name="wd_nothing_sub">Attendez qu\'une tendance claire apparaisse</string>
     <string name="wd_basis">Selon le scénario de %1$s</string>
+    <string name="wd_hold_week">puis conservez pour la hausse de la semaine</string>
+    <string name="wd_buy_back_sub">et rachetez à %1$s</string>
+    <string name="wd_dont_buy">N\'achetez pas maintenant</string>
+    <string name="wd_dont_buy_sub">La hausse actuelle est courte et la semaine penche à la baisse</string>
+    <string name="wd_exit_rebuy">↩︎ Si le prix passe d\'abord au-dessus de %1$s — rachetez</string>
+    <string name="wd_exit_buy">↩︎ Si le prix passe d\'abord au-dessus de %1$s — achetez</string>
+    <string name="wd_exit_sell">↩︎ Si le prix passe d\'abord sous %1$s — vendez</string>
+    <string name="wd_exit_sell_after">↩︎ Si le prix passe sous %1$s après l\'achat — vendez</string>
+    <string name="wd_agree_auto">↪︎ Quand les deux horizons s\'accordent, le conseil change ici tout seul</string>
+    <string name="wd_mix_dip">La baisse des heures est une correction dans la hausse de la semaine</string>
+    <string name="wd_mix_bounce">La hausse des heures est un rebond dans la baisse de la semaine</string>
+    <string name="wd_short_down">▼ baisse courte</string>
+    <string name="wd_short_up">▲ hausse courte</string>
+    <string name="wd_w_up">▲ hausse</string>
+    <string name="wd_w_down">▼ baisse</string>
     <string name="r_w_up" formatted="false">haussière</string>
     <string name="r_w_down" formatted="false">baissière</string>
     <string name="r_w_neutral" formatted="false">neutre</string>

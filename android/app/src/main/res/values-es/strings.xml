@@ -675,6 +675,21 @@
     <string name="wd_nothing">No hagas nada por ahora</string>
     <string name="wd_nothing_sub">Espera a que aparezca una inclinación clara</string>
     <string name="wd_basis">Según el escenario de %1$s</string>
+    <string name="wd_hold_week">y luego mantén para la subida semanal</string>
+    <string name="wd_buy_back_sub">y vuelve a comprar a %1$s</string>
+    <string name="wd_dont_buy">No compres ahora</string>
+    <string name="wd_dont_buy_sub">La subida actual es corta y la semana se inclina a la baja</string>
+    <string name="wd_exit_rebuy">↩︎ Si el precio sube primero por encima de %1$s — recompra</string>
+    <string name="wd_exit_buy">↩︎ Si el precio sube primero por encima de %1$s — compra</string>
+    <string name="wd_exit_sell">↩︎ Si el precio baja primero de %1$s — vende</string>
+    <string name="wd_exit_sell_after">↩︎ Si el precio baja de %1$s después de comprar — vende</string>
+    <string name="wd_agree_auto">↪︎ Cuando los dos horizontes coincidan, el consejo cambia aquí solo</string>
+    <string name="wd_mix_dip">La bajada de las horas es una corrección dentro de la subida semanal</string>
+    <string name="wd_mix_bounce">La subida de las horas es un rebote dentro de la bajada semanal</string>
+    <string name="wd_short_down">▼ bajada corta</string>
+    <string name="wd_short_up">▲ subida corta</string>
+    <string name="wd_w_up">▲ subida</string>
+    <string name="wd_w_down">▼ bajada</string>
     <string name="r_w_up" formatted="false">alcista</string>
     <string name="r_w_down" formatted="false">bajista</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

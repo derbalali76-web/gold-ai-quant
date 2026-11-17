@@ -32,6 +32,9 @@ from pathlib import Path
 from typing import Optional
 from zoneinfo import ZoneInfo
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import advice as ADV  # noqa: E402  advice-0.1.0 (pre-registered 2026-11-17)
+
 NY = ZoneInfo("America/New_York")
 
 GENESIS = "0" * 64
@@ -155,7 +158,8 @@ class Ledger:
     # -------- queries
     def open_items(self, kind: str) -> list[dict]:
         done = {e["data"]["ref"] for e in self.entries
-                if e["kind"] in ("RESULT", "BRIEF_RESULT", "SCENARIO_RESULT", "RANGE_RESULT", "HILO_RESULT")}
+                if e["kind"] in ("RESULT", "BRIEF_RESULT", "SCENARIO_RESULT", "RANGE_RESULT", "HILO_RESULT",
+                                 "ADVICE_RESULT")}
         return [e for e in self.entries if e["kind"] == kind and e["seq"] not in done]
 
     def sorted_bars(self, tf: str, asset: str = "XAU") -> list[tuple[datetime, float, float, float, float]]:
@@ -181,6 +185,7 @@ class Ledger:
         if fresh:
             self._record_recs(snap, now, asset)
             self._record_brief(snap, now, asset)
+            self._record_advice(snap, now, asset)
         self._record_ranges(snap, now, asset)
         self._record_hilo(snap, now, asset)
         self._resolve(now)
@@ -228,6 +233,36 @@ class Ledger:
         # strategy layer: CASH / HOLDING scenarios registered in the SAME run as the forecast, before any outcome
         for sc in build_scenarios(br, float(snap.get("cost") or 0.0), now):
             self.append("SCENARIO", sc, now)
+
+    def _record_advice(self, snap, now, asset="XAU"):
+        """advice-0.1.0: the app's «ماذا أفعل؟» for a holder and for cash, once per asset per UTC day."""
+        if snap.get("market_closed") or snap.get("mode", "LIVE") != "LIVE":
+            return
+        day = now.date().isoformat()
+        if any(e["kind"] == "ADVICE" and e["data"]["date"] == day and asset_of(e) == asset for e in self.entries):
+            return
+        a = ADV.record(snap)
+        if a is None:
+            return
+        self.append("ADVICE", {"fid": forecast_id(asset, "ADVICE", day, snap["as_of"], ADV.VERSION), "asset": asset,
+                               "date": day, "price_at_record": float(snap["price"]),
+                               "cost": float(snap.get("cost") or 0.0), "source_as_of": snap["as_of"],
+                               "expires": iso(now + ADV.WINDOW), **a}, now)
+
+    def _resolve_advice(self, now):
+        for e in self.open_items("ADVICE"):
+            d, rec = e["data"], ts(e["recorded_at"])
+            exp, step = ts(d["expires"]), timedelta(hours=1)
+            bars = self.sorted_bars("H1", asset_of(e))
+            later = [b for b in bars if b[0] >= rec and b[0] + step <= now]
+            if not (now >= exp + step or (later and later[-1][0] >= exp)):
+                continue
+            window = [b for b in later if b[0] < exp]
+            if not window:
+                self.append("ADVICE_RESULT", {"ref": e["seq"], "outcome": "NO_DATA"}, now)
+                continue
+            out = ADV.score(d, d["price_at_record"], d["cost"], window)
+            self.append("ADVICE_RESULT", {"ref": e["seq"], "outcome": "SCORED", **out}, now)
 
     def _record_ranges(self, snap, now, asset="XAU"):
         """Price-range engine (experimental): one 80 % close interval per horizon on a fixed cadence, recorded within
@@ -334,6 +369,7 @@ class Ledger:
                 self.append("RANGE_RESULT", {"ref": e["seq"], "outcome": "NO_DATA"}, now)
 
     def _resolve(self, now):
+        self._resolve_advice(now)
         self._resolve_ranges(now)
         self._resolve_hilo(now)
         for e in self.open_items("SCENARIO"):
@@ -745,6 +781,7 @@ def stats(entries: list[dict], now: datetime) -> dict:
     out["ranges"] = range_stats(entries)
     out["hilo"] = hilo_stats(entries)
     out["completeness"] = completeness(entries, now)
+    out["advice"] = advice_stats(entries)
     out["assets"] = {a: _stats(entries, now, a) for a in ASSETS}
     for v in out["assets"].values():
         for k in ("chain_head", "lines", "schema", "updated_at"):
@@ -812,6 +849,19 @@ def _stats(entries: list[dict], now: datetime, asset: str) -> dict:
                      if scored_b else None},
         "recent": recent,
     }
+
+
+def advice_stats(entries: list[dict]) -> dict:
+    adv = {e["seq"]: e for e in entries if e["kind"] == "ADVICE"}
+    rows = []
+    for r in entries:
+        if r["kind"] == "ADVICE_RESULT" and r["data"].get("outcome") == "SCORED" and r["data"]["ref"] in adv:
+            a = adv[r["data"]["ref"]]["data"]
+            rows.append({"asset": a["asset"], "date": a["date"], "hold_advice": a["hold"]["advice"],
+                         "cash_advice": a["cash"]["advice"], "mix": a["hold"].get("mix"), "result": r["data"]})
+    s = ADV.stats(rows)
+    s["recorded"] = len(adv)
+    return s
 
 
 def write_stats(led: Ledger, now: datetime) -> dict:

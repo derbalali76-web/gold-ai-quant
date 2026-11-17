@@ -116,6 +116,11 @@ def test_public_snapshot_endpoint_feeds_ledger(tmp_path, monkeypatch):
     assert isinstance(s["bars"]["H1"], list)
     for rec in s["recommendations"]:
         assert rec["stop"] and rec["target"]
+    # advice-0.1.0: the per-horizon inputs of «ماذا أفعل؟» are public too
+    hz = {o["horizon"]: o for o in s["outlooks"]}
+    assert {"HOURS", "WEEK"} <= set(hz)
+    for o in s["outlooks"]:
+        assert o["action"] in ("BUY", "SELL", "WAIT", "UNAVAILABLE") and len(o["supports"]) <= 2
     (tmp_path / "led").mkdir()
     led = L.Ledger(tmp_path / "led")
     led.ingest(s, L.ts(s["as_of"]) + timedelta(minutes=1))

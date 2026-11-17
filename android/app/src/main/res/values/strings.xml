@@ -676,6 +676,21 @@
     <string name="wd_nothing">Do nothing for now</string>
     <string name="wd_nothing_sub">Wait until a clear lean appears</string>
     <string name="wd_basis">Based on the scenario of %1$s</string>
+    <string name="wd_hold_week">then keep it for the weekly rise</string>
+    <string name="wd_buy_back_sub">and buy again at %1$s</string>
+    <string name="wd_dont_buy">Do not buy now</string>
+    <string name="wd_dont_buy_sub">The current rise is short, and the week leans down</string>
+    <string name="wd_exit_rebuy">↩︎ If the price rises above %1$s first — buy back</string>
+    <string name="wd_exit_buy">↩︎ If the price rises above %1$s first — buy</string>
+    <string name="wd_exit_sell">↩︎ If the price falls below %1$s first — sell</string>
+    <string name="wd_exit_sell_after">↩︎ If the price falls below %1$s after buying — sell</string>
+    <string name="wd_agree_auto">↪︎ When the two horizons agree, the advice here changes by itself</string>
+    <string name="wd_mix_dip">The hours dip is a correction inside the weekly rise</string>
+    <string name="wd_mix_bounce">The hours rise is a bounce inside the weekly fall</string>
+    <string name="wd_short_down">▼ short fall</string>
+    <string name="wd_short_up">▲ short rise</string>
+    <string name="wd_w_up">▲ rise</string>
+    <string name="wd_w_down">▼ fall</string>
     <string name="r_w_up" formatted="false">up</string>
     <string name="r_w_down" formatted="false">down</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

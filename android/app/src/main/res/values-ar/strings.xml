@@ -675,6 +675,21 @@
     <string name="wd_nothing">لا تفعل شيئاً الآن</string>
     <string name="wd_nothing_sub">انتظر حتى يظهر ترجيح واضح</string>
     <string name="wd_basis">حسب سيناريو %1$s</string>
+    <string name="wd_hold_week">ثم احتفظ لصعود الأسبوع</string>
+    <string name="wd_buy_back_sub">واشترِ من جديد عند %1$s</string>
+    <string name="wd_dont_buy">لا تشترِ الآن</string>
+    <string name="wd_dont_buy_sub">الصعود الحالي قصير، والأسبوع يميل للهبوط</string>
+    <string name="wd_exit_rebuy">↩︎ إن صعد السعر فوق %1$s قبل ذلك — أعد الشراء</string>
+    <string name="wd_exit_buy">↩︎ إن صعد السعر فوق %1$s قبل ذلك — اشترِ</string>
+    <string name="wd_exit_sell">↩︎ إن نزل السعر تحت %1$s قبل ذلك — بِع</string>
+    <string name="wd_exit_sell_after">↩︎ إن نزل السعر تحت %1$s بعد الشراء — بِع</string>
+    <string name="wd_agree_auto">↪︎ عندما يتفق الإطاران تتغير النصيحة هنا تلقائياً</string>
+    <string name="wd_mix_dip">هبوط الساعات تصحيح داخل صعود الأسبوع</string>
+    <string name="wd_mix_bounce">صعود الساعات ارتداد داخل هبوط الأسبوع</string>
+    <string name="wd_short_down">▼ هبوط قصير</string>
+    <string name="wd_short_up">▲ صعود قصير</string>
+    <string name="wd_w_up">▲ صعود</string>
+    <string name="wd_w_down">▼ هبوط</string>
     <string name="r_w_up" formatted="false">صاعد</string>
     <string name="r_w_down" formatted="false">هابط</string>
     <string name="r_w_neutral" formatted="false">محايد</string>

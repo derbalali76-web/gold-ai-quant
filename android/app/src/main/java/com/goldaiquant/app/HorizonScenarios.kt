@@ -19,7 +19,7 @@ object HorizonScenarios {
 
     data class View(val down: Side?, val up: Side?, val likely: Likely)
 
-    enum class Advice { SELL_NOW, WAIT_BUY_LOWER, KEEP_SELL_HIGHER, BUY_NOW, NOTHING }
+    enum class Advice { SELL_NOW, WAIT_BUY_LOWER, KEEP_SELL_HIGHER, BUY_NOW, DONT_BUY, NOTHING }
 
     private fun same(a: Double, b: Double) = kotlin.math.abs(a - b) <= maxOf(0.011, kotlin.math.abs(b) * 1e-7)
 
@@ -60,13 +60,38 @@ object HorizonScenarios {
         return when (o.likely) { "DOWN" -> Likely.DOWN; "UP" -> Likely.UP; "NONE" -> Likely.BETWEEN; else -> null }
     }
 
-    /** The one instruction for «ماذا أفعل؟» and the price it names (null for BUY_NOW / NOTHING). */
-    fun advice(v: View, hold: Boolean): Pair<Advice, Double?> = when (v.likely) {
-        Likely.DOWN -> {
-            val at = v.down!!.target ?: v.down.trigger
-            if (hold) Advice.SELL_NOW to at else Advice.WAIT_BUY_LOWER to at
+    enum class Mix { DIP_IN_UPTREND, BOUNCE_IN_DOWNTREND }
+
+    /**
+     * advice-0.1.0 (owner-approved 2026-11-17, pre-registered in the public ledger before any outcome):
+     * one instruction from the HOURS and WEEK views, whatever tab is open.
+     *  - hours DOWN + week UP (a dip inside a weekly rise): holder sells now and buys back at the hours down target,
+     *    cash waits to buy there; exit = the hours up trigger (rebuy / buy if it is crossed first);
+     *  - hours UP + week DOWN (a bounce inside a weekly fall): holder keeps and sells at the hours up target
+     *    (exit: sell below the hours down trigger); cash does not buy;
+     *  - otherwise the first horizon with a direction (hours, then week) drives:
+     *    DOWN → holder sells now / cash waits, both at its down target, exit above its up trigger;
+     *    UP → holder keeps and sells at its up target / cash buys now, exit below its down trigger;
+     *  - no direction (none, «stays between») → nothing.
+     */
+    data class Plan(val advice: Advice, val at: Double?, val exit: Double?, val mix: Mix?, val basis: String?)
+
+    private fun dir(v: View?) = when (v?.likely) { Likely.DOWN -> -1; Likely.UP -> 1; else -> 0 }
+    private fun downAt(v: View) = v.down?.let { it.target ?: it.trigger }
+    private fun upAt(v: View) = v.up?.let { it.target ?: it.trigger }
+
+    fun decide(hours: View?, week: View?, hold: Boolean): Plan {
+        val h = dir(hours); val w = dir(week)
+        if (h == -1 && w == 1) {
+            val at = downAt(hours!!); val exit = hours.up?.trigger
+            return Plan(if (hold) Advice.SELL_NOW else Advice.WAIT_BUY_LOWER, at, exit, Mix.DIP_IN_UPTREND, "HOURS")
         }
-        Likely.UP -> if (hold) Advice.KEEP_SELL_HIGHER to (v.up!!.target ?: v.up.trigger) else Advice.BUY_NOW to null
-        else -> Advice.NOTHING to null
+        if (h == 1 && w == -1) {
+            return if (hold) Plan(Advice.KEEP_SELL_HIGHER, upAt(hours!!), hours.down?.trigger, Mix.BOUNCE_IN_DOWNTREND, "HOURS")
+            else Plan(Advice.DONT_BUY, null, null, Mix.BOUNCE_IN_DOWNTREND, "HOURS")
+        }
+        val (v, basis) = when { h != 0 -> hours!! to "HOURS"; w != 0 -> week!! to "WEEK"; else -> return Plan(Advice.NOTHING, null, null, null, null) }
+        return if (dir(v) == -1) Plan(if (hold) Advice.SELL_NOW else Advice.WAIT_BUY_LOWER, downAt(v), v.up?.trigger, null, basis)
+        else Plan(if (hold) Advice.KEEP_SELL_HIGHER else Advice.BUY_NOW, if (hold) upAt(v) else null, v.down?.trigger, null, basis)
     }
 }

@@ -490,6 +490,10 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
             return d
         return refresh_live()
 
+    def _lv(d: Decision, o) -> tuple[list, list]:
+        blk = d.levels if o.horizon == "HOURS" else o.levels
+        return (blk.supports, blk.resistances) if blk is not None else ([], [])
+
     def public_snapshot(d: Decision, with_bars: bool = True) -> dict:
         """What the public trust ledger records: only published recommendations, today's analysis and closed bars.
         No token needed: it contains nothing that is not shown in the app, and it is what makes the record checkable."""
@@ -520,7 +524,15 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
                 # for the public monitor: is the analysis healthy right now?
                 "health": d.data_health.status if d.data_health else None, "action": d.action.value,
                 "quote_time": d.quote_timestamp_utc.isoformat() if d.quote_timestamp_utc else None,
-                "app_crashes_7d": crashes_recent()}
+                "app_crashes_7d": crashes_recent(),
+                # beginner advice (advice-0.1.0): what the app's «ماذا أفعل؟» is built from, per horizon
+                "outlooks": [{"horizon": o.horizon, "action": o.action.value,
+                              "plan_side": (o.plan.side if o.plan is not None and o.plan.recommendation
+                                            and d.mode == Mode.LIVE else None),
+                              # the app's HOURS card shows the decision's own levels; WEEK / MONTH their outlook's
+                              "supports": [lv.price for lv in _lv(d, o)[0]][:2],
+                              "resistances": [lv.price for lv in _lv(d, o)[1]][:2]}
+                             for o in d.outlooks]}
 
     crash_log = st.data_dir / "crashes.jsonl"
 
