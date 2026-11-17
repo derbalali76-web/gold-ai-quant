@@ -89,6 +89,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.goldaiquant.app.TrackItem
 import com.goldaiquant.app.Plan
 import com.goldaiquant.app.Brief
+import com.goldaiquant.app.ScenarioOdds
 import com.goldaiquant.app.SourceStatus
 import com.goldaiquant.app.Scenario
 import com.goldaiquant.app.Check
@@ -894,17 +895,44 @@ private fun CheckSection(list: List<Check>) {
 @Composable
 private fun BriefLines(b: Brief, s: UiState? = null, price: Double? = null, onBell: (PriceAlert) -> Unit = {}) {
     Text(stringResource(R.string.card_sc_title), color = Gold, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+    val odds = ScenarioOdds.of(b)
     b.scenarios.take(2).forEach { sc ->
         val col = if (sc.kind == "BULL") BuyGreen else SellRed
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 2.dp)) {
             Text(if (sc.kind == "BULL") "▲ " else "▼ ", color = col, fontSize = 13.sp)
+            if (odds?.likely == sc.kind) Text(stringResource(R.string.sc_likely), color = Color.Black, fontSize = 11.sp,
+                fontWeight = FontWeight.Black, maxLines = 1,
+                modifier = Modifier.padding(end = 6.dp).background(Gold, RoundedCornerShape(8.dp)).padding(horizontal = 6.dp))
             Text(briefLine(sc), color = col, fontSize = 14.sp, fontWeight = FontWeight.SemiBold, lineHeight = 20.sp,
                 modifier = Modifier.weight(1f))
+            if (odds != null) OddsPill(odds.pct(sc.kind), sc.kind == "BULL")
             if (s != null) BellChip(PriceAlerts.isOn(s.priceAlerts, s.asset, sc.trigger), compact = true) {
                 onBell(PriceAlerts.make(s.asset, sc.trigger, price, sc.triggerLevel))
             }
         }
     }
+    if (odds != null) {
+        Text(if (odds.windowHours == 48) stringResource(R.string.sc_pct_note_2d) else stringResource(R.string.sc_pct_note_h, odds.windowHours),
+            color = TextDim, fontSize = 11.5.sp, lineHeight = 16.sp)
+        odds.likely?.let { k ->
+            val p = odds.pct(k)
+            val times = Math.round(p / 10.0).toInt()
+            val text = if (k == "BULL") stringResource(R.string.sc_pct_explain_up, p, ltr(odds.upLevel.p2()), ltr(odds.downLevel.p2()), times)
+                else stringResource(R.string.sc_pct_explain_down, p, ltr(odds.downLevel.p2()), ltr(odds.upLevel.p2()), times)
+            Text(text, color = TextMain, fontSize = 13.sp, lineHeight = 20.sp,
+                modifier = Modifier.fillMaxWidth().padding(top = 4.dp).background(Color(0xFF0E0D11), RoundedCornerShape(12.dp))
+                    .padding(horizontal = 10.dp, vertical = 8.dp))
+        }
+    }
+}
+
+@Composable
+private fun OddsPill(pct: Int, up: Boolean) {
+    val shape = RoundedCornerShape(10.dp)
+    Text(ltr(stringResource(R.string.sc_pct, pct)), color = if (up) BuyGreen else SellRed, fontSize = 12.5.sp,
+        fontWeight = FontWeight.Black, maxLines = 1,
+        modifier = Modifier.padding(start = 6.dp).background((if (up) BuyGreen else SellRed).copy(alpha = 0.15f), shape)
+            .border(1.dp, (if (up) BuyGreen else SellRed).copy(alpha = 0.6f), shape).padding(horizontal = 8.dp, vertical = 2.dp))
 }
 
 @Composable

@@ -482,6 +482,12 @@
     <string name="what_next">Que pourrait-il se passer ?</string>
     <string name="ft_title2">Lequel le prix atteint-il d\'abord, en général ?</string>
     <string name="ft_down">Baisse vers %1$s : %2$d%%</string>
+    <string name="sc_likely">Le plus probable</string>
+    <string name="sc_pct">%1$d%%</string>
+    <string name="sc_pct_note_2d">%% = lequel s\'est produit en premier dans des cas passés similaires, en deux jours.</string>
+    <string name="sc_pct_note_h">%% = lequel s\'est produit en premier dans des cas passés similaires, en %1$d heures.</string>
+    <string name="sc_pct_explain_up">Que signifie %1$d%% ? Sur 10 fois où le prix était dans une situation similaire, il est monté à %2$s avant de descendre à %3$s environ %4$d fois.</string>
+    <string name="sc_pct_explain_down">Que signifie %1$d%% ? Sur 10 fois où le prix était dans une situation similaire, il est descendu à %2$s avant de monter à %3$s environ %4$d fois.</string>
     <string name="ft_up">Hausse vers %1$s : %2$d%%</string>
     <string name="zone_follow2">🔔 M\'alerter quand le prix approche de ces chiffres</string>
     <string name="zone_follow2_on">✓ Alertes activées pour ces chiffres</string>

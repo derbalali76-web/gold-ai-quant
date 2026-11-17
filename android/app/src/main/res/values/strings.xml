@@ -483,6 +483,12 @@
     <string name="what_next">What could happen?</string>
     <string name="ft_title2">Which does the price usually reach first?</string>
     <string name="ft_down">Down to %1$s: %2$d%%</string>
+    <string name="sc_likely">Most likely</string>
+    <string name="sc_pct">%1$d%%</string>
+    <string name="sc_pct_note_2d">%% = which one happened first in similar past cases, within two days.</string>
+    <string name="sc_pct_note_h">%% = which one happened first in similar past cases, within %1$d hours.</string>
+    <string name="sc_pct_explain_up">What does %1$d%% mean? Out of every 10 times the price was in a similar position, it rose to %2$s before falling to %3$s about %4$d times.</string>
+    <string name="sc_pct_explain_down">What does %1$d%% mean? Out of every 10 times the price was in a similar position, it fell to %2$s before rising to %3$s about %4$d times.</string>
     <string name="ft_up">Up to %1$s: %2$d%%</string>
     <string name="zone_follow2">🔔 Alert me when the price nears these numbers</string>
     <string name="zone_follow2_on">✓ Alerts on for these numbers</string>

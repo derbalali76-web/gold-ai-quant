@@ -56,6 +56,29 @@ data class Brief(val date: String, val bias: String, val scenarios: List<Scenari
 data class FirstTouch(val downFirst: Double, val upFirst: Double, val n: Int, val days: Int, val windowHours: Int,
                       val downLevel: Double, val upLevel: Double)
 
+/** Option B (approved by the owner 2026-11-17): next to each of today's two scenarios, how often its level was
+ *  reached FIRST in similar past cases (the server's first_touch, shown only when it held out of sample).
+ *  Percentages always add up to 100; [likely] is the larger side, none on a tie. Null unless the first-touch levels
+ *  are exactly today's two scenario triggers. */
+data class ScenarioOdds(val downPct: Int, val upPct: Int, val likely: String?, val windowHours: Int,
+                        val downLevel: Double, val upLevel: Double) {
+    fun pct(kind: String): Int = if (kind == "BULL") upPct else downPct
+
+    companion object {
+        fun of(b: Brief?): ScenarioOdds? {
+            val ft = b?.firstTouch ?: return null
+            val bear = b.scenarios.firstOrNull { it.kind == "BEAR" } ?: return null
+            val bull = b.scenarios.firstOrNull { it.kind == "BULL" } ?: return null
+            fun same(a: Double, c: Double) = kotlin.math.abs(a - c) <= maxOf(0.011, kotlin.math.abs(c) * 1e-7)
+            if (!same(bear.trigger, ft.downLevel) || !same(bull.trigger, ft.upLevel)) return null
+            val down = Math.round(ft.downFirst * 100).toInt().coerceIn(0, 100)
+            val up = 100 - down
+            val likely = when { up > down -> "BULL"; down > up -> "BEAR"; else -> null }
+            return ScenarioOdds(down, up, likely, ft.windowHours, ft.downLevel, ft.upLevel)
+        }
+    }
+}
+
 /** v1.9: the last closed hour broke a level — a fact to watch, not a recommendation. */
 data class ScenarioEvent(val kind: String, val level: Double, val levelName: String, val target: Double?,
                          val targetName: String?, val hourUtc: String)
