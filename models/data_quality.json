@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-16T13:00:18.895014+00:00",
+ "generated_at": "2026-11-17T13:41:55.880035+00:00",
  "series": {
   "Dukascopy:XAUUSD:M15": {
    "history": {
@@ -8,7 +8,7 @@
      {
       "code": "freshness",
       "status": "FAIL",
-      "value": "52"
+      "value": "54"
      },
      {
       "code": "coverage",
@@ -46,9 +46,9 @@
       "value": "0.018%/0.32%"
      }
     ],
-    "bars": 254564,
+    "bars": 254656,
     "first": "2016-01-03 23:00:00+00:00",
-    "last": "2026-11-15 23:45:00+00:00"
+    "last": "2026-11-16 23:45:00+00:00"
    },
    "last_7_days": {
     "status": "FAIL",
@@ -56,7 +56,7 @@
      {
       "code": "freshness",
       "status": "FAIL",
-      "value": "52"
+      "value": "54"
      },
      {
       "code": "coverage",
@@ -94,9 +94,9 @@
       "value": "0.018%/0.24%"
      }
     ],
-    "bars": 407,
+    "bars": 405,
     "first": "2016-01-03 23:00:00+00:00",
-    "last": "2026-11-15 23:45:00+00:00"
+    "last": "2026-11-16 23:45:00+00:00"
    }
   },
   "Dukascopy:XAUUSD:H1": {
@@ -144,9 +144,9 @@
       "value": "0.018%/0.46%"
      }
     ],
-    "bars": 63703,
+    "bars": 63726,
     "first": "2016-01-03 23:00:00+00:00",
-    "last": "2026-11-15 23:00:00+00:00"
+    "last": "2026-11-16 23:00:00+00:00"
    },
    "last_7_days": {
     "status": "FAIL",
@@ -189,12 +189,12 @@
      {
       "code": "cross_source",
       "status": "OK",
-      "value": "0.020%/0.12%"
+      "value": "0.019%/0.12%"
      }
     ],
     "bars": 101,
     "first": "2016-01-03 23:00:00+00:00",
-    "last": "2026-11-15 23:00:00+00:00"
+    "last": "2026-11-16 23:00:00+00:00"
    }
   },
   "Dukascopy:XAGUSD:M15": {
@@ -204,12 +204,12 @@
      {
       "code": "freshness",
       "status": "FAIL",
-      "value": "52"
+      "value": "54"
      },
      {
       "code": "coverage",
       "status": "FAIL",
-      "value": "53.6%"
+      "value": "65.1%"
      },
      {
       "code": "gaps",
@@ -229,7 +229,7 @@
      {
       "code": "outliers",
       "status": "WARN",
-      "value": "8"
+      "value": "10"
      },
      {
       "code": "flat",
@@ -237,9 +237,9 @@
       "value": "2"
      }
     ],
-    "bars": 35844,
+    "bars": 43632,
     "first": "2024-02-01 00:00:00+00:00",
-    "last": "2026-11-15 23:45:00+00:00"
+    "last": "2026-11-16 23:45:00+00:00"
    },
    "last_7_days": {
     "status": "FAIL",
@@ -247,7 +247,7 @@
      {
       "code": "freshness",
       "status": "FAIL",
-      "value": "52"
+      "value": "54"
      },
      {
       "code": "coverage",
@@ -280,9 +280,9 @@
       "value": "0"
      }
     ],
-    "bars": 407,
+    "bars": 405,
     "first": "2024-02-01 00:00:00+00:00",
-    "last": "2026-11-15 23:45:00+00:00"
+    "last": "2026-11-16 23:45:00+00:00"
    }
   },
   "Dukascopy:XAGUSD:H1": {
@@ -297,7 +297,7 @@
      {
       "code": "coverage",
       "status": "FAIL",
-      "value": "53.6%"
+      "value": "65.2%"
      },
      {
       "code": "gaps",
@@ -316,8 +316,8 @@
      },
      {
       "code": "outliers",
-      "status": "OK",
-      "value": "0"
+      "status": "WARN",
+      "value": "1"
      },
      {
       "code": "flat",
@@ -325,9 +325,9 @@
       "value": "0"
      }
     ],
-    "bars": 8966,
+    "bars": 10915,
     "first": "2024-02-01 00:00:00+00:00",
-    "last": "2026-11-15 23:00:00+00:00"
+    "last": "2026-11-16 23:00:00+00:00"
    },
    "last_7_days": {
     "status": "FAIL",
@@ -359,8 +359,8 @@
      },
      {
       "code": "outliers",
-      "status": "OK",
-      "value": "0"
+      "status": "WARN",
+      "value": "1"
      },
      {
       "code": "flat",
@@ -370,7 +370,7 @@
     ],
     "bars": 101,
     "first": "2024-02-01 00:00:00+00:00",
-    "last": "2026-11-15 23:00:00+00:00"
+    "last": "2026-11-16 23:00:00+00:00"
    }
   },
   "Dukascopy:EURUSD:M15": {
@@ -380,7 +380,7 @@
      {
       "code": "freshness",
       "status": "FAIL",
-      "value": "52"
+      "value": "54"
      },
      {
       "code": "coverage",
@@ -413,9 +413,9 @@
       "value": "0"
      }
     ],
-    "bars": 192,
+    "bars": 288,
     "first": "2026-11-12 00:00:00+00:00",
-    "last": "2026-11-15 23:45:00+00:00"
+    "last": "2026-11-16 23:45:00+00:00"
    },
    "last_7_days": {
     "status": "FAIL",
@@ -423,7 +423,7 @@
      {
       "code": "freshness",
       "status": "FAIL",
-      "value": "52"
+      "value": "54"
      },
      {
       "code": "coverage",
@@ -456,9 +456,9 @@
       "value": "0"
      }
     ],
-    "bars": 192,
+    "bars": 288,
     "first": "2026-11-12 00:00:00+00:00",
-    "last": "2026-11-15 23:45:00+00:00"
+    "last": "2026-11-16 23:45:00+00:00"
    }
   },
   "Dukascopy:EURUSD:H1": {
@@ -491,14 +491,19 @@
       "value": "1"
      },
      {
+      "code": "outliers",
+      "status": "OK",
+      "value": "0"
+     },
+     {
       "code": "flat",
       "status": "OK",
       "value": "0"
      }
     ],
-    "bars": 48,
+    "bars": 72,
     "first": "2026-11-12 00:00:00+00:00",
-    "last": "2026-11-15 23:00:00+00:00"
+    "last": "2026-11-16 23:00:00+00:00"
    },
    "last_7_days": {
     "status": "FAIL",
@@ -529,14 +534,19 @@
       "value": "1"
      },
      {
+      "code": "outliers",
+      "status": "OK",
+      "value": "0"
+     },
+     {
       "code": "flat",
       "status": "OK",
       "value": "0"
      }
     ],
-    "bars": 48,
+    "bars": 72,
     "first": "2026-11-12 00:00:00+00:00",
-    "last": "2026-11-15 23:00:00+00:00"
+    "last": "2026-11-16 23:00:00+00:00"
    }
   },
   "Dukascopy:USDJPY:M15": {
@@ -546,7 +556,7 @@
      {
       "code": "freshness",
       "status": "FAIL",
-      "value": "52"
+      "value": "54"
      },
      {
       "code": "coverage",
@@ -579,9 +589,9 @@
       "value": "0"
      }
     ],
-    "bars": 96,
+    "bars": 192,
     "first": "2026-11-13 00:00:00+00:00",
-    "last": "2026-11-15 23:45:00+00:00"
+    "last": "2026-11-16 23:45:00+00:00"
    },
    "last_7_days": {
     "status": "FAIL",
@@ -589,7 +599,7 @@
      {
       "code": "freshness",
       "status": "FAIL",
-      "value": "52"
+      "value": "54"
      },
      {
       "code": "coverage",
@@ -622,9 +632,9 @@
       "value": "0"
      }
     ],
-    "bars": 96,
+    "bars": 192,
     "first": "2026-11-13 00:00:00+00:00",
-    "last": "2026-11-15 23:45:00+00:00"
+    "last": "2026-11-16 23:45:00+00:00"
    }
   },
   "Dukascopy:USDJPY:H1": {
@@ -662,9 +672,9 @@
       "value": "0"
      }
     ],
-    "bars": 24,
+    "bars": 48,
     "first": "2026-11-13 00:00:00+00:00",
-    "last": "2026-11-15 23:00:00+00:00"
+    "last": "2026-11-16 23:00:00+00:00"
    },
    "last_7_days": {
     "status": "FAIL",
@@ -700,9 +710,9 @@
       "value": "0"
      }
     ],
-    "bars": 24,
+    "bars": 48,
     "first": "2026-11-13 00:00:00+00:00",
-    "last": "2026-11-15 23:00:00+00:00"
+    "last": "2026-11-16 23:00:00+00:00"
    }
   },
   "Dukascopy:DOLLARIDXUSD:M15": {
@@ -712,7 +722,7 @@
      {
       "code": "freshness",
       "status": "FAIL",
-      "value": "252"
+      "value": "62"
      },
      {
       "code": "coverage",
@@ -745,9 +755,9 @@
       "value": "1"
      }
     ],
-    "bars": 168223,
+    "bars": 168307,
     "first": "2019-01-02 01:00:00+00:00",
-    "last": "2026-11-13 21:45:00+00:00"
+    "last": "2026-11-16 21:45:00+00:00"
    },
    "last_7_days": {
     "status": "FAIL",
@@ -755,7 +765,7 @@
      {
       "code": "freshness",
       "status": "FAIL",
-      "value": "252"
+      "value": "62"
      },
      {
       "code": "coverage",
@@ -779,8 +789,8 @@
      },
      {
       "code": "outliers",
-      "status": "WARN",
-      "value": "1"
+      "status": "OK",
+      "value": "0"
      },
      {
       "code": "flat",
@@ -788,9 +798,9 @@
       "value": "0"
      }
     ],
-    "bars": 371,
+    "bars": 369,
     "first": "2019-01-02 01:00:00+00:00",
-    "last": "2026-11-13 21:45:00+00:00"
+    "last": "2026-11-16 21:45:00+00:00"
    }
   },
   "Dukascopy:DOLLARIDXUSD:H1": {
@@ -800,7 +810,7 @@
      {
       "code": "freshness",
       "status": "FAIL",
-      "value": "63"
+      "value": "15"
      },
      {
       "code": "coverage",
@@ -833,9 +843,9 @@
       "value": "0"
      }
     ],
-    "bars": 42090,
+    "bars": 42111,
     "first": "2019-01-02 01:00:00+00:00",
-    "last": "2026-11-13 21:00:00+00:00"
+    "last": "2026-11-16 21:00:00+00:00"
    },
    "last_7_days": {
     "status": "FAIL",
@@ -843,7 +853,7 @@
      {
       "code": "freshness",
       "status": "FAIL",
-      "value": "63"
+      "value": "15"
      },
      {
       "code": "coverage",
@@ -878,7 +888,7 @@
     ],
     "bars": 92,
     "first": "2019-01-02 01:00:00+00:00",
-    "last": "2026-11-13 21:00:00+00:00"
+    "last": "2026-11-16 21:00:00+00:00"
    }
   },
   "Dukascopy:USA500IDXUSD:M15": {
@@ -888,7 +898,7 @@
      {
       "code": "freshness",
       "status": "FAIL",
-      "value": "52"
+      "value": "54"
      },
      {
       "code": "coverage",
@@ -921,9 +931,9 @@
       "value": "1"
      }
     ],
-    "bars": 178684,
+    "bars": 178773,
     "first": "2019-01-01 23:00:00+00:00",
-    "last": "2026-11-15 23:45:00+00:00"
+    "last": "2026-11-16 23:45:00+00:00"
    },
    "last_7_days": {
     "status": "FAIL",
@@ -931,7 +941,7 @@
      {
       "code": "freshness",
       "status": "FAIL",
-      "value": "52"
+      "value": "54"
      },
      {
       "code": "coverage",
@@ -955,8 +965,8 @@
      },
      {
       "code": "outliers",
-      "status": "WARN",
-      "value": "1"
+      "status": "OK",
+      "value": "0"
      },
      {
       "code": "flat",
@@ -964,9 +974,9 @@
       "value": "0"
      }
     ],
-    "bars": 392,
+    "bars": 390,
     "first": "2019-01-01 23:00:00+00:00",
-    "last": "2026-11-15 23:45:00+00:00"
+    "last": "2026-11-16 23:45:00+00:00"
    }
   },
   "Dukascopy:USA500IDXUSD:H1": {
@@ -1009,9 +1019,9 @@
       "value": "1"
      }
     ],
-    "bars": 46172,
+    "bars": 46195,
     "first": "2019-01-01 23:00:00+00:00",
-    "last": "2026-11-15 23:00:00+00:00"
+    "last": "2026-11-16 23:00:00+00:00"
    },
    "last_7_days": {
     "status": "FAIL",
@@ -1054,7 +1064,7 @@
     ],
     "bars": 101,
     "first": "2019-01-01 23:00:00+00:00",
-    "last": "2026-11-15 23:00:00+00:00"
+    "last": "2026-11-16 23:00:00+00:00"
    }
   },
   "Dukascopy:USTBONDTRUSD:M15": {
@@ -1064,7 +1074,7 @@
      {
       "code": "freshness",
       "status": "FAIL",
-      "value": "52"
+      "value": "54"
      },
      {
       "code": "coverage",
@@ -1097,9 +1107,9 @@
       "value": "2"
      }
     ],
-    "bars": 178774,
+    "bars": 178866,
     "first": "2019-01-21 00:00:00+00:00",
-    "last": "2026-11-15 23:45:00+00:00"
+    "last": "2026-11-16 23:45:00+00:00"
    },
    "last_7_days": {
     "status": "FAIL",
@@ -1107,7 +1117,7 @@
      {
       "code": "freshness",
       "status": "FAIL",
-      "value": "52"
+      "value": "54"
      },
      {
       "code": "coverage",
@@ -1131,8 +1141,8 @@
      },
      {
       "code": "outliers",
-      "status": "WARN",
-      "value": "1"
+      "status": "OK",
+      "value": "0"
      },
      {
       "code": "flat",
@@ -1140,9 +1150,9 @@
       "value": "0"
      }
     ],
-    "bars": 407,
+    "bars": 405,
     "first": "2019-01-21 00:00:00+00:00",
-    "last": "2026-11-15 23:45:00+00:00"
+    "last": "2026-11-16 23:45:00+00:00"
    }
   },
   "Dukascopy:USTBONDTRUSD:H1": {
@@ -1185,9 +1195,9 @@
       "value": "0"
      }
     ],
-    "bars": 45259,
+    "bars": 45282,
     "first": "2019-01-21 00:00:00+00:00",
-    "last": "2026-11-15 23:00:00+00:00"
+    "last": "2026-11-16 23:00:00+00:00"
    },
    "last_7_days": {
     "status": "FAIL",
@@ -1230,7 +1240,7 @@
     ],
     "bars": 101,
     "first": "2019-01-21 00:00:00+00:00",
-    "last": "2026-11-15 23:00:00+00:00"
+    "last": "2026-11-16 23:00:00+00:00"
    }
   },
   "TwelveData:XAU/USD:M15": {
@@ -1240,7 +1250,7 @@
      {
       "code": "freshness",
       "status": "FAIL",
-      "value": "45"
+      "value": "37"
      },
      {
       "code": "coverage",
@@ -1273,9 +1283,9 @@
       "value": "0"
      }
     ],
-    "bars": 430,
+    "bars": 438,
     "first": "2026-09-22 14:45:00+00:00",
-    "last": "2026-11-16 01:30:00+00:00"
+    "last": "2026-11-17 04:00:00+00:00"
    }
   },
   "TwelveData:XAU/USD:H1": {
@@ -1285,12 +1295,12 @@
      {
       "code": "freshness",
       "status": "FAIL",
-      "value": "12"
+      "value": "9"
      },
      {
       "code": "coverage",
       "status": "OK",
-      "value": "99.0%"
+      "value": "99.1%"
      },
      {
       "code": "gaps",
@@ -1318,9 +1328,9 @@
       "value": "0"
      }
     ],
-    "bars": 106,
+    "bars": 109,
     "first": "2026-04-19 22:00:00+00:00",
-    "last": "2026-11-16 00:00:00+00:00"
+    "last": "2026-11-17 03:00:00+00:00"
    }
   }
  }
