@@ -50,7 +50,24 @@ data class Check(val code: String, val ok: Boolean?, val args: List<String>, val
 data class Scenario(val kind: String, val trigger: Double, val triggerLevel: String, val target: Double?, val targetLevel: String?,
                     val histRate: Double? = null, val histN: Int = 0, val histDays: Int = 0)
 data class Brief(val date: String, val bias: String, val scenarios: List<Scenario>,
-                 val events: List<ScenarioEvent> = emptyList(), val firstTouch: FirstTouch? = null)
+                 val events: List<ScenarioEvent> = emptyList(), val firstTouch: FirstTouch? = null,
+                 val outcome3: Outcome3? = null)
+
+/** v1.17 (pre-registered): next day between today's two levels — lower first / upper first / neither (sum = 1).
+ *  likely = DOWN | UP | NONE, or null when no outcome leads by 5 points. */
+data class Outcome3(val pDown: Double, val pUp: Double, val pNone: Double, val likely: String?, val windowHours: Int,
+                    val downLevel: Double, val upLevel: Double) {
+    /** Whole percentages that always add up to 100 (largest remainder). */
+    fun percents(): Map<String, Int> {
+        val raw = mapOf("DOWN" to pDown, "UP" to pUp, "NONE" to pNone)
+        val tot = raw.values.sum().takeIf { it > 0 } ?: 1.0
+        val exact = raw.mapValues { it.value / tot * 100 }
+        val base = exact.mapValues { kotlin.math.floor(it.value).toInt() }.toMutableMap()
+        var left = 100 - base.values.sum()
+        exact.entries.sortedByDescending { it.value - kotlin.math.floor(it.value) }.forEach { if (left > 0) { base[it.key] = base[it.key]!! + 1; left-- } }
+        return base
+    }
+}
 
 /** v1.15: descriptive history (not a forecast): which of the two levels was reached first from a similar distance. */
 data class FirstTouch(val downFirst: Double, val upFirst: Double, val n: Int, val days: Int, val windowHours: Int,
@@ -462,7 +479,13 @@ object DecisionParser {
             if (dn == null || up == null || lo == null || hi == null || dn !in 0.0..1.0 || up !in 0.0..1.0) null
             else FirstTouch(dn, up, f.optInt("n", 0), f.optInt("days", 0), f.optInt("window_hours", 48), lo, hi)
         }
-        return Brief(b.optString("date"), b.optString("bias", "UNKNOWN"), sc, ev, ft)
+        val o3 = b.optJSONObject("outcome3")?.let { o ->
+            val d = o.dbl("p_down"); val u = o.dbl("p_up"); val n = o.dbl("p_none")
+            val lo = o.dbl("down_level"); val hi = o.dbl("up_level")
+            if (d == null || u == null || n == null || lo == null || hi == null || listOf(d, u, n).any { it !in 0.0..1.0 }) null
+            else Outcome3(d, u, n, o.str("likely")?.takeIf { it in setOf("DOWN", "UP", "NONE") }, o.optInt("window_hours", 24), lo, hi)
+        }
+        return Brief(b.optString("date"), b.optString("bias", "UNKNOWN"), sc, ev, ft, o3)
     }
 
     private fun parsePlan(p: JSONObject): Plan? {

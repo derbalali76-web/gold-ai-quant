@@ -7,7 +7,7 @@ from typing import Any, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-SCHEMA_VERSION = "1.16.0"
+SCHEMA_VERSION = "1.17.0"
 
 
 class Action(str, Enum):
@@ -284,6 +284,22 @@ class FirstTouch(BaseModel):
     up_level: float
 
 
+class Outcome3(BaseModel):
+    """v1.17 (pre-registered brief.OC_PREREG): what happens in the next day between today's two scenario levels —
+    lower reached first / upper reached first / neither. Shares of similar past cases (out-of-sample stable), adding
+    up to 1. likely = the top outcome when it leads the second by >= 5 points, else None (no clear most-likely)."""
+    model_config = ConfigDict(extra="forbid")
+    p_down: float = Field(ge=0.0, le=1.0)
+    p_up: float = Field(ge=0.0, le=1.0)
+    p_none: float = Field(ge=0.0, le=1.0)
+    likely: Optional[str] = None  # DOWN | UP | NONE
+    n: int
+    window_hours: int
+    down_level: float
+    up_level: float
+    version: str
+
+
 class DailyBrief(BaseModel):
     """Every day, even when no trade is validated: today's bias and the two levels that would change the picture."""
     model_config = ConfigDict(extra="forbid")
@@ -294,6 +310,7 @@ class DailyBrief(BaseModel):
     events: list[ScenarioEvent] = Field(default_factory=list)  # v1.9
     source: str = "H1_LEVELS"  # H1_LEVELS | DAILY_LEVELS
     first_touch: Optional[FirstTouch] = None  # v1.15
+    outcome3: Optional[Outcome3] = None  # v1.17
 
 
 class HorizonOutlook(BaseModel):

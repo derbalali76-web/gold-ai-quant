@@ -410,3 +410,23 @@ def test_monitor_needs_two_unreachable_runs_before_alerting(tmp_path, monkeypatc
     assert json.loads((tmp_path / "monitor.json").read_text())["assets"]["ETH"]["problems"]
     M.main([str(tmp_path / "snap_ETH.json")])
     assert [x for x in out if x.startswith("ALERT ETH: server unreachable")]
+
+
+def test_outcome3_recorded_with_brief_and_settled_from_bars(tmp_path):
+    led = L.Ledger(tmp_path)
+    now = datetime(2026, 11, 18, 0, 5, tzinfo=timezone.utc)
+    o3 = {"p_down": 0.53, "p_up": 0.24, "p_none": 0.23, "likely": "DOWN", "n": 2899, "window_hours": 24,
+          "down_level": 98.0, "up_level": 103.0, "version": "outcome3-0.1.0"}
+    snap = {"as_of": L.iso(now), "asset": "SOL", "price": 100.0, "model_version": "m",
+            "brief": {"date": "2026-11-18", "bias": "SIDEWAYS", "scenarios": [], "outcome3": o3},
+            "bars": {"H1": [], "D1": []}}
+    led.ingest(snap, now)
+    b = [e for e in led.entries if e["kind"] == "BRIEF"][0]
+    assert b["data"]["outcome3"]["likely"] == "DOWN"
+    t0 = datetime(2026, 11, 18, 0, tzinfo=timezone.utc)
+    for i in range(24):
+        t = t0 + timedelta(hours=i)
+        lo = 97.5 if i == 5 else 99.5
+        led.bars.setdefault(("SOL", "H1"), {})[L.iso(t)] = [L.iso(t), 100, 101, lo, 100]
+    st = L.outcome3_stats(led.entries, led.bars)
+    assert st["settled"] == 1 and st["likely_correct"] == 1 and st["recent"][0]["outcome"] == "DOWN"

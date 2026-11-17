@@ -497,6 +497,14 @@
     <string name="what_next">What could happen?</string>
     <string name="ft_title2">Which does the price usually reach first?</string>
     <string name="ft_down">Down to %1$s: %2$d%%</string>
+    <string name="oc_title">What happens in the next %1$d hours?</string>
+    <string name="oc_none">Stays between %1$s and %2$s</string>
+    <string name="oc_down">Falls below %1$s first</string>
+    <string name="oc_down_t">Falls below %1$s first → may continue to %2$s</string>
+    <string name="oc_up">Rises above %1$s first</string>
+    <string name="oc_up_t">Rises above %1$s first → may continue to %2$s</string>
+    <string name="oc_foot">Based on what happened in similar past cases. Recorded every day in the track record to see if it was right.</string>
+    <string name="oc_no_clear">No clear most-likely outcome today.</string>
     <string name="sc_likely">Most likely</string>
     <string name="sc_pct">%1$d%%</string>
     <string name="sc_pct_note_2d">%% = which one happened first in similar past cases, within two days.</string>

@@ -594,6 +594,8 @@ def scenario_history(hs) -> dict:
         if h1 is None or len(h1) < 2000:
             continue
         out["assets"][a] = BR.history_table(h1[h1.index >= two_years])
+        out["assets"][a]["outcome3"] = BR.outcome_table(h1[h1.index >= two_years],
+                                                        BR.OC_WINDOW["gold" if a == "XAU" else "crypto"])
     (MODELS / "scenario_history.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
     print("scenario history:", {a: v["days"] for a, v in out["assets"].items()}, flush=True)
     return out

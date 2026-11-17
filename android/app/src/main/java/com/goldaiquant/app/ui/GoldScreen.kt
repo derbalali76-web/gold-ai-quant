@@ -89,7 +89,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.goldaiquant.app.TrackItem
 import com.goldaiquant.app.Plan
 import com.goldaiquant.app.Brief
-import com.goldaiquant.app.ScenarioOdds
 import com.goldaiquant.app.SourceStatus
 import com.goldaiquant.app.Scenario
 import com.goldaiquant.app.Check
@@ -930,36 +929,61 @@ private fun CheckSection(list: List<Check>) {
 
 @Composable
 private fun BriefLines(b: Brief, s: UiState? = null, price: Double? = null, onBell: (PriceAlert) -> Unit = {}) {
-    Text(stringResource(R.string.card_sc_title), color = Gold, fontSize = 13.sp, fontWeight = FontWeight.Bold)
-    val odds = ScenarioOdds.of(b)
-    b.scenarios.take(2).forEach { sc ->
-        val col = if (sc.kind == "BULL") BuyGreen else SellRed
-        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 2.dp)) {
-            Text(if (sc.kind == "BULL") "▲ " else "▼ ", color = col, fontSize = 13.sp)
-            if (odds?.likely == sc.kind) Text(stringResource(R.string.sc_likely), color = Color.Black, fontSize = 11.sp,
-                fontWeight = FontWeight.Black, maxLines = 1,
-                modifier = Modifier.padding(end = 6.dp).background(Gold, RoundedCornerShape(8.dp)).padding(horizontal = 6.dp))
-            Text(briefLine(sc), color = col, fontSize = 14.sp, fontWeight = FontWeight.SemiBold, lineHeight = 20.sp,
-                modifier = Modifier.weight(1f))
-            if (odds != null) OddsPill(odds.pct(sc.kind), sc.kind == "BULL")
-            if (s != null) BellChip(PriceAlerts.isOn(s.priceAlerts, s.asset, sc.trigger), compact = true) {
-                onBell(PriceAlerts.make(s.asset, sc.trigger, price, sc.triggerLevel))
+    val o = b.outcome3
+    if (o == null) {  // no stable three-outcome history for today's distances: the two scenarios, no percentages
+        Text(stringResource(R.string.card_sc_title), color = Gold, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+        b.scenarios.take(2).forEach { sc ->
+            val col = if (sc.kind == "BULL") BuyGreen else SellRed
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 2.dp)) {
+                Text(if (sc.kind == "BULL") "▲ " else "▼ ", color = col, fontSize = 13.sp)
+                Text(briefLine(sc), color = col, fontSize = 14.sp, fontWeight = FontWeight.SemiBold, lineHeight = 20.sp,
+                    modifier = Modifier.weight(1f))
+                if (s != null) BellChip(PriceAlerts.isOn(s.priceAlerts, s.asset, sc.trigger), compact = true) {
+                    onBell(PriceAlerts.make(s.asset, sc.trigger, price, sc.triggerLevel))
+                }
+            }
+        }
+        Text(stringResource(R.string.oc_no_clear), color = TextDim, fontSize = 12.sp)
+        return
+    }
+    val pc = o.percents()
+    Text(stringResource(R.string.oc_title, o.windowHours), color = Gold, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+    Row(Modifier.fillMaxWidth().padding(vertical = 4.dp).height(10.dp).clip(RoundedCornerShape(5.dp))) {
+        listOf("DOWN" to SellRed, "NONE" to WaitGold, "UP" to BuyGreen).forEach { (k, c) ->
+            val w = (pc[k] ?: 0).toFloat()
+            if (w > 0f) Box(Modifier.weight(w).fillMaxHeight().background(c))
+        }
+    }
+    val bear = b.scenarios.firstOrNull { it.kind == "BEAR" }
+    val bull = b.scenarios.firstOrNull { it.kind == "BULL" }
+    listOf("NONE", "DOWN", "UP").sortedByDescending { pc[it] ?: 0 }.forEach { k ->
+        val col = when (k) { "DOWN" -> SellRed; "UP" -> BuyGreen; else -> WaitGold }
+        val best = o.likely == k
+        val text = when (k) {
+            "DOWN" -> bear?.target?.let { stringResource(R.string.oc_down_t, ltr(o.downLevel.p2()), ltr(it.p2())) }
+                ?: stringResource(R.string.oc_down, ltr(o.downLevel.p2()))
+            "UP" -> bull?.target?.let { stringResource(R.string.oc_up_t, ltr(o.upLevel.p2()), ltr(it.p2())) }
+                ?: stringResource(R.string.oc_up, ltr(o.upLevel.p2()))
+            else -> stringResource(R.string.oc_none, ltr(o.downLevel.p2()), ltr(o.upLevel.p2()))
+        }
+        val shape = RoundedCornerShape(14.dp)
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().padding(vertical = 3.dp)
+            .background(if (best) Gold.copy(alpha = 0.08f) else Color.Transparent, shape)
+            .border(if (best) 2.dp else 1.dp, if (best) Gold else Track, shape).padding(horizontal = 10.dp, vertical = 8.dp)) {
+            if (best) Text(stringResource(R.string.sc_likely), color = Color.Black, fontSize = 11.sp, fontWeight = FontWeight.Black,
+                maxLines = 1, modifier = Modifier.padding(end = 6.dp).background(Gold, RoundedCornerShape(8.dp)).padding(horizontal = 6.dp))
+            Text((if (k == "UP") "▲ " else if (k == "DOWN") "▼ " else "") + text, color = col, fontSize = 14.sp,
+                fontWeight = FontWeight.Bold, lineHeight = 20.sp, modifier = Modifier.weight(1f))
+            Text(ltr(stringResource(R.string.sc_pct, pc[k] ?: 0)), color = col, fontSize = 18.sp, fontWeight = FontWeight.Black,
+                maxLines = 1, modifier = Modifier.padding(horizontal = 6.dp))
+            val lvl = if (k == "DOWN") bear else if (k == "UP") bull else null
+            if (s != null && lvl != null) BellChip(PriceAlerts.isOn(s.priceAlerts, s.asset, lvl.trigger), compact = true) {
+                onBell(PriceAlerts.make(s.asset, lvl.trigger, price, lvl.triggerLevel))
             }
         }
     }
-    if (odds != null) {
-        Text(if (odds.windowHours == 48) stringResource(R.string.sc_pct_note_2d) else stringResource(R.string.sc_pct_note_h, odds.windowHours),
-            color = TextDim, fontSize = 11.5.sp, lineHeight = 16.sp)
-        odds.likely?.let { k ->
-            val p = odds.pct(k)
-            val times = Math.round(p / 10.0).toInt()
-            val text = if (k == "BULL") stringResource(R.string.sc_pct_explain_up, p, ltr(odds.upLevel.p2()), ltr(odds.downLevel.p2()), times)
-                else stringResource(R.string.sc_pct_explain_down, p, ltr(odds.downLevel.p2()), ltr(odds.upLevel.p2()), times)
-            Text(text, color = TextMain, fontSize = 13.sp, lineHeight = 20.sp,
-                modifier = Modifier.fillMaxWidth().padding(top = 4.dp).background(Color(0xFF0E0D11), RoundedCornerShape(12.dp))
-                    .padding(horizontal = 10.dp, vertical = 8.dp))
-        }
-    }
+    Text(stringResource(if (o.likely == null) R.string.oc_no_clear else R.string.oc_foot), color = TextDim, fontSize = 12.sp,
+        lineHeight = 17.sp)
 }
 
 @Composable

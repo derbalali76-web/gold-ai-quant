@@ -496,6 +496,14 @@
     <string name="what_next">¿Qué podría pasar?</string>
     <string name="ft_title2">¿A cuál llega el precio primero, normalmente?</string>
     <string name="ft_down">Bajada a %1$s: %2$d%%</string>
+    <string name="oc_title">¿Qué pasará en las próximas %1$d horas?</string>
+    <string name="oc_none">Se queda entre %1$s y %2$s</string>
+    <string name="oc_down">Baja primero de %1$s</string>
+    <string name="oc_down_t">Baja primero de %1$s → puede seguir hacia %2$s</string>
+    <string name="oc_up">Sube primero de %1$s</string>
+    <string name="oc_up_t">Sube primero de %1$s → puede seguir hacia %2$s</string>
+    <string name="oc_foot">Según casos pasados similares. Se registra cada día en el historial para ver si acertó.</string>
+    <string name="oc_no_clear">Hoy no hay un resultado claramente más probable.</string>
     <string name="sc_likely">Más probable</string>
     <string name="sc_pct">%1$d%%</string>
     <string name="sc_pct_note_2d">%% = cuál ocurrió primero en casos pasados similares, en dos días.</string>

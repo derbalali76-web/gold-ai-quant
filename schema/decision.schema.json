@@ -176,6 +176,17 @@
           ],
           "default": null
         },
+        "outcome3": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Outcome3"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
         "price": {
           "title": "Price",
           "type": "number"
@@ -826,6 +837,74 @@
       ],
       "title": "Mode",
       "type": "string"
+    },
+    "Outcome3": {
+      "additionalProperties": false,
+      "description": "v1.17 (pre-registered brief.OC_PREREG): what happens in the next day between today's two scenario levels —\nlower reached first / upper reached first / neither. Shares of similar past cases (out-of-sample stable), adding\nup to 1. likely = the top outcome when it leads the second by >= 5 points, else None (no clear most-likely).",
+      "properties": {
+        "down_level": {
+          "title": "Down Level",
+          "type": "number"
+        },
+        "likely": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Likely"
+        },
+        "n": {
+          "title": "N",
+          "type": "integer"
+        },
+        "p_down": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "P Down",
+          "type": "number"
+        },
+        "p_none": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "P None",
+          "type": "number"
+        },
+        "p_up": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "P Up",
+          "type": "number"
+        },
+        "up_level": {
+          "title": "Up Level",
+          "type": "number"
+        },
+        "version": {
+          "title": "Version",
+          "type": "string"
+        },
+        "window_hours": {
+          "title": "Window Hours",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "p_down",
+        "p_up",
+        "p_none",
+        "n",
+        "window_hours",
+        "down_level",
+        "up_level",
+        "version"
+      ],
+      "title": "Outcome3",
+      "type": "object"
     },
     "PerfStats": {
       "additionalProperties": false,
@@ -2211,7 +2290,7 @@
       "default": null
     },
     "schema_version": {
-      "default": "1.16.0",
+      "default": "1.17.0",
       "title": "Schema Version",
       "type": "string"
     },

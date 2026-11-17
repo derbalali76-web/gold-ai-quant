@@ -496,6 +496,14 @@
     <string name="what_next">Que pourrait-il se passer ?</string>
     <string name="ft_title2">Lequel le prix atteint-il d\'abord, en général ?</string>
     <string name="ft_down">Baisse vers %1$s : %2$d%%</string>
+    <string name="oc_title">Que se passe-t-il dans les %1$d prochaines heures ?</string>
+    <string name="oc_none">Reste entre %1$s et %2$s</string>
+    <string name="oc_down">Passe d\'abord sous %1$s</string>
+    <string name="oc_down_t">Passe d\'abord sous %1$s → peut aller vers %2$s</string>
+    <string name="oc_up">Passe d\'abord au-dessus de %1$s</string>
+    <string name="oc_up_t">Passe d\'abord au-dessus de %1$s → peut aller vers %2$s</string>
+    <string name="oc_foot">D\'après les cas passés similaires. Enregistré chaque jour dans l\'historique pour vérifier s\'il était juste.</string>
+    <string name="oc_no_clear">Pas d\'issue clairement plus probable aujourd\'hui.</string>
     <string name="sc_likely">Le plus probable</string>
     <string name="sc_pct">%1$d%%</string>
     <string name="sc_pct_note_2d">%% = lequel s\'est produit en premier dans des cas passés similaires, en deux jours.</string>

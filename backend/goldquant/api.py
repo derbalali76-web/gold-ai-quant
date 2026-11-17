@@ -457,6 +457,8 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
             sc = {x.kind: x.trigger for x in d.daily_brief.scenarios}
             BR.attach_first_touch(d.daily_brief, hist_state["table"].get(asset), float(d.quote or 0),
                                   sc.get("BEAR"), sc.get("BULL"), d.levels.atr_h1)
+            BR.attach_outcome3(d.daily_brief, hist_state["table"].get(asset), float(d.quote or 0),
+                               sc.get("BEAR"), sc.get("BULL"), d.levels.atr_h1)
         except Exception:  # noqa: BLE001 — descriptive extra
             return
 

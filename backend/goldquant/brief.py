@@ -131,6 +131,27 @@ def history_table(h1) -> dict:
     return out
 
 
+def attach_outcome3(brief, table: dict | None, price: float, s1: float | None, r1: float | None, atr_now) -> None:
+    """Fill brief.outcome3 (OC_PREREG) from a usable cell; 'likely' only with a lead of >= 5 points."""
+    from .schemas import Outcome3
+    if brief is None or not table or not atr_now or s1 is None or r1 is None or not (s1 < price < r1):
+        return
+    oc = table.get("outcome3") or {}
+    a, b = (price - s1) / float(atr_now), (r1 - price) / float(atr_now)
+    ga, gb = min(FT_GRID, key=lambda g: abs(g - a)), min(FT_GRID, key=lambda g: abs(g - b))
+    if abs(ga - a) > 0.25 or abs(gb - b) > 0.25:
+        return
+    cell = (oc.get("cells") or {}).get(f"{ga}|{gb}")
+    if not cell or not cell[8]:
+        return
+    p = {"DOWN": cell[0], "UP": cell[1], "NONE": cell[2]}
+    top = sorted(p.items(), key=lambda kv: -kv[1])
+    likely = top[0][0] if top[0][1] - top[1][1] >= OC_LEAD else None
+    brief.outcome3 = Outcome3(p_down=cell[0], p_up=cell[1], p_none=cell[2], likely=likely, n=cell[3],
+                              window_hours=int(oc.get("window_hours") or 24), down_level=round(s1, 2),
+                              up_level=round(r1, 2), version=oc.get("version") or OC_VERSION)
+
+
 # ---------------------------------------------------------------- which level is touched first (descriptive)
 FT_WINDOW = 48  # hours
 FT_GRID = [round(0.5 * i, 1) for i in range(1, 13)]  # 0.5 .. 6.0 ATR

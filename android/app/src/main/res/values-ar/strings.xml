@@ -496,6 +496,14 @@
     <string name="what_next">ماذا قد يحدث؟</string>
     <string name="ft_title2">أيهما يصل إليه السعر أولاً غالباً؟</string>
     <string name="ft_down">النزول إلى %1$s: %2$d%%</string>
+    <string name="oc_title">ماذا سيحدث خلال الـ %1$d ساعة القادمة؟</string>
+    <string name="oc_none">يبقى بين %1$s و %2$s</string>
+    <string name="oc_down">ينزل تحت %1$s أولاً</string>
+    <string name="oc_down_t">ينزل تحت %1$s أولاً ← قد يكمل نحو %2$s</string>
+    <string name="oc_up">يصعد فوق %1$s أولاً</string>
+    <string name="oc_up_t">يصعد فوق %1$s أولاً ← قد يكمل نحو %2$s</string>
+    <string name="oc_foot">حسب ما حدث في حالات مشابهة سابقاً. يُسجَّل كل يوم في سجل النتائج لنرى هل كان صحيحاً.</string>
+    <string name="oc_no_clear">لا ترجيح واضح اليوم.</string>
     <string name="sc_likely">الأرجح</string>
     <string name="sc_pct">%1$d%%</string>
     <string name="sc_pct_note_2d">النسبة = أيهما حدث أولاً في حالات مشابهة سابقاً، خلال يومين.</string>

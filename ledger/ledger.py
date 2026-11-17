@@ -223,7 +223,8 @@ class Ledger:
         fid = forecast_id(asset, "BRIEF", day, snap["as_of"], snap.get("model_version"))
         br = self.append("BRIEF", {"fid": fid, "asset": asset, "date": day, "bias": b["bias"],
                                    "price_at_record": float(snap["price"]), "scenarios": b.get("scenarios") or [],
-                                   "model_version": snap.get("model_version"), "source_as_of": snap["as_of"]}, now)
+                                   "model_version": snap.get("model_version"), "source_as_of": snap["as_of"],
+                                   **({"outcome3": b["outcome3"]} if b.get("outcome3") else {})}, now)
         # strategy layer: CASH / HOLDING scenarios registered in the SAME run as the forecast, before any outcome
         for sc in build_scenarios(br, float(snap.get("cost") or 0.0), now):
             self.append("SCENARIO", sc, now)
@@ -683,6 +684,42 @@ def completeness(entries: list[dict], now: datetime) -> dict:
     return out
 
 
+def outcome3_rows(entries: list[dict], bars: dict) -> list[dict]:
+    """Derived (no new line kind): each recorded BRIEF with a three-outcome forecast, settled from the stored hourly
+    bars after its record time — which level was reached first within the window (same hour both: left out)."""
+    out = []
+    for e in entries:
+        if e["kind"] != "BRIEF" or not e["data"].get("outcome3"):
+            continue
+        d, o = e["data"], e["data"]["outcome3"]
+        a = d["asset"]
+        t0 = ts(e["recorded_at"])
+        rows = sorted((ts(k), v) for k, v in (bars.get((a, "H1")) or {}).items() if ts(k) >= t0.replace(minute=0, second=0, microsecond=0))
+        W = int(o.get("window_hours") or 24)
+        row = {"asset": a, "date": d["date"], "likely": o.get("likely"), "p": [o["p_down"], o["p_up"], o["p_none"]]}
+        if len(rows) < W:
+            out.append(dict(row, outcome=None)); continue
+        res = "NONE"
+        for _, v in rows[:W]:
+            dn, up = v[3] <= o["down_level"], v[2] >= o["up_level"]
+            if dn and up:
+                res = "BOTH"; break
+            if dn or up:
+                res = "DOWN" if dn else "UP"; break
+        out.append(dict(row, outcome=res))
+    return out
+
+
+def outcome3_stats(entries: list[dict], bars: dict) -> dict:
+    rows = outcome3_rows(entries, bars)
+    settled = [r for r in rows if r["outcome"] in ("DOWN", "UP", "NONE")]
+    called = [r for r in settled if r["likely"]]
+    return {"recorded": len(rows), "settled": len(settled), "with_likely": len(called),
+            "likely_correct": sum(1 for r in called if r["likely"] == r["outcome"]),
+            "expected_correct": round(sum(max(r["p"]) for r in called), 2),
+            "recent": rows[-10:]}
+
+
 def brief_rows(entries: list[dict]) -> list[dict]:
     """One row per recorded daily bias, newest first, for the app's results page. Derived only (the ledger lines are
     never changed): outcome is the recorded BRIEF_RESULT (CORRECT / WRONG / NOT_SCORED / NO_DATA) or PENDING."""
@@ -779,6 +816,7 @@ def _stats(entries: list[dict], now: datetime, asset: str) -> dict:
 
 def write_stats(led: Ledger, now: datetime) -> dict:
     s = stats(led.entries, now)
+    s["outcome3"] = outcome3_stats(led.entries, led.bars)
     (led.root / "stats.json").write_text(json.dumps(s, ensure_ascii=False, indent=1), encoding="utf-8")
     return s
 
