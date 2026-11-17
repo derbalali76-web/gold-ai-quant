@@ -183,6 +183,71 @@ def first_touch_table(h1) -> dict:
     return {"window_hours": FT_WINDOW, "days": int((h1.index[-1] - h1.index[0]).days), "cells": cells}
 
 
+# ---------------------------------------------------------------- three outcomes of the day (v1, PRE-REGISTERED)
+OC_VERSION = "outcome3-0.1.0"
+OC_WINDOW = {"crypto": 24, "gold": 23}  # one day: 24 hourly bars (gold: 23 trading hours), as the price ranges
+OC_MIN_N, OC_MIN_N_HOLD, OC_MAX_GAP, OC_LEAD = 300, 80, 0.05, 0.05
+OC_PREREG = """PRE-REGISTERED 2026-11-17, committed before any result was computed (owner's request: one clear 'most
+likely' with percentages that never contradict the range or the trend).
+Question: with the price `a` ATR(14, H1) above the lower scenario level and `b` ATR below the upper one, what happens
+in the next day (24 hourly bars; gold 23 trading hours)? Three outcomes that add up to 100 %:
+  DOWN = the lower level is reached first, UP = the upper level is reached first, NONE = neither is reached.
+Cases where both are first reached in the same hour are left out (direction unknown). Same grid (0.5 .. 6.0 ATR in
+steps of 0.5), same stride (one case every 6 hours), same history (last two years), same ATR as first_touch_table.
+A cell is usable only with >= 300 cases, >= 80 of them in the last 20 % of the period, AND each of the three rates
+within 5 points between the first 80 % and the last 20 % (out of sample). 'Most likely' is shown only when the top
+outcome leads the second by >= 5 points; otherwise the app says there is no clear most-likely outcome today.
+Nothing is tuned after seeing results; if few cells pass, few are shown."""
+
+
+def outcome_table(h1, window: int) -> dict:
+    """Three-outcome table (OC_PREREG). cells['a|b'] = [p_down, p_up, p_none, n, p_down_h, p_up_h, p_none_h, n_h, usable]."""
+    import numpy as np
+    from numpy.lib.stride_tricks import sliding_window_view as win
+    if h1 is None or len(h1) < 2000:
+        return {"version": OC_VERSION, "window_hours": window, "cells": {}}
+    h, lo, c = (h1[x].to_numpy(float) for x in ("high", "low", "close"))
+    pc = np.r_[c[0], c[:-1]]
+    tr = np.maximum(h - lo, np.maximum(np.abs(h - pc), np.abs(lo - pc)))
+    atr = pd_rolling_mean(tr, 14)
+    idx = np.arange(20, len(c) - window - 1, FT_STRIDE)
+    idx = idx[np.isfinite(atr[idx]) & (atr[idx] > 0)]
+    H = win(h[1:], window)[idx]
+    L = win(lo[1:], window)[idx]
+    up = (np.maximum.accumulate(H, axis=1) - c[idx, None]) / atr[idx, None]
+    dn = (c[idx, None] - np.minimum.accumulate(L, axis=1)) / atr[idx, None]
+    inf = window + 1
+
+    def first(m, g):
+        hit = m >= g
+        return np.where(hit.any(axis=1), hit.argmax(axis=1), inf)
+    fu = {g: first(up, g) for g in FT_GRID}
+    fd = {g: first(dn, g) for g in FT_GRID}
+    split = int(len(idx) * 0.8)
+    cells = {}
+    for a in FT_GRID:
+        for b in FT_GRID:
+            d_, u_ = fd[a], fu[b]
+            ok = ~((d_ == u_) & (d_ < inf))  # same-hour double touch: left out
+            cls = np.where(d_ < u_, 0, np.where(u_ < d_, 1, 2))  # 0 DOWN, 1 UP, 2 NONE
+
+            def rates(m):
+                k = int(m.sum())
+                return ([round(float((cls[m] == j).mean()), 3) for j in range(3)] if k else [None] * 3), k
+            r, n = rates(ok)
+            if n == 0:
+                continue
+            tr_m = ok.copy(); tr_m[split:] = False
+            ho_m = ok.copy(); ho_m[:split] = False
+            r_tr, _ = rates(tr_m)
+            r_h, n_h = rates(ho_m)
+            usable = (n >= OC_MIN_N and n_h >= OC_MIN_N_HOLD and None not in r_tr and None not in r_h
+                      and all(abs(x - y) <= OC_MAX_GAP for x, y in zip(r_tr, r_h)))
+            cells[f"{a}|{b}"] = r + [n] + r_h + [n_h, usable]
+    return {"version": OC_VERSION, "window_hours": window, "days": int((h1.index[-1] - h1.index[0]).days),
+            "cells": cells}
+
+
 def pd_rolling_mean(x, n):
     import numpy as np
     import pandas as pd
