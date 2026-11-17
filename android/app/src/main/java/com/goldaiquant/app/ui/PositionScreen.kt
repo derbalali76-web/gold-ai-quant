@@ -68,7 +68,7 @@ private fun NumField(label: String, state: MutableState<String>, bad: Boolean, m
         Box {
             if (state.value.isEmpty() && hint.isNotEmpty()) Text(hint, color = Grey, fontSize = 15.sp)
             BasicTextField(value = state.value, onValueChange = { v ->
-                val t = v.filter { it.isDigit() || it in ".,٫" }.take(14); state.value = t; onEdit(t)
+                val t = v.filter { it.isDigit() || it in ".,\u066B" }.take(14); state.value = t; onEdit(t)
             }, singleLine = true, cursorBrush = SolidColor(Gold),
                 textStyle = TextStyle(color = if (bad) SellRed else TextMain, fontSize = 15.sp, fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Start),

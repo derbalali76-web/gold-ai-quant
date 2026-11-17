@@ -649,6 +649,32 @@
     <string name="pc_e_pct">%1$s deve estar entre %2$s e %3$s.</string>
     <string name="pc_e_sell_qty">Não é possível vender mais do que você tem (%1$s). Uma venda parcial é possível.</string>
     <string name="pc_e_first">O primeiro pagamento é maior que o caixa disponível (%1$s).</string>
+    <string name="sc2_title">Cenários — %1$s</string>
+    <string name="sc2_h_hours">as próximas horas</string>
+    <string name="sc2_h_week">esta semana</string>
+    <string name="sc2_h_month">este mês</string>
+    <string name="sc2_down">▼ Cenário de queda</string>
+    <string name="sc2_up">▲ Cenário de alta</string>
+    <string name="sc2_likely">O mais provável</string>
+    <string name="sc2_down_to">Se cair abaixo de %1$s ← pode seguir para %2$s</string>
+    <string name="sc2_down_1">Se cair abaixo de %1$s</string>
+    <string name="sc2_up_to">Se subir acima de %1$s ← pode seguir para %2$s</string>
+    <string name="sc2_up_1">Se subir acima de %1$s</string>
+    <string name="sc2_none">Sem inclinação clara agora</string>
+    <string name="sc2_between">O mais provável: o preço fica entre %1$s e %2$s</string>
+    <string name="sc2_updated">Atualiza sozinha · última %1$s</string>
+    <string name="wd_hold">Tenho %1$s</string>
+    <string name="wd_sell_now">Venda agora</string>
+    <string name="wd_sell_now_sub">e espere para comprar de novo a %1$s</string>
+    <string name="wd_wait">Espere</string>
+    <string name="wd_wait_sub">e compre a %1$s</string>
+    <string name="wd_keep">Mantenha</string>
+    <string name="wd_keep_sub">e venda acima de %1$s</string>
+    <string name="wd_buy">Uma oportunidade de compra</string>
+    <string name="wd_buy_sub">ao preço atual %1$s</string>
+    <string name="wd_nothing">Não faça nada por agora</string>
+    <string name="wd_nothing_sub">Espere até surgir uma inclinação clara</string>
+    <string name="wd_basis">Conforme o cenário de %1$s</string>
     <string name="r_w_up" formatted="false">de alta</string>
     <string name="r_w_down" formatted="false">de baixa</string>
     <string name="r_w_neutral" formatted="false">neutra</string>

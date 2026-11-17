@@ -649,6 +649,32 @@
     <string name="pc_e_pct">%1$s doit être entre %2$s et %3$s.</string>
     <string name="pc_e_sell_qty">Impossible de vendre plus que ce que vous détenez (%1$s). Une vente partielle est possible.</string>
     <string name="pc_e_first">Le premier versement dépasse les liquidités disponibles (%1$s).</string>
+    <string name="sc2_title">Scénarios — %1$s</string>
+    <string name="sc2_h_hours">les prochaines heures</string>
+    <string name="sc2_h_week">cette semaine</string>
+    <string name="sc2_h_month">ce mois-ci</string>
+    <string name="sc2_down">▼ Scénario de baisse</string>
+    <string name="sc2_up">▲ Scénario de hausse</string>
+    <string name="sc2_likely">Le plus probable</string>
+    <string name="sc2_down_to">S\'il passe sous %1$s ← il peut aller vers %2$s</string>
+    <string name="sc2_down_1">S\'il passe sous %1$s</string>
+    <string name="sc2_up_to">S\'il passe au-dessus de %1$s ← il peut aller vers %2$s</string>
+    <string name="sc2_up_1">S\'il passe au-dessus de %1$s</string>
+    <string name="sc2_none">Pas de tendance claire pour l\'instant</string>
+    <string name="sc2_between">Le plus probable : le prix reste entre %1$s et %2$s</string>
+    <string name="sc2_updated">Mise à jour automatique · dernière à %1$s</string>
+    <string name="wd_hold">Je détiens %1$s</string>
+    <string name="wd_sell_now">Vendez maintenant</string>
+    <string name="wd_sell_now_sub">et attendez pour racheter à %1$s</string>
+    <string name="wd_wait">Attendez</string>
+    <string name="wd_wait_sub">et achetez à %1$s</string>
+    <string name="wd_keep">Conservez</string>
+    <string name="wd_keep_sub">et vendez au-dessus de %1$s</string>
+    <string name="wd_buy">Une occasion d\'achat</string>
+    <string name="wd_buy_sub">au prix actuel %1$s</string>
+    <string name="wd_nothing">Ne faites rien pour l\'instant</string>
+    <string name="wd_nothing_sub">Attendez qu\'une tendance claire apparaisse</string>
+    <string name="wd_basis">Selon le scénario de %1$s</string>
     <string name="r_w_up" formatted="false">haussière</string>
     <string name="r_w_down" formatted="false">baissière</string>
     <string name="r_w_neutral" formatted="false">neutre</string>

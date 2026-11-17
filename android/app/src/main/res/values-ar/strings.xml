@@ -649,6 +649,32 @@
     <string name="pc_e_pct">%1$s يجب أن يكون بين %2$s و%3$s.</string>
     <string name="pc_e_sell_qty">لا يمكن بيع أكثر مما تملك (%1$s). البيع الجزئي ممكن.</string>
     <string name="pc_e_first">الدفعة الأولى أكبر من المبلغ المتاح (%1$s).</string>
+    <string name="sc2_title">السيناريوهات — %1$s</string>
+    <string name="sc2_h_hours">الساعات القادمة</string>
+    <string name="sc2_h_week">هذا الأسبوع</string>
+    <string name="sc2_h_month">هذا الشهر</string>
+    <string name="sc2_down">▼ سيناريو الهبوط</string>
+    <string name="sc2_up">▲ سيناريو الصعود</string>
+    <string name="sc2_likely">الأرجح</string>
+    <string name="sc2_down_to">إذا نزل تحت %1$s ← قد يكمل نحو %2$s</string>
+    <string name="sc2_down_1">إذا نزل تحت %1$s</string>
+    <string name="sc2_up_to">إذا صعد فوق %1$s ← قد يكمل نحو %2$s</string>
+    <string name="sc2_up_1">إذا صعد فوق %1$s</string>
+    <string name="sc2_none">لا يوجد ترجيح واضح الآن</string>
+    <string name="sc2_between">الأرجح أن يبقى السعر بين %1$s و%2$s</string>
+    <string name="sc2_updated">تتحدث تلقائياً · آخر تحديث %1$s</string>
+    <string name="wd_hold">أملك %1$s</string>
+    <string name="wd_sell_now">بِع الآن</string>
+    <string name="wd_sell_now_sub">وانتظر الشراء من جديد عند %1$s</string>
+    <string name="wd_wait">انتظر</string>
+    <string name="wd_wait_sub">واشترِ عند %1$s</string>
+    <string name="wd_keep">احتفظ</string>
+    <string name="wd_keep_sub">وبِع فوق %1$s</string>
+    <string name="wd_buy">فرصة شراء</string>
+    <string name="wd_buy_sub">عند السعر الحالي %1$s</string>
+    <string name="wd_nothing">لا تفعل شيئاً الآن</string>
+    <string name="wd_nothing_sub">انتظر حتى يظهر ترجيح واضح</string>
+    <string name="wd_basis">حسب سيناريو %1$s</string>
     <string name="r_w_up" formatted="false">صاعد</string>
     <string name="r_w_down" formatted="false">هابط</string>
     <string name="r_w_neutral" formatted="false">محايد</string>

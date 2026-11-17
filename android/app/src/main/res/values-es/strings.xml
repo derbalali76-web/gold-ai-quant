@@ -649,6 +649,32 @@
     <string name="pc_e_pct">%1$s debe estar entre %2$s y %3$s.</string>
     <string name="pc_e_sell_qty">No puedes vender más de lo que tienes (%1$s). Es posible una venta parcial.</string>
     <string name="pc_e_first">El primer pago supera la liquidez disponible (%1$s).</string>
+    <string name="sc2_title">Escenarios — %1$s</string>
+    <string name="sc2_h_hours">las próximas horas</string>
+    <string name="sc2_h_week">esta semana</string>
+    <string name="sc2_h_month">este mes</string>
+    <string name="sc2_down">▼ Escenario de bajada</string>
+    <string name="sc2_up">▲ Escenario de subida</string>
+    <string name="sc2_likely">Lo más probable</string>
+    <string name="sc2_down_to">Si baja de %1$s ← puede seguir hacia %2$s</string>
+    <string name="sc2_down_1">Si baja de %1$s</string>
+    <string name="sc2_up_to">Si sube de %1$s ← puede seguir hacia %2$s</string>
+    <string name="sc2_up_1">Si sube de %1$s</string>
+    <string name="sc2_none">No hay una inclinación clara ahora</string>
+    <string name="sc2_between">Lo más probable: el precio se queda entre %1$s y %2$s</string>
+    <string name="sc2_updated">Se actualiza sola · última %1$s</string>
+    <string name="wd_hold">Tengo %1$s</string>
+    <string name="wd_sell_now">Vende ahora</string>
+    <string name="wd_sell_now_sub">y espera para volver a comprar a %1$s</string>
+    <string name="wd_wait">Espera</string>
+    <string name="wd_wait_sub">y compra a %1$s</string>
+    <string name="wd_keep">Mantén</string>
+    <string name="wd_keep_sub">y vende por encima de %1$s</string>
+    <string name="wd_buy">Una oportunidad de compra</string>
+    <string name="wd_buy_sub">al precio actual %1$s</string>
+    <string name="wd_nothing">No hagas nada por ahora</string>
+    <string name="wd_nothing_sub">Espera a que aparezca una inclinación clara</string>
+    <string name="wd_basis">Según el escenario de %1$s</string>
     <string name="r_w_up" formatted="false">alcista</string>
     <string name="r_w_down" formatted="false">bajista</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

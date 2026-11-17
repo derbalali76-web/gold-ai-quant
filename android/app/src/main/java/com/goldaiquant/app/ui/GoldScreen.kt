@@ -101,6 +101,8 @@ import com.goldaiquant.app.HorizonCard
 import com.goldaiquant.app.HorizonModel
 import com.goldaiquant.app.Lang
 import com.goldaiquant.app.Level
+import com.goldaiquant.app.HorizonScenarios
+import androidx.compose.ui.draw.alpha
 import com.goldaiquant.app.LevelRelation
 import com.goldaiquant.app.MainViewModel
 import com.goldaiquant.app.ProbState
@@ -264,6 +266,7 @@ private sealed interface Sheet {
     data object CalendarSheet : Sheet
     data object RangeSheet : Sheet
     data object PositionSheet : Sheet
+    data object WhatSheet : Sheet
 }
 
 /** Stateless screen (also used by the UI tests on several screen sizes). */
@@ -294,39 +297,40 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
         ) {
             TopBar(s, compact, onAsset = { sheet = Sheet.Assets }, onCalendar = { onCalendar(); sheet = Sheet.CalendarSheet }) { sheet = Sheet.Settings }
             val card = d?.let { HorizonModel.card(it, selected) }
-            Row(Modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(gap)) {
-                PriceCard(d, s, Modifier.weight(1.1f).fillMaxHeight()) { onBars(s.asset, "H1"); sheet = Sheet.ChartSheet }
-                Box(Modifier.weight(1f).fillMaxHeight()) { TrendCard(card?.trend) { sheet = Sheet.TrendSheet } }
-            }
-            // experimental closing range (qualified horizons only), as designed by Ali: one strip under the price
-            LaunchedEffect(s.asset, d?.decisionId) { if (d != null && !d.isDemo) onRange(s.asset) }
-            s.range?.takeIf { it.asset == s.asset && it.available && d?.isDemo != true }?.let { r ->
-                RangeStrip(r) { sheet = Sheet.RangeSheet }
-            }
+            // beginner screen (approved 2026-11-17): price, horizon tabs, two scenarios, «ماذا أفعل؟», three tiles.
+            // The trend card, the range strip, market activity, the 3-outcome odds and the calculator stay in the code
+            // but are no longer on this screen.
+            PriceCard(d, s, Modifier.fillMaxWidth()) { onBars(s.asset, "H1"); sheet = Sheet.ChartSheet }
             if (d?.isDemo == true) Text(stringResource(R.string.demo_banner),
                 color = Color.Black, fontSize = 12.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth().background(WaitGold, RoundedCornerShape(8.dp)).padding(vertical = 4.dp))
             val haptic = androidx.compose.ui.platform.LocalHapticFeedback.current
-            AskButton(s.loading, compact) {
-                haptic.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.LongPress); onAsk()
-            }
             s.error?.let { ErrorStrip(it, onAsk) }
             if (d != null && card != null) {
                 HorizonTabs(d, selected, s.loading, onHorizon)
                 Crossfade(targetState = card, animationSpec = tween(240), label = "horizon",
                     modifier = Modifier.weight(1f).fillMaxWidth()) { c ->
-                    DecisionCard(c, s, d, compact, Modifier.fillMaxSize(), onPosition, onBell,
-                        onCalc = { sheet = Sheet.PositionSheet }) { l, sup -> sheet = Sheet.LevelSheet(l, sup) }
+                    ScenarioCard(c, s, d, compact, Modifier.fillMaxSize()) { l, sup -> sheet = Sheet.LevelSheet(l, sup) }
+                }
+                WhatButton(compact) {
+                    haptic.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.LongPress)
+                    sheet = Sheet.WhatSheet
+                }
+                s.receivedAt?.let { t ->
+                    Text(stringResource(R.string.sc2_updated, ltr(java.time.format.DateTimeFormatter.ofPattern("HH:mm")
+                        .withZone(java.time.ZoneId.systemDefault()).format(t))), color = TextDim, fontSize = 10.sp,
+                        textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
                 }
                 Row(Modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(gap)) {
-                    if (d.instrument != "XAU/USD") ScalpTile(d, Modifier.weight(1f).fillMaxHeight()) { sheet = Sheet.ScalpSheet }
-                    else ProbTile(card, Modifier.weight(1f).fillMaxHeight()) { sheet = Sheet.Probabilities }
+                    ProbTile(card, Modifier.weight(1f).fillMaxHeight()) { sheet = Sheet.Probabilities }
                     Tile(stringResource(R.string.rec_title), recordTile(s.briefs),
                         WaitGold, Modifier.weight(1f).fillMaxHeight()) { sheet = Sheet.TrustSheet }
                     Tile(stringResource(R.string.details), stringResource(R.string.why_title), WaitGold,
                         Modifier.weight(1f).fillMaxHeight()) { sheet = Sheet.Details }
                 }
             } else {
+                // no analysis yet: the same big button loads it
+                AskButton(s.loading, compact) { onAsk() }
                 if (s.error == null) Text(stringResource(R.string.prompt_ask), color = TextDim, fontSize = 14.sp,
                     textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth().padding(16.dp))
                 Spacer(Modifier.weight(1f))
@@ -358,6 +362,7 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
             onHow = { sheet = Sheet.HowSheet }, onNews = { sheet = Sheet.NewsSheet }) { sheet = null }
         Sheet.HowSheet -> HowDialog { sheet = null }
         Sheet.ScalpSheet -> if (d != null) ScalpDialog(d) { sheet = null }
+        Sheet.WhatSheet -> if (card != null && d != null) WhatDialog(card, d, s, onPosition) { sheet = null }
         Sheet.NewsSheet -> NewsDialog { sheet = null }
         Sheet.ChartSheet -> ChartDialog(s, card, d, onTf = { tf -> onBars(s.asset, tf) },
             onTouch = { sheet = Sheet.TouchSheet(null) }, onFollow = {
@@ -373,6 +378,17 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
     if (!s.onboarded) OnboardingDialog(onDone = onOnboarded)
     // live crypto price while this screen is visible (display only; the analysis uses closed bars)
     val owner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    val latest by androidx.compose.runtime.rememberUpdatedState(s)
+    LaunchedEffect(s.asset, owner) {
+        owner.lifecycle.repeatOnLifecycle(androidx.lifecycle.Lifecycle.State.STARTED) {
+            while (true) {
+                val st = latest
+                val age = st.receivedAt?.let { java.time.Duration.between(it, Instant.now()).toMinutes() } ?: Long.MAX_VALUE
+                if (!st.loading && age >= AUTO_REFRESH_MIN) onAsk()
+                kotlinx.coroutines.delay(60_000)
+            }
+        }
+    }
     LaunchedEffect(s.asset, owner) {
         if (s.asset == "XAU") return@LaunchedEffect
         owner.lifecycle.repeatOnLifecycle(androidx.lifecycle.Lifecycle.State.STARTED) {
@@ -2314,5 +2330,122 @@ private fun RangeDialog(s: UiState, now: Double?, onClose: () -> Unit) {
             }
         }
         Body(stringResource(R.string.rng_disc), TextDim, 11.sp)
+    }
+}
+
+// ---------------------------------------------------------------- beginner screen (approved by the owner 2026-11-17)
+/** Minutes after which the visible screen asks the server again, so the scenarios follow every new analysis. */
+private const val AUTO_REFRESH_MIN = 10L
+
+@Composable
+private fun scHorizon(h: String): String = stringResource(when (h) {
+    "WEEK" -> R.string.sc2_h_week; "MONTH" -> R.string.sc2_h_month; else -> R.string.sc2_h_hours })
+
+@Composable
+private fun ScenarioCard(c: HorizonCard, s: UiState, d: Decision, compact: Boolean, modifier: Modifier,
+                         onLevel: (Level, Boolean) -> Unit) {
+    val v = HorizonScenarios.of(c, d.brief, d.isDemo)
+    Panel(modifier) {
+        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            Text(stringResource(R.string.sc2_title, scHorizon(c.horizon)), color = Gold, fontSize = 15.sp, fontWeight = FontWeight.Bold)
+            if (d.marketClosed) Text(stringResource(R.string.closed_last_session), color = WaitGold, fontSize = 11.sp)
+            else if (s.decisionFromCache || d.isExpired(Instant.now())) Text(stringResource(R.string.saved_decision), color = WaitGold, fontSize = 11.sp)
+            val note = when (v.likely) {
+                HorizonScenarios.Likely.NONE -> stringResource(R.string.sc2_none)
+                HorizonScenarios.Likely.BETWEEN -> stringResource(R.string.sc2_between, ltr(v.down!!.trigger.p2()), ltr(v.up!!.trigger.p2()))
+                else -> null
+            }
+            note?.let {
+                Text(it, color = TextMain, fontSize = 12.sp, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth()
+                    .background(Color(0xFF1D1A12), RoundedCornerShape(10.dp)).padding(horizontal = 8.dp, vertical = 5.dp))
+            }
+            val downBox: @Composable () -> Unit = { v.down?.let { ScenarioBox(false, it, v.likely == HorizonScenarios.Likely.DOWN,
+                v.likely == HorizonScenarios.Likely.UP) } }
+            val upBox: @Composable () -> Unit = { v.up?.let { ScenarioBox(true, it, v.likely == HorizonScenarios.Likely.UP,
+                v.likely == HorizonScenarios.Likely.DOWN) } }
+            if (v.likely == HorizonScenarios.Likely.UP) { upBox(); downBox() } else { downBox(); upBox() }
+            Divider()
+            val lv = c.levels
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                val rows = if (compact) 2 else 3
+                LevelPair(stringResource(R.string.lv_supports), stringResource(R.string.lv_sup_hint), BuyGreen,
+                    lv?.supports.orEmpty(), rows, Modifier.weight(1f)) { onLevel(it, true) }
+                LevelPair(stringResource(R.string.lv_resistances), stringResource(R.string.lv_res_hint), SellRed,
+                    lv?.resistances.orEmpty(), rows, Modifier.weight(1f)) { onLevel(it, false) }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ScenarioBox(up: Boolean, side: HorizonScenarios.Side, likely: Boolean, faint: Boolean) {
+    val color = if (up) BuyGreen else SellRed
+    val shape = RoundedCornerShape(12.dp)
+    val trig = ltr(side.trigger.p2())
+    val line = when {
+        up && side.target != null -> stringResource(R.string.sc2_up_to, trig, ltr(side.target.p2()))
+        up -> stringResource(R.string.sc2_up_1, trig)
+        side.target != null -> stringResource(R.string.sc2_down_to, trig, ltr(side.target.p2()))
+        else -> stringResource(R.string.sc2_down_1, trig)
+    }
+    Column(Modifier.fillMaxWidth().alpha(if (faint) 0.5f else 1f).background(color.copy(alpha = 0.10f), shape)
+        .border(1.dp, color.copy(alpha = if (likely) 0.8f else 0.3f), shape).padding(horizontal = 11.dp, vertical = 8.dp)) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(stringResource(if (up) R.string.sc2_up else R.string.sc2_down), color = color, fontSize = 14.sp,
+                fontWeight = FontWeight.Bold)
+            if (likely) Text(stringResource(R.string.sc2_likely), color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(start = 6.dp).background(color, RoundedCornerShape(20.dp)).padding(horizontal = 8.dp, vertical = 1.dp))
+        }
+        Text(line, color = TextMain, fontSize = 15.sp, fontWeight = FontWeight.Bold, lineHeight = 20.sp)
+    }
+}
+
+@Composable
+private fun WhatButton(compact: Boolean, onClick: () -> Unit) {
+    val label = stringResource(R.string.ask)
+    Text(label, color = Color.Black, fontSize = if (compact) 20.sp else 22.sp, fontWeight = FontWeight.Black,
+        textAlign = TextAlign.Center, maxLines = 1,
+        modifier = Modifier.fillMaxWidth().background(Gold, RoundedCornerShape(14.dp))
+            .clickable(role = Role.Button, onClick = onClick).semantics { contentDescription = label }
+            .padding(vertical = if (compact) 9.dp else 12.dp))
+}
+
+@Composable
+private fun WhatDialog(c: HorizonCard, d: Decision, s: UiState, onPosition: (String) -> Unit, onClose: () -> Unit) {
+    val v = HorizonScenarios.of(c, d.brief, d.isDemo)
+    val hold = s.position == "HOLD"
+    val (advice, at) = HorizonScenarios.advice(v, hold)
+    val now = s.live[s.asset]?.price ?: d.quote
+    val assetName = stringResource(when (s.asset) { "BTC" -> R.string.asset_btc; "ETH" -> R.string.asset_eth
+        "SOL" -> R.string.asset_sol; else -> R.string.asset_gold })
+    DialogFrame(stringResource(R.string.ask), onClose) {
+        Row(Modifier.fillMaxWidth().border(1.dp, CardEdge, RoundedCornerShape(12.dp)).padding(2.dp)) {
+            listOf(true to stringResource(R.string.wd_hold, assetName), false to stringResource(R.string.pos_cash)).forEach { (h, t) ->
+                val on = h == hold
+                Text(t, color = if (on) Color.Black else TextDim, fontSize = 14.sp, textAlign = TextAlign.Center, maxLines = 1,
+                    fontWeight = if (on) FontWeight.Bold else FontWeight.Normal,
+                    modifier = Modifier.weight(1f).background(if (on) Gold else Color.Transparent, RoundedCornerShape(10.dp))
+                        .clickable(role = Role.Tab) { if (!on) onPosition(if (h) "HOLD" else "CASH") }.padding(vertical = 8.dp))
+            }
+        }
+        val p = at?.let { ltr(it.p2()) }
+        val (big, sub, color) = when (advice) {
+            HorizonScenarios.Advice.SELL_NOW -> Triple(R.string.wd_sell_now, stringResource(R.string.wd_sell_now_sub, p!!), SellRed)
+            HorizonScenarios.Advice.WAIT_BUY_LOWER -> Triple(R.string.wd_wait, stringResource(R.string.wd_wait_sub, p!!), SellRed)
+            HorizonScenarios.Advice.KEEP_SELL_HIGHER -> Triple(R.string.wd_keep, stringResource(R.string.wd_keep_sub, p!!), BuyGreen)
+            HorizonScenarios.Advice.BUY_NOW -> Triple(R.string.wd_buy,
+                now?.let { stringResource(R.string.wd_buy_sub, ltr(it.p2())) } ?: "", BuyGreen)
+            HorizonScenarios.Advice.NOTHING -> Triple(R.string.wd_nothing, stringResource(R.string.wd_nothing_sub), Grey)
+        }
+        val shape = RoundedCornerShape(16.dp)
+        Column(Modifier.fillMaxWidth().background(color.copy(alpha = 0.12f), shape).border(1.dp, color, shape).padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(stringResource(big), color = TextMain, fontSize = 26.sp, fontWeight = FontWeight.Black, textAlign = TextAlign.Center)
+            if (sub.isNotEmpty()) Text(sub, color = TextMain, fontSize = 16.sp, textAlign = TextAlign.Center)
+        }
+        Text(stringResource(R.string.wd_basis, scHorizon(c.horizon)), color = TextDim, fontSize = 11.sp,
+            textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+        if (d.isDemo) Text(stringResource(R.string.demo_banner), color = WaitGold, fontSize = 11.sp, textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth())
     }
 }

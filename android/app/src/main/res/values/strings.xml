@@ -650,6 +650,32 @@
     <string name="pc_e_pct">%1$s must be between %2$s and %3$s.</string>
     <string name="pc_e_sell_qty">You cannot sell more than you hold (%1$s). A partial sale is possible.</string>
     <string name="pc_e_first">The first payment is larger than the cash available (%1$s).</string>
+    <string name="sc2_title">Scenarios — %1$s</string>
+    <string name="sc2_h_hours">the next hours</string>
+    <string name="sc2_h_week">this week</string>
+    <string name="sc2_h_month">this month</string>
+    <string name="sc2_down">▼ Down scenario</string>
+    <string name="sc2_up">▲ Up scenario</string>
+    <string name="sc2_likely">Most likely</string>
+    <string name="sc2_down_to">If it falls below %1$s ← it may continue to %2$s</string>
+    <string name="sc2_down_1">If it falls below %1$s</string>
+    <string name="sc2_up_to">If it rises above %1$s ← it may continue to %2$s</string>
+    <string name="sc2_up_1">If it rises above %1$s</string>
+    <string name="sc2_none">No clear lean right now</string>
+    <string name="sc2_between">Most likely: the price stays between %1$s and %2$s</string>
+    <string name="sc2_updated">Updates by itself · last update %1$s</string>
+    <string name="wd_hold">I hold %1$s</string>
+    <string name="wd_sell_now">Sell now</string>
+    <string name="wd_sell_now_sub">and wait to buy again at %1$s</string>
+    <string name="wd_wait">Wait</string>
+    <string name="wd_wait_sub">and buy at %1$s</string>
+    <string name="wd_keep">Keep it</string>
+    <string name="wd_keep_sub">and sell above %1$s</string>
+    <string name="wd_buy">A buying opportunity</string>
+    <string name="wd_buy_sub">at the current price %1$s</string>
+    <string name="wd_nothing">Do nothing for now</string>
+    <string name="wd_nothing_sub">Wait until a clear lean appears</string>
+    <string name="wd_basis">Based on the scenario of %1$s</string>
     <string name="r_w_up" formatted="false">up</string>
     <string name="r_w_down" formatted="false">down</string>
     <string name="r_w_neutral" formatted="false">neutral</string>
