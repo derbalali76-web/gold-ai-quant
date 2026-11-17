@@ -2210,16 +2210,20 @@ private fun RangeDialog(s: UiState, now: Double?, onClose: () -> Unit) {
                 val p = now ?: h.closeAtIssue
                 val pad = (h.high - h.low) * 0.45
                 val lo0 = minOf(h.low - pad, p); val hi0 = maxOf(h.high + pad, p)
+                // the labels below follow the layout direction (low on the right in Arabic), so the drawing must too:
+                // a Canvas is never mirrored by itself (the white marker used to sit on the wrong side in RTL)
+                val rtl = androidx.compose.ui.platform.LocalLayoutDirection.current == androidx.compose.ui.unit.LayoutDirection.Rtl
                 androidx.compose.foundation.Canvas(Modifier.fillMaxWidth().height(34.dp).padding(horizontal = 6.dp)) {
-                    val x = { v: Double -> (size.width * ((v - lo0) / (hi0 - lo0))).toFloat() }
+                    val x = { v: Double -> (size.width * ((v - lo0) / (hi0 - lo0))).toFloat().let { if (rtl) size.width - it else it } }
                     val cy = size.height * 0.62f
                     val bh = 6.dp.toPx()
                     drawRoundRect(Track, androidx.compose.ui.geometry.Offset(0f, cy - bh), androidx.compose.ui.geometry.Size(size.width, bh * 2),
                         androidx.compose.ui.geometry.CornerRadius(bh, bh))
-                    drawRoundRect(Color(0xFF5A4A1C), androidx.compose.ui.geometry.Offset(x(h.low), cy - bh),
-                        androidx.compose.ui.geometry.Size(x(h.high) - x(h.low), bh * 2), androidx.compose.ui.geometry.CornerRadius(bh, bh))
-                    drawRoundRect(Gold, androidx.compose.ui.geometry.Offset(x(h.low), cy - bh),
-                        androidx.compose.ui.geometry.Size(x(h.high) - x(h.low), bh * 2), androidx.compose.ui.geometry.CornerRadius(bh, bh),
+                    val bx = minOf(x(h.low), x(h.high)); val bw = kotlin.math.abs(x(h.high) - x(h.low))
+                    drawRoundRect(Color(0xFF5A4A1C), androidx.compose.ui.geometry.Offset(bx, cy - bh),
+                        androidx.compose.ui.geometry.Size(bw, bh * 2), androidx.compose.ui.geometry.CornerRadius(bh, bh))
+                    drawRoundRect(Gold, androidx.compose.ui.geometry.Offset(bx, cy - bh),
+                        androidx.compose.ui.geometry.Size(bw, bh * 2), androidx.compose.ui.geometry.CornerRadius(bh, bh),
                         style = androidx.compose.ui.graphics.drawscope.Stroke(width = 4f))
                     drawLine(Color.White, androidx.compose.ui.geometry.Offset(x(p), 0f), androidx.compose.ui.geometry.Offset(x(p), size.height), 5f)
                 }
