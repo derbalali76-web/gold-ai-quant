@@ -520,7 +520,7 @@
     <string name="rec_p_7">Últimos 7 días</string>
     <string name="rec_p_30">Últimos 30 días</string>
     <string name="rec_all_assets">Todos los activos</string>
-    <string name="rec_of">%1$d de %2$d</string>
+    <string name="rec_of">%1$s de %2$s</string>
     <string name="rec_correct_lbl">previsiones acertadas</string>
     <string name="rec_acc">precisión</string>
     <string name="rec_small">muestra pequeña</string>

@@ -521,7 +521,7 @@
     <string name="rec_p_7">Last 7 days</string>
     <string name="rec_p_30">Last 30 days</string>
     <string name="rec_all_assets">All assets</string>
-    <string name="rec_of">%1$d of %2$d</string>
+    <string name="rec_of">%1$s of %2$s</string>
     <string name="rec_correct_lbl">correct calls</string>
     <string name="rec_acc">accuracy</string>
     <string name="rec_small">small sample</string>

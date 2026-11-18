@@ -614,7 +614,7 @@ UI = {
 "rec_p_7": ("Last 7 days", "آخر 7 أيام", "7 derniers jours", "Últimos 7 días", "Últimos 7 dias"),
 "rec_p_30": ("Last 30 days", "آخر 30 يوماً", "30 derniers jours", "Últimos 30 días", "Últimos 30 dias"),
 "rec_all_assets": ("All assets", "جميع الأصول", "Tous les actifs", "Todos los activos", "Todos os ativos"),
-"rec_of": ("%1$d of %2$d", "%1$d من %2$d", "%1$d sur %2$d", "%1$d de %2$d", "%1$d de %2$d"),
+"rec_of": ("%1$s of %2$s", "%1$s من %2$s", "%1$s sur %2$s", "%1$s de %2$s", "%1$s de %2$s"),
 "rec_correct_lbl": ("correct calls", "توقعات صحيحة", "prévisions justes", "previsiones acertadas", "previsões certas"),
 "rec_acc": ("accuracy", "معدل الدقة", "précision", "precisión", "precisão"),
 "rec_small": ("small sample", "عيّنة صغيرة", "petit échantillon", "muestra pequeña", "amostra pequena"),

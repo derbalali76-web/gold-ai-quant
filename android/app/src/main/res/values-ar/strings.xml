@@ -520,7 +520,7 @@
     <string name="rec_p_7">آخر 7 أيام</string>
     <string name="rec_p_30">آخر 30 يوماً</string>
     <string name="rec_all_assets">جميع الأصول</string>
-    <string name="rec_of">%1$d من %2$d</string>
+    <string name="rec_of">%1$s من %2$s</string>
     <string name="rec_correct_lbl">توقعات صحيحة</string>
     <string name="rec_acc">معدل الدقة</string>
     <string name="rec_small">عيّنة صغيرة</string>

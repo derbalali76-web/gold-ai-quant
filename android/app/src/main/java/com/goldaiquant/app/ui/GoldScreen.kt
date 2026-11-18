@@ -2110,7 +2110,7 @@ private fun RecordPage(rows: List<BriefRow>, onMore: () -> Unit, onClose: () -> 
             Row(Modifier.fillMaxWidth().background(Color(0xFF0F0E0B), RoundedCornerShape(20.dp))
                 .border(1.dp, Color(0xFF6B5A22), RoundedCornerShape(20.dp)).padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(ltr(stringResource(R.string.rec_of, sm.correct, sm.settled)), color = WaitGold, fontSize = 34.sp, fontWeight = FontWeight.Black)
+                    Text(stringResource(R.string.rec_of, ltr(sm.correct.toString()), ltr(sm.settled.toString())), color = WaitGold, fontSize = 34.sp, fontWeight = FontWeight.Black)
                     Text(stringResource(R.string.rec_correct_lbl), color = TextMain, fontSize = 15.sp, fontWeight = FontWeight.Bold)
                 }
                 Box(Modifier.width(1.dp).height(80.dp).background(Track))
