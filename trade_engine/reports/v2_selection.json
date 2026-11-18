@@ -1,0 +1,17 @@
+{
+ "engine": "te-0.2.0",
+ "selected": {
+  "BTCUSDT": [],
+  "SOLUSDT": []
+ },
+ "file_sha256_16": {
+  "sim.py": "4fe86ab93d80cf24",
+  "rules_v2.py": "e2057241e6d8f6d5",
+  "metrics.py": "a1124a84ea9b92b1",
+  "phase2_v2.py": "9cb0cab6f7976d7b",
+  "phase2.py": "d3ea1328e70a5c61",
+  "data.py": "974a869bead21304",
+  "PREREG_v2.md": "d525ba936261fa98"
+ },
+ "holdout_opened": false
+}
