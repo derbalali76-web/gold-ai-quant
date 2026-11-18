@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit
 class SignalWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx, params) {
     override suspend fun doWork(): Result {
         val prefs = applicationContext.getSharedPreferences("gold_ai_quant", Context.MODE_PRIVATE)
+        if (prefs.getBoolean("te_notify", false)) try { checkTrade(prefs) } catch (e: Exception) { }
         if (!prefs.getBoolean("notify", false)) return Result.success()
         val url = prefs.getString("server_url", null) ?: return Result.success()
         val api = ApiClient(url, prefs.getString("token", "") ?: "")
@@ -104,6 +105,28 @@ class SignalWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx
                 .setContentIntent(open).setAutoCancel(true).private(applicationContext).build()
             NotificationManagerCompat.from(applicationContext).notify(a.key.hashCode(), n)
         }
+    }
+
+    /** A NEW experimental trade in the public ledger: announced once (by its ledger line number). */
+    private suspend fun checkTrade(prefs: android.content.SharedPreferences) {
+        val body = TrustLedger.fetch(TradeOpp.URL) ?: return
+        val st = TradeOpp.parse(body) ?: return
+        prefs.edit().putString("te_state", body).apply()
+        val o = st.active ?: return
+        if (prefs.getInt("te_notified", 0) >= o.seq) return
+        prefs.edit().putInt("te_notified", o.seq).apply()
+        val ctx = LanguageStore.wrap(applicationContext, LanguageStore.resolve(applicationContext))
+        if (!ready(ctx)) return
+        val p0 = { v: Double -> String.format(java.util.Locale.US, "%,.0f", v) }
+        val text = ctx.getString(R.string.te_notif_text, p0(o.limit), p0(o.target), p0(o.stop))
+        val open = PendingIntent.getActivity(applicationContext, 7,
+            Intent(applicationContext, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),
+            PendingIntent.FLAG_IMMUTABLE)
+        val n = NotificationCompat.Builder(applicationContext, CHANNEL)
+            .setSmallIcon(android.R.drawable.stat_notify_more).setContentTitle(ctx.getString(R.string.te_notif_title))
+            .setContentText(text).setStyle(NotificationCompat.BigTextStyle().bigText(text))
+            .setContentIntent(open).setAutoCancel(true).private(applicationContext).build()
+        NotificationManagerCompat.from(applicationContext).notify(("te" + o.seq).hashCode(), n)
     }
 
     private fun ready(ctx: Context): Boolean {

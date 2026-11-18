@@ -22,6 +22,8 @@ data class UiState(
     val error: ApiException? = null,
     val selectedHorizon: String = "HOURS",
     val notify: Boolean = false,
+    val te: TeState? = null,          // experimental live paper trades (public ledger)
+    val teNotify: Boolean = false,
     val track: List<TrackItem> = emptyList(),
     val trustAll: Map<String, Trust> = emptyMap(),
     val briefs: List<BriefRow> = emptyList(),
@@ -83,6 +85,8 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                 token = prefs.getString("token", "") ?: "",
                 liveMode = prefs.getBoolean("live_mode", false),
                 notify = prefs.getBoolean("notify", false),
+                te = TradeOpp.parse(prefs.getString("te_state", null)),
+                teNotify = prefs.getBoolean("te_notify", false),
                 decision = cached,
                 selectedHorizon = HorizonModel.resolve(prefs.getString("horizon", null), cached),
                 decisionFromCache = cached != null,
@@ -150,6 +154,11 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         if (now - trustAt < 20 * 60_000L && _state.value.trustAll.isNotEmpty()) return
         trustAt = now
         viewModelScope.launch {
+            TrustLedger.fetch(TradeOpp.URL)?.let { b ->
+                TradeOpp.parse(b)?.let { t -> prefs.edit().putString("te_state", b).apply(); _state.update { it.copy(te = t) } }
+            }
+        }
+        viewModelScope.launch {
             val body = TrustLedger.fetch() ?: return@launch
             val t = TrustParser.parseAll(body).takeIf { it.isNotEmpty() } ?: return@launch
             prefs.edit().putString("trust", body).apply()
@@ -171,8 +180,17 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     fun setNotify(v: Boolean) {
         _state.update { it.copy(notify = v) }
         prefs.edit().putBoolean("notify", v).apply()
-        SignalWorker.schedule(getApplication(), v)
+        SignalWorker.schedule(getApplication(), v || _state.value.teNotify)
         syncPush()
+    }
+
+    /** Alert when a new experimental trade appears (checked by the background worker every 15 min). */
+    fun setTeNotify(v: Boolean) {
+        _state.update { it.copy(teNotify = v) }
+        prefs.edit().putBoolean("te_notify", v).apply()
+        // a trade already on screen is not announced again
+        if (v) _state.value.te?.active?.let { prefs.edit().putInt("te_notified", maxOf(prefs.getInt("te_notified", 0), it.seq)).apply() }
+        SignalWorker.schedule(getApplication(), v || _state.value.notify)
     }
 
     fun finishOnboarding() {

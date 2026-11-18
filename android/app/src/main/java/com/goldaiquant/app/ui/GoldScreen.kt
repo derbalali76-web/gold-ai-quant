@@ -238,6 +238,8 @@ fun GoldScreen(vm: MainViewModel, lang: Lang, onLanguage: (Lang) -> Unit) {
     val ctx = LocalContext.current
     val askNotify = androidx.activity.compose.rememberLauncherForActivityResult(
         androidx.activity.result.contract.ActivityResultContracts.RequestPermission()) { granted -> vm.setNotify(granted) }
+    val askTe = androidx.activity.compose.rememberLauncherForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.RequestPermission()) { granted -> vm.setTeNotify(granted) }
     val code = remember { InstallCode.get(ctx) }
     CompositionLocalProvider(LocalWatermark provides code) { GoldContent(s, lang, onAsk = vm::ask, onNextDemo = vm::nextDemoMoment,
         onSave = { u, t -> vm.setServerUrl(u); vm.setToken(t) }, onLive = vm::setLiveMode,
@@ -247,12 +249,16 @@ fun GoldScreen(vm: MainViewModel, lang: Lang, onLanguage: (Lang) -> Unit) {
             if (android.os.Build.VERSION.SDK_INT >= 33) askNotify.launch(android.Manifest.permission.POST_NOTIFICATIONS)
             else vm.setNotify(true)
         }, onBars = vm::loadBars, onCalendar = vm::loadCalendar, onOnboarded = vm::finishOnboarding,
-        onPollLive = { vm.pollLive() }, onTouch = vm::loadTouch, onRange = vm::loadRange) }
+        onPollLive = { vm.pollLive() }, onTouch = vm::loadTouch, onRange = vm::loadRange,
+        onTeNotify = { on -> if (on && android.os.Build.VERSION.SDK_INT >= 33) askTe.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+            else vm.setTeNotify(on) }) }
 }
 
 private sealed interface Sheet {
     data class LevelSheet(val level: Level, val isSupport: Boolean) : Sheet
     data object Probabilities : Sheet
+    data object TradeSheet : Sheet
+    data class TradeCalc(val limit: Double, val stop: Double, val target: Double) : Sheet
     data object TrendSheet : Sheet
     data object Details : Sheet
     data object Settings : Sheet
@@ -278,7 +284,8 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
                 onAlertAsset: (String) -> Unit = {}, onPriceAlert: (PriceAlert) -> Unit = {},
                 onNeedNotify: () -> Unit = {}, onBars: (String, String) -> Unit = { _, _ -> },
                 onCalendar: () -> Unit = {}, onOnboarded: () -> Unit = {}, onPollLive: suspend () -> Unit = {},
-                onTouch: (String, List<Double>) -> Unit = { _, _ -> }, onRange: (String) -> Unit = {}) {
+                onTouch: (String, List<Double>) -> Unit = { _, _ -> }, onRange: (String) -> Unit = {},
+                onTeNotify: (Boolean) -> Unit = {}) {
     var sheet by remember { mutableStateOf<Sheet?>(null) }
     val onBell: (PriceAlert) -> Unit = { a ->
         val adding = !PriceAlerts.isOn(s.priceAlerts, a.asset, a.price)
@@ -323,7 +330,8 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
                         textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
                 }
                 Row(Modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(gap)) {
-                    ProbTile(card, Modifier.weight(1f).fillMaxHeight()) { sheet = Sheet.Probabilities }
+                    // «trade opportunities» replaced the probabilities tile (owner request 2026-11-18)
+                    TradeTile(s.te, Modifier.weight(1f).fillMaxHeight()) { sheet = Sheet.TradeSheet }
                     Tile(stringResource(R.string.rec_title), recordTile(s.briefs),
                         WaitGold, Modifier.weight(1f).fillMaxHeight()) { sheet = Sheet.TrustSheet }
                     Tile(stringResource(R.string.details), stringResource(R.string.why_title), WaitGold,
@@ -364,6 +372,9 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
         Sheet.HowSheet -> HowDialog { sheet = null }
         Sheet.ScalpSheet -> if (d != null) ScalpDialog(d) { sheet = null }
         Sheet.WhatSheet -> if (d != null) WhatDialog(d, s, onPosition) { sheet = null }
+        Sheet.TradeSheet -> TradeSheet(s.te, s.teNotify, onTeNotify, onCalc = { _ ->
+            s.te?.active?.let { o -> sheet = Sheet.TradeCalc(o.limit, o.stop, o.target) } }) { sheet = null }
+        is Sheet.TradeCalc -> PositionDialog("BTC", "BTC", sh.limit, sh.stop, sh.target, false) { sheet = Sheet.TradeSheet }
         Sheet.NewsSheet -> NewsDialog { sheet = null }
         Sheet.ChartSheet -> ChartDialog(s, card, d, onTf = { tf -> onBars(s.asset, tf) },
             onTouch = { sheet = Sheet.TouchSheet(null) }, onFollow = {
