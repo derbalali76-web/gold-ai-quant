@@ -528,6 +528,16 @@
     <string name="rec_rng_day">Day range (24 h): %1$s of %2$s correct</string>
     <string name="rec_rng_how">Correct = the price closed inside the range at the end of the period; wrong = it closed above or below; neutral = the closing price could not be fetched.</string>
     <string name="rec_rng_foot">This measures range accuracy only, not a trade result. Each range was recorded before the result and cannot be changed.</string>
+    <string name="rec_rng_d_time">Asset and time</string>
+    <string name="rec_rng_d_range">Expected range</string>
+    <string name="rec_rng_d_close_4h">Close after 4 hours</string>
+    <string name="rec_rng_d_close_24h">Close after 24 hours</string>
+    <string name="rec_rng_d_close_1w">Close after one week</string>
+    <string name="rec_rng_x_ok">We expected the price to close inside the range at the end of the period, and it did, so the range counts as correct.</string>
+    <string name="rec_rng_x_above">We expected the price to close inside the range at the end of the period, but it closed above it, so the range counts as wrong.</string>
+    <string name="rec_rng_x_below">We expected the price to close inside the range at the end of the period, but it closed below it, so the range counts as wrong.</string>
+    <string name="rec_rng_x_wait">The result is settled when the range\'s period ends.</string>
+    <string name="rec_rng_x_nodata">The closing price could not be fetched, so this range is neutral and not counted.</string>
     <string name="rec_title">Results record</string>
     <string name="rec_q">Were our calls right?</string>
     <string name="rec_sub">Results of past price-direction calls</string>

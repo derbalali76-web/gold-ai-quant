@@ -41,7 +41,7 @@ class RecordTest {
 
     private val ranges = """{"range_rows":[
       {"seq":40,"asset":"XAU","horizon":"4h","issued_at":"2026-11-18T08:00:00Z","low":3742.0,"high":3804.1,"outcome":"PENDING","close":null},
-      {"seq":39,"asset":"XAU","horizon":"4h","issued_at":"2026-11-18T04:00:00Z","low":3763.0,"high":3814.9,"outcome":"INSIDE","close":3772.43},
+      {"seq":39,"asset":"XAU","horizon":"4h","issued_at":"2026-11-18T04:00:00Z","low":3763.0,"high":3814.9,"outcome":"INSIDE","close":3772.43,"price_at_issue":3790.1,"bars":4,"target_bar":"2026-11-18T07:00:00Z"},
       {"seq":38,"asset":"XAU","horizon":"24h","issued_at":"2026-11-18T00:00:00Z","low":3790.8,"high":3913.8,"outcome":"PENDING","close":null},
       {"seq":37,"asset":"XAU","horizon":"4h","issued_at":"2026-11-18T00:00:00Z","low":3836.7,"high":3867.4,"outcome":"BELOW","close":3788.5},
       {"seq":36,"asset":"BTC","horizon":"4h","issued_at":"2026-11-17T20:00:00Z","low":1.0,"high":2.0,"outcome":"ABOVE","close":2.5},
@@ -57,6 +57,9 @@ class RecordTest {
         assertEquals(RecStatus.WRONG, Record.status(rows.first { it.seq == 36 }))
         assertEquals(RecStatus.NEUTRAL, Record.status(rows.first { it.seq == 35 }))
         assertEquals(RecStatus.PENDING, Record.status(rows.first { it.seq == 40 }))
+        val r39 = rows.first { it.seq == 39 }
+        assertEquals(3790.1, r39.priceAtIssue!!, 1e-9); assertEquals(4, r39.bars); assertEquals("2026-11-18T07:00:00Z", r39.targetBar)
+        assertNull(rows.first { it.seq == 40 }.targetBar)
     }
 
     @Test fun rangeFilterByHorizonAssetAndDays() {

@@ -2197,12 +2197,19 @@ private fun RecordPage(rows: List<BriefRow>, ranges: List<RangeRow>, onMore: () 
 @Composable
 private fun RangeRecord(shown: List<RangeRow>, tab: String, showAll: Boolean, onToggle: () -> Unit) {
     val sm = Record.rangeSummary(shown)
-    Column(Modifier.fillMaxWidth().background(Color(0xFF0F0E0B), RoundedCornerShape(20.dp))
-        .border(1.dp, Color(0xFF6B5A22), RoundedCornerShape(20.dp)).padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(stringResource(R.string.rec_of, ltr(sm.correct.toString()), ltr(sm.settled.toString())), color = WaitGold, fontSize = 34.sp, fontWeight = FontWeight.Black)
-        Text(stringResource(if (tab == "1w") R.string.rec_rng_lbl_1w else R.string.rec_rng_lbl_4h), color = TextMain, fontSize = 15.sp, fontWeight = FontWeight.Bold)
-        if (sm.settled < Record.MIN_SETTLED) Text(stringResource(R.string.rec_rng_small), color = TextDim, fontSize = 12.sp, textAlign = TextAlign.Center)
+    var detail by remember { mutableStateOf<RangeRow?>(null) }
+    detail?.let { RangeDetail(it) { detail = null } }
+    Row(Modifier.fillMaxWidth().background(Color(0xFF0F0E0B), RoundedCornerShape(20.dp))
+        .border(1.dp, Color(0xFF6B5A22), RoundedCornerShape(20.dp)).padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
+        Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(stringResource(R.string.rec_of, ltr(sm.correct.toString()), ltr(sm.settled.toString())), color = WaitGold, fontSize = 34.sp, fontWeight = FontWeight.Black)
+            Text(stringResource(if (tab == "1w") R.string.rec_rng_lbl_1w else R.string.rec_rng_lbl_4h), color = TextMain, fontSize = 15.sp,
+                fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+        }
+        Box(Modifier.width(1.dp).height(80.dp).background(Track))
+        Box(Modifier.weight(1f), contentAlignment = Alignment.Center) { RecGauge(sm.accuracy, sm.settled >= Record.MIN_SETTLED) }
     }
+    if (sm.settled < Record.MIN_SETTLED) Text(stringResource(R.string.rec_rng_small), color = TextDim, fontSize = 12.sp)
     Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
         @Composable
         fun chip(t: String, n: Int, bg: Color, edge: Color, fg: Color) = Text("$t ${ltr("$n")}", color = fg, fontSize = 12.sp,
@@ -2221,7 +2228,7 @@ private fun RangeRecord(shown: List<RangeRow>, tab: String, showAll: Boolean, on
             color = TextDim, fontSize = 13.sp, modifier = Modifier.padding(vertical = 14.dp))
         (if (showAll) shown else shown.take(5)).forEachIndexed { i, r ->
             if (i > 0) Box(Modifier.fillMaxWidth().height(1.dp).background(Color(0xFF222222)))
-            RangeRecRow(r, week = tab == "1w")
+            RangeRecRow(r, week = tab == "1w") { detail = r }
         }
     }
     if (shown.size > 5) Text(stringResource(if (showAll) R.string.rec_show_less else R.string.rec_show_all), color = WaitGold,
@@ -2235,12 +2242,47 @@ private fun RangeRecord(shown: List<RangeRow>, tab: String, showAll: Boolean, on
 }
 
 @Composable
-private fun RangeRecRow(r: RangeRow, week: Boolean) {
+private fun rangeWhen(r: RangeRow, week: Boolean): String {
     val locale = LocalConfiguration.current.locales[0]
     val t = try { java.time.Instant.parse(r.issuedAt).atZone(java.time.ZoneId.systemDefault()) } catch (e: Exception) { null }
     val day = t?.let { DateTimeFormatter.ofPattern("d MMMM", locale).format(it) } ?: r.issuedAt.take(10)
-    val title = if (week || t == null) day else day + " · " + ltr(DateTimeFormatter.ofPattern("HH:mm", java.util.Locale.ROOT).format(t))
-    Row(Modifier.fillMaxWidth().padding(vertical = 10.dp), verticalAlignment = Alignment.CenterVertically,
+    return if (week || t == null) day else day + " · " + ltr(DateTimeFormatter.ofPattern("HH:mm", java.util.Locale.ROOT).format(t))
+}
+
+@Composable
+private fun RangeDetail(r: RangeRow, onClose: () -> Unit) {
+    val st = Record.status(r)
+    val title = stringResource(when (st) {
+        RecStatus.CORRECT -> R.string.rec_why_ok; RecStatus.WRONG -> R.string.rec_why_bad
+        RecStatus.NEUTRAL -> R.string.rec_why_neutral; else -> R.string.rec_why_wait
+    })
+    DialogFrame(title, onClose) {
+        KV(stringResource(R.string.rec_rng_d_time), rangeWhen(r, r.horizon == "1w") + " · " + ltr(recAssetName(r.asset)), 13.sp)
+        KV(stringResource(R.string.rec_rng_d_range), ltr(recPrice(r.low) + " – " + recPrice(r.high)), 13.sp)
+        KV(stringResource(R.string.rec_d_price), ltr(recPrice(r.priceAtIssue)), 13.sp)
+        // the target bar is an hourly bar's open time; its close (the price we compare) is one hour later
+        val end = r.targetBar?.let { try { java.time.Instant.parse(it).plusSeconds(3600).atZone(java.time.ZoneId.systemDefault()) } catch (e: Exception) { null } }
+        val closeLbl = stringResource(when (r.horizon) { "1w" -> R.string.rec_rng_d_close_1w; "24h" -> R.string.rec_rng_d_close_24h; else -> R.string.rec_rng_d_close_4h }) +
+            (end?.let { " (" + ltr(DateTimeFormatter.ofPattern("HH:mm", java.util.Locale.ROOT).format(it)) + ")" } ?: "")
+        KV(closeLbl, ltr(recPrice(r.close)), 13.sp)
+        val why = stringResource(when {
+            st == RecStatus.CORRECT -> R.string.rec_rng_x_ok
+            r.outcome == "ABOVE" -> R.string.rec_rng_x_above
+            r.outcome == "BELOW" -> R.string.rec_rng_x_below
+            st == RecStatus.NEUTRAL -> R.string.rec_rng_x_nodata
+            else -> R.string.rec_rng_x_wait
+        })
+        val bg = when (st) { RecStatus.CORRECT -> Color(0xFF0F3A22); RecStatus.WRONG -> Color(0xFF2A1214); else -> Track }
+        Text(why, color = TextMain, fontSize = 14.sp, lineHeight = 21.sp,
+            modifier = Modifier.fillMaxWidth().padding(top = 6.dp).background(bg, RoundedCornerShape(12.dp)).padding(10.dp))
+        Body(stringResource(R.string.rec_rng_foot), TextDim, 11.sp)
+    }
+}
+
+@Composable
+private fun RangeRecRow(r: RangeRow, week: Boolean, onClick: () -> Unit) {
+    val title = rangeWhen(r, week)
+    Row(Modifier.fillMaxWidth().clickable(role = Role.Button, onClick = onClick).padding(vertical = 10.dp), verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(10.dp)) {
         RecAvatar(r.asset)
         Column(Modifier.weight(1f)) {

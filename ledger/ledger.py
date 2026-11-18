@@ -681,7 +681,8 @@ def range_rows(entries: list[dict], keep: int = 400) -> list[dict]:
             continue
         d, r = e["data"], res.get(e["seq"], {})
         rows.append({"seq": e["seq"], "asset": asset_of(e), "horizon": d["horizon"], "issued_at": d["issued_at"],
-                     "low": d["low"], "high": d["high"], "outcome": r.get("outcome", "PENDING"), "close": r.get("close")})
+                     "low": d["low"], "high": d["high"], "price_at_issue": d.get("close_at_issue"), "bars": d.get("bars"),
+                     "outcome": r.get("outcome", "PENDING"), "close": r.get("close"), "target_bar": r.get("target_bar")})
     rows.sort(key=lambda x: (x["issued_at"], x["seq"]), reverse=True)
     return rows[:keep]
 

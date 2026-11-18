@@ -527,6 +527,16 @@
     <string name="rec_rng_day">Fourchette du jour (24 h) : %1$s sur %2$s justes</string>
     <string name="rec_rng_how">Juste = le prix a clôturé dans la fourchette à la fin de la période ; faux = au-dessus ou en dessous ; neutre = clôture introuvable.</string>
     <string name="rec_rng_foot">Ceci mesure uniquement la justesse de la fourchette, pas une opération. Chaque fourchette a été enregistrée avant le résultat et ne peut être modifiée.</string>
+    <string name="rec_rng_d_time">Actif et heure</string>
+    <string name="rec_rng_d_range">Fourchette prévue</string>
+    <string name="rec_rng_d_close_4h">Clôture après 4 heures</string>
+    <string name="rec_rng_d_close_24h">Clôture après 24 heures</string>
+    <string name="rec_rng_d_close_1w">Clôture après une semaine</string>
+    <string name="rec_rng_x_ok">Nous prévoyions une clôture dans la fourchette en fin de période, et ce fut le cas : la fourchette est juste.</string>
+    <string name="rec_rng_x_above">Nous prévoyions une clôture dans la fourchette, mais le prix a clôturé au-dessus : la fourchette est fausse.</string>
+    <string name="rec_rng_x_below">Nous prévoyions une clôture dans la fourchette, mais le prix a clôturé en dessous : la fourchette est fausse.</string>
+    <string name="rec_rng_x_wait">Le résultat est tranché à la fin de la période de la fourchette.</string>
+    <string name="rec_rng_x_nodata">La clôture n\'a pas pu être récupérée : fourchette neutre, non comptée.</string>
     <string name="rec_title">Registre des résultats</string>
     <string name="rec_q">Nos prévisions étaient-elles justes ?</string>
     <string name="rec_sub">Résultats des prévisions de direction passées</string>

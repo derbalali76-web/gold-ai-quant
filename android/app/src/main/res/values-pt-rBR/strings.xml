@@ -527,6 +527,16 @@
     <string name="rec_rng_day">Faixa do dia (24 h): %1$s de %2$s certas</string>
     <string name="rec_rng_how">Certo = o preço fechou dentro da faixa no fim do período; errado = fechou acima ou abaixo; neutro = fechamento indisponível.</string>
     <string name="rec_rng_foot">Isto mede só a precisão da faixa, não uma operação. Cada faixa foi registrada antes do resultado e não pode ser alterada.</string>
+    <string name="rec_rng_d_time">Ativo e hora</string>
+    <string name="rec_rng_d_range">Faixa prevista</string>
+    <string name="rec_rng_d_close_4h">Fechamento após 4 horas</string>
+    <string name="rec_rng_d_close_24h">Fechamento após 24 horas</string>
+    <string name="rec_rng_d_close_1w">Fechamento após uma semana</string>
+    <string name="rec_rng_x_ok">Esperávamos que o preço fechasse dentro da faixa no fim do período, e fechou: a faixa está certa.</string>
+    <string name="rec_rng_x_above">Esperávamos fechamento dentro da faixa, mas fechou acima: a faixa está errada.</string>
+    <string name="rec_rng_x_below">Esperávamos fechamento dentro da faixa, mas fechou abaixo: a faixa está errada.</string>
+    <string name="rec_rng_x_wait">O resultado é definido ao fim do período da faixa.</string>
+    <string name="rec_rng_x_nodata">Não foi possível obter o fechamento: faixa neutra, não conta.</string>
     <string name="rec_title">Registro de resultados</string>
     <string name="rec_q">Nossas previsões acertaram?</string>
     <string name="rec_sub">Resultados das previsões de direção anteriores</string>

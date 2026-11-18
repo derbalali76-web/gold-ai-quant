@@ -527,6 +527,16 @@
     <string name="rec_rng_day">نطاق اليوم (24 ساعة): %1$s من %2$s صحيح</string>
     <string name="rec_rng_how">صحيح = أغلق السعر داخل النطاق في نهاية المدة، خطأ = أغلق فوقه أو تحته، محايد = تعذّر جلب سعر الإغلاق.</string>
     <string name="rec_rng_foot">هذا قياس لدقة النطاق فقط، وليس نتيجة صفقة. سُجّل كل نطاق قبل معرفة النتيجة ولا يمكن تعديله.</string>
+    <string name="rec_rng_d_time">الأصل والوقت</string>
+    <string name="rec_rng_d_range">النطاق المتوقع</string>
+    <string name="rec_rng_d_close_4h">الإغلاق بعد 4 ساعات</string>
+    <string name="rec_rng_d_close_24h">الإغلاق بعد 24 ساعة</string>
+    <string name="rec_rng_d_close_1w">الإغلاق بعد أسبوع</string>
+    <string name="rec_rng_x_ok">توقعنا أن يغلق السعر داخل النطاق في نهاية المدة، وأغلق داخله، فاعتُبر النطاق صحيحاً.</string>
+    <string name="rec_rng_x_above">توقعنا أن يغلق السعر داخل النطاق في نهاية المدة، لكنه أغلق فوقه، فاعتُبر النطاق خطأ.</string>
+    <string name="rec_rng_x_below">توقعنا أن يغلق السعر داخل النطاق في نهاية المدة، لكنه أغلق تحته، فاعتُبر النطاق خطأ.</string>
+    <string name="rec_rng_x_wait">النتيجة تُحسم عند انتهاء مدة النطاق.</string>
+    <string name="rec_rng_x_nodata">تعذّر جلب سعر الإغلاق، فاعتُبر النطاق محايداً ولا يُحسب.</string>
     <string name="rec_title">سجل النتائج</string>
     <string name="rec_q">هل كانت توقعاتنا صحيحة؟</string>
     <string name="rec_sub">نتائج توقعات اتجاه السعر السابقة</string>

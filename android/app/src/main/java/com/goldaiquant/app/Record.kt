@@ -12,7 +12,8 @@ data class RangeTrack(val recorded: Int, val settled: Int, val inside: Int)
 
 /** One recorded price range (stats.json "range_rows"): did the price close inside it at the horizon's end? */
 data class RangeRow(val seq: Int, val asset: String, val horizon: String, val issuedAt: String, val low: Double,
-                    val high: Double, val outcome: String, val close: Double?)
+                    val high: Double, val outcome: String, val close: Double?,
+                    val priceAtIssue: Double? = null, val bars: Int? = null, val targetBar: String? = null)
 
 enum class RecStatus { CORRECT, WRONG, NEUTRAL, PENDING, NO_DATA }
 
@@ -59,7 +60,10 @@ object Record {
             val lo = o.optDouble("low"); val hi = o.optDouble("high")
             if (!lo.isFinite() || !hi.isFinite()) return@mapNotNull null
             RangeRow(o.optInt("seq"), o.optString("asset", "XAU"), o.optString("horizon"), t, lo, hi,
-                o.optString("outcome", "PENDING"), o.optDouble("close").takeIf { !o.isNull("close") && it.isFinite() })
+                o.optString("outcome", "PENDING"), o.optDouble("close").takeIf { !o.isNull("close") && it.isFinite() },
+                o.optDouble("price_at_issue").takeIf { !o.isNull("price_at_issue") && it.isFinite() },
+                o.optInt("bars").takeIf { o.has("bars") && !o.isNull("bars") },
+                o.optString("target_bar").takeIf { !o.isNull("target_bar") && it.length >= 16 })
         }.sortedWith(compareByDescending<RangeRow> { it.issuedAt }.thenByDescending { it.seq })
     }
 

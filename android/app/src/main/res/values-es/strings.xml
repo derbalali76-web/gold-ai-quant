@@ -527,6 +527,16 @@
     <string name="rec_rng_day">Rango del día (24 h): %1$s de %2$s acertados</string>
     <string name="rec_rng_how">Acierto = el precio cerró dentro del rango al final del periodo; fallo = cerró por encima o por debajo; neutral = no se obtuvo el cierre.</string>
     <string name="rec_rng_foot">Esto mide solo la precisión del rango, no una operación. Cada rango se registró antes del resultado y no puede cambiarse.</string>
+    <string name="rec_rng_d_time">Activo y hora</string>
+    <string name="rec_rng_d_range">Rango previsto</string>
+    <string name="rec_rng_d_close_4h">Cierre tras 4 horas</string>
+    <string name="rec_rng_d_close_24h">Cierre tras 24 horas</string>
+    <string name="rec_rng_d_close_1w">Cierre tras una semana</string>
+    <string name="rec_rng_x_ok">Esperábamos que el precio cerrara dentro del rango al final del periodo, y así fue: el rango es acierto.</string>
+    <string name="rec_rng_x_above">Esperábamos un cierre dentro del rango, pero cerró por encima: el rango es fallo.</string>
+    <string name="rec_rng_x_below">Esperábamos un cierre dentro del rango, pero cerró por debajo: el rango es fallo.</string>
+    <string name="rec_rng_x_wait">El resultado se resuelve al terminar el periodo del rango.</string>
+    <string name="rec_rng_x_nodata">No se pudo obtener el cierre: rango neutral, no cuenta.</string>
     <string name="rec_title">Registro de resultados</string>
     <string name="rec_q">¿Acertaron nuestras previsiones?</string>
     <string name="rec_sub">Resultados de previsiones de dirección pasadas</string>
