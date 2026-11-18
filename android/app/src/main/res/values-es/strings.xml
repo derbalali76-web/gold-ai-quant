@@ -513,6 +513,20 @@
     <string name="ft_up">Subida a %1$s: %2$d%%</string>
     <string name="zone_follow2">🔔 Avísame cuando el precio se acerque a estos números</string>
     <string name="zone_follow2_on">✓ Avisos activados para estos números</string>
+    <string name="rec_t_hours">Horas</string>
+    <string name="rec_t_day">Día</string>
+    <string name="rec_t_week">Semana</string>
+    <string name="rec_rng_sub">¿Se mantuvo el precio dentro del rango previsto?</string>
+    <string name="rec_rng_lbl_4h">rangos acertados (4 horas)</string>
+    <string name="rec_rng_lbl_1w">rangos acertados (semanal)</string>
+    <string name="rec_rng_small">La muestra aún es pequeña: no juzgamos la calidad todavía.</string>
+    <string name="rec_rng_line">Rango %1$s – %2$s</string>
+    <string name="rec_rng_close">Cierre %1$s</string>
+    <string name="rec_rng_empty">No hay rangos en este periodo.</string>
+    <string name="rec_rng_week_empty">El rango semanal se registra cada lunes y se resuelve una semana después. Aún no hay resultados.</string>
+    <string name="rec_rng_day">Rango del día (24 h): %1$s de %2$s acertados</string>
+    <string name="rec_rng_how">Acierto = el precio cerró dentro del rango al final del periodo; fallo = cerró por encima o por debajo; neutral = no se obtuvo el cierre.</string>
+    <string name="rec_rng_foot">Esto mide solo la precisión del rango, no una operación. Cada rango se registró antes del resultado y no puede cambiarse.</string>
     <string name="rec_title">Registro de resultados</string>
     <string name="rec_q">¿Acertaron nuestras previsiones?</string>
     <string name="rec_sub">Resultados de previsiones de dirección pasadas</string>

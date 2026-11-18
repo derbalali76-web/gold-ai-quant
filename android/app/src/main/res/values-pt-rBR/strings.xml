@@ -513,6 +513,20 @@
     <string name="ft_up">Alta para %1$s: %2$d%%</string>
     <string name="zone_follow2">🔔 Me avise quando o preço se aproximar destes números</string>
     <string name="zone_follow2_on">✓ Alertas ativados para estes números</string>
+    <string name="rec_t_hours">Horas</string>
+    <string name="rec_t_day">Dia</string>
+    <string name="rec_t_week">Semana</string>
+    <string name="rec_rng_sub">O preço ficou dentro da faixa prevista?</string>
+    <string name="rec_rng_lbl_4h">faixas certas (4 horas)</string>
+    <string name="rec_rng_lbl_1w">faixas certas (semanal)</string>
+    <string name="rec_rng_small">A amostra ainda é pequena: não julgamos a qualidade ainda.</string>
+    <string name="rec_rng_line">Faixa %1$s – %2$s</string>
+    <string name="rec_rng_close">Fechamento %1$s</string>
+    <string name="rec_rng_empty">Nenhuma faixa neste período.</string>
+    <string name="rec_rng_week_empty">A faixa semanal é registrada toda segunda-feira e definida uma semana depois. Ainda sem resultados.</string>
+    <string name="rec_rng_day">Faixa do dia (24 h): %1$s de %2$s certas</string>
+    <string name="rec_rng_how">Certo = o preço fechou dentro da faixa no fim do período; errado = fechou acima ou abaixo; neutro = fechamento indisponível.</string>
+    <string name="rec_rng_foot">Isto mede só a precisão da faixa, não uma operação. Cada faixa foi registrada antes do resultado e não pode ser alterada.</string>
     <string name="rec_title">Registro de resultados</string>
     <string name="rec_q">Nossas previsões acertaram?</string>
     <string name="rec_sub">Resultados das previsões de direção anteriores</string>

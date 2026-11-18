@@ -117,6 +117,7 @@ import com.goldaiquant.app.RangeInfo
 import com.goldaiquant.app.BriefRow
 import com.goldaiquant.app.RecStatus
 import com.goldaiquant.app.Record
+import com.goldaiquant.app.RangeRow
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import com.goldaiquant.app.DataHealth
@@ -350,7 +351,7 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
         Sheet.TrendSheet -> if (card != null) TrendDialog(card) { sheet = null }
         Sheet.Details -> if (card != null && d != null) DetailsDialog(card, d) { sheet = null }
         Sheet.Assets -> AssetDialog(s, { a -> sheet = null; onAssetPick(a) }) { sheet = null }
-        Sheet.TrustSheet -> RecordPage(s.briefs, onMore = { sheet = Sheet.TrustDetails }) { sheet = null }
+        Sheet.TrustSheet -> RecordPage(s.briefs, s.rangeRows, onMore = { sheet = Sheet.TrustDetails }) { sheet = null }
         Sheet.TrustDetails -> TrustDialog(s.trust, s.position) { sheet = Sheet.TrustSheet }
         Sheet.RangeSheet -> RangeDialog(s, s.live[s.asset]?.price ?: s.decision?.quote) { sheet = null }
         Sheet.PositionSheet -> PositionDialog(s.asset, stringResource(when (s.asset) { "BTC" -> R.string.asset_btc
@@ -2066,13 +2067,14 @@ private fun RecDropdown(label: String, options: List<Pair<String, String>>, modi
 }
 
 @Composable
-private fun RecordPage(rows: List<BriefRow>, onMore: () -> Unit, onClose: () -> Unit) {
+private fun RecordPage(rows: List<BriefRow>, ranges: List<RangeRow>, onMore: () -> Unit, onClose: () -> Unit) {
     val uri = LocalUriHandler.current
     var days by remember { mutableStateOf(7) }
     var asset by remember { mutableStateOf<String?>(null) }
     var showAll by remember { mutableStateOf(false) }
     var method by remember { mutableStateOf(false) }
     var detail by remember { mutableStateOf<BriefRow?>(null) }
+    var tab by remember { mutableStateOf("24h") }  // "4h" hours | "24h" day (direction calls) | "1w" week
     detail?.let { RecDetail(it) { detail = null } }
     val today = java.time.LocalDate.now(java.time.ZoneOffset.UTC)
     val shown = Record.filter(rows, asset, days, today)
@@ -2098,7 +2100,16 @@ private fun RecordPage(rows: List<BriefRow>, onMore: () -> Unit, onClose: () -> 
             }
             Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(stringResource(R.string.rec_q), color = TextMain, fontSize = 22.sp, fontWeight = FontWeight.Black, textAlign = TextAlign.Center)
-                Text(stringResource(R.string.rec_sub), color = TextDim, fontSize = 13.sp, textAlign = TextAlign.Center)
+                Text(stringResource(if (tab == "24h") R.string.rec_sub else R.string.rec_rng_sub), color = TextDim, fontSize = 13.sp, textAlign = TextAlign.Center)
+            }
+            Row(Modifier.fillMaxWidth().background(Color(0xFF16161B), RoundedCornerShape(14.dp)).padding(4.dp)) {
+                listOf("4h" to R.string.rec_t_hours, "24h" to R.string.rec_t_day, "1w" to R.string.rec_t_week).forEach { (k, l) ->
+                    val on = tab == k
+                    Text(stringResource(l), color = if (on) Color(0xFF111111) else TextDim, fontSize = 14.sp,
+                        fontWeight = if (on) FontWeight.Black else FontWeight.Normal, textAlign = TextAlign.Center,
+                        modifier = Modifier.weight(1f).background(if (on) Gold else Color.Transparent, RoundedCornerShape(10.dp))
+                            .clickable(role = Role.Tab) { tab = k; showAll = false }.padding(vertical = 9.dp))
+                }
             }
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 RecDropdown(periods.first { it.first == "$days" }.second, periods, Modifier.weight(1f)) { days = it.toInt(); showAll = false }
@@ -2106,75 +2117,139 @@ private fun RecordPage(rows: List<BriefRow>, onMore: () -> Unit, onClose: () -> 
                     asset = it.ifEmpty { null }; showAll = false
                 }
             }
-            // summary: settled correct of settled, and the accuracy gauge (grey until enough settled calls)
-            Row(Modifier.fillMaxWidth().background(Color(0xFF0F0E0B), RoundedCornerShape(20.dp))
-                .border(1.dp, Color(0xFF6B5A22), RoundedCornerShape(20.dp)).padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
-                Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(stringResource(R.string.rec_of, ltr(sm.correct.toString()), ltr(sm.settled.toString())), color = WaitGold, fontSize = 34.sp, fontWeight = FontWeight.Black)
-                    Text(stringResource(R.string.rec_correct_lbl), color = TextMain, fontSize = 15.sp, fontWeight = FontWeight.Bold)
-                }
-                Box(Modifier.width(1.dp).height(80.dp).background(Track))
-                Box(Modifier.weight(1f), contentAlignment = Alignment.Center) { RecGauge(sm.accuracy, sm.settled >= Record.MIN_SETTLED) }
-            }
-            if (days == 1) Text(stringResource(R.string.rec_today_note), color = TextDim, fontSize = 12.sp)
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                @Composable
-                fun chip(t: String, n: Int, bg: Color, edge: Color, fg: Color) = Text("$t ${ltr("$n")}", color = fg, fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold, maxLines = 1, textAlign = TextAlign.Center,
-                    modifier = Modifier.weight(1f).background(bg, RoundedCornerShape(16.dp)).border(1.dp, edge, RoundedCornerShape(16.dp))
-                        .padding(vertical = 6.dp))
-                chip("✓ " + stringResource(R.string.rec_c), sm.correct, Color(0xFF0F3A22), Color(0xFF1F8F4E), Color(0xFF3FE08A))
-                chip("✕ " + stringResource(R.string.rec_w), sm.wrong, Color(0xFF3A1416), Color(0xFFB3363B), Color(0xFFFF7B80))
-                chip("— " + stringResource(R.string.rec_n), sm.neutral, Track, Grey, Color(0xFFD0D0D6))
-                chip("⏱ " + stringResource(R.string.rec_p), sm.pending, Track, Grey, Color(0xFFD0D0D6))
-            }
-            Text(stringResource(R.string.rec_latest), color = TextMain, fontSize = 17.sp, fontWeight = FontWeight.Black)
-            Column(Modifier.fillMaxWidth().background(Color(0xFF0C0C0F), RoundedCornerShape(18.dp))
-                .border(1.dp, Track, RoundedCornerShape(18.dp)).padding(horizontal = 12.dp)) {
-                if (shown.isEmpty()) Text(stringResource(R.string.rec_empty), color = TextDim, fontSize = 13.sp,
-                    modifier = Modifier.padding(vertical = 14.dp))
-                val list = if (showAll) shown else shown.take(3)
-                list.forEachIndexed { i, r ->
-                    if (i > 0) Box(Modifier.fillMaxWidth().height(1.dp).background(Color(0xFF222222)))
-                    RecRow(r) { detail = r }
-                }
-            }
-            if (shown.size > 3) Text(stringResource(if (showAll) R.string.rec_show_less else R.string.rec_show_all), color = WaitGold,
-                fontSize = 16.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth().background(Color(0xFF14120C), RoundedCornerShape(24.dp))
-                    .border(1.5.dp, Gold, RoundedCornerShape(24.dp)).clickable(role = Role.Button) { showAll = !showAll }
-                    .padding(vertical = 11.dp))
-            // optional methodology: how accuracy is measured, and the "always up" baseline on the same calls
-            Column(Modifier.fillMaxWidth().border(1.dp, Track, RoundedCornerShape(16.dp))) {
-                Row(Modifier.fillMaxWidth().clickable(role = Role.Button) { method = !method }.padding(12.dp)) {
-                    Text(stringResource(R.string.rec_how), color = TextMain, fontSize = 14.sp, fontWeight = FontWeight.Bold,
-                        modifier = Modifier.weight(1f))
-                    Text(if (method) "▴" else "▾", color = Gold)
-                }
-                if (method) Column(Modifier.padding(start = 12.dp, end = 12.dp, bottom = 12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    listOf(R.string.rec_how_1, R.string.rec_how_2, R.string.rec_how_3, R.string.rec_how_4).forEach {
-                        Text("• " + stringResource(it), color = TextMain, fontSize = 13.sp, lineHeight = 19.sp)
+            if (tab == "24h") {
+                // summary: settled correct of settled, and the accuracy gauge (grey until enough settled calls)
+                Row(Modifier.fillMaxWidth().background(Color(0xFF0F0E0B), RoundedCornerShape(20.dp))
+                    .border(1.dp, Color(0xFF6B5A22), RoundedCornerShape(20.dp)).padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(stringResource(R.string.rec_of, ltr(sm.correct.toString()), ltr(sm.settled.toString())), color = WaitGold, fontSize = 34.sp, fontWeight = FontWeight.Black)
+                        Text(stringResource(R.string.rec_correct_lbl), color = TextMain, fontSize = 15.sp, fontWeight = FontWeight.Bold)
                     }
-                    if (sm.settled > 0) Column(Modifier.fillMaxWidth().background(Color(0xFF1A1610), RoundedCornerShape(12.dp)).padding(10.dp)) {
-                        Text(stringResource(R.string.rec_base_title), color = WaitGold, fontSize = 13.sp, fontWeight = FontWeight.Bold)
-                        @Composable
-                        fun line(t: String, k: Int) = Row(Modifier.fillMaxWidth()) {
-                            Text(t, color = TextMain, fontSize = 13.sp, modifier = Modifier.weight(1f))
-                            Text(ltr(stringResource(R.string.rec_frac, k, sm.settled, Math.round(100.0 * k / sm.settled).toInt())),
-                                color = TextMain, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                    Box(Modifier.width(1.dp).height(80.dp).background(Track))
+                    Box(Modifier.weight(1f), contentAlignment = Alignment.Center) { RecGauge(sm.accuracy, sm.settled >= Record.MIN_SETTLED) }
+                }
+                if (days == 1) Text(stringResource(R.string.rec_today_note), color = TextDim, fontSize = 12.sp)
+                val dayRng = Record.rangeSummary(Record.filterRanges(ranges, "24h", asset, days, today))
+                if (dayRng.settled > 0) Text(stringResource(R.string.rec_rng_day, ltr(dayRng.correct.toString()), ltr(dayRng.settled.toString())),
+                    color = TextMain, fontSize = 13.sp, modifier = Modifier.fillMaxWidth().background(Color(0xFF16161B), RoundedCornerShape(12.dp)).padding(10.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    @Composable
+                    fun chip(t: String, n: Int, bg: Color, edge: Color, fg: Color) = Text("$t ${ltr("$n")}", color = fg, fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold, maxLines = 1, textAlign = TextAlign.Center,
+                        modifier = Modifier.weight(1f).background(bg, RoundedCornerShape(16.dp)).border(1.dp, edge, RoundedCornerShape(16.dp))
+                            .padding(vertical = 6.dp))
+                    chip("✓ " + stringResource(R.string.rec_c), sm.correct, Color(0xFF0F3A22), Color(0xFF1F8F4E), Color(0xFF3FE08A))
+                    chip("✕ " + stringResource(R.string.rec_w), sm.wrong, Color(0xFF3A1416), Color(0xFFB3363B), Color(0xFFFF7B80))
+                    chip("— " + stringResource(R.string.rec_n), sm.neutral, Track, Grey, Color(0xFFD0D0D6))
+                    chip("⏱ " + stringResource(R.string.rec_p), sm.pending, Track, Grey, Color(0xFFD0D0D6))
+                }
+                Text(stringResource(R.string.rec_latest), color = TextMain, fontSize = 17.sp, fontWeight = FontWeight.Black)
+                Column(Modifier.fillMaxWidth().background(Color(0xFF0C0C0F), RoundedCornerShape(18.dp))
+                    .border(1.dp, Track, RoundedCornerShape(18.dp)).padding(horizontal = 12.dp)) {
+                    if (shown.isEmpty()) Text(stringResource(R.string.rec_empty), color = TextDim, fontSize = 13.sp,
+                        modifier = Modifier.padding(vertical = 14.dp))
+                    val list = if (showAll) shown else shown.take(3)
+                    list.forEachIndexed { i, r ->
+                        if (i > 0) Box(Modifier.fillMaxWidth().height(1.dp).background(Color(0xFF222222)))
+                        RecRow(r) { detail = r }
+                    }
+                }
+                if (shown.size > 3) Text(stringResource(if (showAll) R.string.rec_show_less else R.string.rec_show_all), color = WaitGold,
+                    fontSize = 16.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth().background(Color(0xFF14120C), RoundedCornerShape(24.dp))
+                        .border(1.5.dp, Gold, RoundedCornerShape(24.dp)).clickable(role = Role.Button) { showAll = !showAll }
+                        .padding(vertical = 11.dp))
+                // optional methodology: how accuracy is measured, and the "always up" baseline on the same calls
+                Column(Modifier.fillMaxWidth().border(1.dp, Track, RoundedCornerShape(16.dp))) {
+                    Row(Modifier.fillMaxWidth().clickable(role = Role.Button) { method = !method }.padding(12.dp)) {
+                        Text(stringResource(R.string.rec_how), color = TextMain, fontSize = 14.sp, fontWeight = FontWeight.Bold,
+                            modifier = Modifier.weight(1f))
+                        Text(if (method) "▴" else "▾", color = Gold)
+                    }
+                    if (method) Column(Modifier.padding(start = 12.dp, end = 12.dp, bottom = 12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                        listOf(R.string.rec_how_1, R.string.rec_how_2, R.string.rec_how_3, R.string.rec_how_4).forEach {
+                            Text("• " + stringResource(it), color = TextMain, fontSize = 13.sp, lineHeight = 19.sp)
                         }
-                        line(stringResource(R.string.rec_base_ours), sm.correct)
-                        line(stringResource(R.string.rec_base_up), sm.baselineUp)
+                        if (sm.settled > 0) Column(Modifier.fillMaxWidth().background(Color(0xFF1A1610), RoundedCornerShape(12.dp)).padding(10.dp)) {
+                            Text(stringResource(R.string.rec_base_title), color = WaitGold, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                            @Composable
+                            fun line(t: String, k: Int) = Row(Modifier.fillMaxWidth()) {
+                                Text(t, color = TextMain, fontSize = 13.sp, modifier = Modifier.weight(1f))
+                                Text(ltr(stringResource(R.string.rec_frac, k, sm.settled, Math.round(100.0 * k / sm.settled).toInt())),
+                                    color = TextMain, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                            }
+                            line(stringResource(R.string.rec_base_ours), sm.correct)
+                            line(stringResource(R.string.rec_base_up), sm.baselineUp)
+                        }
+                        Text(stringResource(R.string.rec_verify), color = WaitGold, fontSize = 12.sp,
+                            modifier = Modifier.clickable(role = Role.Button) { uri.openUri(TrustLedger.REPO_URL) })
+                        Text(stringResource(R.string.rec_more), color = TextDim, fontSize = 12.sp,
+                            modifier = Modifier.clickable(role = Role.Button, onClick = onMore))
                     }
-                    Text(stringResource(R.string.rec_verify), color = WaitGold, fontSize = 12.sp,
-                        modifier = Modifier.clickable(role = Role.Button) { uri.openUri(TrustLedger.REPO_URL) })
-                    Text(stringResource(R.string.rec_more), color = TextDim, fontSize = 12.sp,
-                        modifier = Modifier.clickable(role = Role.Button, onClick = onMore))
                 }
-            }
-            Text("ⓘ " + stringResource(R.string.rec_foot), color = TextDim, fontSize = 12.sp, textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth())
+                Text("ⓘ " + stringResource(R.string.rec_foot), color = TextDim, fontSize = 12.sp, textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth())
+            } else RangeRecord(Record.filterRanges(ranges, tab, asset, days, today), tab, showAll) { showAll = !showAll }
         }
+    }
+}
+
+@Composable
+private fun RangeRecord(shown: List<RangeRow>, tab: String, showAll: Boolean, onToggle: () -> Unit) {
+    val sm = Record.rangeSummary(shown)
+    Column(Modifier.fillMaxWidth().background(Color(0xFF0F0E0B), RoundedCornerShape(20.dp))
+        .border(1.dp, Color(0xFF6B5A22), RoundedCornerShape(20.dp)).padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(stringResource(R.string.rec_of, ltr(sm.correct.toString()), ltr(sm.settled.toString())), color = WaitGold, fontSize = 34.sp, fontWeight = FontWeight.Black)
+        Text(stringResource(if (tab == "1w") R.string.rec_rng_lbl_1w else R.string.rec_rng_lbl_4h), color = TextMain, fontSize = 15.sp, fontWeight = FontWeight.Bold)
+        if (sm.settled < Record.MIN_SETTLED) Text(stringResource(R.string.rec_rng_small), color = TextDim, fontSize = 12.sp, textAlign = TextAlign.Center)
+    }
+    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+        @Composable
+        fun chip(t: String, n: Int, bg: Color, edge: Color, fg: Color) = Text("$t ${ltr("$n")}", color = fg, fontSize = 12.sp,
+            fontWeight = FontWeight.Bold, maxLines = 1, textAlign = TextAlign.Center,
+            modifier = Modifier.weight(1f).background(bg, RoundedCornerShape(16.dp)).border(1.dp, edge, RoundedCornerShape(16.dp))
+                .padding(vertical = 6.dp))
+        chip("✓ " + stringResource(R.string.rec_c), sm.correct, Color(0xFF0F3A22), Color(0xFF1F8F4E), Color(0xFF3FE08A))
+        chip("✕ " + stringResource(R.string.rec_w), sm.wrong, Color(0xFF3A1416), Color(0xFFB3363B), Color(0xFFFF7B80))
+        chip("— " + stringResource(R.string.rec_n), sm.neutral, Track, Grey, Color(0xFFD0D0D6))
+        chip("⏱ " + stringResource(R.string.rec_p), sm.pending, Track, Grey, Color(0xFFD0D0D6))
+    }
+    Text(stringResource(R.string.rec_latest), color = TextMain, fontSize = 17.sp, fontWeight = FontWeight.Black)
+    Column(Modifier.fillMaxWidth().background(Color(0xFF0C0C0F), RoundedCornerShape(18.dp))
+        .border(1.dp, Track, RoundedCornerShape(18.dp)).padding(horizontal = 12.dp)) {
+        if (shown.isEmpty()) Text(stringResource(if (tab == "1w") R.string.rec_rng_week_empty else R.string.rec_rng_empty),
+            color = TextDim, fontSize = 13.sp, modifier = Modifier.padding(vertical = 14.dp))
+        (if (showAll) shown else shown.take(5)).forEachIndexed { i, r ->
+            if (i > 0) Box(Modifier.fillMaxWidth().height(1.dp).background(Color(0xFF222222)))
+            RangeRecRow(r, week = tab == "1w")
+        }
+    }
+    if (shown.size > 5) Text(stringResource(if (showAll) R.string.rec_show_less else R.string.rec_show_all), color = WaitGold,
+        fontSize = 16.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center,
+        modifier = Modifier.fillMaxWidth().background(Color(0xFF14120C), RoundedCornerShape(24.dp))
+            .border(1.5.dp, Gold, RoundedCornerShape(24.dp)).clickable(role = Role.Button, onClick = onToggle)
+            .padding(vertical = 11.dp))
+    Text("• " + stringResource(R.string.rec_rng_how), color = TextMain, fontSize = 13.sp, lineHeight = 19.sp)
+    Text("ⓘ " + stringResource(R.string.rec_rng_foot), color = TextDim, fontSize = 12.sp, textAlign = TextAlign.Center,
+        modifier = Modifier.fillMaxWidth())
+}
+
+@Composable
+private fun RangeRecRow(r: RangeRow, week: Boolean) {
+    val locale = LocalConfiguration.current.locales[0]
+    val t = try { java.time.Instant.parse(r.issuedAt).atZone(java.time.ZoneId.systemDefault()) } catch (e: Exception) { null }
+    val day = t?.let { DateTimeFormatter.ofPattern("d MMMM", locale).format(it) } ?: r.issuedAt.take(10)
+    val title = if (week || t == null) day else day + " · " + ltr(DateTimeFormatter.ofPattern("HH:mm", java.util.Locale.ROOT).format(t))
+    Row(Modifier.fillMaxWidth().padding(vertical = 10.dp), verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+        RecAvatar(r.asset)
+        Column(Modifier.weight(1f)) {
+            Text(title + " · " + ltr(recAssetName(r.asset)), color = TextMain, fontSize = 14.sp, fontWeight = FontWeight.Bold, maxLines = 1)
+            val line = stringResource(R.string.rec_rng_line, ltr(recPrice(r.low)), ltr(recPrice(r.high))) +
+                (r.close?.let { " · " + stringResource(R.string.rec_rng_close, ltr(recPrice(it))) } ?: "")
+            Text(line, color = TextDim, fontSize = 12.sp)
+        }
+        RecBadge(Record.status(r))
     }
 }
 

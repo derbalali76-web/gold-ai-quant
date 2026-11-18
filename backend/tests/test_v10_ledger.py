@@ -306,6 +306,9 @@ def test_range_recorded_on_cadence_then_resolved_on_the_target_close(tmp_path):
     assert len(res) == 1 and res[0]["data"]["outcome"] == "ABOVE" and res[0]["data"]["close"] == 2012.0
     st = L.stats(led.entries, now)["ranges"]["XAU"]["4h"]
     assert st["recorded"] == 1 and st["settled"] == 1 and st["inside"] == 0
+    rows = L.stats(led.entries, now)["range_rows"]
+    assert rows == [{"seq": r[0]["seq"], "asset": "XAU", "horizon": "4h", "issued_at": L.iso(issued), "low": 1990.0,
+                     "high": 2010.0, "outcome": "ABOVE", "close": 2012.0}]
     assert L.Ledger(tmp_path).verify() == []
 
 

@@ -513,6 +513,20 @@
     <string name="ft_up">Hausse vers %1$s : %2$d%%</string>
     <string name="zone_follow2">🔔 M\'alerter quand le prix approche de ces chiffres</string>
     <string name="zone_follow2_on">✓ Alertes activées pour ces chiffres</string>
+    <string name="rec_t_hours">Heures</string>
+    <string name="rec_t_day">Jour</string>
+    <string name="rec_t_week">Semaine</string>
+    <string name="rec_rng_sub">Le prix est-il resté dans la fourchette prévue ?</string>
+    <string name="rec_rng_lbl_4h">fourchettes justes (4 heures)</string>
+    <string name="rec_rng_lbl_1w">fourchettes justes (hebdomadaire)</string>
+    <string name="rec_rng_small">L\'échantillon est encore petit : pas de jugement sur la qualité.</string>
+    <string name="rec_rng_line">Fourchette %1$s – %2$s</string>
+    <string name="rec_rng_close">Clôture %1$s</string>
+    <string name="rec_rng_empty">Aucune fourchette sur cette période.</string>
+    <string name="rec_rng_week_empty">La fourchette hebdomadaire est enregistrée chaque lundi et tranchée une semaine plus tard. Pas encore de résultats.</string>
+    <string name="rec_rng_day">Fourchette du jour (24 h) : %1$s sur %2$s justes</string>
+    <string name="rec_rng_how">Juste = le prix a clôturé dans la fourchette à la fin de la période ; faux = au-dessus ou en dessous ; neutre = clôture introuvable.</string>
+    <string name="rec_rng_foot">Ceci mesure uniquement la justesse de la fourchette, pas une opération. Chaque fourchette a été enregistrée avant le résultat et ne peut être modifiée.</string>
     <string name="rec_title">Registre des résultats</string>
     <string name="rec_q">Nos prévisions étaient-elles justes ?</string>
     <string name="rec_sub">Résultats des prévisions de direction passées</string>

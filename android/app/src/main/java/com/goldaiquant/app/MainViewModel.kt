@@ -26,6 +26,7 @@ data class UiState(
     val trustAll: Map<String, Trust> = emptyMap(),
     val briefs: List<BriefRow> = emptyList(),
     val rangeTracks: Map<String, Map<String, RangeTrack>> = emptyMap(),
+    val rangeRows: List<RangeRow> = emptyList(),
     val range: RangeInfo? = null,
     val asset: String = "XAU",  // XAU | BTC | ETH | SOL
     val positions: Map<String, String> = emptyMap(),  // asset -> CASH | HOLD (stored on the phone only)
@@ -89,6 +90,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                 trustAll = TrustParser.parseAll(prefs.getString("trust", null)),
                 briefs = Record.parse(prefs.getString("trust", null)),
                 rangeTracks = Record.rangeTracks(prefs.getString("trust", null)),
+                rangeRows = Record.rangeRows(prefs.getString("trust", null)),
                 asset = asset0,
                 alertAssets = SignalWorker.alertAssets(prefs),
                 priceAlerts = PriceAlerts.load(prefs),
@@ -151,7 +153,8 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             val body = TrustLedger.fetch() ?: return@launch
             val t = TrustParser.parseAll(body).takeIf { it.isNotEmpty() } ?: return@launch
             prefs.edit().putString("trust", body).apply()
-            _state.update { it.copy(trustAll = t, briefs = Record.parse(body), rangeTracks = Record.rangeTracks(body)) }
+            _state.update { it.copy(trustAll = t, briefs = Record.parse(body), rangeTracks = Record.rangeTracks(body),
+                rangeRows = Record.rangeRows(body)) }
         }
     }
 

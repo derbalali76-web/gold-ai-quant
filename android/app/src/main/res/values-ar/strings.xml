@@ -513,6 +513,20 @@
     <string name="ft_up">الصعود إلى %1$s: %2$d%%</string>
     <string name="zone_follow2">🔔 نبّهني عندما يقترب السعر من هذه الأرقام</string>
     <string name="zone_follow2_on">✓ التنبيه مفعّل عند هذه الأرقام</string>
+    <string name="rec_t_hours">الساعات</string>
+    <string name="rec_t_day">اليوم</string>
+    <string name="rec_t_week">الأسبوع</string>
+    <string name="rec_rng_sub">هل بقي السعر داخل النطاق المتوقع؟</string>
+    <string name="rec_rng_lbl_4h">نطاقات صحيحة (نطاق 4 ساعات)</string>
+    <string name="rec_rng_lbl_1w">نطاقات صحيحة (نطاق أسبوعي)</string>
+    <string name="rec_rng_small">العيّنة ما زالت صغيرة، لا نحكم على الجودة بعد.</string>
+    <string name="rec_rng_line">النطاق %1$s – %2$s</string>
+    <string name="rec_rng_close">الإغلاق %1$s</string>
+    <string name="rec_rng_empty">لا نطاقات في هذه الفترة.</string>
+    <string name="rec_rng_week_empty">النطاق الأسبوعي يُسجَّل كل يوم اثنين وتُحسم نتيجته بعد أسبوع. لا نتائج بعد.</string>
+    <string name="rec_rng_day">نطاق اليوم (24 ساعة): %1$s من %2$s صحيح</string>
+    <string name="rec_rng_how">صحيح = أغلق السعر داخل النطاق في نهاية المدة، خطأ = أغلق فوقه أو تحته، محايد = تعذّر جلب سعر الإغلاق.</string>
+    <string name="rec_rng_foot">هذا قياس لدقة النطاق فقط، وليس نتيجة صفقة. سُجّل كل نطاق قبل معرفة النتيجة ولا يمكن تعديله.</string>
     <string name="rec_title">سجل النتائج</string>
     <string name="rec_q">هل كانت توقعاتنا صحيحة؟</string>
     <string name="rec_sub">نتائج توقعات اتجاه السعر السابقة</string>

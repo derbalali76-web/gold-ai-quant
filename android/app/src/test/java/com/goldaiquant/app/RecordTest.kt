@@ -38,4 +38,37 @@ class RecordTest {
         assertEquals(3, sol.size)
         assertNull(Record.summary(emptyList()).accuracy)
     }
+
+    private val ranges = """{"range_rows":[
+      {"seq":40,"asset":"XAU","horizon":"4h","issued_at":"2026-11-18T08:00:00Z","low":3742.0,"high":3804.1,"outcome":"PENDING","close":null},
+      {"seq":39,"asset":"XAU","horizon":"4h","issued_at":"2026-11-18T04:00:00Z","low":3763.0,"high":3814.9,"outcome":"INSIDE","close":3772.43},
+      {"seq":38,"asset":"XAU","horizon":"24h","issued_at":"2026-11-18T00:00:00Z","low":3790.8,"high":3913.8,"outcome":"PENDING","close":null},
+      {"seq":37,"asset":"XAU","horizon":"4h","issued_at":"2026-11-18T00:00:00Z","low":3836.7,"high":3867.4,"outcome":"BELOW","close":3788.5},
+      {"seq":36,"asset":"BTC","horizon":"4h","issued_at":"2026-11-17T20:00:00Z","low":1.0,"high":2.0,"outcome":"ABOVE","close":2.5},
+      {"seq":35,"asset":"SOL","horizon":"4h","issued_at":"2026-11-17T16:00:00Z","low":1.0,"high":2.0,"outcome":"NO_DATA","close":null},
+      {"seq":34,"asset":"XAU","horizon":"4h","issued_at":"bad","low":1.0,"high":2.0,"outcome":"INSIDE","close":1.5}]}"""
+
+    @Test fun rangeRowsMapToCorrectWrongNeutral() {
+        val rows = Record.rangeRows(ranges)
+        assertEquals(6, rows.size)  // the malformed time is dropped
+        assertEquals(40, rows.first().seq)
+        assertEquals(RecStatus.CORRECT, Record.status(rows.first { it.seq == 39 }))
+        assertEquals(RecStatus.WRONG, Record.status(rows.first { it.seq == 37 }))
+        assertEquals(RecStatus.WRONG, Record.status(rows.first { it.seq == 36 }))
+        assertEquals(RecStatus.NEUTRAL, Record.status(rows.first { it.seq == 35 }))
+        assertEquals(RecStatus.PENDING, Record.status(rows.first { it.seq == 40 }))
+    }
+
+    @Test fun rangeFilterByHorizonAssetAndDays() {
+        val rows = Record.rangeRows(ranges)
+        val today = LocalDate.parse("2026-11-18")
+        val gold4h = Record.filterRanges(rows, "4h", "XAU", 7, today)
+        assertEquals(listOf(40, 39, 37), gold4h.map { it.seq })
+        val s = Record.rangeSummary(gold4h)
+        assertEquals(1, s.correct); assertEquals(1, s.wrong); assertEquals(0, s.neutral); assertEquals(1, s.pending)
+        assertEquals(5, Record.filterRanges(rows, "4h", null, 7, today).size)
+        assertEquals(3, Record.filterRanges(rows, "4h", null, 1, today).size)
+        assertEquals(1, Record.filterRanges(rows, "24h", null, 7, today).size)
+        assertEquals(0, Record.filterRanges(rows, "1w", null, 30, today).size)
+    }
 }

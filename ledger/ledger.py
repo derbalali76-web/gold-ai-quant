@@ -672,6 +672,20 @@ def range_stats(entries: list[dict]) -> dict:
     return out
 
 
+def range_rows(entries: list[dict], keep: int = 400) -> list[dict]:
+    """One row per recorded range, newest first, for the app's results page (derived; ledger lines never change)."""
+    res = {x["data"]["ref"]: x["data"] for x in entries if x["kind"] == "RANGE_RESULT"}
+    rows = []
+    for e in entries:
+        if e["kind"] != "RANGE":
+            continue
+        d, r = e["data"], res.get(e["seq"], {})
+        rows.append({"seq": e["seq"], "asset": asset_of(e), "horizon": d["horizon"], "issued_at": d["issued_at"],
+                     "low": d["low"], "high": d["high"], "outcome": r.get("outcome", "PENDING"), "close": r.get("close")})
+    rows.sort(key=lambda x: (x["issued_at"], x["seq"]), reverse=True)
+    return rows[:keep]
+
+
 LIVE_START = datetime(2026, 11, 16, 20, tzinfo=timezone.utc)  # first issue time with the independent issuer
 RANGE_HORIZONS = {"XAU": ("4h", "24h", "1w"), "BTC": ("4h", "24h", "1w"), "ETH": ("4h", "24h", "1w"),
                   "SOL": ("4h", "24h", "1w")}
@@ -779,6 +793,7 @@ def stats(entries: list[dict], now: datetime) -> dict:
     out["scenarios"] = scenario_stats(entries)
     out["briefs"] = brief_rows(entries)
     out["ranges"] = range_stats(entries)
+    out["range_rows"] = range_rows(entries)
     out["hilo"] = hilo_stats(entries)
     out["completeness"] = completeness(entries, now)
     out["advice"] = advice_stats(entries)

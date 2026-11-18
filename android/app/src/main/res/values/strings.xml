@@ -514,6 +514,20 @@
     <string name="ft_up">Up to %1$s: %2$d%%</string>
     <string name="zone_follow2">🔔 Alert me when the price nears these numbers</string>
     <string name="zone_follow2_on">✓ Alerts on for these numbers</string>
+    <string name="rec_t_hours">Hours</string>
+    <string name="rec_t_day">Day</string>
+    <string name="rec_t_week">Week</string>
+    <string name="rec_rng_sub">Did the price stay inside the expected range?</string>
+    <string name="rec_rng_lbl_4h">correct ranges (4-hour range)</string>
+    <string name="rec_rng_lbl_1w">correct ranges (weekly range)</string>
+    <string name="rec_rng_small">The sample is still small; we don\'t judge quality yet.</string>
+    <string name="rec_rng_line">Range %1$s – %2$s</string>
+    <string name="rec_rng_close">Close %1$s</string>
+    <string name="rec_rng_empty">No ranges in this period.</string>
+    <string name="rec_rng_week_empty">The weekly range is recorded every Monday and settled a week later. No results yet.</string>
+    <string name="rec_rng_day">Day range (24 h): %1$s of %2$s correct</string>
+    <string name="rec_rng_how">Correct = the price closed inside the range at the end of the period; wrong = it closed above or below; neutral = the closing price could not be fetched.</string>
+    <string name="rec_rng_foot">This measures range accuracy only, not a trade result. Each range was recorded before the result and cannot be changed.</string>
     <string name="rec_title">Results record</string>
     <string name="rec_q">Were our calls right?</string>
     <string name="rec_sub">Results of past price-direction calls</string>
