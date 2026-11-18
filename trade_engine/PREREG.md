@@ -78,3 +78,27 @@ Max drawdown is reported next to buy-and-hold over the same months.
 - FAIL: any criterion missed at that point. Early stop: drawdown > 2 × the holdout's maximum drawdown.
 - Until PASS the app may only show these trades labelled «تجريبي» (experimental), never as buy instructions;
   any screen change is shown as a mockup for approval first.
+
+## Addendum A1 — implementation details fixed before phase 2 (2026-11-18, no rule evaluated yet)
+These make the registered plan concrete; none relaxes a criterion.
+1. **Holdout isolation.** Phase 2 drops every 1h/15m bar with open time ≥ 2025-11-15 *before* building 4h bars,
+   features or the market, so holdout prices are never in memory. Decisions end 2025-11-08 (7-day embargo; the
+   longest order life is 6 entry bars + 31 hold bars ≈ 6.2 days). Any NO_DATA outcome is reported.
+2. **Confidence intervals.** Trades are grouped by decision month and resampled with a circular block bootstrap
+   of 3 consecutive months (2 000 draws, percentile 95 %) for mean net return and profit factor — this keeps
+   regime dependence that a trade-level resample would break. Rates use Wilson intervals. Phase-1 baselines are
+   recomputed with the same method for comparison.
+3. **Random-entry baseline (fair timing, geometry and costs).** Pool = every 4h decision bar in the evaluation
+   windows (2022-01-01 .. 2025-11-08). Each pool bar gets an (entry, stop, target) offset triple, in ATR units of
+   that bar, drawn (seeded) from the rule's own orders; it is simulated with the same simulator, costs, timeouts.
+   One draw = as many pool orders as the rule placed, without replacement; statistic = mean net per filled trade.
+   1 000 draws; p = (1 + #draws ≥ rule) / 1 001. Fewer than 10 rule orders → p = 1. Holm over all 48.
+4. **Probability model.** Logistic regression (L2, C = 1, standardised inputs) on the four registered inputs,
+   fitted per window on that configuration's orders decided from 2021-01-01 up to 7 days before the window.
+   Fewer than 30 training examples or one class only → predict the training base rate. Brier skill (pooled over
+   windows) = 1 − Σ(p − y)² / Σ(base − y)², base = the training base rate of each window. Reliability: 10 bins.
+   P(fill) on all orders; P(target first) and P(net > 0) on filled orders.
+5. A window with no filled trade counts as "not positive". Cost sensitivity ×0.75 and ×2 is reported for every
+   configuration; selection uses the registered costs (×1) only. All 48 results are published, pass or fail.
+6. **Freeze.** The selection file records the sha256 of sim.py, rules.py, metrics.py, phase2.py and the data
+   fingerprints; the commit is tagged `te-0.1.0-frozen`. The holdout is not opened in phase 2.
