@@ -1,0 +1,122 @@
+"""AI QUANT Trade Engine simulator: fills, exits, intrabar ordering and costs on hand-built bars."""
+import sys
+from pathlib import Path
+
+import pandas as pd
+import pytest
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from trade_engine.sim import Costs, Market, Order, simulate, run  # noqa: E402
+
+T0 = pd.Timestamp("2025-01-01 00:00", tz="UTC")
+ZERO = Costs(0.0, 0.0, 0.0, 0.0)
+
+
+def bars(rows, step="1h", start=T0):
+    idx = pd.date_range(start, periods=len(rows), freq=step, tz="UTC")
+    return pd.DataFrame(rows, index=idx, columns=["open", "high", "low", "close"])
+
+
+def flat(n, p=100.0, step="1h", start=T0):
+    return bars([[p, p, p, p]] * n, step, start)
+
+
+def mk(rows, pad=200):
+    """Hourly bars from T0, then a long flat tail so every order has data for its whole life."""
+    df = pd.concat([bars(rows), flat(pad, rows[-1][3], start=T0 + pd.Timedelta(hours=len(rows)))])
+    return Market(None, df)
+
+
+def test_limit_needs_a_trade_strictly_below():
+    m = mk([[101, 101, 100, 100.5]])  # touches 100, never trades below
+    r = simulate(Order(T0, target=110, stop=90, limit=100), m, ZERO)
+    assert r.outcome == "NOT_FILLED" and not r.filled and r.net == 0
+
+
+def test_limit_fill_then_target_in_a_later_bar_net_of_fees():
+    m = mk([[101, 101, 99.5, 100], [100, 111, 100, 110]])
+    c = Costs(maker=0.001, taker=0.001, half_spread=0.0, slippage=0.0)
+    r = simulate(Order(T0, target=110, stop=90, limit=100), m, c)
+    assert r.outcome == "TARGET" and r.entry == 100 and r.exit == 110
+    assert r.net == pytest.approx(110 * 0.999 / (100 * 1.001) - 1, abs=1e-6)
+
+
+def test_target_not_allowed_in_the_fill_bar_but_stop_is():
+    m = mk([[101, 120, 99, 100]])  # fill bar reaches the target: not counted; flat afterwards -> time exit
+    r = simulate(Order(T0, target=110, stop=90, limit=100, hold_bars=1), m, ZERO)
+    assert r.outcome == "TIME"
+    m2 = mk([[101, 101, 85, 95]])  # fill bar goes on to the stop: counted
+    r2 = simulate(Order(T0, target=110, stop=90, limit=100), m2, ZERO)
+    assert r2.outcome == "STOP" and r2.exit == 90
+
+
+def test_both_levels_in_one_bar_counts_as_stop():
+    m = mk([[101, 101, 99, 100], [100, 115, 85, 100]])
+    r = simulate(Order(T0, target=110, stop=90, limit=100), m, ZERO)
+    assert r.outcome == "STOP"
+
+
+def test_gap_through_stop_fills_at_open_with_slippage():
+    m = mk([[101, 101, 99, 100], [80, 82, 79, 81]])
+    c = Costs(0.0, 0.0, 0.0, 0.01)
+    r = simulate(Order(T0, target=110, stop=90, limit=100), m, c)
+    assert r.outcome == "STOP" and r.exit == pytest.approx(80 * 0.99)
+
+
+def test_limit_fills_at_a_lower_open():
+    m = mk([[97, 98, 96, 97], [97, 120, 97, 115]])
+    r = simulate(Order(T0, target=110, stop=90, limit=100), m, ZERO)
+    assert r.entry == 97 and r.outcome == "TARGET" and r.exit == 110
+
+
+def test_market_entry_pays_spread_slippage_and_taker():
+    m = mk([[100, 100, 100, 100]])
+    c = Costs(maker=0.0, taker=0.001, half_spread=0.0005, slippage=0.0005)
+    r = simulate(Order(T0, target=110, stop=90, limit=None, hold_bars=1), m, c)
+    assert r.entry == pytest.approx(100.1)
+    assert r.outcome == "TIME" and r.exit == pytest.approx(100 * 0.999)
+    assert r.net == pytest.approx(100 * 0.999 * 0.999 / (100.1 * 1.001) - 1, abs=1e-6)
+
+
+def test_time_exit_after_hold_bars_and_no_data_at_the_edge():
+    m = mk([[101, 101, 99, 100]] + [[100, 101, 99, 100]] * 30, pad=0)
+    r = simulate(Order(T0, target=110, stop=90, limit=100, hold_bars=2), m, ZERO)
+    assert r.outcome == "TIME" and r.bars_held <= 3
+    assert simulate(Order(T0, target=110, stop=90, limit=100, hold_bars=30), m, ZERO).outcome == "NO_DATA"
+
+
+def test_fifteen_minute_bars_take_over_where_available():
+    h1 = flat(300, 100)
+    q = bars([[100, 100, 99, 99.5], [99.5, 99.6, 89, 89.5]] + [[89.5] * 4] * 100, "15min", T0)
+    m = Market(q, h1)
+    r = simulate(Order(T0, target=110, stop=90, limit=100), m, ZERO)
+    assert r.fill_time.startswith("2025-01-01 00:00") and r.outcome == "STOP"
+
+
+def test_one_position_at_a_time():
+    m = mk([[101, 101, 99, 100]] + [[100, 100.5, 99.5, 100]] * 100)
+    orders = [Order(T0 + k * pd.Timedelta(hours=4), target=110, stop=90, limit=100, hold_bars=2) for k in range(4)]
+    rs = run(orders, m, ZERO)
+    assert len(rs) < 4 and all(r.filled or r.outcome == "NOT_FILLED" for r in rs)
+
+
+def test_rule_family_is_the_registered_24_and_holdout_is_sealed(monkeypatch):
+    from trade_engine import rules
+    cs = rules.configs()
+    assert len(cs) == 24 and len({c["id"] for c in cs}) == 24
+    monkeypatch.delenv("TE_UNSEAL_HOLDOUT", raising=False)
+    f = pd.DataFrame({"t": [rules.HOLDOUT_START]})
+    with pytest.raises(PermissionError):
+        rules.orders(f, cs[0], rules.DEV_START, rules.HOLDOUT_END)
+
+
+def test_features_at_t_do_not_change_when_future_bars_arrive():
+    import numpy as np
+    from trade_engine import rules
+    rng = np.random.default_rng(1)
+    c = 100 * np.exp(np.cumsum(rng.normal(0, 0.01, 600)))
+    idx = pd.date_range("2024-01-01", periods=600, freq="4h", tz="UTC")
+    h4 = pd.DataFrame({"open": c, "high": c * 1.01, "low": c * 0.99, "close": c, "volume": rng.uniform(1, 2, 600)}, index=idx)
+    full, cut = rules.features(h4), rules.features(h4.iloc[:450])
+    common = cut.index
+    pd.testing.assert_frame_equal(full.loc[common], cut, check_exact=False, rtol=1e-12)
