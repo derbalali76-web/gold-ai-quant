@@ -1,7 +1,7 @@
 {
- "trained_at": "2026-11-17T13:42:25.516594+00:00",
+ "trained_at": "2026-11-18T13:17:32.773513+00:00",
  "dataset": "LIVE HISTORY (Dukascopy)",
- "trained_until": "2026-11-17T00:00:00+00:00",
+ "trained_until": "2026-11-18T00:00:00+00:00",
  "qualified": false,
  "reason": "المعايرة غير كافية (فجوة منحنى الموثوقية كبيرة)",
  "n_oos": 95796
