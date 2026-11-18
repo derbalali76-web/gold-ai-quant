@@ -1,0 +1,25 @@
+name: trade-engine-data
+# Trade-engine-only funding collector (writes trade_engine/data/ only). Manual, plus monthly on the 10th.
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: "41 5 10 * *"
+concurrency: { group: trade-engine-data, cancel-in-progress: false }
+permissions: { contents: write }
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with: { python-version: "3.12" }
+      - run: python -m trade_engine.collect
+      - run: python -m trade_engine.collect   # second pass: months unchanged since the first pass become final
+      - name: commit
+        run: |
+          git config user.name "ai-quant-bot"; git config user.email "bot@users.noreply.github.com"
+          git add trade_engine/data
+          git diff --cached --quiet && exit 0
+          git commit -m "trade engine data: funding archive [skip render]"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && exit 0; sleep 5; done; exit 1

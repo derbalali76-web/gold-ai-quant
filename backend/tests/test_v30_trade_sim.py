@@ -132,3 +132,14 @@ def test_holm_and_brier_skill_and_month_bootstrap():
     months = np.array(["2024-%02d" % (i % 12 + 1) for i in range(48)])
     ci = month_block_boot(months, np.ones(48) * 0.01, np.mean)
     assert ci == (0.01, 0.01)
+
+
+def test_te_collector_parses_archive_and_drops_duplicates():
+    import io, zipfile
+    from trade_engine.collect import parse, months
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w") as z:
+        z.writestr("x.csv", "calc_time,funding_interval_hours,last_funding_rate\n"
+                            "1733011200000,8,0.0001\n1733040000000,8,0.0002\n1733040000000,8,0.0003\n")
+    assert parse(buf.getvalue()) == [(1733011200000, 0.0001), (1733040000000, 0.0003)]
+    assert list(months(2024, 11, (2025, 1))) == [(2024, 11), (2024, 12), (2025, 1)]  # December included
