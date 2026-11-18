@@ -1,0 +1,26 @@
+{
+ "engine": "te-0.1.0",
+ "selected": {
+  "BTCUSDT": [],
+  "SOLUSDT": []
+ },
+ "file_sha256_16": {
+  "sim.py": "4fe86ab93d80cf24",
+  "rules.py": "0548be69024c3385",
+  "metrics.py": "a1124a84ea9b92b1",
+  "phase2.py": "d3ea1328e70a5c61",
+  "data.py": "974a869bead21304",
+  "PREREG.md": "36afdad4236ec998"
+ },
+ "data_fingerprints": {
+  "BTCUSDT": {
+   "1h": "70c697c45f035162",
+   "15m": "e77bf90c0c2fd23f"
+  },
+  "SOLUSDT": {
+   "1h": "74c376c688244165",
+   "15m": "5f1c4ed148c6b3cf"
+  }
+ },
+ "holdout_opened": false
+}

@@ -120,3 +120,15 @@ def test_features_at_t_do_not_change_when_future_bars_arrive():
     full, cut = rules.features(h4), rules.features(h4.iloc[:450])
     common = cut.index
     pd.testing.assert_frame_equal(full.loc[common], cut, check_exact=False, rtol=1e-12)
+
+
+def test_holm_and_brier_skill_and_month_bootstrap():
+    import numpy as np
+    from trade_engine.phase2 import holm
+    from trade_engine.metrics import brier_skill, month_block_boot
+    assert holm([0.01, 0.04, 0.03]) == [0.03, 0.06, 0.06]
+    y = np.array([1, 0, 1, 1.0]); base = np.full(4, 0.75)
+    assert brier_skill(base, base, y) == 0.0 and brier_skill(y, base, y) == 1.0
+    months = np.array(["2024-%02d" % (i % 12 + 1) for i in range(48)])
+    ci = month_block_boot(months, np.ones(48) * 0.01, np.mean)
+    assert ci == (0.01, 0.01)

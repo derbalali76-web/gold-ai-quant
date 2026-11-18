@@ -65,3 +65,46 @@ def summary(results) -> dict:
         "max_drawdown_pct": round(100 * max_dd(net), 2) if len(net) else 0.0,
         "avg_bars_held": round(float(np.mean([r.bars_held for r in filled])), 1) if filled else None,
     }
+
+
+def month_block_boot(months: np.ndarray, x: np.ndarray, fn, n: int = 2000, block: int = 3, seed: int = 7):
+    """Circular block bootstrap over calendar months (addendum A1-2). months: 'YYYY-MM' per trade (time order)."""
+    if len(x) < 10:
+        return None
+    keys = sorted(set(months))
+    groups = [x[months == k] for k in keys]
+    nm = len(keys)
+    rng = np.random.default_rng(seed)
+    vals = []
+    for _ in range(n):
+        parts, got = [], 0
+        while got < nm:
+            s = int(rng.integers(0, nm))
+            for d in range(block):
+                parts.append(groups[(s + d) % nm])
+            got += block
+        v = fn(np.concatenate(parts)) if parts else None
+        if v is not None and np.isfinite(v):
+            vals.append(v)
+    if not vals:
+        return None
+    lo, hi = np.percentile(vals, [2.5, 97.5])
+    return round(float(lo), 6), round(float(hi), 6)
+
+
+def brier_skill(p: np.ndarray, base: np.ndarray, y: np.ndarray):
+    if len(y) == 0:
+        return None
+    den = float(((base - y) ** 2).sum())
+    return None if den == 0 else round(1 - float(((p - y) ** 2).sum()) / den, 4)
+
+
+def reliability(p: np.ndarray, y: np.ndarray, bins: int = 10) -> list:
+    out = []
+    for i in range(bins):
+        lo, hi = i / bins, (i + 1) / bins
+        sel = (p >= lo) & ((p < hi) if i < bins - 1 else (p <= hi))
+        if sel.any():
+            out.append({"bin": [lo, hi], "n": int(sel.sum()), "mean_p": round(float(p[sel].mean()), 4),
+                        "observed": round(float(y[sel].mean()), 4)})
+    return out
