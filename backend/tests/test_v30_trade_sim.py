@@ -143,3 +143,35 @@ def test_te_collector_parses_archive_and_drops_duplicates():
                             "1733011200000,8,0.0001\n1733040000000,8,0.0002\n1733040000000,8,0.0003\n")
     assert parse(buf.getvalue()) == [(1733011200000, 0.0001), (1733040000000, 0.0003)]
     assert list(months(2024, 11, (2025, 1))) == [(2024, 11), (2024, 12), (2025, 1)]  # December included
+
+
+def _res(t, net, filled=True, outcome="TARGET"):
+    from trade_engine.sim import Result
+    return Result(str(pd.Timestamp(t, tz="UTC")), filled, outcome if filled else "NOT_FILLED", net=net)
+
+
+def test_v2_random_and_ablation_tests_behave():
+    import numpy as np
+    from trade_engine import phase2_v2 as P
+    rng = np.random.default_rng(0)
+    nets = np.concatenate([np.full(500, -0.01), np.full(10, np.inf)])
+    p_hi, _ = P.p_random(nets, 50, 0.02, rng)
+    p_lo, _ = P.p_random(nets, 50, -0.05, rng)
+    assert p_hi < 0.01 and p_lo > 0.99
+    strata = np.array(["a"] * 255 + ["b"] * 255)
+    p_s, _ = P.p_random(nets, 20, 0.02, rng, strata, ["a"] * 20)
+    assert p_s < 0.01
+    days = pd.date_range("2022-01-01", periods=400, freq="3D")
+    good = [_res(t, 0.02) for t in days]
+    bad = [_res(t, -0.01) for t in days]
+    p_ab, d = P.p_ablation(good, bad, rng)
+    assert p_ab < 0.01 and d == 3.0
+    assert P.p_ablation(bad, good, rng)[0] > 0.99
+
+
+def test_v2_signals_use_only_trailing_information():
+    from trade_engine import rules_v2 as R
+    s = pd.Series(range(100), index=pd.date_range("2024-01-01", periods=100, freq="D", tz="UTC"), dtype=float)
+    full, cut = R._trail_pct(s, 30), R._trail_pct(s.iloc[:60], 30)
+    pd.testing.assert_series_equal(full.iloc[:60], cut)
+    assert len(R.configs()) == 12

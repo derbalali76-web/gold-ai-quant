@@ -1,0 +1,112 @@
+{
+ "funding_te_store": {
+  "BTCUSDT": {
+   "first": "2020-01-01 00:00:00+00:00",
+   "last": "2026-10-31 16:00:00+00:00",
+   "rows": 7488,
+   "duplicates": 0,
+   "monotonic": true,
+   "max_gap_hours": 8.0,
+   "interval_hours_counts": {
+    "8.0": 7487
+   },
+   "months_below_3_per_day": [],
+   "december_rows": 558,
+   "december_months": [
+    "2020-12",
+    "2021-12",
+    "2022-12",
+    "2023-12",
+    "2024-12",
+    "2025-12"
+   ],
+   "settlements_off_the_hour": 0,
+   "max_offset_seconds": 0.0,
+   "shared_store_overlap": 6930,
+   "shared_store_max_abs_diff": 0.0,
+   "shared_store_rows_missing_here": 0
+  },
+  "SOLUSDT": {
+   "first": "2020-09-13 16:00:00.004000+00:00",
+   "last": "2026-10-31 16:00:00+00:00",
+   "rows": 6793,
+   "duplicates": 0,
+   "monotonic": true,
+   "max_gap_hours": 8.0,
+   "interval_hours_counts": {
+    "8.0": 6691,
+    "2.0": 98,
+    "4.0": 3
+   },
+   "months_below_3_per_day": [
+    {
+     "month": "2020-09",
+     "rows": 52,
+     "expected_8h": 90
+    }
+   ],
+   "december_rows": 558,
+   "december_months": [
+    "2020-12",
+    "2021-12",
+    "2022-12",
+    "2023-12",
+    "2024-12",
+    "2025-12"
+   ],
+   "settlements_off_the_hour": 0,
+   "max_offset_seconds": 0.0,
+   "shared_store_overlap": 6328,
+   "shared_store_max_abs_diff": 0.0,
+   "shared_store_rows_missing_here": 0
+  }
+ },
+ "open_interest_shared_store": {
+  "BTCUSDT": {
+   "first": "2021-12-31 23:00:00+00:00",
+   "last": "2026-11-13 23:00:00+00:00",
+   "hours": 42664,
+   "missing_hours": 9,
+   "missing_list": [
+    "2024-02-16 14:00:00+00:00",
+    "2024-02-16 15:00:00+00:00",
+    "2024-02-16 16:00:00+00:00",
+    "2024-02-16 17:00:00+00:00",
+    "2024-02-16 18:00:00+00:00",
+    "2024-02-16 19:00:00+00:00",
+    "2024-02-16 20:00:00+00:00",
+    "2024-02-16 21:00:00+00:00",
+    "2024-02-16 22:00:00+00:00"
+   ],
+   "duplicates": 12,
+   "oi_nan": 0,
+   "oi_jumps_over_50pct_in_1h": 58
+  },
+  "SOLUSDT": {
+   "first": "2021-12-31 23:00:00+00:00",
+   "last": "2026-11-13 23:00:00+00:00",
+   "hours": 42664,
+   "missing_hours": 9,
+   "missing_list": [
+    "2024-02-16 14:00:00+00:00",
+    "2024-02-16 15:00:00+00:00",
+    "2024-02-16 16:00:00+00:00",
+    "2024-02-16 17:00:00+00:00",
+    "2024-02-16 18:00:00+00:00",
+    "2024-02-16 19:00:00+00:00",
+    "2024-02-16 20:00:00+00:00",
+    "2024-02-16 21:00:00+00:00",
+    "2024-02-16 22:00:00+00:00"
+   ],
+   "duplicates": 12,
+   "oi_nan": 0,
+   "oi_jumps_over_50pct_in_1h": 26
+  }
+ },
+ "publication_rules": {
+  "spot_klines": "bar values final at bar close; used when close <= t",
+  "funding": "rate fixed and published at settlement (calc_time); used when calc_time < t (strict); stale after 9 h",
+  "open_interest": "5-min snapshot published by the exchange API within minutes; hourly row = last snapshot of the hour; used when open_time + 2 h <= t (1 h safety lag)",
+  "archive_files": "monthly/daily archive copies appear later but carry the same values; the backtest uses event time + the lags above, which a live reader of the API can also meet"
+ }
+}

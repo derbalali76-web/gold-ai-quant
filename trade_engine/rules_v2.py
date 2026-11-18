@@ -37,6 +37,24 @@ def _trail_pct(s: pd.Series, days: int) -> pd.Series:
     return s.rolling(f"{days}D", min_periods=30).apply(lambda a: (a <= a[-1]).mean(), raw=True)
 
 
+def te_funding(sym: str) -> pd.Series:
+    """Funding from the trade engine's own store (all months, Decembers included; see collect.py)."""
+    parts = [pd.read_csv(f) for f in sorted(glob.glob(str(Path(__file__).resolve().parent / "data" / sym / "funding" / "*.csv")))]
+    df = pd.concat(parts)
+    s = pd.Series(df["funding"].astype(float).values, index=pd.to_datetime(df["calc_time_ms"], unit="ms", utc=True))
+    return s[~s.index.duplicated(keep="last")].sort_index()
+
+
+def clean_oi(sym: str) -> pd.Series:
+    """Open interest per hour. The archive encodes missing snapshots as 0: those, and hours that appear twice
+    (two files disagree about the hour's last snapshot), are treated as missing — never as real values."""
+    raw = pd.concat([pd.read_csv(f, compression="gzip") for f in sorted(glob.glob(str(ROOT / sym / "metrics" / "*.csv.gz")))])
+    raw["open_time"] = pd.to_datetime(raw["open_time"], utc=True, format="ISO8601")
+    dup = raw["open_time"].duplicated(keep=False)
+    s = raw[~dup].set_index("open_time").sort_index()["oi"].astype(float)
+    return s[s > 0]
+
+
 def features(sym: str, h1: pd.DataFrame, until: pd.Timestamp) -> pd.DataFrame:
     """4h decision rows with every input known at t. `h1` must already exclude bars at/after `until`."""
     raw = pd.concat([pd.read_csv(f, compression="gzip") for f in sorted(glob.glob(str(ROOT / sym / "1h" / "*.csv.gz")))])
@@ -63,7 +81,7 @@ def features(sym: str, h1: pd.DataFrame, until: pd.Timestamp) -> pd.DataFrame:
     f["atrp"] = f["atr"] / c
     ft = f.set_index("t")
     # ---- funding: last settlement strictly before t, at most 9 h old
-    fu = _read(sym, "funding")["funding"].astype(float)
+    fu = te_funding(sym)
     fu = fu[fu.index < until]
     idx = fu.index.searchsorted(ft.index, side="left") - 1
     last_t = pd.Series(fu.index[np.clip(idx, 0, None)], index=ft.index).where(idx >= 0)
@@ -73,7 +91,7 @@ def features(sym: str, h1: pd.DataFrame, until: pd.Timestamp) -> pd.DataFrame:
     fpct = _trail_pct(fu, 365)                                         # percentile of each settlement in its past year
     ft["funding_pct"] = pd.Series(fpct.values[np.clip(idx, 0, None)], index=ft.index).where(fresh & (idx >= 0))
     # ---- open interest: hours that closed >= 1 h before t
-    oi = _read(sym, "metrics")["oi"].astype(float)
+    oi = clean_oi(sym)
     oi = oi[oi.index + pd.Timedelta(hours=2) <= until]
     known = ft.index - pd.Timedelta(hours=2)                           # latest usable open_time
     j = oi.index.searchsorted(known, side="right") - 1
