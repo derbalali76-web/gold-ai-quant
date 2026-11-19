@@ -1,10 +1,16 @@
 {
- "updated_at": "2026-11-18T17:12:42.899525Z",
+ "updated_at": "2026-11-19T00:16:36.050077Z",
  "sources": {
   "bls": "ok",
   "fomc": "ok"
  },
  "events": [
+  {
+   "time_utc": "2026-11-18T19:00:00Z",
+   "name": "FOMC rate decision",
+   "importance": 3,
+   "source": "federalreserve.gov"
+  },
   {
    "time_utc": "2026-12-01T15:00:00Z",
    "name": "US JOLTS",
