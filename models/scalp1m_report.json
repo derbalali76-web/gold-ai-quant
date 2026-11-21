@@ -1,7 +1,7 @@
 {
  "schema": 1,
  "version": "scalp1m-1",
- "updated_at": "2026-11-15T11:53:28.150041+00:00",
+ "updated_at": "2026-11-21T13:06:27.008905+00:00",
  "data_complete": true,
  "assets": {
   "BTC": [
@@ -15,22 +15,22 @@
      "spread": 0.0001,
      "slippage": 0.0002
     },
-    "period": "2021-01-01 -> 2026-11-14",
-    "orders": 8585,
-    "filled": 6377,
+    "period": "2021-01-01 -> 2026-11-20",
+    "orders": 8588,
+    "filled": 6380,
     "unfilled": 2208,
     "targets": 1641,
-    "stops": 2548,
+    "stops": 2551,
     "timeouts": 2188,
-    "win_rate": 0.3295,
-    "avg_net_pct": -0.2065,
+    "win_rate": 0.3293,
+    "avg_net_pct": -0.2068,
     "avg_net_ci": [
-     -0.2252,
-     -0.188
+     -0.2249,
+     -0.19
     ],
-    "total_net_pct": -1317.14,
-    "max_drawdown_pct": 1317.14,
-    "trades_per_week": 20.83,
+    "total_net_pct": -1319.18,
+    "max_drawdown_pct": 1319.18,
+    "trades_per_week": 20.78,
     "years": {
      "2021": {
       "trades": 1287,
@@ -53,19 +53,19 @@
       "avg_net_pct": -0.2062
      },
      "2026": {
-      "trades": 808,
-      "avg_net_pct": -0.2095
+      "trades": 811,
+      "avg_net_pct": -0.2112
      }
     },
-    "holdout_trades": 1073,
-    "holdout_avg_pct": -0.2078,
-    "baseline_avg_pct": -0.1973,
-    "baseline_holdout_avg_pct": -0.1976,
+    "holdout_trades": 1061,
+    "holdout_avg_pct": -0.2081,
+    "baseline_avg_pct": -0.197,
+    "baseline_holdout_avg_pct": -0.1965,
     "edge_ci": [
-     -0.0315,
-     0.0103
+     -0.0317,
+     0.0128
     ],
-    "gross_avg_pct": -0.0464,
+    "gross_avg_pct": -0.0467,
     "qualified": false,
     "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
     "checks": {
@@ -86,22 +86,22 @@
      "spread": 0.0001,
      "slippage": 0.0002
     },
-    "period": "2021-01-01 -> 2026-11-14",
-    "orders": 8961,
-    "filled": 6697,
+    "period": "2021-01-01 -> 2026-11-20",
+    "orders": 8964,
+    "filled": 6700,
     "unfilled": 2264,
     "targets": 1581,
-    "stops": 3777,
+    "stops": 3780,
     "timeouts": 1339,
-    "win_rate": 0.2951,
-    "avg_net_pct": -0.2033,
+    "win_rate": 0.2949,
+    "avg_net_pct": -0.2034,
     "avg_net_ci": [
-     -0.2196,
-     -0.1847
+     -0.2205,
+     -0.1857
     ],
-    "total_net_pct": -1361.31,
-    "max_drawdown_pct": 1361.31,
-    "trades_per_week": 21.88,
+    "total_net_pct": -1362.74,
+    "max_drawdown_pct": 1362.74,
+    "trades_per_week": 21.82,
     "years": {
      "2021": {
       "trades": 1320,
@@ -124,19 +124,19 @@
       "avg_net_pct": -0.214
      },
      "2026": {
-      "trades": 848,
-      "avg_net_pct": -0.2035
+      "trades": 851,
+      "avg_net_pct": -0.2044
      }
     },
-    "holdout_trades": 1134,
-    "holdout_avg_pct": -0.205,
-    "baseline_avg_pct": -0.1973,
-    "baseline_holdout_avg_pct": -0.2012,
+    "holdout_trades": 1121,
+    "holdout_avg_pct": -0.2047,
+    "baseline_avg_pct": -0.198,
+    "baseline_holdout_avg_pct": -0.197,
     "edge_ci": [
-     -0.0258,
-     0.0143
+     -0.0236,
+     0.0156
     ],
-    "gross_avg_pct": -0.0431,
+    "gross_avg_pct": -0.0433,
     "qualified": false,
     "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
     "checks": {
@@ -157,22 +157,22 @@
      "spread": 0.0001,
      "slippage": 0.0002
     },
-    "period": "2021-01-01 -> 2026-11-14",
-    "orders": 9454,
-    "filled": 7103,
+    "period": "2021-01-01 -> 2026-11-20",
+    "orders": 9457,
+    "filled": 7106,
     "unfilled": 2351,
     "targets": 746,
-    "stops": 5581,
+    "stops": 5584,
     "timeouts": 776,
-    "win_rate": 0.317,
-    "avg_net_pct": -0.2005,
+    "win_rate": 0.3169,
+    "avg_net_pct": -0.2006,
     "avg_net_ci": [
-     -0.2134,
-     -0.1891
+     -0.2141,
+     -0.1875
     ],
-    "total_net_pct": -1424.12,
-    "max_drawdown_pct": 1424.18,
-    "trades_per_week": 23.2,
+    "total_net_pct": -1425.55,
+    "max_drawdown_pct": 1425.55,
+    "trades_per_week": 23.15,
     "years": {
      "2021": {
       "trades": 1391,
@@ -195,19 +195,19 @@
       "avg_net_pct": -0.202
      },
      "2026": {
-      "trades": 907,
-      "avg_net_pct": -0.2003
+      "trades": 910,
+      "avg_net_pct": -0.2012
      }
     },
-    "holdout_trades": 1208,
-    "holdout_avg_pct": -0.1994,
-    "baseline_avg_pct": -0.19,
-    "baseline_holdout_avg_pct": -0.1919,
+    "holdout_trades": 1195,
+    "holdout_avg_pct": -0.1991,
+    "baseline_avg_pct": -0.1919,
+    "baseline_holdout_avg_pct": -0.1924,
     "edge_ci": [
-     -0.0264,
-     0.006
+     -0.0257,
+     0.0065
     ],
-    "gross_avg_pct": -0.0404,
+    "gross_avg_pct": -0.0405,
     "qualified": false,
     "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
     "checks": {
@@ -228,22 +228,22 @@
      "spread": 0.0001,
      "slippage": 0.0002
     },
-    "period": "2021-01-01 -> 2026-11-14",
-    "orders": 8601,
-    "filled": 3694,
-    "unfilled": 4907,
+    "period": "2021-01-01 -> 2026-11-20",
+    "orders": 8605,
+    "filled": 3696,
+    "unfilled": 4909,
     "targets": 786,
-    "stops": 1398,
+    "stops": 1400,
     "timeouts": 1510,
-    "win_rate": 0.3346,
-    "avg_net_pct": -0.2007,
+    "win_rate": 0.3344,
+    "avg_net_pct": -0.201,
     "avg_net_ci": [
-     -0.2241,
-     -0.1773
+     -0.2256,
+     -0.1776
     ],
-    "total_net_pct": -741.45,
-    "max_drawdown_pct": 742.43,
-    "trades_per_week": 12.07,
+    "total_net_pct": -742.81,
+    "max_drawdown_pct": 743.79,
+    "trades_per_week": 12.04,
     "years": {
      "2021": {
       "trades": 697,
@@ -266,19 +266,19 @@
       "avg_net_pct": -0.2001
      },
      "2026": {
-      "trades": 506,
-      "avg_net_pct": -0.1937
+      "trades": 508,
+      "avg_net_pct": -0.1956
      }
     },
-    "holdout_trades": 669,
-    "holdout_avg_pct": -0.2073,
-    "baseline_avg_pct": -0.1957,
-    "baseline_holdout_avg_pct": -0.2061,
+    "holdout_trades": 659,
+    "holdout_avg_pct": -0.2071,
+    "baseline_avg_pct": -0.1992,
+    "baseline_holdout_avg_pct": -0.19,
     "edge_ci": [
-     -0.0323,
-     0.0211
+     -0.0292,
+     0.0275
     ],
-    "gross_avg_pct": -0.0405,
+    "gross_avg_pct": -0.0408,
     "qualified": false,
     "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
     "checks": {
@@ -299,22 +299,22 @@
      "spread": 0.0001,
      "slippage": 0.0002
     },
-    "period": "2021-01-01 -> 2026-11-14",
-    "orders": 9246,
-    "filled": 4203,
-    "unfilled": 5043,
+    "period": "2021-01-01 -> 2026-11-20",
+    "orders": 9250,
+    "filled": 4205,
+    "unfilled": 5045,
     "targets": 801,
-    "stops": 2338,
+    "stops": 2340,
     "timeouts": 1064,
-    "win_rate": 0.2919,
-    "avg_net_pct": -0.2045,
+    "win_rate": 0.2918,
+    "avg_net_pct": -0.2046,
     "avg_net_ci": [
-     -0.2247,
-     -0.1863
+     -0.2229,
+     -0.1828
     ],
-    "total_net_pct": -859.38,
-    "max_drawdown_pct": 860.36,
-    "trades_per_week": 13.73,
+    "total_net_pct": -860.34,
+    "max_drawdown_pct": 861.32,
+    "trades_per_week": 13.7,
     "years": {
      "2021": {
       "trades": 735,
@@ -337,19 +337,19 @@
       "avg_net_pct": -0.2051
      },
      "2026": {
-      "trades": 582,
-      "avg_net_pct": -0.19
+      "trades": 584,
+      "avg_net_pct": -0.191
      }
     },
-    "holdout_trades": 776,
-    "holdout_avg_pct": -0.202,
-    "baseline_avg_pct": -0.1925,
-    "baseline_holdout_avg_pct": -0.1969,
+    "holdout_trades": 764,
+    "holdout_avg_pct": -0.2007,
+    "baseline_avg_pct": -0.196,
+    "baseline_holdout_avg_pct": -0.1973,
     "edge_ci": [
-     -0.0338,
-     0.0142
+     -0.0337,
+     0.0143
     ],
-    "gross_avg_pct": -0.0441,
+    "gross_avg_pct": -0.0442,
     "qualified": false,
     "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
     "checks": {
@@ -370,22 +370,22 @@
      "spread": 0.0001,
      "slippage": 0.0002
     },
-    "period": "2021-01-01 -> 2026-11-14",
-    "orders": 9859,
-    "filled": 4471,
-    "unfilled": 5388,
+    "period": "2021-01-01 -> 2026-11-20",
+    "orders": 9863,
+    "filled": 4473,
+    "unfilled": 5390,
     "targets": 383,
-    "stops": 3501,
+    "stops": 3503,
     "timeouts": 587,
-    "win_rate": 0.3109,
+    "win_rate": 0.311,
     "avg_net_pct": -0.2021,
     "avg_net_ci": [
      -0.2174,
-     -0.1851
+     -0.187
     ],
-    "total_net_pct": -903.69,
-    "max_drawdown_pct": 904.67,
-    "trades_per_week": 14.6,
+    "total_net_pct": -904.06,
+    "max_drawdown_pct": 905.12,
+    "trades_per_week": 14.57,
     "years": {
      "2021": {
       "trades": 821,
@@ -408,17 +408,17 @@
       "avg_net_pct": -0.2108
      },
      "2026": {
-      "trades": 606,
-      "avg_net_pct": -0.19
+      "trades": 608,
+      "avg_net_pct": -0.1899
      }
     },
-    "holdout_trades": 806,
-    "holdout_avg_pct": -0.2029,
-    "baseline_avg_pct": -0.1901,
-    "baseline_holdout_avg_pct": -0.1972,
+    "holdout_trades": 794,
+    "holdout_avg_pct": -0.2009,
+    "baseline_avg_pct": -0.1928,
+    "baseline_holdout_avg_pct": -0.1935,
     "edge_ci": [
-     -0.0308,
-     0.0067
+     -0.0302,
+     0.0088
     ],
     "gross_avg_pct": -0.0417,
     "qualified": false,
@@ -441,7 +441,7 @@
      "spread": 0.0001,
      "slippage": 0.0002
     },
-    "period": "2021-01-01 -> 2026-11-14",
+    "period": "2021-01-01 -> 2026-11-20",
     "orders": 4058,
     "filled": 2973,
     "unfilled": 1085,
@@ -456,7 +456,7 @@
     ],
     "total_net_pct": -588.89,
     "max_drawdown_pct": 590.32,
-    "trades_per_week": 9.71,
+    "trades_per_week": 9.68,
     "years": {
      "2021": {
       "trades": 719,
@@ -485,11 +485,11 @@
     },
     "holdout_trades": 465,
     "holdout_avg_pct": -0.1793,
-    "baseline_avg_pct": -0.1989,
-    "baseline_holdout_avg_pct": -0.2104,
+    "baseline_avg_pct": -0.1998,
+    "baseline_holdout_avg_pct": -0.2036,
     "edge_ci": [
-     -0.0322,
-     0.0408
+     -0.0325,
+     0.041
     ],
     "gross_avg_pct": -0.0379,
     "qualified": false,
@@ -512,7 +512,7 @@
      "spread": 0.0001,
      "slippage": 0.0002
     },
-    "period": "2021-01-01 -> 2026-11-14",
+    "period": "2021-01-01 -> 2026-11-20",
     "orders": 4105,
     "filled": 3009,
     "unfilled": 1096,
@@ -527,7 +527,7 @@
     ],
     "total_net_pct": -600.41,
     "max_drawdown_pct": 602.69,
-    "trades_per_week": 9.83,
+    "trades_per_week": 9.8,
     "years": {
      "2021": {
       "trades": 723,
@@ -556,11 +556,11 @@
     },
     "holdout_trades": 472,
     "holdout_avg_pct": -0.1686,
-    "baseline_avg_pct": -0.1976,
-    "baseline_holdout_avg_pct": -0.1999,
+    "baseline_avg_pct": -0.1922,
+    "baseline_holdout_avg_pct": -0.2031,
     "edge_ci": [
-     -0.0376,
-     0.0305
+     -0.0401,
+     0.0265
     ],
     "gross_avg_pct": -0.0393,
     "qualified": false,
@@ -583,7 +583,7 @@
      "spread": 0.0001,
      "slippage": 0.0002
     },
-    "period": "2021-01-01 -> 2026-11-14",
+    "period": "2021-01-01 -> 2026-11-20",
     "orders": 4236,
     "filled": 3100,
     "unfilled": 1136,
@@ -598,7 +598,7 @@
     ],
     "total_net_pct": -624.13,
     "max_drawdown_pct": 624.36,
-    "trades_per_week": 10.13,
+    "trades_per_week": 10.1,
     "years": {
      "2021": {
       "trades": 745,
@@ -627,11 +627,11 @@
     },
     "holdout_trades": 491,
     "holdout_avg_pct": -0.1708,
-    "baseline_avg_pct": -0.1932,
-    "baseline_holdout_avg_pct": -0.1905,
+    "baseline_avg_pct": -0.1964,
+    "baseline_holdout_avg_pct": -0.1897,
     "edge_ci": [
-     -0.0334,
-     0.0171
+     -0.0308,
+     0.023
     ],
     "gross_avg_pct": -0.0411,
     "qualified": false,
@@ -656,22 +656,22 @@
      "spread": 0.0001,
      "slippage": 0.0002
     },
-    "period": "2021-01-01 -> 2026-11-14",
-    "orders": 9213,
-    "filled": 6806,
+    "period": "2021-01-01 -> 2026-11-20",
+    "orders": 9218,
+    "filled": 6811,
     "unfilled": 2407,
     "targets": 2174,
-    "stops": 3185,
-    "timeouts": 1447,
-    "win_rate": 0.3664,
-    "avg_net_pct": -0.1996,
+    "stops": 3188,
+    "timeouts": 1449,
+    "win_rate": 0.3662,
+    "avg_net_pct": -0.1998,
     "avg_net_ci": [
-     -0.2195,
-     -0.1818
+     -0.2199,
+     -0.1819
     ],
-    "total_net_pct": -1358.6,
-    "max_drawdown_pct": 1358.6,
-    "trades_per_week": 22.23,
+    "total_net_pct": -1361.09,
+    "max_drawdown_pct": 1361.09,
+    "trades_per_week": 22.19,
     "years": {
      "2021": {
       "trades": 1583,
@@ -694,19 +694,19 @@
       "avg_net_pct": -0.1908
      },
      "2026": {
-      "trades": 804,
-      "avg_net_pct": -0.2046
+      "trades": 809,
+      "avg_net_pct": -0.2064
      }
     },
-    "holdout_trades": 1086,
-    "holdout_avg_pct": -0.1995,
-    "baseline_avg_pct": -0.1938,
-    "baseline_holdout_avg_pct": -0.1957,
+    "holdout_trades": 1079,
+    "holdout_avg_pct": -0.2016,
+    "baseline_avg_pct": -0.1963,
+    "baseline_holdout_avg_pct": -0.2094,
     "edge_ci": [
-     -0.0288,
-     0.0172
+     -0.0291,
+     0.0175
     ],
-    "gross_avg_pct": -0.0395,
+    "gross_avg_pct": -0.0397,
     "qualified": false,
     "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
     "checks": {
@@ -727,22 +727,22 @@
      "spread": 0.0001,
      "slippage": 0.0002
     },
-    "period": "2021-01-01 -> 2026-11-14",
-    "orders": 9466,
-    "filled": 7004,
+    "period": "2021-01-01 -> 2026-11-20",
+    "orders": 9474,
+    "filled": 7012,
     "unfilled": 2462,
     "targets": 2182,
-    "stops": 4016,
-    "timeouts": 806,
-    "win_rate": 0.3454,
-    "avg_net_pct": -0.1981,
+    "stops": 4023,
+    "timeouts": 807,
+    "win_rate": 0.345,
+    "avg_net_pct": -0.1984,
     "avg_net_ci": [
-     -0.2169,
-     -0.1806
+     -0.2166,
+     -0.1803
     ],
-    "total_net_pct": -1387.8,
-    "max_drawdown_pct": 1387.8,
-    "trades_per_week": 22.88,
+    "total_net_pct": -1391.16,
+    "max_drawdown_pct": 1391.16,
+    "trades_per_week": 22.84,
     "years": {
      "2021": {
       "trades": 1579,
@@ -765,19 +765,19 @@
       "avg_net_pct": -0.1883
      },
      "2026": {
-      "trades": 836,
-      "avg_net_pct": -0.2136
+      "trades": 844,
+      "avg_net_pct": -0.2156
      }
     },
-    "holdout_trades": 1122,
-    "holdout_avg_pct": -0.2079,
-    "baseline_avg_pct": -0.2002,
-    "baseline_holdout_avg_pct": -0.1979,
+    "holdout_trades": 1118,
+    "holdout_avg_pct": -0.2088,
+    "baseline_avg_pct": -0.1946,
+    "baseline_holdout_avg_pct": -0.1969,
     "edge_ci": [
-     -0.0203,
-     0.0246
+     -0.0273,
+     0.018
     ],
-    "gross_avg_pct": -0.038,
+    "gross_avg_pct": -0.0383,
     "qualified": false,
     "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
     "checks": {
@@ -798,22 +798,22 @@
      "spread": 0.0001,
      "slippage": 0.0002
     },
-    "period": "2021-01-01 -> 2026-11-14",
-    "orders": 9960,
-    "filled": 7444,
+    "period": "2021-01-01 -> 2026-11-20",
+    "orders": 9968,
+    "filled": 7452,
     "unfilled": 2516,
     "targets": 1112,
-    "stops": 5970,
+    "stops": 5978,
     "timeouts": 362,
-    "win_rate": 0.3282,
-    "avg_net_pct": -0.1935,
+    "win_rate": 0.3278,
+    "avg_net_pct": -0.1938,
     "avg_net_ci": [
-     -0.207,
-     -0.1774
+     -0.208,
+     -0.1795
     ],
-    "total_net_pct": -1440.65,
-    "max_drawdown_pct": 1440.65,
-    "trades_per_week": 24.32,
+    "total_net_pct": -1443.94,
+    "max_drawdown_pct": 1443.94,
+    "trades_per_week": 24.27,
     "years": {
      "2021": {
       "trades": 1661,
@@ -836,19 +836,19 @@
       "avg_net_pct": -0.187
      },
      "2026": {
-      "trades": 902,
-      "avg_net_pct": -0.2063
+      "trades": 910,
+      "avg_net_pct": -0.2081
      }
     },
-    "holdout_trades": 1211,
-    "holdout_avg_pct": -0.204,
-    "baseline_avg_pct": -0.1937,
-    "baseline_holdout_avg_pct": -0.2014,
+    "holdout_trades": 1206,
+    "holdout_avg_pct": -0.2052,
+    "baseline_avg_pct": -0.1925,
+    "baseline_holdout_avg_pct": -0.197,
     "edge_ci": [
-     -0.0167,
-     0.0172
+     -0.0194,
+     0.0181
     ],
-    "gross_avg_pct": -0.0334,
+    "gross_avg_pct": -0.0336,
     "qualified": false,
     "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
     "checks": {
@@ -869,22 +869,22 @@
      "spread": 0.0001,
      "slippage": 0.0002
     },
-    "period": "2021-01-01 -> 2026-11-14",
-    "orders": 6956,
-    "filled": 3717,
-    "unfilled": 3239,
-    "targets": 988,
-    "stops": 1779,
+    "period": "2021-01-01 -> 2026-11-20",
+    "orders": 6960,
+    "filled": 3719,
+    "unfilled": 3241,
+    "targets": 989,
+    "stops": 1780,
     "timeouts": 950,
-    "win_rate": 0.3489,
+    "win_rate": 0.349,
     "avg_net_pct": -0.221,
     "avg_net_ci": [
-     -0.2482,
-     -0.1985
+     -0.2434,
+     -0.1974
     ],
-    "total_net_pct": -821.6,
-    "max_drawdown_pct": 821.6,
-    "trades_per_week": 12.14,
+    "total_net_pct": -821.79,
+    "max_drawdown_pct": 822.28,
+    "trades_per_week": 12.11,
     "years": {
      "2021": {
       "trades": 699,
@@ -907,19 +907,19 @@
       "avg_net_pct": -0.2192
      },
      "2026": {
-      "trades": 517,
-      "avg_net_pct": -0.2046
+      "trades": 519,
+      "avg_net_pct": -0.2042
      }
     },
-    "holdout_trades": 699,
-    "holdout_avg_pct": -0.2135,
-    "baseline_avg_pct": -0.1961,
-    "baseline_holdout_avg_pct": -0.1976,
+    "holdout_trades": 694,
+    "holdout_avg_pct": -0.2131,
+    "baseline_avg_pct": -0.1958,
+    "baseline_holdout_avg_pct": -0.1934,
     "edge_ci": [
-     -0.056,
-     0.0092
+     -0.0523,
+     0.0031
     ],
-    "gross_avg_pct": -0.0607,
+    "gross_avg_pct": -0.0606,
     "qualified": false,
     "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
     "checks": {
@@ -940,22 +940,22 @@
      "spread": 0.0001,
      "slippage": 0.0002
     },
-    "period": "2021-01-01 -> 2026-11-14",
-    "orders": 7488,
-    "filled": 4120,
-    "unfilled": 3368,
-    "targets": 1011,
-    "stops": 2469,
+    "period": "2021-01-01 -> 2026-11-20",
+    "orders": 7493,
+    "filled": 4123,
+    "unfilled": 3370,
+    "targets": 1012,
+    "stops": 2471,
     "timeouts": 640,
     "win_rate": 0.3119,
-    "avg_net_pct": -0.2181,
+    "avg_net_pct": -0.218,
     "avg_net_ci": [
-     -0.2384,
-     -0.1941
+     -0.2418,
+     -0.1966
     ],
-    "total_net_pct": -898.47,
-    "max_drawdown_pct": 898.47,
-    "trades_per_week": 13.46,
+    "total_net_pct": -898.9,
+    "max_drawdown_pct": 899.39,
+    "trades_per_week": 13.43,
     "years": {
      "2021": {
       "trades": 703,
@@ -978,17 +978,17 @@
       "avg_net_pct": -0.2137
      },
      "2026": {
-      "trades": 588,
-      "avg_net_pct": -0.2071
+      "trades": 591,
+      "avg_net_pct": -0.2068
      }
     },
-    "holdout_trades": 792,
-    "holdout_avg_pct": -0.2067,
-    "baseline_avg_pct": -0.1975,
-    "baseline_holdout_avg_pct": -0.18,
+    "holdout_trades": 788,
+    "holdout_avg_pct": -0.2062,
+    "baseline_avg_pct": -0.2004,
+    "baseline_holdout_avg_pct": -0.2112,
     "edge_ci": [
-     -0.0489,
-     0.0039
+     -0.0439,
+     0.0088
     ],
     "gross_avg_pct": -0.0575,
     "qualified": false,
@@ -1011,22 +1011,22 @@
      "spread": 0.0001,
      "slippage": 0.0002
     },
-    "period": "2021-01-01 -> 2026-11-14",
-    "orders": 8086,
-    "filled": 4459,
-    "unfilled": 3627,
-    "targets": 511,
-    "stops": 3644,
+    "period": "2021-01-01 -> 2026-11-20",
+    "orders": 8091,
+    "filled": 4462,
+    "unfilled": 3629,
+    "targets": 512,
+    "stops": 3646,
     "timeouts": 304,
-    "win_rate": 0.3063,
+    "win_rate": 0.3064,
     "avg_net_pct": -0.2144,
     "avg_net_ci": [
-     -0.2318,
-     -0.193
+     -0.2338,
+     -0.1954
     ],
-    "total_net_pct": -956.0,
-    "max_drawdown_pct": 956.02,
-    "trades_per_week": 14.57,
+    "total_net_pct": -956.43,
+    "max_drawdown_pct": 956.94,
+    "trades_per_week": 14.53,
     "years": {
      "2021": {
       "trades": 793,
@@ -1049,19 +1049,19 @@
       "avg_net_pct": -0.2137
      },
      "2026": {
-      "trades": 622,
-      "avg_net_pct": -0.206
+      "trades": 625,
+      "avg_net_pct": -0.2057
      }
     },
-    "holdout_trades": 847,
-    "holdout_avg_pct": -0.2002,
-    "baseline_avg_pct": -0.1957,
-    "baseline_holdout_avg_pct": -0.1937,
+    "holdout_trades": 843,
+    "holdout_avg_pct": -0.1996,
+    "baseline_avg_pct": -0.1956,
+    "baseline_holdout_avg_pct": -0.1973,
     "edge_ci": [
-     -0.0393,
-     0.0018
+     -0.0385,
+     0.0012
     ],
-    "gross_avg_pct": -0.0539,
+    "gross_avg_pct": -0.0538,
     "qualified": false,
     "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
     "checks": {
@@ -1082,22 +1082,22 @@
      "spread": 0.0001,
      "slippage": 0.0002
     },
-    "period": "2021-01-01 -> 2026-11-14",
-    "orders": 5391,
-    "filled": 4026,
-    "unfilled": 1365,
+    "period": "2021-01-01 -> 2026-11-20",
+    "orders": 5393,
+    "filled": 4027,
+    "unfilled": 1366,
     "targets": 1496,
-    "stops": 2096,
+    "stops": 2097,
     "timeouts": 434,
-    "win_rate": 0.3934,
-    "avg_net_pct": -0.1936,
+    "win_rate": 0.3933,
+    "avg_net_pct": -0.1937,
     "avg_net_ci": [
-     -0.2226,
-     -0.1654
+     -0.2202,
+     -0.1693
     ],
-    "total_net_pct": -779.46,
-    "max_drawdown_pct": 780.06,
-    "trades_per_week": 13.15,
+    "total_net_pct": -780.14,
+    "max_drawdown_pct": 780.74,
+    "trades_per_week": 13.12,
     "years": {
      "2021": {
       "trades": 961,
@@ -1120,19 +1120,19 @@
       "avg_net_pct": -0.1846
      },
      "2026": {
-      "trades": 532,
-      "avg_net_pct": -0.1608
+      "trades": 533,
+      "avg_net_pct": -0.1617
      }
     },
-    "holdout_trades": 691,
-    "holdout_avg_pct": -0.1496,
-    "baseline_avg_pct": -0.1905,
-    "baseline_holdout_avg_pct": -0.1944,
+    "holdout_trades": 684,
+    "holdout_avg_pct": -0.1515,
+    "baseline_avg_pct": -0.1977,
+    "baseline_holdout_avg_pct": -0.2014,
     "edge_ci": [
-     -0.0329,
-     0.0241
+     -0.0277,
+     0.0339
     ],
-    "gross_avg_pct": -0.0334,
+    "gross_avg_pct": -0.0335,
     "qualified": false,
     "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
     "checks": {
@@ -1153,22 +1153,22 @@
      "spread": 0.0001,
      "slippage": 0.0002
     },
-    "period": "2021-01-01 -> 2026-11-14",
-    "orders": 5422,
-    "filled": 4037,
-    "unfilled": 1385,
+    "period": "2021-01-01 -> 2026-11-20",
+    "orders": 5424,
+    "filled": 4038,
+    "unfilled": 1386,
     "targets": 1539,
-    "stops": 2244,
+    "stops": 2245,
     "timeouts": 254,
-    "win_rate": 0.3976,
-    "avg_net_pct": -0.1945,
+    "win_rate": 0.3975,
+    "avg_net_pct": -0.1946,
     "avg_net_ci": [
-     -0.2223,
-     -0.1678
+     -0.2249,
+     -0.1698
     ],
-    "total_net_pct": -785.23,
-    "max_drawdown_pct": 785.41,
-    "trades_per_week": 13.19,
+    "total_net_pct": -785.93,
+    "max_drawdown_pct": 786.11,
+    "trades_per_week": 13.15,
     "years": {
      "2021": {
       "trades": 959,
@@ -1191,19 +1191,19 @@
       "avg_net_pct": -0.1885
      },
      "2026": {
-      "trades": 531,
-      "avg_net_pct": -0.1729
+      "trades": 532,
+      "avg_net_pct": -0.1739
      }
     },
-    "holdout_trades": 693,
-    "holdout_avg_pct": -0.1585,
-    "baseline_avg_pct": -0.1947,
-    "baseline_holdout_avg_pct": -0.192,
+    "holdout_trades": 686,
+    "holdout_avg_pct": -0.1598,
+    "baseline_avg_pct": -0.1898,
+    "baseline_holdout_avg_pct": -0.1953,
     "edge_ci": [
-     -0.0328,
-     0.0338
+     -0.0351,
+     0.0265
     ],
-    "gross_avg_pct": -0.0344,
+    "gross_avg_pct": -0.0345,
     "qualified": false,
     "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
     "checks": {
@@ -1224,22 +1224,22 @@
      "spread": 0.0001,
      "slippage": 0.0002
     },
-    "period": "2021-01-01 -> 2026-11-14",
-    "orders": 5587,
-    "filled": 4166,
-    "unfilled": 1421,
+    "period": "2021-01-01 -> 2026-11-20",
+    "orders": 5589,
+    "filled": 4167,
+    "unfilled": 1422,
     "targets": 828,
-    "stops": 3260,
+    "stops": 3261,
     "timeouts": 78,
-    "win_rate": 0.3207,
-    "avg_net_pct": -0.1863,
+    "win_rate": 0.3206,
+    "avg_net_pct": -0.1865,
     "avg_net_ci": [
-     -0.2098,
-     -0.1624
+     -0.2107,
+     -0.1648
     ],
-    "total_net_pct": -776.29,
-    "max_drawdown_pct": 776.29,
-    "trades_per_week": 13.61,
+    "total_net_pct": -776.99,
+    "max_drawdown_pct": 776.99,
+    "trades_per_week": 13.57,
     "years": {
      "2021": {
       "trades": 981,
@@ -1262,19 +1262,19 @@
       "avg_net_pct": -0.2006
      },
      "2026": {
-      "trades": 554,
-      "avg_net_pct": -0.1648
+      "trades": 555,
+      "avg_net_pct": -0.1658
      }
     },
-    "holdout_trades": 726,
-    "holdout_avg_pct": -0.1602,
-    "baseline_avg_pct": -0.1948,
-    "baseline_holdout_avg_pct": -0.1852,
+    "holdout_trades": 718,
+    "holdout_avg_pct": -0.161,
+    "baseline_avg_pct": -0.1913,
+    "baseline_holdout_avg_pct": -0.1883,
     "edge_ci": [
-     -0.0153,
-     0.0361
+     -0.0198,
+     0.0295
     ],
-    "gross_avg_pct": -0.0263,
+    "gross_avg_pct": -0.0264,
     "qualified": false,
     "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
     "checks": {
@@ -1297,22 +1297,22 @@
      "spread": 0.0002,
      "slippage": 0.0002
     },
-    "period": "2021-01-01 -> 2026-11-14",
-    "orders": 10270,
-    "filled": 7728,
-    "unfilled": 2542,
-    "targets": 2884,
-    "stops": 4340,
-    "timeouts": 504,
+    "period": "2021-01-01 -> 2026-11-20",
+    "orders": 10290,
+    "filled": 7747,
+    "unfilled": 2543,
+    "targets": 2890,
+    "stops": 4352,
+    "timeouts": 505,
     "win_rate": 0.3892,
-    "avg_net_pct": -0.2193,
+    "avg_net_pct": -0.2194,
     "avg_net_ci": [
-     -0.2375,
-     -0.2026
+     -0.2384,
+     -0.1998
     ],
-    "total_net_pct": -1694.38,
-    "max_drawdown_pct": 1695.82,
-    "trades_per_week": 25.24,
+    "total_net_pct": -1699.43,
+    "max_drawdown_pct": 1700.87,
+    "trades_per_week": 25.23,
     "years": {
      "2021": {
       "trades": 1865,
@@ -1335,19 +1335,19 @@
       "avg_net_pct": -0.2065
      },
      "2026": {
-      "trades": 891,
-      "avg_net_pct": -0.2197
+      "trades": 910,
+      "avg_net_pct": -0.2207
      }
     },
-    "holdout_trades": 1198,
-    "holdout_avg_pct": -0.2298,
-    "baseline_avg_pct": -0.2113,
-    "baseline_holdout_avg_pct": -0.2184,
+    "holdout_trades": 1195,
+    "holdout_avg_pct": -0.2293,
+    "baseline_avg_pct": -0.2088,
+    "baseline_holdout_avg_pct": -0.2089,
     "edge_ci": [
-     -0.0301,
-     0.0142
+     -0.034,
+     0.01
     ],
-    "gross_avg_pct": -0.0488,
+    "gross_avg_pct": -0.0489,
     "qualified": false,
     "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
     "checks": {
@@ -1368,22 +1368,22 @@
      "spread": 0.0002,
      "slippage": 0.0002
     },
-    "period": "2021-01-01 -> 2026-11-14",
-    "orders": 10356,
-    "filled": 7793,
-    "unfilled": 2563,
-    "targets": 3210,
-    "stops": 4275,
-    "timeouts": 308,
-    "win_rate": 0.4242,
+    "period": "2021-01-01 -> 2026-11-20",
+    "orders": 10376,
+    "filled": 7812,
+    "unfilled": 2564,
+    "targets": 3215,
+    "stops": 4288,
+    "timeouts": 309,
+    "win_rate": 0.424,
     "avg_net_pct": -0.2273,
     "avg_net_ci": [
-     -0.2487,
-     -0.2065
+     -0.2462,
+     -0.2055
     ],
-    "total_net_pct": -1771.19,
-    "max_drawdown_pct": 1772.63,
-    "trades_per_week": 25.46,
+    "total_net_pct": -1775.97,
+    "max_drawdown_pct": 1777.41,
+    "trades_per_week": 25.45,
     "years": {
      "2021": {
       "trades": 1824,
@@ -1406,17 +1406,17 @@
       "avg_net_pct": -0.2137
      },
      "2026": {
-      "trades": 925,
-      "avg_net_pct": -0.2205
+      "trades": 944,
+      "avg_net_pct": -0.2211
      }
     },
-    "holdout_trades": 1245,
-    "holdout_avg_pct": -0.2321,
-    "baseline_avg_pct": -0.2123,
-    "baseline_holdout_avg_pct": -0.2169,
+    "holdout_trades": 1241,
+    "holdout_avg_pct": -0.2315,
+    "baseline_avg_pct": -0.2146,
+    "baseline_holdout_avg_pct": -0.2105,
     "edge_ci": [
-     -0.0391,
-     0.0099
+     -0.0379,
+     0.0124
     ],
     "gross_avg_pct": -0.0572,
     "qualified": false,
@@ -1439,22 +1439,22 @@
      "spread": 0.0002,
      "slippage": 0.0002
     },
-    "period": "2021-01-01 -> 2026-11-14",
-    "orders": 10739,
-    "filled": 8149,
-    "unfilled": 2590,
-    "targets": 1707,
-    "stops": 6349,
+    "period": "2021-01-01 -> 2026-11-20",
+    "orders": 10760,
+    "filled": 8169,
+    "unfilled": 2591,
+    "targets": 1709,
+    "stops": 6367,
     "timeouts": 93,
-    "win_rate": 0.3007,
-    "avg_net_pct": -0.2153,
+    "win_rate": 0.3004,
+    "avg_net_pct": -0.2155,
     "avg_net_ci": [
-     -0.2345,
-     -0.1993
+     -0.2328,
+     -0.1976
     ],
-    "total_net_pct": -1754.58,
-    "max_drawdown_pct": 1755.17,
-    "trades_per_week": 26.62,
+    "total_net_pct": -1760.62,
+    "max_drawdown_pct": 1761.1,
+    "trades_per_week": 26.61,
     "years": {
      "2021": {
       "trades": 1894,
@@ -1477,19 +1477,19 @@
       "avg_net_pct": -0.2161
      },
      "2026": {
-      "trades": 961,
-      "avg_net_pct": -0.2329
+      "trades": 981,
+      "avg_net_pct": -0.2344
      }
     },
-    "holdout_trades": 1298,
-    "holdout_avg_pct": -0.2402,
-    "baseline_avg_pct": -0.206,
-    "baseline_holdout_avg_pct": -0.2086,
+    "holdout_trades": 1294,
+    "holdout_avg_pct": -0.2417,
+    "baseline_avg_pct": -0.2104,
+    "baseline_holdout_avg_pct": -0.2162,
     "edge_ci": [
-     -0.0283,
-     0.0088
+     -0.0246,
+     0.0152
     ],
-    "gross_avg_pct": -0.0452,
+    "gross_avg_pct": -0.0454,
     "qualified": false,
     "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
     "checks": {
@@ -1510,21 +1510,21 @@
      "spread": 0.0002,
      "slippage": 0.0002
     },
-    "period": "2021-01-01 -> 2026-11-14",
-    "orders": 5169,
-    "filled": 3767,
-    "unfilled": 1402,
-    "targets": 1341,
-    "stops": 2072,
-    "timeouts": 354,
-    "win_rate": 0.3865,
-    "avg_net_pct": -0.2193,
+    "period": "2021-01-01 -> 2026-11-20",
+    "orders": 5181,
+    "filled": 3775,
+    "unfilled": 1406,
+    "targets": 1345,
+    "stops": 2074,
+    "timeouts": 356,
+    "win_rate": 0.3868,
+    "avg_net_pct": -0.2189,
     "avg_net_ci": [
-     -0.2466,
-     -0.1915
+     -0.2444,
+     -0.1871
     ],
-    "total_net_pct": -826.26,
-    "max_drawdown_pct": 827.19,
+    "total_net_pct": -826.33,
+    "max_drawdown_pct": 827.43,
     "trades_per_week": 12.3,
     "years": {
      "2021": {
@@ -1548,19 +1548,19 @@
       "avg_net_pct": -0.2226
      },
      "2026": {
-      "trades": 542,
-      "avg_net_pct": -0.1859
+      "trades": 550,
+      "avg_net_pct": -0.1833
      }
     },
     "holdout_trades": 728,
-    "holdout_avg_pct": -0.2074,
-    "baseline_avg_pct": -0.2144,
-    "baseline_holdout_avg_pct": -0.2201,
+    "holdout_avg_pct": -0.2006,
+    "baseline_avg_pct": -0.2143,
+    "baseline_holdout_avg_pct": -0.2169,
     "edge_ci": [
-     -0.0351,
-     0.0269
+     -0.0355,
+     0.0249
     ],
-    "gross_avg_pct": -0.0488,
+    "gross_avg_pct": -0.0483,
     "qualified": false,
     "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
     "checks": {
@@ -1581,21 +1581,21 @@
      "spread": 0.0002,
      "slippage": 0.0002
     },
-    "period": "2021-01-01 -> 2026-11-14",
-    "orders": 5239,
-    "filled": 3809,
-    "unfilled": 1430,
-    "targets": 1413,
-    "stops": 2147,
+    "period": "2021-01-01 -> 2026-11-20",
+    "orders": 5253,
+    "filled": 3818,
+    "unfilled": 1435,
+    "targets": 1417,
+    "stops": 2152,
     "timeouts": 249,
-    "win_rate": 0.3967,
-    "avg_net_pct": -0.2194,
+    "win_rate": 0.3968,
+    "avg_net_pct": -0.2193,
     "avg_net_ci": [
-     -0.2477,
-     -0.1887
+     -0.248,
+     -0.1896
     ],
-    "total_net_pct": -835.82,
-    "max_drawdown_pct": 837.26,
+    "total_net_pct": -837.45,
+    "max_drawdown_pct": 838.89,
     "trades_per_week": 12.44,
     "years": {
      "2021": {
@@ -1619,19 +1619,19 @@
       "avg_net_pct": -0.2162
      },
      "2026": {
-      "trades": 609,
-      "avg_net_pct": -0.2097
+      "trades": 618,
+      "avg_net_pct": -0.2092
      }
     },
     "holdout_trades": 812,
-    "holdout_avg_pct": -0.2271,
-    "baseline_avg_pct": -0.2157,
-    "baseline_holdout_avg_pct": -0.2205,
+    "holdout_avg_pct": -0.2239,
+    "baseline_avg_pct": -0.2218,
+    "baseline_holdout_avg_pct": -0.2213,
     "edge_ci": [
-     -0.0362,
-     0.0295
+     -0.0301,
+     0.0386
     ],
-    "gross_avg_pct": -0.0491,
+    "gross_avg_pct": -0.049,
     "qualified": false,
     "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
     "checks": {
@@ -1652,21 +1652,21 @@
      "spread": 0.0002,
      "slippage": 0.0002
     },
-    "period": "2021-01-01 -> 2026-11-14",
-    "orders": 5912,
-    "filled": 4296,
-    "unfilled": 1616,
-    "targets": 802,
-    "stops": 3429,
+    "period": "2021-01-01 -> 2026-11-20",
+    "orders": 5927,
+    "filled": 4307,
+    "unfilled": 1620,
+    "targets": 805,
+    "stops": 3437,
     "timeouts": 65,
-    "win_rate": 0.3075,
-    "avg_net_pct": -0.2052,
+    "win_rate": 0.3083,
+    "avg_net_pct": -0.2046,
     "avg_net_ci": [
-     -0.2259,
-     -0.1838
+     -0.2271,
+     -0.1834
     ],
-    "total_net_pct": -881.48,
-    "max_drawdown_pct": 882.93,
+    "total_net_pct": -881.26,
+    "max_drawdown_pct": 883.99,
     "trades_per_week": 14.03,
     "years": {
      "2021": {
@@ -1690,19 +1690,19 @@
       "avg_net_pct": -0.2065
      },
      "2026": {
-      "trades": 655,
-      "avg_net_pct": -0.2086
+      "trades": 666,
+      "avg_net_pct": -0.2048
      }
     },
-    "holdout_trades": 883,
-    "holdout_avg_pct": -0.2199,
-    "baseline_avg_pct": -0.2041,
-    "baseline_holdout_avg_pct": -0.204,
+    "holdout_trades": 884,
+    "holdout_avg_pct": -0.2145,
+    "baseline_avg_pct": -0.2107,
+    "baseline_holdout_avg_pct": -0.2083,
     "edge_ci": [
-     -0.0291,
-     0.0224
+     -0.0171,
+     0.0307
     ],
-    "gross_avg_pct": -0.0349,
+    "gross_avg_pct": -0.0343,
     "qualified": false,
     "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
     "checks": {
@@ -1723,22 +1723,22 @@
      "spread": 0.0002,
      "slippage": 0.0002
     },
-    "period": "2021-01-01 -> 2026-11-14",
-    "orders": 7214,
-    "filled": 5526,
-    "unfilled": 1688,
-    "targets": 2225,
-    "stops": 3124,
-    "timeouts": 177,
-    "win_rate": 0.4108,
-    "avg_net_pct": -0.2025,
+    "period": "2021-01-01 -> 2026-11-20",
+    "orders": 7226,
+    "filled": 5535,
+    "unfilled": 1691,
+    "targets": 2227,
+    "stops": 3130,
+    "timeouts": 178,
+    "win_rate": 0.4107,
+    "avg_net_pct": -0.2028,
     "avg_net_ci": [
-     -0.2224,
-     -0.1771
+     -0.2256,
+     -0.1783
     ],
-    "total_net_pct": -1119.29,
-    "max_drawdown_pct": 1120.73,
-    "trades_per_week": 18.05,
+    "total_net_pct": -1122.34,
+    "max_drawdown_pct": 1123.78,
+    "trades_per_week": 18.03,
     "years": {
      "2021": {
       "trades": 1305,
@@ -1761,19 +1761,19 @@
       "avg_net_pct": -0.1801
      },
      "2026": {
-      "trades": 559,
-      "avg_net_pct": -0.1961
+      "trades": 568,
+      "avg_net_pct": -0.1984
      }
     },
-    "holdout_trades": 758,
-    "holdout_avg_pct": -0.2044,
-    "baseline_avg_pct": -0.2056,
-    "baseline_holdout_avg_pct": -0.2235,
+    "holdout_trades": 756,
+    "holdout_avg_pct": -0.2055,
+    "baseline_avg_pct": -0.2095,
+    "baseline_holdout_avg_pct": -0.2237,
     "edge_ci": [
-     -0.0262,
-     0.0322
+     -0.0177,
+     0.0333
     ],
-    "gross_avg_pct": -0.0319,
+    "gross_avg_pct": -0.0321,
     "qualified": false,
     "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
     "checks": {
@@ -1794,22 +1794,22 @@
      "spread": 0.0002,
      "slippage": 0.0002
     },
-    "period": "2021-01-01 -> 2026-11-14",
-    "orders": 7150,
-    "filled": 5477,
-    "unfilled": 1673,
-    "targets": 2576,
-    "stops": 2758,
-    "timeouts": 143,
-    "win_rate": 0.4778,
-    "avg_net_pct": -0.2059,
+    "period": "2021-01-01 -> 2026-11-20",
+    "orders": 7162,
+    "filled": 5486,
+    "unfilled": 1676,
+    "targets": 2578,
+    "stops": 2764,
+    "timeouts": 144,
+    "win_rate": 0.4776,
+    "avg_net_pct": -0.206,
     "avg_net_ci": [
-     -0.2367,
-     -0.1805
+     -0.2319,
+     -0.1765
     ],
-    "total_net_pct": -1127.65,
-    "max_drawdown_pct": 1129.57,
-    "trades_per_week": 17.89,
+    "total_net_pct": -1130.3,
+    "max_drawdown_pct": 1132.22,
+    "trades_per_week": 17.87,
     "years": {
      "2021": {
       "trades": 1283,
@@ -1832,19 +1832,19 @@
       "avg_net_pct": -0.189
      },
      "2026": {
-      "trades": 559,
-      "avg_net_pct": -0.1861
+      "trades": 568,
+      "avg_net_pct": -0.1879
      }
     },
-    "holdout_trades": 757,
-    "holdout_avg_pct": -0.1898,
-    "baseline_avg_pct": -0.2154,
-    "baseline_holdout_avg_pct": -0.2286,
+    "holdout_trades": 754,
+    "holdout_avg_pct": -0.1892,
+    "baseline_avg_pct": -0.2176,
+    "baseline_holdout_avg_pct": -0.2222,
     "edge_ci": [
-     -0.0197,
-     0.0411
+     -0.0198,
+     0.0439
     ],
-    "gross_avg_pct": -0.0358,
+    "gross_avg_pct": -0.0359,
     "qualified": false,
     "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
     "checks": {
@@ -1865,22 +1865,22 @@
      "spread": 0.0002,
      "slippage": 0.0002
     },
-    "period": "2021-01-01 -> 2026-11-14",
-    "orders": 7385,
-    "filled": 5655,
-    "unfilled": 1730,
-    "targets": 1427,
-    "stops": 4196,
+    "period": "2021-01-01 -> 2026-11-20",
+    "orders": 7397,
+    "filled": 5664,
+    "unfilled": 1733,
+    "targets": 1428,
+    "stops": 4204,
     "timeouts": 32,
     "win_rate": 0.313,
-    "avg_net_pct": -0.1996,
+    "avg_net_pct": -0.1997,
     "avg_net_ci": [
-     -0.223,
-     -0.1791
+     -0.2209,
+     -0.1785
     ],
-    "total_net_pct": -1128.58,
-    "max_drawdown_pct": 1130.01,
-    "trades_per_week": 18.47,
+    "total_net_pct": -1131.17,
+    "max_drawdown_pct": 1132.7,
+    "trades_per_week": 18.45,
     "years": {
      "2021": {
       "trades": 1324,
@@ -1903,19 +1903,19 @@
       "avg_net_pct": -0.2019
      },
      "2026": {
-      "trades": 579,
-      "avg_net_pct": -0.1845
+      "trades": 588,
+      "avg_net_pct": -0.1861
      }
     },
-    "holdout_trades": 783,
-    "holdout_avg_pct": -0.1891,
-    "baseline_avg_pct": -0.2066,
-    "baseline_holdout_avg_pct": -0.21,
+    "holdout_trades": 779,
+    "holdout_avg_pct": -0.1897,
+    "baseline_avg_pct": -0.2072,
+    "baseline_holdout_avg_pct": -0.2145,
     "edge_ci": [
-     -0.0169,
-     0.0322
+     -0.0168,
+     0.0346
     ],
-    "gross_avg_pct": -0.0294,
+    "gross_avg_pct": -0.0296,
     "qualified": false,
     "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
     "checks": {
@@ -1934,55 +1934,55 @@
     "fees": 0.001,
     "setup": "BREAKOUT_RETEST",
     "stop": "FIXED",
-    "filled": 6377,
-    "avg_net_pct": -0.1565,
-    "holdout_avg_pct": -0.1578,
-    "baseline_avg_pct": -0.1473
+    "filled": 6380,
+    "avg_net_pct": -0.1568,
+    "holdout_avg_pct": -0.1581,
+    "baseline_avg_pct": -0.147
    },
    {
     "fees": 0.001,
     "setup": "BREAKOUT_RETEST",
     "stop": "ATR",
-    "filled": 6697,
-    "avg_net_pct": -0.1533,
-    "holdout_avg_pct": -0.155,
-    "baseline_avg_pct": -0.1473
+    "filled": 6700,
+    "avg_net_pct": -0.1534,
+    "holdout_avg_pct": -0.1547,
+    "baseline_avg_pct": -0.148
    },
    {
     "fees": 0.001,
     "setup": "BREAKOUT_RETEST",
     "stop": "TRAIL",
-    "filled": 7092,
-    "avg_net_pct": -0.1498,
-    "holdout_avg_pct": -0.1487,
-    "baseline_avg_pct": -0.1457
+    "filled": 7095,
+    "avg_net_pct": -0.1499,
+    "holdout_avg_pct": -0.1483,
+    "baseline_avg_pct": -0.1445
    },
    {
     "fees": 0.001,
     "setup": "LEVEL_BOUNCE",
     "stop": "FIXED",
-    "filled": 3694,
-    "avg_net_pct": -0.1507,
-    "holdout_avg_pct": -0.1573,
-    "baseline_avg_pct": -0.1457
+    "filled": 3696,
+    "avg_net_pct": -0.151,
+    "holdout_avg_pct": -0.1571,
+    "baseline_avg_pct": -0.1492
    },
    {
     "fees": 0.001,
     "setup": "LEVEL_BOUNCE",
     "stop": "ATR",
-    "filled": 4203,
-    "avg_net_pct": -0.1545,
-    "holdout_avg_pct": -0.152,
-    "baseline_avg_pct": -0.1425
+    "filled": 4205,
+    "avg_net_pct": -0.1546,
+    "holdout_avg_pct": -0.1507,
+    "baseline_avg_pct": -0.146
    },
    {
     "fees": 0.001,
     "setup": "LEVEL_BOUNCE",
     "stop": "TRAIL",
-    "filled": 4469,
+    "filled": 4471,
     "avg_net_pct": -0.1516,
-    "holdout_avg_pct": -0.1514,
-    "baseline_avg_pct": -0.1461
+    "holdout_avg_pct": -0.1494,
+    "baseline_avg_pct": -0.143
    },
    {
     "fees": 0.001,
@@ -1991,7 +1991,7 @@
     "filled": 2973,
     "avg_net_pct": -0.1481,
     "holdout_avg_pct": -0.1293,
-    "baseline_avg_pct": -0.1489
+    "baseline_avg_pct": -0.1498
    },
    {
     "fees": 0.001,
@@ -2000,7 +2000,7 @@
     "filled": 3009,
     "avg_net_pct": -0.1495,
     "holdout_avg_pct": -0.1186,
-    "baseline_avg_pct": -0.1476
+    "baseline_avg_pct": -0.1422
    },
    {
     "fees": 0.001,
@@ -2009,61 +2009,61 @@
     "filled": 3095,
     "avg_net_pct": -0.1523,
     "holdout_avg_pct": -0.1238,
-    "baseline_avg_pct": -0.1376
+    "baseline_avg_pct": -0.1442
    },
    {
     "fees": 0.0005,
     "setup": "BREAKOUT_RETEST",
     "stop": "FIXED",
-    "filled": 6377,
-    "avg_net_pct": -0.1065,
-    "holdout_avg_pct": -0.1078,
-    "baseline_avg_pct": -0.0973
+    "filled": 6380,
+    "avg_net_pct": -0.1068,
+    "holdout_avg_pct": -0.1081,
+    "baseline_avg_pct": -0.097
    },
    {
     "fees": 0.0005,
     "setup": "BREAKOUT_RETEST",
     "stop": "ATR",
-    "filled": 6697,
-    "avg_net_pct": -0.1033,
-    "holdout_avg_pct": -0.105,
-    "baseline_avg_pct": -0.0973
+    "filled": 6700,
+    "avg_net_pct": -0.1034,
+    "holdout_avg_pct": -0.1047,
+    "baseline_avg_pct": -0.098
    },
    {
     "fees": 0.0005,
     "setup": "BREAKOUT_RETEST",
     "stop": "TRAIL",
-    "filled": 7082,
-    "avg_net_pct": -0.1002,
-    "holdout_avg_pct": -0.0988,
-    "baseline_avg_pct": -0.093
+    "filled": 7085,
+    "avg_net_pct": -0.1003,
+    "holdout_avg_pct": -0.0985,
+    "baseline_avg_pct": -0.0939
    },
    {
     "fees": 0.0005,
     "setup": "LEVEL_BOUNCE",
     "stop": "FIXED",
-    "filled": 3694,
-    "avg_net_pct": -0.1007,
-    "holdout_avg_pct": -0.1073,
-    "baseline_avg_pct": -0.0957
+    "filled": 3696,
+    "avg_net_pct": -0.101,
+    "holdout_avg_pct": -0.1071,
+    "baseline_avg_pct": -0.0992
    },
    {
     "fees": 0.0005,
     "setup": "LEVEL_BOUNCE",
     "stop": "ATR",
-    "filled": 4203,
-    "avg_net_pct": -0.1045,
-    "holdout_avg_pct": -0.102,
-    "baseline_avg_pct": -0.0925
+    "filled": 4205,
+    "avg_net_pct": -0.1046,
+    "holdout_avg_pct": -0.1007,
+    "baseline_avg_pct": -0.096
    },
    {
     "fees": 0.0005,
     "setup": "LEVEL_BOUNCE",
     "stop": "TRAIL",
-    "filled": 4468,
+    "filled": 4470,
     "avg_net_pct": -0.1013,
-    "holdout_avg_pct": -0.1015,
-    "baseline_avg_pct": -0.0907
+    "holdout_avg_pct": -0.0995,
+    "baseline_avg_pct": -0.0933
    },
    {
     "fees": 0.0005,
@@ -2072,7 +2072,7 @@
     "filled": 2973,
     "avg_net_pct": -0.0981,
     "holdout_avg_pct": -0.0793,
-    "baseline_avg_pct": -0.0989
+    "baseline_avg_pct": -0.0998
    },
    {
     "fees": 0.0005,
@@ -2081,7 +2081,7 @@
     "filled": 3009,
     "avg_net_pct": -0.0995,
     "holdout_avg_pct": -0.0686,
-    "baseline_avg_pct": -0.0976
+    "baseline_avg_pct": -0.0922
    },
    {
     "fees": 0.0005,
@@ -2090,7 +2090,7 @@
     "filled": 3092,
     "avg_net_pct": -0.1032,
     "holdout_avg_pct": -0.0742,
-    "baseline_avg_pct": -0.0856
+    "baseline_avg_pct": -0.092
    }
   ],
   "ETH": [
@@ -2098,163 +2098,163 @@
     "fees": 0.001,
     "setup": "BREAKOUT_RETEST",
     "stop": "FIXED",
-    "filled": 6806,
-    "avg_net_pct": -0.1496,
-    "holdout_avg_pct": -0.1495,
-    "baseline_avg_pct": -0.1438
+    "filled": 6811,
+    "avg_net_pct": -0.1498,
+    "holdout_avg_pct": -0.1516,
+    "baseline_avg_pct": -0.1463
    },
    {
     "fees": 0.001,
     "setup": "BREAKOUT_RETEST",
     "stop": "ATR",
-    "filled": 7004,
-    "avg_net_pct": -0.1481,
-    "holdout_avg_pct": -0.1579,
-    "baseline_avg_pct": -0.1502
+    "filled": 7012,
+    "avg_net_pct": -0.1484,
+    "holdout_avg_pct": -0.1588,
+    "baseline_avg_pct": -0.1446
    },
    {
     "fees": 0.001,
     "setup": "BREAKOUT_RETEST",
     "stop": "TRAIL",
-    "filled": 7415,
-    "avg_net_pct": -0.1444,
-    "holdout_avg_pct": -0.1537,
-    "baseline_avg_pct": -0.144
+    "filled": 7423,
+    "avg_net_pct": -0.1446,
+    "holdout_avg_pct": -0.1549,
+    "baseline_avg_pct": -0.1421
    },
    {
     "fees": 0.001,
     "setup": "LEVEL_BOUNCE",
     "stop": "FIXED",
-    "filled": 3717,
+    "filled": 3719,
     "avg_net_pct": -0.171,
-    "holdout_avg_pct": -0.1635,
-    "baseline_avg_pct": -0.1461
+    "holdout_avg_pct": -0.1631,
+    "baseline_avg_pct": -0.1458
    },
    {
     "fees": 0.001,
     "setup": "LEVEL_BOUNCE",
     "stop": "ATR",
-    "filled": 4120,
-    "avg_net_pct": -0.1681,
-    "holdout_avg_pct": -0.1567,
-    "baseline_avg_pct": -0.1475
+    "filled": 4123,
+    "avg_net_pct": -0.168,
+    "holdout_avg_pct": -0.1562,
+    "baseline_avg_pct": -0.1504
    },
    {
     "fees": 0.001,
     "setup": "LEVEL_BOUNCE",
     "stop": "TRAIL",
-    "filled": 4449,
-    "avg_net_pct": -0.1657,
-    "holdout_avg_pct": -0.1517,
-    "baseline_avg_pct": -0.1455
+    "filled": 4452,
+    "avg_net_pct": -0.1656,
+    "holdout_avg_pct": -0.1511,
+    "baseline_avg_pct": -0.1501
    },
    {
     "fees": 0.001,
     "setup": "MOMENTUM_CONT",
     "stop": "FIXED",
-    "filled": 4026,
-    "avg_net_pct": -0.1436,
-    "holdout_avg_pct": -0.0996,
-    "baseline_avg_pct": -0.1405
+    "filled": 4027,
+    "avg_net_pct": -0.1437,
+    "holdout_avg_pct": -0.1015,
+    "baseline_avg_pct": -0.1477
    },
    {
     "fees": 0.001,
     "setup": "MOMENTUM_CONT",
     "stop": "ATR",
-    "filled": 4037,
-    "avg_net_pct": -0.1445,
-    "holdout_avg_pct": -0.1085,
-    "baseline_avg_pct": -0.1447
-   },
-   {
-    "fees": 0.001,
-    "setup": "MOMENTUM_CONT",
-    "stop": "TRAIL",
-    "filled": 4146,
-    "avg_net_pct": -0.1387,
-    "holdout_avg_pct": -0.1115,
+    "filled": 4038,
+    "avg_net_pct": -0.1446,
+    "holdout_avg_pct": -0.1098,
     "baseline_avg_pct": -0.1398
    },
    {
+    "fees": 0.001,
+    "setup": "MOMENTUM_CONT",
+    "stop": "TRAIL",
+    "filled": 4147,
+    "avg_net_pct": -0.1388,
+    "holdout_avg_pct": -0.1123,
+    "baseline_avg_pct": -0.1453
+   },
+   {
     "fees": 0.0005,
     "setup": "BREAKOUT_RETEST",
     "stop": "FIXED",
-    "filled": 6806,
-    "avg_net_pct": -0.0996,
-    "holdout_avg_pct": -0.0995,
-    "baseline_avg_pct": -0.0938
+    "filled": 6811,
+    "avg_net_pct": -0.0998,
+    "holdout_avg_pct": -0.1016,
+    "baseline_avg_pct": -0.0963
    },
    {
     "fees": 0.0005,
     "setup": "BREAKOUT_RETEST",
     "stop": "ATR",
-    "filled": 7004,
-    "avg_net_pct": -0.0981,
-    "holdout_avg_pct": -0.1079,
-    "baseline_avg_pct": -0.1002
+    "filled": 7012,
+    "avg_net_pct": -0.0984,
+    "holdout_avg_pct": -0.1088,
+    "baseline_avg_pct": -0.0946
    },
    {
     "fees": 0.0005,
     "setup": "BREAKOUT_RETEST",
     "stop": "TRAIL",
-    "filled": 7404,
-    "avg_net_pct": -0.0949,
-    "holdout_avg_pct": -0.1041,
-    "baseline_avg_pct": -0.0939
+    "filled": 7412,
+    "avg_net_pct": -0.0952,
+    "holdout_avg_pct": -0.1053,
+    "baseline_avg_pct": -0.0943
    },
    {
     "fees": 0.0005,
     "setup": "LEVEL_BOUNCE",
     "stop": "FIXED",
-    "filled": 3717,
+    "filled": 3719,
     "avg_net_pct": -0.121,
-    "holdout_avg_pct": -0.1135,
-    "baseline_avg_pct": -0.0961
+    "holdout_avg_pct": -0.1131,
+    "baseline_avg_pct": -0.0958
    },
    {
     "fees": 0.0005,
     "setup": "LEVEL_BOUNCE",
     "stop": "ATR",
-    "filled": 4120,
-    "avg_net_pct": -0.1181,
-    "holdout_avg_pct": -0.1067,
-    "baseline_avg_pct": -0.0975
+    "filled": 4123,
+    "avg_net_pct": -0.118,
+    "holdout_avg_pct": -0.1062,
+    "baseline_avg_pct": -0.1004
    },
    {
     "fees": 0.0005,
     "setup": "LEVEL_BOUNCE",
     "stop": "TRAIL",
-    "filled": 4442,
-    "avg_net_pct": -0.1146,
-    "holdout_avg_pct": -0.1017,
-    "baseline_avg_pct": -0.0926
+    "filled": 4445,
+    "avg_net_pct": -0.1145,
+    "holdout_avg_pct": -0.1012,
+    "baseline_avg_pct": -0.0946
    },
    {
     "fees": 0.0005,
     "setup": "MOMENTUM_CONT",
     "stop": "FIXED",
-    "filled": 4026,
-    "avg_net_pct": -0.0936,
-    "holdout_avg_pct": -0.0496,
-    "baseline_avg_pct": -0.0905
+    "filled": 4027,
+    "avg_net_pct": -0.0937,
+    "holdout_avg_pct": -0.0515,
+    "baseline_avg_pct": -0.0977
    },
    {
     "fees": 0.0005,
     "setup": "MOMENTUM_CONT",
     "stop": "ATR",
-    "filled": 4037,
-    "avg_net_pct": -0.0945,
-    "holdout_avg_pct": -0.0585,
-    "baseline_avg_pct": -0.0947
+    "filled": 4038,
+    "avg_net_pct": -0.0946,
+    "holdout_avg_pct": -0.0598,
+    "baseline_avg_pct": -0.0898
    },
    {
     "fees": 0.0005,
     "setup": "MOMENTUM_CONT",
     "stop": "TRAIL",
-    "filled": 4135,
-    "avg_net_pct": -0.0883,
-    "holdout_avg_pct": -0.0625,
-    "baseline_avg_pct": -0.089
+    "filled": 4136,
+    "avg_net_pct": -0.0884,
+    "holdout_avg_pct": -0.0633,
+    "baseline_avg_pct": -0.0924
    }
   ],
   "SOL": [
@@ -2262,163 +2262,163 @@
     "fees": 0.001,
     "setup": "BREAKOUT_RETEST",
     "stop": "FIXED",
-    "filled": 7728,
-    "avg_net_pct": -0.1693,
-    "holdout_avg_pct": -0.1798,
-    "baseline_avg_pct": -0.1613
-   },
-   {
-    "fees": 0.001,
-    "setup": "BREAKOUT_RETEST",
-    "stop": "ATR",
-    "filled": 7793,
-    "avg_net_pct": -0.1773,
-    "holdout_avg_pct": -0.1821,
-    "baseline_avg_pct": -0.1623
-   },
-   {
-    "fees": 0.001,
-    "setup": "BREAKOUT_RETEST",
-    "stop": "TRAIL",
-    "filled": 8104,
-    "avg_net_pct": -0.1641,
-    "holdout_avg_pct": -0.1898,
-    "baseline_avg_pct": -0.1576
-   },
-   {
-    "fees": 0.001,
-    "setup": "LEVEL_BOUNCE",
-    "stop": "FIXED",
-    "filled": 3767,
-    "avg_net_pct": -0.1693,
-    "holdout_avg_pct": -0.1574,
-    "baseline_avg_pct": -0.1644
-   },
-   {
-    "fees": 0.001,
-    "setup": "LEVEL_BOUNCE",
-    "stop": "ATR",
-    "filled": 3809,
+    "filled": 7747,
     "avg_net_pct": -0.1694,
-    "holdout_avg_pct": -0.1771,
-    "baseline_avg_pct": -0.1657
+    "holdout_avg_pct": -0.1793,
+    "baseline_avg_pct": -0.1588
+   },
+   {
+    "fees": 0.001,
+    "setup": "BREAKOUT_RETEST",
+    "stop": "ATR",
+    "filled": 7812,
+    "avg_net_pct": -0.1773,
+    "holdout_avg_pct": -0.1815,
+    "baseline_avg_pct": -0.1646
+   },
+   {
+    "fees": 0.001,
+    "setup": "BREAKOUT_RETEST",
+    "stop": "TRAIL",
+    "filled": 8124,
+    "avg_net_pct": -0.1643,
+    "holdout_avg_pct": -0.1917,
+    "baseline_avg_pct": -0.1577
+   },
+   {
+    "fees": 0.001,
+    "setup": "LEVEL_BOUNCE",
+    "stop": "FIXED",
+    "filled": 3775,
+    "avg_net_pct": -0.1689,
+    "holdout_avg_pct": -0.1506,
+    "baseline_avg_pct": -0.1643
+   },
+   {
+    "fees": 0.001,
+    "setup": "LEVEL_BOUNCE",
+    "stop": "ATR",
+    "filled": 3818,
+    "avg_net_pct": -0.1693,
+    "holdout_avg_pct": -0.1739,
+    "baseline_avg_pct": -0.1718
    },
    {
     "fees": 0.001,
     "setup": "LEVEL_BOUNCE",
     "stop": "TRAIL",
-    "filled": 4288,
-    "avg_net_pct": -0.158,
-    "holdout_avg_pct": -0.1714,
-    "baseline_avg_pct": -0.1611
+    "filled": 4299,
+    "avg_net_pct": -0.1574,
+    "holdout_avg_pct": -0.1661,
+    "baseline_avg_pct": -0.1526
    },
    {
     "fees": 0.001,
     "setup": "MOMENTUM_CONT",
     "stop": "FIXED",
-    "filled": 5526,
-    "avg_net_pct": -0.1525,
-    "holdout_avg_pct": -0.1544,
-    "baseline_avg_pct": -0.1556
+    "filled": 5535,
+    "avg_net_pct": -0.1528,
+    "holdout_avg_pct": -0.1555,
+    "baseline_avg_pct": -0.1595
    },
    {
     "fees": 0.001,
     "setup": "MOMENTUM_CONT",
     "stop": "ATR",
-    "filled": 5477,
-    "avg_net_pct": -0.1559,
-    "holdout_avg_pct": -0.1398,
-    "baseline_avg_pct": -0.1654
+    "filled": 5486,
+    "avg_net_pct": -0.156,
+    "holdout_avg_pct": -0.1392,
+    "baseline_avg_pct": -0.1676
    },
    {
     "fees": 0.001,
     "setup": "MOMENTUM_CONT",
     "stop": "TRAIL",
-    "filled": 5625,
-    "avg_net_pct": -0.1487,
-    "holdout_avg_pct": -0.1378,
-    "baseline_avg_pct": -0.1542
+    "filled": 5634,
+    "avg_net_pct": -0.1488,
+    "holdout_avg_pct": -0.1383,
+    "baseline_avg_pct": -0.1628
    },
    {
     "fees": 0.0005,
     "setup": "BREAKOUT_RETEST",
     "stop": "FIXED",
-    "filled": 7728,
-    "avg_net_pct": -0.1193,
-    "holdout_avg_pct": -0.1298,
-    "baseline_avg_pct": -0.1113
-   },
-   {
-    "fees": 0.0005,
-    "setup": "BREAKOUT_RETEST",
-    "stop": "ATR",
-    "filled": 7793,
-    "avg_net_pct": -0.1273,
-    "holdout_avg_pct": -0.1321,
-    "baseline_avg_pct": -0.1123
-   },
-   {
-    "fees": 0.0005,
-    "setup": "BREAKOUT_RETEST",
-    "stop": "TRAIL",
-    "filled": 8073,
-    "avg_net_pct": -0.1144,
-    "holdout_avg_pct": -0.1408,
-    "baseline_avg_pct": -0.1121
-   },
-   {
-    "fees": 0.0005,
-    "setup": "LEVEL_BOUNCE",
-    "stop": "FIXED",
-    "filled": 3767,
-    "avg_net_pct": -0.1193,
-    "holdout_avg_pct": -0.1074,
-    "baseline_avg_pct": -0.1144
-   },
-   {
-    "fees": 0.0005,
-    "setup": "LEVEL_BOUNCE",
-    "stop": "ATR",
-    "filled": 3809,
+    "filled": 7747,
     "avg_net_pct": -0.1194,
-    "holdout_avg_pct": -0.1271,
-    "baseline_avg_pct": -0.1157
+    "holdout_avg_pct": -0.1293,
+    "baseline_avg_pct": -0.1088
+   },
+   {
+    "fees": 0.0005,
+    "setup": "BREAKOUT_RETEST",
+    "stop": "ATR",
+    "filled": 7812,
+    "avg_net_pct": -0.1273,
+    "holdout_avg_pct": -0.1315,
+    "baseline_avg_pct": -0.1146
+   },
+   {
+    "fees": 0.0005,
+    "setup": "BREAKOUT_RETEST",
+    "stop": "TRAIL",
+    "filled": 8093,
+    "avg_net_pct": -0.1145,
+    "holdout_avg_pct": -0.1424,
+    "baseline_avg_pct": -0.1046
+   },
+   {
+    "fees": 0.0005,
+    "setup": "LEVEL_BOUNCE",
+    "stop": "FIXED",
+    "filled": 3775,
+    "avg_net_pct": -0.1189,
+    "holdout_avg_pct": -0.1006,
+    "baseline_avg_pct": -0.1143
+   },
+   {
+    "fees": 0.0005,
+    "setup": "LEVEL_BOUNCE",
+    "stop": "ATR",
+    "filled": 3818,
+    "avg_net_pct": -0.1193,
+    "holdout_avg_pct": -0.1239,
+    "baseline_avg_pct": -0.1218
    },
    {
     "fees": 0.0005,
     "setup": "LEVEL_BOUNCE",
     "stop": "TRAIL",
-    "filled": 4273,
-    "avg_net_pct": -0.1084,
-    "holdout_avg_pct": -0.1213,
-    "baseline_avg_pct": -0.1038
+    "filled": 4284,
+    "avg_net_pct": -0.1078,
+    "holdout_avg_pct": -0.116,
+    "baseline_avg_pct": -0.1078
    },
    {
     "fees": 0.0005,
     "setup": "MOMENTUM_CONT",
     "stop": "FIXED",
-    "filled": 5526,
-    "avg_net_pct": -0.1025,
-    "holdout_avg_pct": -0.1044,
-    "baseline_avg_pct": -0.1056
+    "filled": 5535,
+    "avg_net_pct": -0.1028,
+    "holdout_avg_pct": -0.1055,
+    "baseline_avg_pct": -0.1095
    },
    {
     "fees": 0.0005,
     "setup": "MOMENTUM_CONT",
     "stop": "ATR",
-    "filled": 5477,
-    "avg_net_pct": -0.1059,
-    "holdout_avg_pct": -0.0898,
-    "baseline_avg_pct": -0.1154
+    "filled": 5486,
+    "avg_net_pct": -0.106,
+    "holdout_avg_pct": -0.0892,
+    "baseline_avg_pct": -0.1176
    },
    {
     "fees": 0.0005,
     "setup": "MOMENTUM_CONT",
     "stop": "TRAIL",
-    "filled": 5604,
-    "avg_net_pct": -0.0991,
-    "holdout_avg_pct": -0.0842,
-    "baseline_avg_pct": -0.1092
+    "filled": 5613,
+    "avg_net_pct": -0.0993,
+    "holdout_avg_pct": -0.0847,
+    "baseline_avg_pct": -0.1101
    }
   ]
  },
@@ -2427,16 +2427,16 @@
   "assets": {
    "BTC": {
     "activity_forecast": {
-     "skill": 0.2538,
+     "skill": 0.2536,
      "skill_ci99": [
-      0.225,
-      0.281
+      0.2257,
+      0.2788
      ],
-     "holdout_skill": 0.1513,
+     "holdout_skill": 0.144,
      "qualified": true,
      "reason": "qualified"
     },
-    "gate_share": 0.0904,
+    "gate_share": 0.0913,
     "results": [
      {
       "asset": "BTC",
@@ -2448,22 +2448,22 @@
        "spread": 0.0001,
        "slippage": 0.0002
       },
-      "period": "2022-01-01 -> 2026-11-14",
-      "orders": 608,
-      "filled": 467,
+      "period": "2022-01-01 -> 2026-11-20",
+      "orders": 607,
+      "filled": 466,
       "unfilled": 141,
-      "targets": 126,
+      "targets": 125,
       "stops": 222,
       "timeouts": 119,
-      "win_rate": 0.334,
-      "avg_net_pct": -0.2367,
+      "win_rate": 0.3326,
+      "avg_net_pct": -0.2382,
       "avg_net_ci": [
-       -0.3071,
-       -0.1663
+       -0.3159,
+       -0.1637
       ],
-      "total_net_pct": -110.53,
-      "max_drawdown_pct": 111.09,
-      "trades_per_week": 1.84,
+      "total_net_pct": -111.02,
+      "max_drawdown_pct": 111.58,
+      "trades_per_week": 1.83,
       "years": {
        "2022": {
         "trades": 7,
@@ -2478,23 +2478,23 @@
         "avg_net_pct": -0.2525
        },
        "2025": {
-        "trades": 136,
-        "avg_net_pct": -0.2358
+        "trades": 135,
+        "avg_net_pct": -0.2412
        },
        "2026": {
         "trades": 99,
         "avg_net_pct": -0.2437
        }
       },
-      "holdout_trades": 120,
-      "holdout_avg_pct": -0.2646,
-      "baseline_avg_pct": -0.1908,
-      "baseline_holdout_avg_pct": -0.2215,
+      "holdout_trades": 111,
+      "holdout_avg_pct": -0.251,
+      "baseline_avg_pct": -0.188,
+      "baseline_holdout_avg_pct": -0.1792,
       "edge_ci": [
-       -0.1264,
-       0.0467
+       -0.1391,
+       0.0448
       ],
-      "gross_avg_pct": -0.0767,
+      "gross_avg_pct": -0.0782,
       "qualified": false,
       "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
       "checks": {
@@ -2515,22 +2515,22 @@
        "spread": 0.0001,
        "slippage": 0.0002
       },
-      "period": "2022-01-01 -> 2026-11-14",
-      "orders": 630,
-      "filled": 488,
+      "period": "2022-01-01 -> 2026-11-20",
+      "orders": 629,
+      "filled": 487,
       "unfilled": 142,
-      "targets": 123,
+      "targets": 122,
       "stops": 296,
       "timeouts": 69,
-      "win_rate": 0.3115,
-      "avg_net_pct": -0.2286,
+      "win_rate": 0.3101,
+      "avg_net_pct": -0.2301,
       "avg_net_ci": [
-       -0.2919,
-       -0.1641
+       -0.2996,
+       -0.1596
       ],
-      "total_net_pct": -111.56,
-      "max_drawdown_pct": 111.62,
-      "trades_per_week": 1.92,
+      "total_net_pct": -112.05,
+      "max_drawdown_pct": 112.11,
+      "trades_per_week": 1.91,
       "years": {
        "2022": {
         "trades": 7,
@@ -2545,23 +2545,23 @@
         "avg_net_pct": -0.2439
        },
        "2025": {
-        "trades": 146,
-        "avg_net_pct": -0.2311
+        "trades": 145,
+        "avg_net_pct": -0.2361
        },
        "2026": {
         "trades": 101,
         "avg_net_pct": -0.2308
        }
       },
-      "holdout_trades": 124,
-      "holdout_avg_pct": -0.2555,
-      "baseline_avg_pct": -0.193,
-      "baseline_holdout_avg_pct": -0.1961,
+      "holdout_trades": 115,
+      "holdout_avg_pct": -0.2482,
+      "baseline_avg_pct": -0.1948,
+      "baseline_holdout_avg_pct": -0.2065,
       "edge_ci": [
-       -0.1059,
-       0.0464
+       -0.1143,
+       0.0417
       ],
-      "gross_avg_pct": -0.0685,
+      "gross_avg_pct": -0.07,
       "qualified": false,
       "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
       "checks": {
@@ -2582,22 +2582,22 @@
        "spread": 0.0001,
        "slippage": 0.0002
       },
-      "period": "2022-01-01 -> 2026-11-14",
-      "orders": 655,
-      "filled": 510,
+      "period": "2022-01-01 -> 2026-11-20",
+      "orders": 654,
+      "filled": 509,
       "unfilled": 145,
       "targets": 57,
-      "stops": 430,
+      "stops": 429,
       "timeouts": 23,
-      "win_rate": 0.3216,
-      "avg_net_pct": -0.2122,
+      "win_rate": 0.3202,
+      "avg_net_pct": -0.2129,
       "avg_net_ci": [
-       -0.2619,
-       -0.1623
+       -0.2677,
+       -0.1571
       ],
-      "total_net_pct": -108.21,
-      "max_drawdown_pct": 108.21,
-      "trades_per_week": 2.01,
+      "total_net_pct": -108.34,
+      "max_drawdown_pct": 108.34,
+      "trades_per_week": 2.0,
       "years": {
        "2022": {
         "trades": 7,
@@ -2612,23 +2612,23 @@
         "avg_net_pct": -0.2442
        },
        "2025": {
-        "trades": 152,
-        "avg_net_pct": -0.2046
+        "trades": 151,
+        "avg_net_pct": -0.2069
        },
        "2026": {
         "trades": 107,
         "avg_net_pct": -0.2275
        }
       },
-      "holdout_trades": 130,
-      "holdout_avg_pct": -0.2319,
-      "baseline_avg_pct": -0.1908,
-      "baseline_holdout_avg_pct": -0.2106,
+      "holdout_trades": 121,
+      "holdout_avg_pct": -0.2273,
+      "baseline_avg_pct": -0.1995,
+      "baseline_holdout_avg_pct": -0.2262,
       "edge_ci": [
-       -0.0824,
-       0.0403
+       -0.0699,
+       0.0509
       ],
-      "gross_avg_pct": -0.0521,
+      "gross_avg_pct": -0.0528,
       "qualified": false,
       "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
       "checks": {
@@ -2649,22 +2649,22 @@
        "spread": 0.0001,
        "slippage": 0.0002
       },
-      "period": "2022-01-01 -> 2026-11-14",
-      "orders": 394,
+      "period": "2022-01-01 -> 2026-11-20",
+      "orders": 393,
       "filled": 233,
-      "unfilled": 161,
-      "targets": 64,
+      "unfilled": 160,
+      "targets": 65,
       "stops": 106,
-      "timeouts": 63,
-      "win_rate": 0.3777,
-      "avg_net_pct": -0.2006,
+      "timeouts": 62,
+      "win_rate": 0.382,
+      "avg_net_pct": -0.1982,
       "avg_net_ci": [
-       -0.2958,
-       -0.0951
+       -0.2984,
+       -0.0878
       ],
-      "total_net_pct": -46.74,
-      "max_drawdown_pct": 47.72,
-      "trades_per_week": 0.92,
+      "total_net_pct": -46.17,
+      "max_drawdown_pct": 47.31,
+      "trades_per_week": 0.91,
       "years": {
        "2022": {
         "trades": 3,
@@ -2679,23 +2679,23 @@
         "avg_net_pct": -0.1823
        },
        "2025": {
-        "trades": 69,
-        "avg_net_pct": -0.224
+        "trades": 68,
+        "avg_net_pct": -0.2262
        },
        "2026": {
-        "trades": 53,
-        "avg_net_pct": -0.2179
+        "trades": 54,
+        "avg_net_pct": -0.2047
        }
       },
-      "holdout_trades": 61,
-      "holdout_avg_pct": -0.257,
-      "baseline_avg_pct": -0.1706,
-      "baseline_holdout_avg_pct": -0.1755,
+      "holdout_trades": 57,
+      "holdout_avg_pct": -0.2174,
+      "baseline_avg_pct": -0.2104,
+      "baseline_holdout_avg_pct": -0.2204,
       "edge_ci": [
-       -0.1317,
-       0.0838
+       -0.0984,
+       0.1268
       ],
-      "gross_avg_pct": -0.0403,
+      "gross_avg_pct": -0.0378,
       "qualified": false,
       "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
       "checks": {
@@ -2716,21 +2716,21 @@
        "spread": 0.0001,
        "slippage": 0.0002
       },
-      "period": "2022-01-01 -> 2026-11-14",
-      "orders": 426,
+      "period": "2022-01-01 -> 2026-11-20",
+      "orders": 425,
       "filled": 257,
-      "unfilled": 169,
-      "targets": 67,
-      "stops": 151,
+      "unfilled": 168,
+      "targets": 68,
+      "stops": 150,
       "timeouts": 39,
-      "win_rate": 0.3502,
-      "avg_net_pct": -0.1963,
+      "win_rate": 0.3541,
+      "avg_net_pct": -0.1927,
       "avg_net_ci": [
-       -0.2845,
-       -0.0941
+       -0.2771,
+       -0.0867
       ],
-      "total_net_pct": -50.45,
-      "max_drawdown_pct": 50.94,
+      "total_net_pct": -49.53,
+      "max_drawdown_pct": 50.46,
       "trades_per_week": 1.01,
       "years": {
        "2022": {
@@ -2746,23 +2746,23 @@
         "avg_net_pct": -0.141
        },
        "2025": {
-        "trades": 83,
-        "avg_net_pct": -0.2647
+        "trades": 82,
+        "avg_net_pct": -0.2627
        },
        "2026": {
-        "trades": 60,
-        "avg_net_pct": -0.1821
+        "trades": 61,
+        "avg_net_pct": -0.1711
        }
       },
-      "holdout_trades": 68,
-      "holdout_avg_pct": -0.214,
-      "baseline_avg_pct": -0.1851,
-      "baseline_holdout_avg_pct": -0.2094,
+      "holdout_trades": 64,
+      "holdout_avg_pct": -0.1826,
+      "baseline_avg_pct": -0.1824,
+      "baseline_holdout_avg_pct": -0.2003,
       "edge_ci": [
-       -0.1098,
-       0.0894
+       -0.1064,
+       0.0869
       ],
-      "gross_avg_pct": -0.036,
+      "gross_avg_pct": -0.0324,
       "qualified": false,
       "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
       "checks": {
@@ -2783,22 +2783,22 @@
        "spread": 0.0001,
        "slippage": 0.0002
       },
-      "period": "2022-01-01 -> 2026-11-14",
-      "orders": 467,
+      "period": "2022-01-01 -> 2026-11-20",
+      "orders": 466,
       "filled": 276,
-      "unfilled": 191,
-      "targets": 26,
-      "stops": 239,
+      "unfilled": 190,
+      "targets": 27,
+      "stops": 238,
       "timeouts": 11,
-      "win_rate": 0.337,
-      "avg_net_pct": -0.2029,
+      "win_rate": 0.3406,
+      "avg_net_pct": -0.1995,
       "avg_net_ci": [
-       -0.2697,
-       -0.1297
+       -0.2662,
+       -0.1221
       ],
-      "total_net_pct": -55.99,
-      "max_drawdown_pct": 56.19,
-      "trades_per_week": 1.09,
+      "total_net_pct": -55.07,
+      "max_drawdown_pct": 55.27,
+      "trades_per_week": 1.08,
       "years": {
        "2022": {
         "trades": 3,
@@ -2813,23 +2813,23 @@
         "avg_net_pct": -0.1511
        },
        "2025": {
-        "trades": 87,
-        "avg_net_pct": -0.263
+        "trades": 86,
+        "avg_net_pct": -0.2611
        },
        "2026": {
-        "trades": 62,
-        "avg_net_pct": -0.2256
+        "trades": 63,
+        "avg_net_pct": -0.2143
        }
       },
-      "holdout_trades": 70,
-      "holdout_avg_pct": -0.2507,
-      "baseline_avg_pct": -0.1963,
-      "baseline_holdout_avg_pct": -0.172,
+      "holdout_trades": 66,
+      "holdout_avg_pct": -0.2225,
+      "baseline_avg_pct": -0.2061,
+      "baseline_holdout_avg_pct": -0.2187,
       "edge_ci": [
-       -0.0831,
-       0.0745
+       -0.0723,
+       0.081
       ],
-      "gross_avg_pct": -0.0424,
+      "gross_avg_pct": -0.0391,
       "qualified": false,
       "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
       "checks": {
@@ -2850,22 +2850,22 @@
        "spread": 0.0001,
        "slippage": 0.0002
       },
-      "period": "2022-01-01 -> 2026-11-14",
+      "period": "2022-01-01 -> 2026-11-20",
       "orders": 359,
       "filled": 268,
       "unfilled": 91,
       "targets": 76,
-      "stops": 157,
-      "timeouts": 35,
+      "stops": 158,
+      "timeouts": 34,
       "win_rate": 0.3209,
-      "avg_net_pct": -0.28,
+      "avg_net_pct": -0.282,
       "avg_net_ci": [
-       -0.3681,
-       -0.1864
+       -0.3742,
+       -0.1813
       ],
-      "total_net_pct": -75.03,
-      "max_drawdown_pct": 75.34,
-      "trades_per_week": 1.06,
+      "total_net_pct": -75.57,
+      "max_drawdown_pct": 75.89,
+      "trades_per_week": 1.05,
       "years": {
        "2022": {
         "trades": 2,
@@ -2880,23 +2880,23 @@
         "avg_net_pct": -0.3094
        },
        "2025": {
-        "trades": 70,
-        "avg_net_pct": -0.3466
+        "trades": 69,
+        "avg_net_pct": -0.3497
        },
        "2026": {
-        "trades": 52,
-        "avg_net_pct": -0.184
+        "trades": 53,
+        "avg_net_pct": -0.1934
        }
       },
-      "holdout_trades": 64,
-      "holdout_avg_pct": -0.2429,
-      "baseline_avg_pct": -0.1812,
-      "baseline_holdout_avg_pct": -0.1849,
+      "holdout_trades": 61,
+      "holdout_avg_pct": -0.2503,
+      "baseline_avg_pct": -0.1541,
+      "baseline_holdout_avg_pct": -0.1796,
       "edge_ci": [
-       -0.2108,
-       0.025
+       -0.227,
+       -0.0181
       ],
-      "gross_avg_pct": -0.1197,
+      "gross_avg_pct": -0.1217,
       "qualified": false,
       "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
       "checks": {
@@ -2917,21 +2917,21 @@
        "spread": 0.0001,
        "slippage": 0.0002
       },
-      "period": "2022-01-01 -> 2026-11-14",
+      "period": "2022-01-01 -> 2026-11-20",
       "orders": 359,
       "filled": 269,
       "unfilled": 90,
       "targets": 74,
-      "stops": 170,
-      "timeouts": 25,
+      "stops": 171,
+      "timeouts": 24,
       "win_rate": 0.3011,
-      "avg_net_pct": -0.2897,
+      "avg_net_pct": -0.2936,
       "avg_net_ci": [
-       -0.3851,
-       -0.1941
+       -0.3923,
+       -0.1902
       ],
-      "total_net_pct": -77.94,
-      "max_drawdown_pct": 77.94,
+      "total_net_pct": -78.98,
+      "max_drawdown_pct": 78.98,
       "trades_per_week": 1.06,
       "years": {
        "2022": {
@@ -2947,23 +2947,23 @@
         "avg_net_pct": -0.3109
        },
        "2025": {
-        "trades": 70,
-        "avg_net_pct": -0.3478
+        "trades": 69,
+        "avg_net_pct": -0.3509
        },
        "2026": {
-        "trades": 51,
-        "avg_net_pct": -0.1936
+        "trades": 52,
+        "avg_net_pct": -0.2126
        }
       },
-      "holdout_trades": 63,
-      "holdout_avg_pct": -0.2514,
-      "baseline_avg_pct": -0.2151,
-      "baseline_holdout_avg_pct": -0.222,
+      "holdout_trades": 60,
+      "holdout_avg_pct": -0.2698,
+      "baseline_avg_pct": -0.2057,
+      "baseline_holdout_avg_pct": -0.2152,
       "edge_ci": [
-       -0.2023,
-       0.0386
+       -0.1991,
+       0.0238
       ],
-      "gross_avg_pct": -0.1296,
+      "gross_avg_pct": -0.1335,
       "qualified": false,
       "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
       "checks": {
@@ -2984,21 +2984,21 @@
        "spread": 0.0001,
        "slippage": 0.0002
       },
-      "period": "2022-01-01 -> 2026-11-14",
+      "period": "2022-01-01 -> 2026-11-20",
       "orders": 366,
       "filled": 275,
       "unfilled": 91,
       "targets": 37,
-      "stops": 229,
-      "timeouts": 9,
+      "stops": 230,
+      "timeouts": 8,
       "win_rate": 0.2618,
-      "avg_net_pct": -0.2715,
+      "avg_net_pct": -0.2711,
       "avg_net_ci": [
-       -0.357,
-       -0.1911
+       -0.3461,
+       -0.182
       ],
-      "total_net_pct": -74.66,
-      "max_drawdown_pct": 74.66,
+      "total_net_pct": -74.55,
+      "max_drawdown_pct": 74.55,
       "trades_per_week": 1.08,
       "years": {
        "2022": {
@@ -3014,23 +3014,23 @@
         "avg_net_pct": -0.2702
        },
        "2025": {
-        "trades": 71,
-        "avg_net_pct": -0.3223
+        "trades": 70,
+        "avg_net_pct": -0.325
        },
        "2026": {
-        "trades": 55,
-        "avg_net_pct": -0.2289
+        "trades": 56,
+        "avg_net_pct": -0.2251
        }
       },
-      "holdout_trades": 68,
-      "holdout_avg_pct": -0.2531,
-      "baseline_avg_pct": -0.2,
-      "baseline_holdout_avg_pct": -0.2022,
+      "holdout_trades": 65,
+      "holdout_avg_pct": -0.2552,
+      "baseline_avg_pct": -0.1926,
+      "baseline_holdout_avg_pct": -0.1936,
       "edge_ci": [
-       -0.166,
-       0.0166
+       -0.1693,
+       0.0139
       ],
-      "gross_avg_pct": -0.1114,
+      "gross_avg_pct": -0.1109,
       "qualified": false,
       "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
       "checks": {
@@ -3051,10 +3051,10 @@
        "spread": 0.0001,
        "slippage": 0.0002
       },
-      "period": "2022-01-01 -> 2026-11-14",
-      "orders": 3532,
+      "period": "2022-01-01 -> 2026-11-20",
+      "orders": 3533,
       "filled": 1973,
-      "unfilled": 1559,
+      "unfilled": 1560,
       "targets": 714,
       "stops": 1080,
       "timeouts": 179,
@@ -3066,7 +3066,7 @@
       ],
       "total_net_pct": -392.11,
       "max_drawdown_pct": 393.58,
-      "trades_per_week": 7.77,
+      "trades_per_week": 7.74,
       "years": {
        "2022": {
         "trades": 635,
@@ -3089,13 +3089,13 @@
         "avg_net_pct": -0.1531
        }
       },
-      "holdout_trades": 243,
-      "holdout_avg_pct": -0.1689,
-      "baseline_avg_pct": -0.1881,
-      "baseline_holdout_avg_pct": -0.1988,
+      "holdout_trades": 236,
+      "holdout_avg_pct": -0.173,
+      "baseline_avg_pct": -0.1864,
+      "baseline_holdout_avg_pct": -0.2127,
       "edge_ci": [
-       -0.0516,
-       0.0373
+       -0.0548,
+       0.0311
       ],
       "gross_avg_pct": -0.0381,
       "qualified": false,
@@ -3118,10 +3118,10 @@
        "spread": 0.0001,
        "slippage": 0.0002
       },
-      "period": "2022-01-01 -> 2026-11-14",
-      "orders": 3476,
+      "period": "2022-01-01 -> 2026-11-20",
+      "orders": 3477,
       "filled": 1923,
-      "unfilled": 1553,
+      "unfilled": 1554,
       "targets": 746,
       "stops": 1047,
       "timeouts": 130,
@@ -3133,7 +3133,7 @@
       ],
       "total_net_pct": -366.16,
       "max_drawdown_pct": 367.63,
-      "trades_per_week": 7.57,
+      "trades_per_week": 7.55,
       "years": {
        "2022": {
         "trades": 604,
@@ -3156,13 +3156,13 @@
         "avg_net_pct": -0.1491
        }
       },
-      "holdout_trades": 247,
-      "holdout_avg_pct": -0.1728,
-      "baseline_avg_pct": -0.185,
-      "baseline_holdout_avg_pct": -0.1871,
+      "holdout_trades": 239,
+      "holdout_avg_pct": -0.1678,
+      "baseline_avg_pct": -0.1948,
+      "baseline_holdout_avg_pct": -0.1877,
       "edge_ci": [
-       -0.0448,
-       0.0383
+       -0.0375,
+       0.0464
       ],
       "gross_avg_pct": -0.0297,
       "qualified": false,
@@ -3185,10 +3185,10 @@
        "spread": 0.0001,
        "slippage": 0.0002
       },
-      "period": "2022-01-01 -> 2026-11-14",
-      "orders": 3625,
+      "period": "2022-01-01 -> 2026-11-20",
+      "orders": 3626,
       "filled": 2017,
-      "unfilled": 1608,
+      "unfilled": 1609,
       "targets": 404,
       "stops": 1589,
       "timeouts": 24,
@@ -3200,7 +3200,7 @@
       ],
       "total_net_pct": -391.29,
       "max_drawdown_pct": 391.62,
-      "trades_per_week": 7.94,
+      "trades_per_week": 7.91,
       "years": {
        "2022": {
         "trades": 638,
@@ -3223,13 +3223,13 @@
         "avg_net_pct": -0.1418
        }
       },
-      "holdout_trades": 254,
-      "holdout_avg_pct": -0.164,
-      "baseline_avg_pct": -0.1883,
-      "baseline_holdout_avg_pct": -0.2036,
+      "holdout_trades": 246,
+      "holdout_avg_pct": -0.1639,
+      "baseline_avg_pct": -0.1888,
+      "baseline_holdout_avg_pct": -0.189,
       "edge_ci": [
-       -0.041,
-       0.0334
+       -0.0437,
+       0.0326
       ],
       "gross_avg_pct": -0.0333,
       "qualified": false,
@@ -3252,7 +3252,7 @@
        "spread": 0.0001,
        "slippage": 0.0002
       },
-      "period": "2022-01-01 -> 2026-11-14",
+      "period": "2022-01-01 -> 2026-11-20",
       "orders": 614,
       "filled": 337,
       "unfilled": 277,
@@ -3267,7 +3267,7 @@
       ],
       "total_net_pct": -60.62,
       "max_drawdown_pct": 61.13,
-      "trades_per_week": 1.33,
+      "trades_per_week": 1.32,
       "years": {
        "2022": {
         "trades": 5,
@@ -3290,13 +3290,13 @@
         "avg_net_pct": -0.1116
        }
       },
-      "holdout_trades": 79,
-      "holdout_avg_pct": -0.1595,
-      "baseline_avg_pct": -0.1931,
-      "baseline_holdout_avg_pct": -0.1944,
+      "holdout_trades": 77,
+      "holdout_avg_pct": -0.1676,
+      "baseline_avg_pct": -0.202,
+      "baseline_holdout_avg_pct": -0.2466,
       "edge_ci": [
-       -0.0941,
-       0.1265
+       -0.0894,
+       0.1435
       ],
       "gross_avg_pct": -0.0192,
       "qualified": false,
@@ -3319,7 +3319,7 @@
        "spread": 0.0001,
        "slippage": 0.0002
       },
-      "period": "2022-01-01 -> 2026-11-14",
+      "period": "2022-01-01 -> 2026-11-20",
       "orders": 585,
       "filled": 325,
       "unfilled": 260,
@@ -3357,13 +3357,13 @@
         "avg_net_pct": -0.1355
        }
       },
-      "holdout_trades": 81,
-      "holdout_avg_pct": -0.1747,
-      "baseline_avg_pct": -0.1733,
-      "baseline_holdout_avg_pct": -0.2097,
+      "holdout_trades": 79,
+      "holdout_avg_pct": -0.1792,
+      "baseline_avg_pct": -0.2115,
+      "baseline_holdout_avg_pct": -0.2036,
       "edge_ci": [
-       -0.0821,
-       0.156
+       -0.0384,
+       0.2026
       ],
       "gross_avg_pct": 0.021,
       "qualified": false,
@@ -3386,7 +3386,7 @@
        "spread": 0.0001,
        "slippage": 0.0002
       },
-      "period": "2022-01-01 -> 2026-11-14",
+      "period": "2022-01-01 -> 2026-11-20",
       "orders": 619,
       "filled": 341,
       "unfilled": 278,
@@ -3424,13 +3424,13 @@
         "avg_net_pct": -0.1433
        }
       },
-      "holdout_trades": 83,
-      "holdout_avg_pct": -0.2002,
-      "baseline_avg_pct": -0.1719,
-      "baseline_holdout_avg_pct": -0.2146,
+      "holdout_trades": 81,
+      "holdout_avg_pct": -0.1989,
+      "baseline_avg_pct": -0.1999,
+      "baseline_holdout_avg_pct": -0.2366,
       "edge_ci": [
-       -0.0732,
-       0.1072
+       -0.0556,
+       0.1482
       ],
       "gross_avg_pct": 0.0118,
       "qualified": false,
@@ -3449,14 +3449,14 @@
     "activity_forecast": {
      "skill": 0.2506,
      "skill_ci99": [
-      0.2193,
-      0.2829
+      0.2196,
+      0.2773
      ],
-     "holdout_skill": 0.1293,
+     "holdout_skill": 0.131,
      "qualified": false,
      "reason": "failed: calibrated (5 points)"
     },
-    "gate_share": 0.1469,
+    "gate_share": 0.1477,
     "results": [
      {
       "asset": "ETH",
@@ -3468,21 +3468,21 @@
        "spread": 0.0001,
        "slippage": 0.0002
       },
-      "period": "2023-01-01 -> 2026-11-14",
-      "orders": 757,
-      "filled": 578,
-      "unfilled": 179,
-      "targets": 205,
-      "stops": 284,
-      "timeouts": 89,
-      "win_rate": 0.3893,
-      "avg_net_pct": -0.1892,
+      "period": "2023-01-01 -> 2026-11-20",
+      "orders": 758,
+      "filled": 580,
+      "unfilled": 178,
+      "targets": 204,
+      "stops": 286,
+      "timeouts": 90,
+      "win_rate": 0.3862,
+      "avg_net_pct": -0.1926,
       "avg_net_ci": [
-       -0.253,
-       -0.1144
+       -0.2615,
+       -0.1198
       ],
-      "total_net_pct": -109.35,
-      "max_drawdown_pct": 109.95,
+      "total_net_pct": -111.74,
+      "max_drawdown_pct": 111.74,
       "trades_per_week": 2.86,
       "years": {
        "2023": {
@@ -3498,19 +3498,19 @@
         "avg_net_pct": -0.169
        },
        "2026": {
-        "trades": 75,
-        "avg_net_pct": -0.179
+        "trades": 77,
+        "avg_net_pct": -0.2054
        }
       },
-      "holdout_trades": 72,
-      "holdout_avg_pct": -0.1981,
-      "baseline_avg_pct": -0.1939,
-      "baseline_holdout_avg_pct": -0.1316,
+      "holdout_trades": 60,
+      "holdout_avg_pct": -0.243,
+      "baseline_avg_pct": -0.2056,
+      "baseline_holdout_avg_pct": -0.2408,
       "edge_ci": [
-       -0.0725,
-       0.0881
+       -0.0683,
+       0.0928
       ],
-      "gross_avg_pct": -0.029,
+      "gross_avg_pct": -0.0325,
       "qualified": false,
       "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
       "checks": {
@@ -3531,22 +3531,22 @@
        "spread": 0.0001,
        "slippage": 0.0002
       },
-      "period": "2023-01-01 -> 2026-11-14",
-      "orders": 770,
-      "filled": 588,
-      "unfilled": 182,
-      "targets": 198,
-      "stops": 340,
+      "period": "2023-01-01 -> 2026-11-20",
+      "orders": 772,
+      "filled": 591,
+      "unfilled": 181,
+      "targets": 197,
+      "stops": 344,
       "timeouts": 50,
-      "win_rate": 0.3639,
-      "avg_net_pct": -0.1974,
+      "win_rate": 0.3604,
+      "avg_net_pct": -0.2008,
       "avg_net_ci": [
-       -0.2623,
-       -0.1238
+       -0.2663,
+       -0.1221
       ],
-      "total_net_pct": -116.05,
-      "max_drawdown_pct": 116.82,
-      "trades_per_week": 2.91,
+      "total_net_pct": -118.68,
+      "max_drawdown_pct": 118.68,
+      "trades_per_week": 2.92,
       "years": {
        "2023": {
         "trades": 4,
@@ -3558,22 +3558,22 @@
        },
        "2025": {
         "trades": 293,
-        "avg_net_pct": -0.1856
+        "avg_net_pct": -0.1857
        },
        "2026": {
-        "trades": 75,
-        "avg_net_pct": -0.1677
+        "trades": 78,
+        "avg_net_pct": -0.1948
        }
       },
-      "holdout_trades": 72,
-      "holdout_avg_pct": -0.1863,
-      "baseline_avg_pct": -0.1819,
-      "baseline_holdout_avg_pct": -0.2101,
+      "holdout_trades": 61,
+      "holdout_avg_pct": -0.2141,
+      "baseline_avg_pct": -0.2133,
+      "baseline_holdout_avg_pct": -0.2321,
       "edge_ci": [
-       -0.0918,
-       0.058
+       -0.0837,
+       0.0889
       ],
-      "gross_avg_pct": -0.0372,
+      "gross_avg_pct": -0.0406,
       "qualified": false,
       "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
       "checks": {
@@ -3594,21 +3594,21 @@
        "spread": 0.0001,
        "slippage": 0.0002
       },
-      "period": "2023-01-01 -> 2026-11-14",
-      "orders": 803,
-      "filled": 619,
-      "unfilled": 184,
+      "period": "2023-01-01 -> 2026-11-20",
+      "orders": 805,
+      "filled": 622,
+      "unfilled": 183,
       "targets": 105,
-      "stops": 502,
+      "stops": 505,
       "timeouts": 12,
-      "win_rate": 0.3199,
-      "avg_net_pct": -0.1907,
+      "win_rate": 0.3167,
+      "avg_net_pct": -0.1935,
       "avg_net_ci": [
-       -0.2438,
-       -0.1301
+       -0.2466,
+       -0.1338
       ],
-      "total_net_pct": -118.04,
-      "max_drawdown_pct": 118.04,
+      "total_net_pct": -120.33,
+      "max_drawdown_pct": 120.33,
       "trades_per_week": 3.07,
       "years": {
        "2023": {
@@ -3624,19 +3624,19 @@
         "avg_net_pct": -0.191
        },
        "2026": {
-        "trades": 77,
-        "avg_net_pct": -0.1708
+        "trades": 80,
+        "avg_net_pct": -0.1928
        }
       },
-      "holdout_trades": 74,
-      "holdout_avg_pct": -0.1907,
-      "baseline_avg_pct": -0.1987,
-      "baseline_holdout_avg_pct": -0.224,
+      "holdout_trades": 62,
+      "holdout_avg_pct": -0.2456,
+      "baseline_avg_pct": -0.1816,
+      "baseline_holdout_avg_pct": -0.1981,
       "edge_ci": [
-       -0.0568,
-       0.062
+       -0.0713,
+       0.0419
       ],
-      "gross_avg_pct": -0.0305,
+      "gross_avg_pct": -0.0333,
       "qualified": false,
       "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
       "checks": {
@@ -3657,21 +3657,21 @@
        "spread": 0.0001,
        "slippage": 0.0002
       },
-      "period": "2023-01-01 -> 2026-11-14",
+      "period": "2023-01-01 -> 2026-11-20",
       "orders": 411,
-      "filled": 274,
-      "unfilled": 137,
+      "filled": 275,
+      "unfilled": 136,
       "targets": 85,
-      "stops": 140,
+      "stops": 141,
       "timeouts": 49,
-      "win_rate": 0.3832,
-      "avg_net_pct": -0.2073,
+      "win_rate": 0.3818,
+      "avg_net_pct": -0.209,
       "avg_net_ci": [
-       -0.2956,
-       -0.1074
+       -0.3065,
+       -0.1073
       ],
-      "total_net_pct": -56.8,
-      "max_drawdown_pct": 59.55,
+      "total_net_pct": -57.48,
+      "max_drawdown_pct": 60.23,
       "trades_per_week": 1.36,
       "years": {
        "2023": {
@@ -3683,23 +3683,23 @@
         "avg_net_pct": -0.2582
        },
        "2025": {
-        "trades": 156,
-        "avg_net_pct": -0.2012
+        "trades": 157,
+        "avg_net_pct": -0.2042
        },
        "2026": {
         "trades": 45,
         "avg_net_pct": -0.1625
        }
       },
-      "holdout_trades": 45,
-      "holdout_avg_pct": -0.1625,
-      "baseline_avg_pct": -0.196,
-      "baseline_holdout_avg_pct": -0.1835,
+      "holdout_trades": 40,
+      "holdout_avg_pct": -0.1749,
+      "baseline_avg_pct": -0.1889,
+      "baseline_holdout_avg_pct": -0.2399,
       "edge_ci": [
-       -0.1327,
-       0.1057
+       -0.1379,
+       0.0929
       ],
-      "gross_avg_pct": -0.0471,
+      "gross_avg_pct": -0.0488,
       "qualified": false,
       "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
       "checks": {
@@ -3720,22 +3720,22 @@
        "spread": 0.0001,
        "slippage": 0.0002
       },
-      "period": "2023-01-01 -> 2026-11-14",
-      "orders": 446,
+      "period": "2023-01-01 -> 2026-11-20",
+      "orders": 445,
       "filled": 300,
-      "unfilled": 146,
-      "targets": 85,
-      "stops": 184,
+      "unfilled": 145,
+      "targets": 84,
+      "stops": 185,
       "timeouts": 31,
-      "win_rate": 0.3367,
-      "avg_net_pct": -0.2094,
+      "win_rate": 0.3333,
+      "avg_net_pct": -0.2127,
       "avg_net_ci": [
-       -0.2874,
-       -0.1153
+       -0.2948,
+       -0.1339
       ],
-      "total_net_pct": -62.83,
-      "max_drawdown_pct": 64.17,
-      "trades_per_week": 1.49,
+      "total_net_pct": -63.81,
+      "max_drawdown_pct": 65.15,
+      "trades_per_week": 1.48,
       "years": {
        "2023": {
         "trades": 1,
@@ -3747,22 +3747,22 @@
        },
        "2025": {
         "trades": 170,
-        "avg_net_pct": -0.2024
+        "avg_net_pct": -0.2027
        },
        "2026": {
         "trades": 49,
-        "avg_net_pct": -0.1505
+        "avg_net_pct": -0.1693
        }
       },
-      "holdout_trades": 49,
-      "holdout_avg_pct": -0.1505,
-      "baseline_avg_pct": -0.2111,
-      "baseline_holdout_avg_pct": -0.233,
+      "holdout_trades": 44,
+      "holdout_avg_pct": -0.1864,
+      "baseline_avg_pct": -0.1853,
+      "baseline_holdout_avg_pct": -0.1927,
       "edge_ci": [
-       -0.0877,
-       0.0928
+       -0.1139,
+       0.0945
       ],
-      "gross_avg_pct": -0.0491,
+      "gross_avg_pct": -0.0524,
       "qualified": false,
       "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
       "checks": {
@@ -3783,22 +3783,22 @@
        "spread": 0.0001,
        "slippage": 0.0002
       },
-      "period": "2023-01-01 -> 2026-11-14",
-      "orders": 483,
+      "period": "2023-01-01 -> 2026-11-20",
+      "orders": 482,
       "filled": 325,
-      "unfilled": 158,
+      "unfilled": 157,
       "targets": 45,
       "stops": 270,
       "timeouts": 10,
-      "win_rate": 0.3323,
-      "avg_net_pct": -0.203,
+      "win_rate": 0.3262,
+      "avg_net_pct": -0.2071,
       "avg_net_ci": [
-       -0.2672,
-       -0.1277
+       -0.2747,
+       -0.1423
       ],
-      "total_net_pct": -65.98,
-      "max_drawdown_pct": 66.15,
-      "trades_per_week": 1.61,
+      "total_net_pct": -67.3,
+      "max_drawdown_pct": 67.47,
+      "trades_per_week": 1.6,
       "years": {
        "2023": {
         "trades": 1,
@@ -3810,22 +3810,22 @@
        },
        "2025": {
         "trades": 184,
-        "avg_net_pct": -0.1987
+        "avg_net_pct": -0.202
        },
        "2026": {
         "trades": 53,
-        "avg_net_pct": -0.1818
+        "avg_net_pct": -0.1952
        }
       },
-      "holdout_trades": 53,
-      "holdout_avg_pct": -0.1818,
-      "baseline_avg_pct": -0.1928,
-      "baseline_holdout_avg_pct": -0.1369,
+      "holdout_trades": 48,
+      "holdout_avg_pct": -0.1978,
+      "baseline_avg_pct": -0.2076,
+      "baseline_holdout_avg_pct": -0.1719,
       "edge_ci": [
-       -0.0841,
-       0.0764
+       -0.0808,
+       0.0857
       ],
-      "gross_avg_pct": -0.0427,
+      "gross_avg_pct": -0.0468,
       "qualified": false,
       "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
       "checks": {
@@ -3846,10 +3846,10 @@
        "spread": 0.0001,
        "slippage": 0.0002
       },
-      "period": "2023-01-01 -> 2026-11-14",
-      "orders": 467,
+      "period": "2023-01-01 -> 2026-11-20",
+      "orders": 466,
       "filled": 351,
-      "unfilled": 116,
+      "unfilled": 115,
       "targets": 132,
       "stops": 188,
       "timeouts": 31,
@@ -3861,7 +3861,7 @@
       ],
       "total_net_pct": -68.62,
       "max_drawdown_pct": 69.41,
-      "trades_per_week": 1.74,
+      "trades_per_week": 1.73,
       "years": {
        "2024": {
         "trades": 121,
@@ -3876,13 +3876,13 @@
         "avg_net_pct": -0.1384
        }
       },
-      "holdout_trades": 48,
-      "holdout_avg_pct": -0.1289,
-      "baseline_avg_pct": -0.195,
-      "baseline_holdout_avg_pct": -0.1635,
+      "holdout_trades": 42,
+      "holdout_avg_pct": -0.1059,
+      "baseline_avg_pct": -0.1776,
+      "baseline_holdout_avg_pct": -0.2217,
       "edge_ci": [
-       -0.1044,
-       0.106
+       -0.1289,
+       0.0858
       ],
       "gross_avg_pct": -0.0353,
       "qualified": false,
@@ -3905,10 +3905,10 @@
        "spread": 0.0001,
        "slippage": 0.0002
       },
-      "period": "2023-01-01 -> 2026-11-14",
-      "orders": 470,
+      "period": "2023-01-01 -> 2026-11-20",
+      "orders": 469,
       "filled": 354,
-      "unfilled": 116,
+      "unfilled": 115,
       "targets": 134,
       "stops": 189,
       "timeouts": 31,
@@ -3935,13 +3935,13 @@
         "avg_net_pct": -0.1578
        }
       },
-      "holdout_trades": 48,
-      "holdout_avg_pct": -0.1589,
-      "baseline_avg_pct": -0.189,
-      "baseline_holdout_avg_pct": -0.2261,
+      "holdout_trades": 42,
+      "holdout_avg_pct": -0.1281,
+      "baseline_avg_pct": -0.1813,
+      "baseline_holdout_avg_pct": -0.2155,
       "edge_ci": [
-       -0.132,
-       0.0789
+       -0.1526,
+       0.0748
       ],
       "gross_avg_pct": -0.0531,
       "qualified": false,
@@ -3964,10 +3964,10 @@
        "spread": 0.0001,
        "slippage": 0.0002
       },
-      "period": "2023-01-01 -> 2026-11-14",
-      "orders": 482,
+      "period": "2023-01-01 -> 2026-11-20",
+      "orders": 481,
       "filled": 362,
-      "unfilled": 120,
+      "unfilled": 119,
       "targets": 77,
       "stops": 279,
       "timeouts": 6,
@@ -3994,13 +3994,13 @@
         "avg_net_pct": -0.0915
        }
       },
-      "holdout_trades": 47,
-      "holdout_avg_pct": -0.1042,
-      "baseline_avg_pct": -0.2083,
-      "baseline_holdout_avg_pct": -0.2511,
+      "holdout_trades": 41,
+      "holdout_avg_pct": -0.0728,
+      "baseline_avg_pct": -0.1773,
+      "baseline_holdout_avg_pct": -0.1602,
       "edge_ci": [
-       -0.0482,
-       0.1357
+       -0.0827,
+       0.0918
       ],
       "gross_avg_pct": -0.0159,
       "qualified": false,
@@ -4023,22 +4023,22 @@
        "spread": 0.0001,
        "slippage": 0.0002
       },
-      "period": "2023-01-01 -> 2026-11-14",
-      "orders": 4163,
-      "filled": 2407,
-      "unfilled": 1756,
-      "targets": 908,
-      "stops": 1330,
+      "period": "2023-01-01 -> 2026-11-20",
+      "orders": 4171,
+      "filled": 2412,
+      "unfilled": 1759,
+      "targets": 910,
+      "stops": 1333,
       "timeouts": 169,
       "win_rate": 0.4067,
       "avg_net_pct": -0.1952,
       "avg_net_ci": [
-       -0.2308,
-       -0.1632
+       -0.2318,
+       -0.1585
       ],
-      "total_net_pct": -469.87,
-      "max_drawdown_pct": 469.87,
-      "trades_per_week": 11.92,
+      "total_net_pct": -470.93,
+      "max_drawdown_pct": 470.93,
+      "trades_per_week": 11.9,
       "years": {
        "2023": {
         "trades": 375,
@@ -4053,17 +4053,17 @@
         "avg_net_pct": -0.1895
        },
        "2026": {
-        "trades": 423,
-        "avg_net_pct": -0.2073
+        "trades": 428,
+        "avg_net_pct": -0.2074
        }
       },
-      "holdout_trades": 395,
-      "holdout_avg_pct": -0.2069,
-      "baseline_avg_pct": -0.1948,
-      "baseline_holdout_avg_pct": -0.1905,
+      "holdout_trades": 375,
+      "holdout_avg_pct": -0.2211,
+      "baseline_avg_pct": -0.2007,
+      "baseline_holdout_avg_pct": -0.2089,
       "edge_ci": [
-       -0.0395,
-       0.0426
+       -0.0341,
+       0.0519
       ],
       "gross_avg_pct": -0.0345,
       "qualified": false,
@@ -4086,22 +4086,22 @@
        "spread": 0.0001,
        "slippage": 0.0002
       },
-      "period": "2023-01-01 -> 2026-11-14",
-      "orders": 4059,
-      "filled": 2323,
-      "unfilled": 1736,
-      "targets": 912,
-      "stops": 1267,
+      "period": "2023-01-01 -> 2026-11-20",
+      "orders": 4066,
+      "filled": 2327,
+      "unfilled": 1739,
+      "targets": 914,
+      "stops": 1269,
       "timeouts": 144,
-      "win_rate": 0.4197,
-      "avg_net_pct": -0.1967,
+      "win_rate": 0.4199,
+      "avg_net_pct": -0.1965,
       "avg_net_ci": [
-       -0.2377,
-       -0.1592
+       -0.2347,
+       -0.159
       ],
-      "total_net_pct": -456.91,
-      "max_drawdown_pct": 456.91,
-      "trades_per_week": 11.51,
+      "total_net_pct": -457.36,
+      "max_drawdown_pct": 457.36,
+      "trades_per_week": 11.48,
       "years": {
        "2023": {
         "trades": 364,
@@ -4116,19 +4116,19 @@
         "avg_net_pct": -0.2071
        },
        "2026": {
-        "trades": 424,
-        "avg_net_pct": -0.1967
+        "trades": 428,
+        "avg_net_pct": -0.1959
        }
       },
-      "holdout_trades": 397,
-      "holdout_avg_pct": -0.1962,
-      "baseline_avg_pct": -0.1982,
-      "baseline_holdout_avg_pct": -0.2037,
+      "holdout_trades": 376,
+      "holdout_avg_pct": -0.2123,
+      "baseline_avg_pct": -0.1948,
+      "baseline_holdout_avg_pct": -0.194,
       "edge_ci": [
-       -0.0457,
-       0.0419
+       -0.0513,
+       0.046
       ],
-      "gross_avg_pct": -0.0362,
+      "gross_avg_pct": -0.036,
       "qualified": false,
       "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
       "checks": {
@@ -4149,22 +4149,22 @@
        "spread": 0.0001,
        "slippage": 0.0002
       },
-      "period": "2023-01-01 -> 2026-11-14",
-      "orders": 4234,
-      "filled": 2436,
-      "unfilled": 1798,
-      "targets": 510,
-      "stops": 1901,
+      "period": "2023-01-01 -> 2026-11-20",
+      "orders": 4241,
+      "filled": 2440,
+      "unfilled": 1801,
+      "targets": 512,
+      "stops": 1903,
       "timeouts": 25,
-      "win_rate": 0.3231,
-      "avg_net_pct": -0.1943,
+      "win_rate": 0.3234,
+      "avg_net_pct": -0.1941,
       "avg_net_ci": [
-       -0.2253,
-       -0.1596
+       -0.2241,
+       -0.1583
       ],
-      "total_net_pct": -473.25,
-      "max_drawdown_pct": 473.63,
-      "trades_per_week": 12.07,
+      "total_net_pct": -473.7,
+      "max_drawdown_pct": 473.84,
+      "trades_per_week": 12.04,
       "years": {
        "2023": {
         "trades": 380,
@@ -4179,19 +4179,19 @@
         "avg_net_pct": -0.1834
        },
        "2026": {
-        "trades": 435,
-        "avg_net_pct": -0.2049
+        "trades": 439,
+        "avg_net_pct": -0.204
        }
       },
-      "holdout_trades": 407,
-      "holdout_avg_pct": -0.2106,
-      "baseline_avg_pct": -0.1937,
-      "baseline_holdout_avg_pct": -0.1905,
+      "holdout_trades": 385,
+      "holdout_avg_pct": -0.2184,
+      "baseline_avg_pct": -0.1895,
+      "baseline_holdout_avg_pct": -0.1845,
       "edge_ci": [
-       -0.033,
-       0.0367
+       -0.0438,
+       0.0325
       ],
-      "gross_avg_pct": -0.0338,
+      "gross_avg_pct": -0.0336,
       "qualified": false,
       "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
       "checks": {
@@ -4212,21 +4212,21 @@
        "spread": 0.0001,
        "slippage": 0.0002
       },
-      "period": "2023-01-01 -> 2026-11-14",
-      "orders": 919,
-      "filled": 533,
-      "unfilled": 386,
-      "targets": 216,
+      "period": "2023-01-01 -> 2026-11-20",
+      "orders": 923,
+      "filled": 536,
+      "unfilled": 387,
+      "targets": 217,
       "stops": 279,
-      "timeouts": 38,
-      "win_rate": 0.4409,
-      "avg_net_pct": -0.1587,
+      "timeouts": 40,
+      "win_rate": 0.4403,
+      "avg_net_pct": -0.1571,
       "avg_net_ci": [
-       -0.2336,
-       -0.0842
+       -0.237,
+       -0.0784
       ],
-      "total_net_pct": -84.61,
-      "max_drawdown_pct": 86.18,
+      "total_net_pct": -84.2,
+      "max_drawdown_pct": 85.71,
       "trades_per_week": 2.64,
       "years": {
        "2023": {
@@ -4238,23 +4238,23 @@
         "avg_net_pct": -0.1483
        },
        "2025": {
-        "trades": 274,
-        "avg_net_pct": -0.1638
+        "trades": 275,
+        "avg_net_pct": -0.1614
        },
        "2026": {
-        "trades": 89,
-        "avg_net_pct": -0.1535
+        "trades": 91,
+        "avg_net_pct": -0.1511
        }
       },
-      "holdout_trades": 89,
-      "holdout_avg_pct": -0.1535,
-      "baseline_avg_pct": -0.2027,
-      "baseline_holdout_avg_pct": -0.1743,
+      "holdout_trades": 72,
+      "holdout_avg_pct": -0.1678,
+      "baseline_avg_pct": -0.1847,
+      "baseline_holdout_avg_pct": -0.1656,
       "edge_ci": [
-       -0.0316,
-       0.1427
+       -0.0559,
+       0.1173
       ],
-      "gross_avg_pct": 0.002,
+      "gross_avg_pct": 0.0036,
       "qualified": false,
       "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
       "checks": {
@@ -4275,22 +4275,22 @@
        "spread": 0.0001,
        "slippage": 0.0002
       },
-      "period": "2023-01-01 -> 2026-11-14",
-      "orders": 877,
-      "filled": 511,
-      "unfilled": 366,
-      "targets": 229,
+      "period": "2023-01-01 -> 2026-11-20",
+      "orders": 881,
+      "filled": 514,
+      "unfilled": 367,
+      "targets": 230,
       "stops": 250,
-      "timeouts": 32,
-      "win_rate": 0.4814,
-      "avg_net_pct": -0.1409,
+      "timeouts": 34,
+      "win_rate": 0.4805,
+      "avg_net_pct": -0.1393,
       "avg_net_ci": [
-       -0.2188,
-       -0.058
+       -0.223,
+       -0.0542
       ],
-      "total_net_pct": -72.0,
-      "max_drawdown_pct": 75.54,
-      "trades_per_week": 2.53,
+      "total_net_pct": -71.59,
+      "max_drawdown_pct": 75.13,
+      "trades_per_week": 2.54,
       "years": {
        "2023": {
         "trades": 6,
@@ -4301,23 +4301,23 @@
         "avg_net_pct": -0.1227
        },
        "2025": {
-        "trades": 259,
-        "avg_net_pct": -0.1586
+        "trades": 260,
+        "avg_net_pct": -0.1561
        },
        "2026": {
-        "trades": 88,
-        "avg_net_pct": -0.1318
+        "trades": 90,
+        "avg_net_pct": -0.1298
        }
       },
-      "holdout_trades": 88,
-      "holdout_avg_pct": -0.1318,
-      "baseline_avg_pct": -0.1875,
-      "baseline_holdout_avg_pct": -0.1377,
+      "holdout_trades": 71,
+      "holdout_avg_pct": -0.1674,
+      "baseline_avg_pct": -0.2004,
+      "baseline_holdout_avg_pct": -0.1985,
       "edge_ci": [
-       -0.0318,
-       0.1371
+       -0.0284,
+       0.154
       ],
-      "gross_avg_pct": 0.0196,
+      "gross_avg_pct": 0.0212,
       "qualified": false,
       "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
       "checks": {
@@ -4338,21 +4338,21 @@
        "spread": 0.0001,
        "slippage": 0.0002
       },
-      "period": "2023-01-01 -> 2026-11-14",
-      "orders": 909,
-      "filled": 527,
-      "unfilled": 382,
+      "period": "2023-01-01 -> 2026-11-20",
+      "orders": 913,
+      "filled": 530,
+      "unfilled": 383,
       "targets": 132,
-      "stops": 391,
+      "stops": 394,
       "timeouts": 4,
-      "win_rate": 0.3416,
-      "avg_net_pct": -0.1521,
+      "win_rate": 0.3415,
+      "avg_net_pct": -0.151,
       "avg_net_ci": [
-       -0.2223,
-       -0.0861
+       -0.2241,
+       -0.0704
       ],
-      "total_net_pct": -80.18,
-      "max_drawdown_pct": 80.18,
+      "total_net_pct": -80.04,
+      "max_drawdown_pct": 80.04,
       "trades_per_week": 2.61,
       "years": {
        "2023": {
@@ -4364,23 +4364,23 @@
         "avg_net_pct": -0.1492
        },
        "2025": {
-        "trades": 268,
-        "avg_net_pct": -0.1441
+        "trades": 269,
+        "avg_net_pct": -0.1429
        },
        "2026": {
-        "trades": 91,
-        "avg_net_pct": -0.1734
+        "trades": 93,
+        "avg_net_pct": -0.1701
        }
       },
-      "holdout_trades": 91,
-      "holdout_avg_pct": -0.1734,
-      "baseline_avg_pct": -0.188,
-      "baseline_holdout_avg_pct": -0.2071,
+      "holdout_trades": 73,
+      "holdout_avg_pct": -0.1852,
+      "baseline_avg_pct": -0.1908,
+      "baseline_holdout_avg_pct": -0.1847,
       "edge_ci": [
-       -0.0401,
-       0.1144
+       -0.0329,
+       0.1145
       ],
-      "gross_avg_pct": 0.0083,
+      "gross_avg_pct": 0.0095,
       "qualified": false,
       "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
       "checks": {
@@ -4395,12 +4395,12 @@
    },
    "SOL": {
     "activity_forecast": {
-     "skill": 0.1507,
+     "skill": 0.1489,
      "skill_ci99": [
-      0.1188,
-      0.1906
+      0.1151,
+      0.1836
      ],
-     "holdout_skill": 0.2145,
+     "holdout_skill": 0.2123,
      "qualified": true,
      "reason": "qualified"
     },
@@ -4416,7 +4416,7 @@
        "spread": 0.0002,
        "slippage": 0.0002
       },
-      "period": "2024-01-01 -> 2026-11-14",
+      "period": "2024-01-01 -> 2026-11-20",
       "orders": 14,
       "filled": 12,
       "unfilled": 2,
@@ -4448,11 +4448,11 @@
       },
       "holdout_trades": 1,
       "holdout_avg_pct": -0.6899,
-      "baseline_avg_pct": -0.1912,
-      "baseline_holdout_avg_pct": -0.0515,
+      "baseline_avg_pct": -0.1626,
+      "baseline_holdout_avg_pct": -0.1031,
       "edge_ci": [
-       -0.6405,
-       0.485
+       -0.6898,
+       0.4558
       ],
       "gross_avg_pct": -0.1299,
       "qualified": false,
@@ -4475,7 +4475,7 @@
        "spread": 0.0002,
        "slippage": 0.0002
       },
-      "period": "2024-01-01 -> 2026-11-14",
+      "period": "2024-01-01 -> 2026-11-20",
       "orders": 13,
       "filled": 11,
       "unfilled": 2,
@@ -4507,11 +4507,11 @@
       },
       "holdout_trades": 1,
       "holdout_avg_pct": -1.1898,
-      "baseline_avg_pct": -0.3767,
-      "baseline_holdout_avg_pct": -0.1716,
+      "baseline_avg_pct": -0.1831,
+      "baseline_holdout_avg_pct": -0.06,
       "edge_ci": [
-       -0.6416,
-       0.791
+       -0.7668,
+       0.5923
       ],
       "gross_avg_pct": -0.1069,
       "qualified": false,
@@ -4534,7 +4534,7 @@
        "spread": 0.0002,
        "slippage": 0.0002
       },
-      "period": "2024-01-01 -> 2026-11-14",
+      "period": "2024-01-01 -> 2026-11-20",
       "orders": 14,
       "filled": 12,
       "unfilled": 2,
@@ -4566,11 +4566,11 @@
       },
       "holdout_trades": 1,
       "holdout_avg_pct": -1.1898,
-      "baseline_avg_pct": -0.1755,
-      "baseline_holdout_avg_pct": 0.088,
+      "baseline_avg_pct": -0.2009,
+      "baseline_holdout_avg_pct": -0.1571,
       "edge_ci": [
-       -0.6002,
-       0.4115
+       -0.6785,
+       0.4487
       ],
       "gross_avg_pct": -0.1086,
       "qualified": false,
@@ -4593,7 +4593,7 @@
        "spread": 0.0002,
        "slippage": 0.0002
       },
-      "period": "2024-01-01 -> 2026-11-14",
+      "period": "2024-01-01 -> 2026-11-20",
       "orders": 4,
       "filled": 3,
       "unfilled": 1,
@@ -4622,11 +4622,11 @@
       },
       "holdout_trades": 1,
       "holdout_avg_pct": -0.6899,
-      "baseline_avg_pct": -0.1448,
-      "baseline_holdout_avg_pct": -0.1049,
+      "baseline_avg_pct": -0.211,
+      "baseline_holdout_avg_pct": -0.105,
       "edge_ci": [
-       -1.108,
-       0.0
+       -0.9989,
+       -0.0
       ],
       "gross_avg_pct": -0.5199,
       "qualified": false,
@@ -4649,7 +4649,7 @@
        "spread": 0.0002,
        "slippage": 0.0002
       },
-      "period": "2024-01-01 -> 2026-11-14",
+      "period": "2024-01-01 -> 2026-11-20",
       "orders": 4,
       "filled": 3,
       "unfilled": 1,
@@ -4678,11 +4678,11 @@
       },
       "holdout_trades": 1,
       "holdout_avg_pct": -1.0177,
-      "baseline_avg_pct": -0.3272,
-      "baseline_holdout_avg_pct": -0.005,
+      "baseline_avg_pct": -0.1144,
+      "baseline_holdout_avg_pct": -0.2473,
       "edge_ci": [
-       -0.9996,
-       0.1459
+       -1.3224,
+       0.0987
       ],
       "gross_avg_pct": -0.5715,
       "qualified": false,
@@ -4705,7 +4705,7 @@
        "spread": 0.0002,
        "slippage": 0.0002
       },
-      "period": "2024-01-01 -> 2026-11-14",
+      "period": "2024-01-01 -> 2026-11-20",
       "orders": 4,
       "filled": 3,
       "unfilled": 1,
@@ -4734,11 +4734,11 @@
       },
       "holdout_trades": 1,
       "holdout_avg_pct": -0.02,
-      "baseline_avg_pct": -0.3203,
-      "baseline_holdout_avg_pct": -0.0026,
+      "baseline_avg_pct": -0.1137,
+      "baseline_holdout_avg_pct": 0.23,
       "edge_ci": [
-       -0.6894,
-       0.6018
+       -0.8853,
+       0.4343
       ],
       "gross_avg_pct": -0.239,
       "qualified": false,
@@ -4761,7 +4761,7 @@
        "spread": 0.0002,
        "slippage": 0.0002
       },
-      "period": "2024-01-01 -> 2026-11-14",
+      "period": "2024-01-01 -> 2026-11-20",
       "orders": 3,
       "filled": 3,
       "unfilled": 0,
@@ -4786,11 +4786,11 @@
       },
       "holdout_trades": 1,
       "holdout_avg_pct": -0.6899,
-      "baseline_avg_pct": -0.1448,
-      "baseline_holdout_avg_pct": -0.1049,
+      "baseline_avg_pct": -0.211,
+      "baseline_holdout_avg_pct": -0.105,
       "edge_ci": [
-       -1.108,
-       -0.0
+       -0.9989,
+       0.0
       ],
       "gross_avg_pct": -0.5199,
       "qualified": false,
@@ -4813,7 +4813,7 @@
        "spread": 0.0002,
        "slippage": 0.0002
       },
-      "period": "2024-01-01 -> 2026-11-14",
+      "period": "2024-01-01 -> 2026-11-20",
       "orders": 3,
       "filled": 3,
       "unfilled": 0,
@@ -4838,11 +4838,11 @@
       },
       "holdout_trades": 1,
       "holdout_avg_pct": 0.48,
-      "baseline_avg_pct": -0.3272,
-      "baseline_holdout_avg_pct": -0.005,
+      "baseline_avg_pct": -0.1144,
+      "baseline_holdout_avg_pct": -0.2473,
       "edge_ci": [
-       -1.2249,
-       1.1019
+       -1.5877,
+       1.1148
       ],
       "gross_avg_pct": -0.2923,
       "qualified": false,
@@ -4865,7 +4865,7 @@
        "spread": 0.0002,
        "slippage": 0.0002
       },
-      "period": "2024-01-01 -> 2026-11-14",
+      "period": "2024-01-01 -> 2026-11-20",
       "orders": 4,
       "filled": 4,
       "unfilled": 0,
@@ -4890,11 +4890,11 @@
       },
       "holdout_trades": 1,
       "holdout_avg_pct": 0.48,
-      "baseline_avg_pct": -0.2322,
-      "baseline_holdout_avg_pct": -0.2899,
+      "baseline_avg_pct": -0.1785,
+      "baseline_holdout_avg_pct": 0.2264,
       "edge_ci": [
-       -1.0987,
-       0.8465
+       -1.1268,
+       0.7936
       ],
       "gross_avg_pct": -0.1817,
       "qualified": false,
@@ -4917,22 +4917,22 @@
        "spread": 0.0002,
        "slippage": 0.0002
       },
-      "period": "2024-01-01 -> 2026-11-14",
-      "orders": 6536,
-      "filled": 4237,
-      "unfilled": 2299,
-      "targets": 1679,
-      "stops": 2426,
-      "timeouts": 132,
-      "win_rate": 0.4093,
+      "period": "2024-01-01 -> 2026-11-20",
+      "orders": 6558,
+      "filled": 4252,
+      "unfilled": 2306,
+      "targets": 1685,
+      "stops": 2434,
+      "timeouts": 133,
+      "win_rate": 0.4092,
       "avg_net_pct": -0.2072,
       "avg_net_ci": [
-       -0.2336,
-       -0.1813
+       -0.2339,
+       -0.1812
       ],
-      "total_net_pct": -878.11,
-      "max_drawdown_pct": 880.03,
-      "trades_per_week": 28.3,
+      "total_net_pct": -881.12,
+      "max_drawdown_pct": 882.56,
+      "trades_per_week": 28.24,
       "years": {
        "2024": {
         "trades": 2079,
@@ -4943,19 +4943,19 @@
         "avg_net_pct": -0.218
        },
        "2026": {
-        "trades": 672,
-        "avg_net_pct": -0.1962
+        "trades": 687,
+        "avg_net_pct": -0.1963
        }
       },
-      "holdout_trades": 372,
-      "holdout_avg_pct": -0.2281,
-      "baseline_avg_pct": -0.2103,
-      "baseline_holdout_avg_pct": -0.2121,
+      "holdout_trades": 384,
+      "holdout_avg_pct": -0.2326,
+      "baseline_avg_pct": -0.212,
+      "baseline_holdout_avg_pct": -0.199,
       "edge_ci": [
-       -0.0309,
-       0.0355
+       -0.0277,
+       0.0389
       ],
-      "gross_avg_pct": -0.0366,
+      "gross_avg_pct": -0.0365,
       "qualified": false,
       "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
       "checks": {
@@ -4976,22 +4976,22 @@
        "spread": 0.0002,
        "slippage": 0.0002
       },
-      "period": "2024-01-01 -> 2026-11-14",
-      "orders": 6014,
-      "filled": 3862,
-      "unfilled": 2152,
-      "targets": 1780,
-      "stops": 1942,
+      "period": "2024-01-01 -> 2026-11-20",
+      "orders": 6036,
+      "filled": 3876,
+      "unfilled": 2160,
+      "targets": 1786,
+      "stops": 1950,
       "timeouts": 140,
-      "win_rate": 0.4751,
-      "avg_net_pct": -0.2033,
+      "win_rate": 0.475,
+      "avg_net_pct": -0.2035,
       "avg_net_ci": [
-       -0.2381,
-       -0.1743
+       -0.2361,
+       -0.171
       ],
-      "total_net_pct": -785.14,
-      "max_drawdown_pct": 789.25,
-      "trades_per_week": 25.8,
+      "total_net_pct": -788.65,
+      "max_drawdown_pct": 792.28,
+      "trades_per_week": 25.74,
       "years": {
        "2024": {
         "trades": 1858,
@@ -5002,19 +5002,19 @@
         "avg_net_pct": -0.2245
        },
        "2026": {
-        "trades": 646,
-        "avg_net_pct": -0.1895
+        "trades": 660,
+        "avg_net_pct": -0.1908
        }
       },
-      "holdout_trades": 363,
-      "holdout_avg_pct": -0.2113,
-      "baseline_avg_pct": -0.2175,
-      "baseline_holdout_avg_pct": -0.2056,
+      "holdout_trades": 374,
+      "holdout_avg_pct": -0.2183,
+      "baseline_avg_pct": -0.2076,
+      "baseline_holdout_avg_pct": -0.2002,
       "edge_ci": [
-       -0.0254,
-       0.0609
+       -0.0417,
+       0.0429
       ],
-      "gross_avg_pct": -0.0331,
+      "gross_avg_pct": -0.0332,
       "qualified": false,
       "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
       "checks": {
@@ -5035,22 +5035,22 @@
        "spread": 0.0002,
        "slippage": 0.0002
       },
-      "period": "2024-01-01 -> 2026-11-14",
-      "orders": 6439,
-      "filled": 4137,
-      "unfilled": 2302,
-      "targets": 1015,
-      "stops": 3098,
+      "period": "2024-01-01 -> 2026-11-20",
+      "orders": 6461,
+      "filled": 4151,
+      "unfilled": 2310,
+      "targets": 1019,
+      "stops": 3108,
       "timeouts": 24,
-      "win_rate": 0.3036,
-      "avg_net_pct": -0.1986,
+      "win_rate": 0.3038,
+      "avg_net_pct": -0.1983,
       "avg_net_ci": [
-       -0.2249,
-       -0.1716
+       -0.2239,
+       -0.1703
       ],
-      "total_net_pct": -821.79,
-      "max_drawdown_pct": 822.02,
-      "trades_per_week": 27.63,
+      "total_net_pct": -823.08,
+      "max_drawdown_pct": 823.25,
+      "trades_per_week": 27.57,
       "years": {
        "2024": {
         "trades": 2017,
@@ -5061,19 +5061,19 @@
         "avg_net_pct": -0.2194
        },
        "2026": {
-        "trades": 679,
-        "avg_net_pct": -0.197
+        "trades": 693,
+        "avg_net_pct": -0.1949
        }
       },
-      "holdout_trades": 378,
-      "holdout_avg_pct": -0.2056,
-      "baseline_avg_pct": -0.2045,
-      "baseline_holdout_avg_pct": -0.2034,
+      "holdout_trades": 389,
+      "holdout_avg_pct": -0.2055,
+      "baseline_avg_pct": -0.209,
+      "baseline_holdout_avg_pct": -0.2138,
       "edge_ci": [
-       -0.0261,
-       0.0335
+       -0.0194,
+       0.0389
       ],
-      "gross_avg_pct": -0.0284,
+      "gross_avg_pct": -0.0281,
       "qualified": false,
       "reason": "failed: average net CI above zero; every year positive; final holdout positive; beats baseline (CI)",
       "checks": {
@@ -5094,7 +5094,7 @@
        "spread": 0.0002,
        "slippage": 0.0002
       },
-      "period": "2024-01-01 -> 2026-11-14",
+      "period": "2024-01-01 -> 2026-11-20",
       "orders": 26,
       "filled": 15,
       "unfilled": 11,
@@ -5126,11 +5126,11 @@
       },
       "holdout_trades": 2,
       "holdout_avg_pct": -0.1049,
-      "baseline_avg_pct": -0.2634,
-      "baseline_holdout_avg_pct": -0.6421,
+      "baseline_avg_pct": -0.3358,
+      "baseline_holdout_avg_pct": -0.2999,
       "edge_ci": [
-       -0.4298,
-       0.548
+       -0.3339,
+       0.6098
       ],
       "gross_avg_pct": -0.037,
       "qualified": false,
@@ -5153,7 +5153,7 @@
        "spread": 0.0002,
        "slippage": 0.0002
       },
-      "period": "2024-01-01 -> 2026-11-14",
+      "period": "2024-01-01 -> 2026-11-20",
       "orders": 23,
       "filled": 15,
       "unfilled": 8,
@@ -5185,11 +5185,11 @@
       },
       "holdout_trades": 2,
       "holdout_avg_pct": -0.2075,
-      "baseline_avg_pct": -0.2545,
-      "baseline_holdout_avg_pct": -0.4759,
+      "baseline_avg_pct": -0.2732,
+      "baseline_holdout_avg_pct": -0.2635,
       "edge_ci": [
-       -0.431,
-       0.637
+       -0.3893,
+       0.6759
       ],
       "gross_avg_pct": 0.0678,
       "qualified": false,
@@ -5212,7 +5212,7 @@
        "spread": 0.0002,
        "slippage": 0.0002
       },
-      "period": "2024-01-01 -> 2026-11-14",
+      "period": "2024-01-01 -> 2026-11-20",
       "orders": 24,
       "filled": 15,
       "unfilled": 9,
@@ -5244,11 +5244,11 @@
       },
       "holdout_trades": 2,
       "holdout_avg_pct": -0.2075,
-      "baseline_avg_pct": -0.2947,
-      "baseline_holdout_avg_pct": -0.3931,
+      "baseline_avg_pct": -0.2656,
+      "baseline_holdout_avg_pct": -0.2419,
       "edge_ci": [
-       -0.3413,
-       0.6712
+       -0.3314,
+       0.6319
       ],
       "gross_avg_pct": 0.091,
       "qualified": false,
