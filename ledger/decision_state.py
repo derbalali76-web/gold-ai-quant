@@ -33,7 +33,7 @@ import urllib.request
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-SCHEMA = "decision-state-1"
+SCHEMA = "decision-state-2"   # -2 adds the presentation layer `view` + `radar` (2026-11-22); -1 lines stay as recorded
 ASSETS = ("XAU", "BTC", "ETH", "SOL", "PAXG")
 BARS = {"XAU": "bars_H1.json", "BTC": "bars_BTC_H1.json", "ETH": "bars_ETH_H1.json", "SOL": "bars_SOL_H1.json"}
 PRICE_ONLY = {"PAXG"}
@@ -100,6 +100,100 @@ def actions(sig: dict | None, asset: str, stats: dict, gates_ok: bool, gate_reas
     return {"holder": hold, "cash": cash, "signal_id": sig["id"]}
 
 
+# ------------------------------------------------------------------------- presentation (decision-state-2)
+# What the app shows. Approved by the owner 2026-11-22 (phase 4 design):
+#   * the likely scenario is always shown (layer `scenario`, a FORECAST) — it never becomes an order by itself;
+#   * an executive decision is shown ONLY for a QUALIFIED action with every gate open; otherwise the verdict is WAIT
+#     with the reasons why no trade is approved;
+#   * a cash user is never told to sell; a holder may be told to sell BEFORE a break (pre-emptive) when that exact
+#     instruction is qualified, with the buy-back level and the invalidation level;
+#   * the radar lists what is forming / qualified / rejected / expired; a QUALIFIED radar item exists iff a non-WAIT
+#     verdict with the same signal id exists (one state everywhere);
+#   * durations are adaptive (until the record's own expiry, which can exceed 24 h); no daily quota.
+def _hours_left(advice: dict | None, now: datetime):
+    if not advice or not advice.get("expires"):
+        return None
+    return max(0, round((ts(advice["expires"]) - now).total_seconds() / 3600))
+
+
+def view(asset: str, act: dict, advice: dict | None, price: dict | None, gates: dict, now: datetime) -> dict:
+    sid, h, c = act.get("signal_id"), act["holder"], act["cash"]
+    p = (price or {}).get("value")
+    dur = _hours_left(advice, now)
+    sup = (((advice or {}).get("hours") or {}).get("down") or [None])[0]
+
+    def why(a: dict) -> list:
+        if asset in PRICE_ONLY:
+            return ["price_only_asset"]
+        if not gates["ok"]:
+            return ["blocked:" + r for r in gates["reasons"]] or ["blocked"]
+        if a["stage"] == "BLOCKED":
+            return ["blocked:" + (a.get("reason") or "")]
+        if sid is None:
+            return ["no_signal"]
+        if a["stage"] == "NONE":
+            return ["no_edge"]
+        if a["stage"] == "FAILED":
+            return ["record_failed"]
+        return ["not_yet_qualified"]
+
+    out = {"holder": {"verdict": "WAIT", "signal_id": sid, "plan": None, "why": []},
+           "cash": {"verdict": "WAIT", "signal_id": sid, "plan": None, "why": []}}
+    ok = gates["ok"] and p is not None and asset not in PRICE_ONLY
+    if ok and h["stage"] == "QUALIFIED" and h["action"] == "SELL_OWNED" and h.get("rebuy_at") is not None:
+        out["holder"].update(verdict="SELL_THEN_REBUY", plan={"sell": p, "rebuy_at": h["rebuy_at"],
+                             "invalidate_above": h.get("level"), "duration_h": dur, "adaptive": True})
+    else:
+        out["holder"]["why"] = why(h) if h["action"] != "HOLD" or h["stage"] != "QUALIFIED" else ["hold_is_the_plan"]
+    if ok and c["stage"] == "QUALIFIED" and c.get("advice") in ("BUY_NOW", "WAIT_BUY_LOWER"):
+        buy_now = c["advice"] == "BUY_NOW"
+        entry = p if buy_now else c.get("level")
+        tgt = ((advice or {}).get("cash") or {}).get("exit") if buy_now else None
+        if entry is not None:
+            out["cash"].update(verdict="BUY" if buy_now else "BUY_LIMIT", plan={"entry": entry, "target": tgt,
+                               "invalidate_below": sup if (sup is not None and sup < entry) else None,
+                               "duration_h": dur, "adaptive": True})
+    if out["cash"]["verdict"] == "WAIT":
+        out["cash"]["why"] = why(c)
+    for k in ("holder", "cash"):
+        if out[k]["verdict"] == "WAIT":
+            out[k]["signal_id"] = sid if out[k]["why"] and out[k]["why"][0] in ("not_yet_qualified", "record_failed") else None
+    assert out["cash"]["verdict"] in ("BUY", "BUY_LIMIT", "WAIT")    # never a sell for a cash user
+    return out
+
+
+RADAR_STATE = {"SCENARIO": "FORMING", "QUALIFIED": "QUALIFIED", "FAILED": "REJECTED"}
+
+
+def radar(asset: str, act: dict, v: dict, te: dict | None) -> list:
+    items, sid = [], act.get("signal_id")
+    if sid and asset not in PRICE_ONLY and act["holder"]["stage"] != "BLOCKED":
+        qual = any(v[k]["verdict"] != "WAIT" for k in ("holder", "cash"))
+        stages = [act[k]["stage"] for k in ("holder", "cash") if act[k]["stage"] in RADAR_STATE]
+        if qual:
+            st = "QUALIFIED"
+        elif "SCENARIO" in stages:
+            st = "FORMING"
+        elif "FAILED" in stages:
+            st = "REJECTED"
+        else:
+            st = None
+        if st:
+            items.append({"id": sid, "source": "advice-0.1.0", "state": st,
+                          "holder": act["holder"].get("action"), "cash": act["cash"].get("action"),
+                          "level": act["holder"].get("rebuy_at") or act["cash"].get("level")})
+    if te and te.get("asset") == asset:
+        a = (te.get("active") or [None])[0]
+        if a:
+            items.append({"id": "te-%s" % a.get("seq"), "source": te.get("engine"), "state": "FORMING", "stage": "PAPER_TEST",
+                          "entry": a.get("limit"), "target": a.get("target"), "invalidate_below": a.get("stop"),
+                          "status": a.get("status")})
+        lc = te.get("last_closed") or {}
+        if lc.get("status") == "NOT_FILLED":
+            items.append({"id": "te-%s" % lc.get("seq"), "source": te.get("engine"), "state": "EXPIRED", "stage": "PAPER_TEST"})
+    return items
+
+
 def build(asset: str, advice: dict | None, stats: dict, price: dict | None, te: dict | None, now: datetime) -> dict:
     gates, reasons = True, []
     if price is None or now - ts(price["at"]) > PRICE_MAX_AGE:
@@ -116,8 +210,10 @@ def build(asset: str, advice: dict | None, stats: dict, price: dict | None, te: 
     if te and asset == te.get("asset"):
         a = (te.get("active") or [None])[0]
         opp = {"engine": te.get("engine"), "stage": "PAPER_TEST", "active": a, "record": te.get("record")}
+    g = {"ok": gates, "reasons": reasons}
+    v = view(asset, act, advice, price, g, now)
     return {"asset": asset, "price": price, "scenario": scenario, "signal": None if sig is None else {k: sig[k] for k in ("id", "kind")},
-            "actions": act, "opportunity": opp, "gates": {"ok": gates, "reasons": reasons}}
+            "actions": act, "view": v, "radar": radar(asset, act, v, te), "opportunity": opp, "gates": g}
 
 
 def signature(s: dict) -> str:
@@ -125,7 +221,8 @@ def signature(s: dict) -> str:
     a = s["actions"]
     keep = {"sig": s["signal"], "h": {k: a["holder"].get(k) for k in ("action", "stage", "level", "rebuy_at")},
             "c": {k: a["cash"].get(k) for k in ("action", "stage", "level")}, "g": s["gates"]["ok"],
-            "o": None if not s["opportunity"] else (s["opportunity"]["active"] or {}).get("seq")}
+            "o": None if not s["opportunity"] else (s["opportunity"]["active"] or {}).get("seq"),
+            "v": {k: s["view"][k]["verdict"] for k in ("holder", "cash")} if "view" in s else None}
     return hashlib.sha256(canon(keep).encode()).hexdigest()[:16]
 
 
@@ -190,7 +287,7 @@ def apply(in_dir: Path, repo: Path, now: datetime | None = None) -> dict:
         if last_sig.get(a) != s["signature"]:
             prev = lines[-1]["hash"] if lines else "0" * 64
             e = {"seq": len(lines) + 1, "kind": "STATE", "recorded_at": iso(now), "schema": SCHEMA,
-                 "data": {k: s[k] for k in ("asset", "signature", "signal", "actions", "gates")}, "prev": prev}
+                 "data": {k: s[k] for k in ("asset", "signature", "signal", "actions", "view", "gates")}, "prev": prev}
             e["hash"] = hashlib.sha256((prev + canon({k: v for k, v in e.items() if k != "hash"})).encode()).hexdigest()
             lines.append(e)
             (repo / "decision").mkdir(exist_ok=True)

@@ -23,6 +23,7 @@ data class UiState(
     val selectedHorizon: String = "HOURS",
     val notify: Boolean = false,
     val te: TeState? = null,          // experimental live paper trades (public ledger)
+    val unified: UnifiedState? = null, // AI QUANT 2.0: one decision state for «ماذا أفعل؟», radar and record (public ledger)
     val teNotify: Boolean = false,
     val track: List<TrackItem> = emptyList(),
     val trustAll: Map<String, Trust> = emptyMap(),
@@ -86,6 +87,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                 liveMode = prefs.getBoolean("live_mode", false),
                 notify = prefs.getBoolean("notify", false),
                 te = TradeOpp.parse(prefs.getString("te_state", null)),
+                unified = Unified.parse(prefs.getString("unified_state", null)),
                 teNotify = prefs.getBoolean("te_notify", false),
                 decision = cached,
                 selectedHorizon = HorizonModel.resolve(prefs.getString("horizon", null), cached),
@@ -156,6 +158,9 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch {
             TrustLedger.fetch(TradeOpp.URL)?.let { b ->
                 TradeOpp.parse(b)?.let { t -> prefs.edit().putString("te_state", b).apply(); _state.update { it.copy(te = t) } }
+            }
+            TrustLedger.fetch(Unified.URL)?.let { b ->
+                Unified.parse(b)?.let { u -> prefs.edit().putString("unified_state", b).apply(); _state.update { it.copy(unified = u) } }
             }
         }
         viewModelScope.launch {

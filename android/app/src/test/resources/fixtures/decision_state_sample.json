@@ -1,0 +1,375 @@
+{
+ "schema": "decision-state-2",
+ "updated_at": "2026-11-22T12:29:06Z",
+ "assets": {
+  "XAU": {
+   "asset": "XAU",
+   "price": {
+    "value": 3533.284,
+    "at": "2026-11-20T22:00:00Z"
+   },
+   "scenario": null,
+   "signal": null,
+   "actions": {
+    "holder": {
+     "action": "HOLD",
+     "stage": "NONE",
+     "level": null,
+     "rebuy_at": null,
+     "reason": "no_signal"
+    },
+    "cash": {
+     "action": "WAIT",
+     "stage": "NONE",
+     "level": null,
+     "reason": "no_signal"
+    },
+    "signal_id": null
+   },
+   "view": {
+    "holder": {
+     "verdict": "WAIT",
+     "signal_id": null,
+     "plan": null,
+     "why": [
+      "blocked:stale_or_missing_price",
+      "blocked:stale_advice"
+     ]
+    },
+    "cash": {
+     "verdict": "WAIT",
+     "signal_id": null,
+     "plan": null,
+     "why": [
+      "blocked:stale_or_missing_price",
+      "blocked:stale_advice"
+     ]
+    }
+   },
+   "radar": [],
+   "opportunity": null,
+   "gates": {
+    "ok": false,
+    "reasons": [
+     "stale_or_missing_price",
+     "stale_advice"
+    ]
+   },
+   "signature": "fec609f2ecaaa6f6"
+  },
+  "BTC": {
+   "asset": "BTC",
+   "price": {
+    "value": 61062.74,
+    "at": "2026-11-22T12:00:00Z"
+   },
+   "scenario": {
+    "source": "advice-0.1.0",
+    "recorded_at": "2026-11-22T00:01:02Z",
+    "hours": {
+     "down": [
+      58815.65,
+      57798.55
+     ],
+     "likely": "DOWN",
+     "up": [
+      63796.13,
+      66957.49
+     ]
+    },
+    "week": {
+     "down": [
+      58348.7,
+      null
+     ],
+     "likely": "NONE",
+     "up": [
+      62006.0,
+      62405.12
+     ]
+    },
+    "stage": "FORECAST"
+   },
+   "signal": {
+    "id": "22af8ddda9fa",
+    "kind": "DOWN_MOVE"
+   },
+   "actions": {
+    "holder": {
+     "action": "SELL_OWNED",
+     "stage": "SCENARIO",
+     "level": 63796.13,
+     "rebuy_at": 57798.55,
+     "advice": "SELL_NOW",
+     "reason": "advice-0.1.0"
+    },
+    "cash": {
+     "action": "WAIT",
+     "stage": "SCENARIO",
+     "level": 57798.55,
+     "advice": "WAIT_BUY_LOWER",
+     "reason": "advice-0.1.0"
+    },
+    "signal_id": "22af8ddda9fa"
+   },
+   "view": {
+    "holder": {
+     "verdict": "WAIT",
+     "signal_id": "22af8ddda9fa",
+     "plan": null,
+     "why": [
+      "not_yet_qualified"
+     ]
+    },
+    "cash": {
+     "verdict": "WAIT",
+     "signal_id": "22af8ddda9fa",
+     "plan": null,
+     "why": [
+      "not_yet_qualified"
+     ]
+    }
+   },
+   "radar": [
+    {
+     "id": "22af8ddda9fa",
+     "source": "advice-0.1.0",
+     "state": "FORMING",
+     "holder": "SELL_OWNED",
+     "cash": "WAIT",
+     "level": 57798.55
+    }
+   ],
+   "opportunity": {
+    "engine": "te-live-h1-0.1",
+    "stage": "PAPER_TEST",
+    "active": null,
+    "record": {
+     "orders": 1,
+     "not_filled": 0,
+     "closed": 1,
+     "wins": 1,
+     "losses": 0,
+     "mean_net_pct": 8.019,
+     "total_net_pct": 8.019
+    }
+   },
+   "gates": {
+    "ok": true,
+    "reasons": []
+   },
+   "signature": "db1636994e951e8f"
+  },
+  "ETH": {
+   "asset": "ETH",
+   "price": {
+    "value": 1708.46,
+    "at": "2026-11-22T12:00:00Z"
+   },
+   "scenario": {
+    "source": "advice-0.1.0",
+    "recorded_at": "2026-11-22T00:01:02Z",
+    "hours": {
+     "down": [
+      1673.71,
+      1621.8
+     ],
+     "likely": "NONE",
+     "up": [
+      1693.19,
+      1828.96
+     ]
+    },
+    "week": {
+     "down": [
+      1508.84,
+      null
+     ],
+     "likely": "NONE",
+     "up": [
+      1711.08,
+      1839.65
+     ]
+    },
+    "stage": "FORECAST"
+   },
+   "signal": {
+    "id": "27bb08a3542e",
+    "kind": "NO_EDGE"
+   },
+   "actions": {
+    "holder": {
+     "action": "HOLD",
+     "stage": "NONE",
+     "level": null,
+     "rebuy_at": null,
+     "advice": "NOTHING",
+     "reason": "advice-0.1.0"
+    },
+    "cash": {
+     "action": "WAIT",
+     "stage": "NONE",
+     "level": null,
+     "advice": "NOTHING",
+     "reason": "advice-0.1.0"
+    },
+    "signal_id": "27bb08a3542e"
+   },
+   "view": {
+    "holder": {
+     "verdict": "WAIT",
+     "signal_id": null,
+     "plan": null,
+     "why": [
+      "no_edge"
+     ]
+    },
+    "cash": {
+     "verdict": "WAIT",
+     "signal_id": null,
+     "plan": null,
+     "why": [
+      "no_edge"
+     ]
+    }
+   },
+   "radar": [],
+   "opportunity": null,
+   "gates": {
+    "ok": true,
+    "reasons": []
+   },
+   "signature": "cb618b9ff1f1dc84"
+  },
+  "SOL": {
+   "asset": "SOL",
+   "price": {
+    "value": 70.65,
+    "at": "2026-11-22T12:00:00Z"
+   },
+   "scenario": {
+    "source": "advice-0.1.0",
+    "recorded_at": "2026-11-22T00:01:02Z",
+    "hours": {
+     "down": [
+      68.3,
+      67.23
+     ],
+     "likely": "NONE",
+     "up": [
+      78.53,
+      79.69
+     ]
+    },
+    "week": {
+     "down": [
+      67.41,
+      64.04
+     ],
+     "likely": "NONE",
+     "up": [
+      75.78,
+      82.96
+     ]
+    },
+    "stage": "FORECAST"
+   },
+   "signal": {
+    "id": "a2e2551d84f6",
+    "kind": "NO_EDGE"
+   },
+   "actions": {
+    "holder": {
+     "action": "HOLD",
+     "stage": "NONE",
+     "level": null,
+     "rebuy_at": null,
+     "advice": "NOTHING",
+     "reason": "advice-0.1.0"
+    },
+    "cash": {
+     "action": "WAIT",
+     "stage": "NONE",
+     "level": null,
+     "advice": "NOTHING",
+     "reason": "advice-0.1.0"
+    },
+    "signal_id": "a2e2551d84f6"
+   },
+   "view": {
+    "holder": {
+     "verdict": "WAIT",
+     "signal_id": null,
+     "plan": null,
+     "why": [
+      "no_edge"
+     ]
+    },
+    "cash": {
+     "verdict": "WAIT",
+     "signal_id": null,
+     "plan": null,
+     "why": [
+      "no_edge"
+     ]
+    }
+   },
+   "radar": [],
+   "opportunity": null,
+   "gates": {
+    "ok": true,
+    "reasons": []
+   },
+   "signature": "8f94541da2473129"
+  },
+  "PAXG": {
+   "asset": "PAXG",
+   "price": null,
+   "scenario": null,
+   "signal": null,
+   "actions": {
+    "holder": {
+     "action": "HOLD",
+     "stage": "NONE",
+     "level": null,
+     "rebuy_at": null,
+     "reason": "price_only_asset"
+    },
+    "cash": {
+     "action": "WAIT",
+     "stage": "NONE",
+     "level": null,
+     "reason": "price_only_asset"
+    },
+    "signal_id": null
+   },
+   "view": {
+    "holder": {
+     "verdict": "WAIT",
+     "signal_id": null,
+     "plan": null,
+     "why": [
+      "price_only_asset"
+     ]
+    },
+    "cash": {
+     "verdict": "WAIT",
+     "signal_id": null,
+     "plan": null,
+     "why": [
+      "price_only_asset"
+     ]
+    }
+   },
+   "radar": [],
+   "opportunity": null,
+   "gates": {
+    "ok": false,
+    "reasons": [
+     "stale_or_missing_price"
+    ]
+   },
+   "signature": "fec609f2ecaaa6f6"
+  }
+ }
+}
