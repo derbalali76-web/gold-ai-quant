@@ -1,0 +1,553 @@
+{
+ "XAUUSD": {
+  "cost": 0.0003,
+  "results": [
+   {
+    "rule": "BREAKOUT_LONG",
+    "stop": 0.004,
+    "cost": 0.0003,
+    "period": "2016-01-03 -> 2026-11-20",
+    "trades": 2411,
+    "targets": 299,
+    "stops": 628,
+    "timeouts": 1484,
+    "win_rate": 0.4363,
+    "avg_net_pct": -0.0223,
+    "avg_net_ci95": [
+     -0.035,
+     -0.0085
+    ],
+    "halves_pct": [
+     -0.0374,
+     -0.0073
+    ],
+    "holdout_trades": 564,
+    "holdout_avg_pct": 0.0159,
+    "total_net_pct": -53.81,
+    "max_drawdown_pct": 66.72,
+    "trades_per_week": 4.25,
+    "baseline_avg_pct": -0.0256,
+    "edge_ci95": [
+     -0.0122,
+     0.0188
+    ],
+    "qualified": false,
+    "reason": "failed: average net CI above zero; both halves positive; beats evenly-timed entries (CI)",
+    "checks": {
+     "at least 100 trades": true,
+     "average net CI above zero": false,
+     "both halves positive": false,
+     "final holdout positive": true,
+     "beats evenly-timed entries (CI)": false
+    }
+   },
+   {
+    "rule": "BREAKOUT_LONG",
+    "stop": 0.0065,
+    "cost": 0.0003,
+    "period": "2016-01-03 -> 2026-11-20",
+    "trades": 2373,
+    "targets": 312,
+    "stops": 284,
+    "timeouts": 1777,
+    "win_rate": 0.4598,
+    "avg_net_pct": -0.023,
+    "avg_net_ci95": [
+     -0.0384,
+     -0.0084
+    ],
+    "halves_pct": [
+     -0.0372,
+     -0.0087
+    ],
+    "holdout_trades": 554,
+    "holdout_avg_pct": 0.0105,
+    "total_net_pct": -54.47,
+    "max_drawdown_pct": 67.17,
+    "trades_per_week": 4.18,
+    "baseline_avg_pct": -0.0236,
+    "edge_ci95": [
+     -0.0171,
+     0.0185
+    ],
+    "qualified": false,
+    "reason": "failed: average net CI above zero; both halves positive; beats evenly-timed entries (CI)",
+    "checks": {
+     "at least 100 trades": true,
+     "average net CI above zero": false,
+     "both halves positive": false,
+     "final holdout positive": true,
+     "beats evenly-timed entries (CI)": false
+    }
+   },
+   {
+    "rule": "BREAKOUT_SHORT",
+    "stop": 0.004,
+    "cost": 0.0003,
+    "period": "2016-01-03 -> 2026-11-20",
+    "trades": 1946,
+    "targets": 273,
+    "stops": 599,
+    "timeouts": 1074,
+    "win_rate": 0.4065,
+    "avg_net_pct": -0.0414,
+    "avg_net_ci95": [
+     -0.057,
+     -0.0253
+    ],
+    "halves_pct": [
+     -0.0493,
+     -0.0336
+    ],
+    "holdout_trades": 412,
+    "holdout_avg_pct": -0.0421,
+    "total_net_pct": -80.65,
+    "max_drawdown_pct": 90.58,
+    "trades_per_week": 3.43,
+    "baseline_avg_pct": -0.0329,
+    "edge_ci95": [
+     -0.026,
+     0.0101
+    ],
+    "qualified": false,
+    "reason": "failed: average net CI above zero; both halves positive; final holdout positive; beats evenly-timed entries (CI)",
+    "checks": {
+     "at least 100 trades": true,
+     "average net CI above zero": false,
+     "both halves positive": false,
+     "final holdout positive": false,
+     "beats evenly-timed entries (CI)": false
+    }
+   },
+   {
+    "rule": "BREAKOUT_SHORT",
+    "stop": 0.0065,
+    "cost": 0.0003,
+    "period": "2016-01-03 -> 2026-11-20",
+    "trades": 1918,
+    "targets": 285,
+    "stops": 292,
+    "timeouts": 1341,
+    "win_rate": 0.427,
+    "avg_net_pct": -0.05,
+    "avg_net_ci95": [
+     -0.0684,
+     -0.0316
+    ],
+    "halves_pct": [
+     -0.0551,
+     -0.0448
+    ],
+    "holdout_trades": 402,
+    "holdout_avg_pct": -0.0687,
+    "total_net_pct": -95.84,
+    "max_drawdown_pct": 103.65,
+    "trades_per_week": 3.38,
+    "baseline_avg_pct": -0.0381,
+    "edge_ci95": [
+     -0.0316,
+     0.0096
+    ],
+    "qualified": false,
+    "reason": "failed: average net CI above zero; both halves positive; final holdout positive; beats evenly-timed entries (CI)",
+    "checks": {
+     "at least 100 trades": true,
+     "average net CI above zero": false,
+     "both halves positive": false,
+     "final holdout positive": false,
+     "beats evenly-timed entries (CI)": false
+    }
+   },
+   {
+    "rule": "PULLBACK_LONG",
+    "stop": 0.004,
+    "cost": 0.0003,
+    "period": "2016-01-03 -> 2026-11-20",
+    "trades": 4120,
+    "targets": 387,
+    "stops": 1021,
+    "timeouts": 2712,
+    "win_rate": 0.4604,
+    "avg_net_pct": -0.0229,
+    "avg_net_ci95": [
+     -0.033,
+     -0.0127
+    ],
+    "halves_pct": [
+     -0.0241,
+     -0.0217
+    ],
+    "holdout_trades": 911,
+    "holdout_avg_pct": -0.0147,
+    "total_net_pct": -94.22,
+    "max_drawdown_pct": 98.19,
+    "trades_per_week": 7.26,
+    "baseline_avg_pct": -0.0253,
+    "edge_ci95": [
+     -0.0089,
+     0.0142
+    ],
+    "qualified": false,
+    "reason": "failed: average net CI above zero; both halves positive; final holdout positive; beats evenly-timed entries (CI)",
+    "checks": {
+     "at least 100 trades": true,
+     "average net CI above zero": false,
+     "both halves positive": false,
+     "final holdout positive": false,
+     "beats evenly-timed entries (CI)": false
+    }
+   },
+   {
+    "rule": "PULLBACK_LONG",
+    "stop": 0.0065,
+    "cost": 0.0003,
+    "period": "2016-01-03 -> 2026-11-20",
+    "trades": 3772,
+    "targets": 363,
+    "stops": 396,
+    "timeouts": 3013,
+    "win_rate": 0.4825,
+    "avg_net_pct": -0.0201,
+    "avg_net_ci95": [
+     -0.0313,
+     -0.0086
+    ],
+    "halves_pct": [
+     -0.0175,
+     -0.0227
+    ],
+    "holdout_trades": 801,
+    "holdout_avg_pct": -0.0154,
+    "total_net_pct": -75.83,
+    "max_drawdown_pct": 80.1,
+    "trades_per_week": 6.65,
+    "baseline_avg_pct": -0.0265,
+    "edge_ci95": [
+     -0.0065,
+     0.0192
+    ],
+    "qualified": false,
+    "reason": "failed: average net CI above zero; both halves positive; final holdout positive; beats evenly-timed entries (CI)",
+    "checks": {
+     "at least 100 trades": true,
+     "average net CI above zero": false,
+     "both halves positive": false,
+     "final holdout positive": false,
+     "beats evenly-timed entries (CI)": false
+    }
+   },
+   {
+    "rule": "LONDON_OPEN_LONG",
+    "stop": 0.004,
+    "cost": 0.0003,
+    "period": "2016-01-03 -> 2026-11-20",
+    "trades": 728,
+    "targets": 39,
+    "stops": 134,
+    "timeouts": 555,
+    "win_rate": 0.4107,
+    "avg_net_pct": -0.0447,
+    "avg_net_ci95": [
+     -0.0698,
+     -0.0186
+    ],
+    "halves_pct": [
+     -0.0488,
+     -0.0406
+    ],
+    "holdout_trades": 113,
+    "holdout_avg_pct": -0.0544,
+    "total_net_pct": -32.53,
+    "max_drawdown_pct": 34.43,
+    "trades_per_week": 1.28,
+    "baseline_avg_pct": -0.0228,
+    "edge_ci95": [
+     -0.0543,
+     0.0094
+    ],
+    "qualified": false,
+    "reason": "failed: average net CI above zero; both halves positive; final holdout positive; beats evenly-timed entries (CI)",
+    "checks": {
+     "at least 100 trades": true,
+     "average net CI above zero": false,
+     "both halves positive": false,
+     "final holdout positive": false,
+     "beats evenly-timed entries (CI)": false
+    }
+   },
+   {
+    "rule": "LONDON_OPEN_LONG",
+    "stop": 0.0065,
+    "cost": 0.0003,
+    "period": "2016-01-03 -> 2026-11-20",
+    "trades": 725,
+    "targets": 42,
+    "stops": 35,
+    "timeouts": 648,
+    "win_rate": 0.4221,
+    "avg_net_pct": -0.0366,
+    "avg_net_ci95": [
+     -0.0637,
+     -0.0102
+    ],
+    "halves_pct": [
+     -0.0485,
+     -0.0248
+    ],
+    "holdout_trades": 112,
+    "holdout_avg_pct": -0.0432,
+    "total_net_pct": -26.55,
+    "max_drawdown_pct": 29.31,
+    "trades_per_week": 1.28,
+    "baseline_avg_pct": -0.0251,
+    "edge_ci95": [
+     -0.0443,
+     0.0207
+    ],
+    "qualified": false,
+    "reason": "failed: average net CI above zero; both halves positive; final holdout positive; beats evenly-timed entries (CI)",
+    "checks": {
+     "at least 100 trades": true,
+     "average net CI above zero": false,
+     "both halves positive": false,
+     "final holdout positive": false,
+     "beats evenly-timed entries (CI)": false
+    }
+   },
+   {
+    "rule": "LONDON_OPEN_SHORT",
+    "stop": 0.004,
+    "cost": 0.0003,
+    "period": "2016-01-03 -> 2026-11-20",
+    "trades": 641,
+    "targets": 52,
+    "stops": 122,
+    "timeouts": 467,
+    "win_rate": 0.4243,
+    "avg_net_pct": -0.0321,
+    "avg_net_ci95": [
+     -0.064,
+     0.0012
+    ],
+    "halves_pct": [
+     -0.0431,
+     -0.0212
+    ],
+    "holdout_trades": 105,
+    "holdout_avg_pct": -0.0131,
+    "total_net_pct": -20.58,
+    "max_drawdown_pct": 24.05,
+    "trades_per_week": 1.13,
+    "baseline_avg_pct": -0.038,
+    "edge_ci95": [
+     -0.0326,
+     0.0452
+    ],
+    "qualified": false,
+    "reason": "failed: average net CI above zero; both halves positive; final holdout positive; beats evenly-timed entries (CI)",
+    "checks": {
+     "at least 100 trades": true,
+     "average net CI above zero": false,
+     "both halves positive": false,
+     "final holdout positive": false,
+     "beats evenly-timed entries (CI)": false
+    }
+   },
+   {
+    "rule": "LONDON_OPEN_SHORT",
+    "stop": 0.0065,
+    "cost": 0.0003,
+    "period": "2016-01-03 -> 2026-11-20",
+    "trades": 637,
+    "targets": 54,
+    "stops": 44,
+    "timeouts": 539,
+    "win_rate": 0.4396,
+    "avg_net_pct": -0.031,
+    "avg_net_ci95": [
+     -0.0635,
+     0.0032
+    ],
+    "halves_pct": [
+     -0.0418,
+     -0.0202
+    ],
+    "holdout_trades": 104,
+    "holdout_avg_pct": -0.0137,
+    "total_net_pct": -19.72,
+    "max_drawdown_pct": 23.02,
+    "trades_per_week": 1.12,
+    "baseline_avg_pct": -0.0255,
+    "edge_ci95": [
+     -0.0445,
+     0.0329
+    ],
+    "qualified": false,
+    "reason": "failed: average net CI above zero; both halves positive; final holdout positive; beats evenly-timed entries (CI)",
+    "checks": {
+     "at least 100 trades": true,
+     "average net CI above zero": false,
+     "both halves positive": false,
+     "final holdout positive": false,
+     "beats evenly-timed entries (CI)": false
+    }
+   },
+   {
+    "rule": "NY_OPEN_LONG",
+    "stop": 0.004,
+    "cost": 0.0003,
+    "period": "2016-01-03 -> 2026-11-20",
+    "trades": 802,
+    "targets": 125,
+    "stops": 282,
+    "timeouts": 395,
+    "win_rate": 0.4489,
+    "avg_net_pct": -0.0199,
+    "avg_net_ci95": [
+     -0.0537,
+     0.0125
+    ],
+    "halves_pct": [
+     -0.0316,
+     -0.0081
+    ],
+    "holdout_trades": 164,
+    "holdout_avg_pct": -0.0343,
+    "total_net_pct": -15.93,
+    "max_drawdown_pct": 19.69,
+    "trades_per_week": 1.41,
+    "baseline_avg_pct": -0.023,
+    "edge_ci95": [
+     -0.0348,
+     0.0394
+    ],
+    "qualified": false,
+    "reason": "failed: average net CI above zero; both halves positive; final holdout positive; beats evenly-timed entries (CI)",
+    "checks": {
+     "at least 100 trades": true,
+     "average net CI above zero": false,
+     "both halves positive": false,
+     "final holdout positive": false,
+     "beats evenly-timed entries (CI)": false
+    }
+   },
+   {
+    "rule": "NY_OPEN_LONG",
+    "stop": 0.0065,
+    "cost": 0.0003,
+    "period": "2016-01-03 -> 2026-11-20",
+    "trades": 798,
+    "targets": 131,
+    "stops": 155,
+    "timeouts": 512,
+    "win_rate": 0.4862,
+    "avg_net_pct": -0.0289,
+    "avg_net_ci95": [
+     -0.0674,
+     0.0106
+    ],
+    "halves_pct": [
+     -0.0394,
+     -0.0184
+    ],
+    "holdout_trades": 162,
+    "holdout_avg_pct": -0.053,
+    "total_net_pct": -23.06,
+    "max_drawdown_pct": 27.6,
+    "trades_per_week": 1.41,
+    "baseline_avg_pct": -0.0265,
+    "edge_ci95": [
+     -0.0462,
+     0.0415
+    ],
+    "qualified": false,
+    "reason": "failed: average net CI above zero; both halves positive; final holdout positive; beats evenly-timed entries (CI)",
+    "checks": {
+     "at least 100 trades": true,
+     "average net CI above zero": false,
+     "both halves positive": false,
+     "final holdout positive": false,
+     "beats evenly-timed entries (CI)": false
+    }
+   },
+   {
+    "rule": "NY_OPEN_SHORT",
+    "stop": 0.004,
+    "cost": 0.0003,
+    "period": "2016-01-03 -> 2026-11-20",
+    "trades": 723,
+    "targets": 134,
+    "stops": 272,
+    "timeouts": 317,
+    "win_rate": 0.4066,
+    "avg_net_pct": -0.0387,
+    "avg_net_ci95": [
+     -0.0772,
+     -0.0014
+    ],
+    "halves_pct": [
+     -0.0517,
+     -0.0258
+    ],
+    "holdout_trades": 134,
+    "holdout_avg_pct": -0.024,
+    "total_net_pct": -28.0,
+    "max_drawdown_pct": 31.32,
+    "trades_per_week": 1.27,
+    "baseline_avg_pct": -0.0447,
+    "edge_ci95": [
+     -0.0353,
+     0.0482
+    ],
+    "qualified": false,
+    "reason": "failed: average net CI above zero; both halves positive; final holdout positive; beats evenly-timed entries (CI)",
+    "checks": {
+     "at least 100 trades": true,
+     "average net CI above zero": false,
+     "both halves positive": false,
+     "final holdout positive": false,
+     "beats evenly-timed entries (CI)": false
+    }
+   },
+   {
+    "rule": "NY_OPEN_SHORT",
+    "stop": 0.0065,
+    "cost": 0.0003,
+    "period": "2016-01-03 -> 2026-11-20",
+    "trades": 719,
+    "targets": 144,
+    "stops": 131,
+    "timeouts": 444,
+    "win_rate": 0.4339,
+    "avg_net_pct": -0.0453,
+    "avg_net_ci95": [
+     -0.0906,
+     -0.0
+    ],
+    "halves_pct": [
+     -0.0501,
+     -0.0406
+    ],
+    "holdout_trades": 133,
+    "holdout_avg_pct": -0.0587,
+    "total_net_pct": -32.59,
+    "max_drawdown_pct": 35.93,
+    "trades_per_week": 1.27,
+    "baseline_avg_pct": -0.0425,
+    "edge_ci95": [
+     -0.0492,
+     0.0383
+    ],
+    "qualified": false,
+    "reason": "failed: average net CI above zero; both halves positive; final holdout positive; beats evenly-timed entries (CI)",
+    "checks": {
+     "at least 100 trades": true,
+     "average net CI above zero": false,
+     "both halves positive": false,
+     "final holdout positive": false,
+     "beats evenly-timed entries (CI)": false
+    }
+   }
+  ]
+ }
+}

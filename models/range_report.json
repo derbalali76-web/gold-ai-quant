@@ -1,12 +1,12 @@
 {
  "schema": 1,
  "version": "range-har-0.1.0",
- "updated_at": "2026-11-16T18:00:12.296253+00:00",
+ "updated_at": "2026-11-22T12:05:39.751783+00:00",
  "events_source": {
-  "fomc": 103,
+  "fomc": 104,
   "bls": 135
  },
- "events_n": 149,
+ "events_n": 150,
  "assets": {
   "XAU": {
    "4h": {
@@ -14,129 +14,129 @@
     "horizon": "4h",
     "bars": 4,
     "qualified": false,
-    "period": "2016-04-05 -> 2026-11-13",
-    "holdout_from": "2024-09-18",
+    "period": "2016-04-05 -> 2026-11-20",
+    "holdout_from": "2024-09-27",
     "walk_forward": {
      "m": {
-      "n": 9878,
+      "n": 9919,
       "coverage": 0.7922,
-      "width_pct": 0.7454,
-      "median_width_pct": 0.6987,
-      "interval_score": 1.2353
+      "width_pct": 0.7455,
+      "median_width_pct": 0.6988,
+      "interval_score": 1.2348
      },
      "b1": {
-      "n": 9878,
-      "coverage": 0.7863,
-      "width_pct": 0.7132,
-      "median_width_pct": 0.7261,
-      "interval_score": 1.3197
+      "n": 9919,
+      "coverage": 0.7865,
+      "width_pct": 0.7133,
+      "median_width_pct": 0.7265,
+      "interval_score": 1.3191
      },
      "b2": {
-      "n": 9878,
-      "coverage": 0.8248,
-      "width_pct": 0.8595,
-      "median_width_pct": 0.7679,
-      "interval_score": 1.319
+      "n": 9919,
+      "coverage": 0.8251,
+      "width_pct": 0.8598,
+      "median_width_pct": 0.7683,
+      "interval_score": 1.3186
      },
      "best_baseline": "b2"
     },
     "holdout": {
      "m": {
-      "n": 3110,
-      "coverage": 0.774,
-      "width_pct": 1.1436,
-      "median_width_pct": 1.0376,
-      "interval_score": 2.0046
+      "n": 3121,
+      "coverage": 0.7703,
+      "width_pct": 1.1409,
+      "median_width_pct": 1.037,
+      "interval_score": 2.0146
      },
      "b1": {
-      "n": 3110,
-      "coverage": 0.7559,
-      "width_pct": 1.0385,
-      "median_width_pct": 0.9135,
-      "interval_score": 2.0902
+      "n": 3121,
+      "coverage": 0.7568,
+      "width_pct": 1.0442,
+      "median_width_pct": 0.9395,
+      "interval_score": 2.0944
      },
      "b2": {
-      "n": 3110,
-      "coverage": 0.818,
-      "width_pct": 1.3595,
-      "median_width_pct": 1.1962,
-      "interval_score": 2.0026
+      "n": 3121,
+      "coverage": 0.8167,
+      "width_pct": 1.3619,
+      "median_width_pct": 1.2001,
+      "interval_score": 2.0071
      },
      "best_baseline": "b2"
     },
     "score_diff_vs_best": -0.0837,
     "score_diff_ci99": [
-     -0.0977,
-     -0.0694
+     -0.0979,
+     -0.0698
     ],
     "regimes": {
      "low": {
       "m": {
-       "n": 3293,
+       "n": 3307,
        "coverage": 0.7883,
-       "width_pct": 0.5576,
-       "median_width_pct": 0.5446,
-       "interval_score": 0.9294
+       "width_pct": 0.5578,
+       "median_width_pct": 0.5451,
+       "interval_score": 0.9286
       },
       "b1": {
-       "n": 3293,
-       "coverage": 0.8318,
-       "width_pct": 0.6286,
+       "n": 3307,
+       "coverage": 0.8322,
+       "width_pct": 0.6287,
        "median_width_pct": 0.562,
-       "interval_score": 0.9768
+       "interval_score": 0.976
       },
       "b2": {
-       "n": 3293,
-       "coverage": 0.8014,
-       "width_pct": 0.5829,
-       "median_width_pct": 0.5671,
-       "interval_score": 0.9876
+       "n": 3307,
+       "coverage": 0.8019,
+       "width_pct": 0.5833,
+       "median_width_pct": 0.5672,
+       "interval_score": 0.9868
       }
      },
      "mid": {
       "m": {
-       "n": 3292,
+       "n": 3306,
        "coverage": 0.7992,
-       "width_pct": 0.722,
-       "median_width_pct": 0.7029,
-       "interval_score": 1.1626
+       "width_pct": 0.7224,
+       "median_width_pct": 0.7033,
+       "interval_score": 1.1644
       },
       "b1": {
-       "n": 3292,
-       "coverage": 0.8092,
-       "width_pct": 0.7389,
-       "median_width_pct": 0.7531,
-       "interval_score": 1.2173
+       "n": 3306,
+       "coverage": 0.8085,
+       "width_pct": 0.7396,
+       "median_width_pct": 0.7527,
+       "interval_score": 1.2187
       },
       "b2": {
-       "n": 3292,
-       "coverage": 0.8247,
-       "width_pct": 0.8006,
-       "median_width_pct": 0.7725,
-       "interval_score": 1.2422
+       "n": 3306,
+       "coverage": 0.8249,
+       "width_pct": 0.8027,
+       "median_width_pct": 0.7733,
+       "interval_score": 1.244
       }
      },
      "high": {
       "m": {
-       "n": 3293,
-       "coverage": 0.7889,
-       "width_pct": 0.9567,
-       "median_width_pct": 0.9234,
-       "interval_score": 1.614
+       "n": 3306,
+       "coverage": 0.7892,
+       "width_pct": 0.9562,
+       "median_width_pct": 0.9233,
+       "interval_score": 1.6116
       },
       "b1": {
-       "n": 3293,
-       "coverage": 0.7179,
-       "width_pct": 0.7721,
-       "median_width_pct": 0.7755,
-       "interval_score": 1.7648
+       "n": 3306,
+       "coverage": 0.7187,
+       "width_pct": 0.7718,
+       "median_width_pct": 0.7747,
+       "interval_score": 1.7627
       },
       "b2": {
-       "n": 3293,
-       "coverage": 0.8482,
-       "width_pct": 1.195,
-       "median_width_pct": 1.0775,
-       "interval_score": 1.7272
+       "n": 3306,
+       "coverage": 0.8485,
+       "width_pct": 1.1936,
+       "median_width_pct": 1.0764,
+       "interval_score": 1.725
       }
      }
     },
@@ -239,50 +239,50 @@
      },
      "2024": {
       "m": {
-       "n": 1061,
-       "coverage": 0.7832,
-       "width_pct": 0.7584,
-       "median_width_pct": 0.7294,
-       "interval_score": 1.2832
+       "n": 1102,
+       "coverage": 0.784,
+       "width_pct": 0.7582,
+       "median_width_pct": 0.7319,
+       "interval_score": 1.277
       },
       "b2": {
-       "n": 1061,
-       "coverage": 0.819,
-       "width_pct": 0.8844,
-       "median_width_pct": 0.8191,
-       "interval_score": 1.3711
+       "n": 1102,
+       "coverage": 0.8221,
+       "width_pct": 0.8862,
+       "median_width_pct": 0.8231,
+       "interval_score": 1.3652
       }
      }
     },
     "events": {
-     "windows": 136,
+     "windows": 137,
      "first": "2021-01-05 19:00:00",
-     "last": "2027-11-17 19:00:00",
+     "last": "2027-11-18 19:00:00",
      "m": {
-      "n": 136,
-      "coverage": 0.6103,
-      "width_pct": 1.1399,
-      "median_width_pct": 0.9925,
-      "interval_score": 2.8713
+      "n": 137,
+      "coverage": 0.6058,
+      "width_pct": 1.1377,
+      "median_width_pct": 0.9872,
+      "interval_score": 2.8712
      },
      "b1": {
-      "n": 136,
-      "coverage": 0.5515,
-      "width_pct": 0.9429,
-      "median_width_pct": 0.8624,
-      "interval_score": 3.0077
+      "n": 137,
+      "coverage": 0.5474,
+      "width_pct": 0.9461,
+      "median_width_pct": 0.8641,
+      "interval_score": 3.0045
      },
      "b2": {
-      "n": 136,
-      "coverage": 0.5956,
-      "width_pct": 1.1201,
-      "median_width_pct": 0.9413,
-      "interval_score": 2.9677
+      "n": 137,
+      "coverage": 0.5985,
+      "width_pct": 1.1227,
+      "median_width_pct": 0.942,
+      "interval_score": 2.9568
      }
     },
     "calibration_quantiles": [
-     -1.526,
-     1.662
+     -1.509,
+     1.663
     ],
     "gates": {
      "G1 holdout coverage 77-83%": true,
@@ -296,130 +296,130 @@
     "version": "range-har-0.1.0",
     "horizon": "24h",
     "bars": 23,
-    "qualified": true,
-    "period": "2016-04-06 -> 2026-11-12",
-    "holdout_from": "2024-09-17",
+    "qualified": false,
+    "period": "2016-04-06 -> 2026-11-19",
+    "holdout_from": "2024-09-26",
     "walk_forward": {
      "m": {
-      "n": 9875,
-      "coverage": 0.7981,
-      "width_pct": 1.9879,
-      "median_width_pct": 1.9582,
-      "interval_score": 3.1104
+      "n": 9916,
+      "coverage": 0.7978,
+      "width_pct": 1.988,
+      "median_width_pct": 1.9586,
+      "interval_score": 3.1079
      },
      "b1": {
-      "n": 9875,
-      "coverage": 0.7898,
-      "width_pct": 1.9672,
-      "median_width_pct": 1.9916,
-      "interval_score": 3.179
+      "n": 9916,
+      "coverage": 0.7899,
+      "width_pct": 1.9678,
+      "median_width_pct": 1.9939,
+      "interval_score": 3.1757
      },
      "b2": {
-      "n": 9875,
-      "coverage": 0.7795,
-      "width_pct": 2.0612,
-      "median_width_pct": 1.8413,
-      "interval_score": 3.1895
+      "n": 9916,
+      "coverage": 0.7799,
+      "width_pct": 2.0617,
+      "median_width_pct": 1.8422,
+      "interval_score": 3.1867
      },
      "best_baseline": "b1"
     },
     "holdout": {
      "m": {
-      "n": 3108,
-      "coverage": 0.7847,
-      "width_pct": 3.1506,
-      "median_width_pct": 3.0814,
-      "interval_score": 5.0609
+      "n": 3119,
+      "coverage": 0.7807,
+      "width_pct": 3.1283,
+      "median_width_pct": 3.0461,
+      "interval_score": 5.1296
      },
      "b1": {
-      "n": 3108,
-      "coverage": 0.7442,
-      "width_pct": 2.7943,
-      "median_width_pct": 2.4348,
-      "interval_score": 5.3668
+      "n": 3119,
+      "coverage": 0.7425,
+      "width_pct": 2.7959,
+      "median_width_pct": 2.535,
+      "interval_score": 5.3965
      },
      "b2": {
-      "n": 3108,
-      "coverage": 0.7635,
-      "width_pct": 3.2577,
-      "median_width_pct": 2.8645,
-      "interval_score": 5.0711
+      "n": 3119,
+      "coverage": 0.7608,
+      "width_pct": 3.2615,
+      "median_width_pct": 2.8714,
+      "interval_score": 5.1123
      },
      "best_baseline": "b2"
     },
-    "score_diff_vs_best": -0.0686,
+    "score_diff_vs_best": -0.0678,
     "score_diff_ci99": [
-     -0.1123,
-     -0.0304
+     -0.1117,
+     -0.0307
     ],
     "regimes": {
      "low": {
       "m": {
-       "n": 3292,
-       "coverage": 0.7983,
-       "width_pct": 1.5526,
-       "median_width_pct": 1.5434,
-       "interval_score": 2.4235
+       "n": 3306,
+       "coverage": 0.7989,
+       "width_pct": 1.5532,
+       "median_width_pct": 1.544,
+       "interval_score": 2.4205
       },
       "b1": {
-       "n": 3292,
-       "coverage": 0.8229,
-       "width_pct": 1.7126,
-       "median_width_pct": 1.6175,
-       "interval_score": 2.4181
+       "n": 3306,
+       "coverage": 0.8237,
+       "width_pct": 1.7131,
+       "median_width_pct": 1.6177,
+       "interval_score": 2.4155
       },
       "b2": {
-       "n": 3292,
-       "coverage": 0.7476,
-       "width_pct": 1.3976,
-       "median_width_pct": 1.3594,
-       "interval_score": 2.4888
+       "n": 3306,
+       "coverage": 0.7483,
+       "width_pct": 1.3985,
+       "median_width_pct": 1.36,
+       "interval_score": 2.4858
       }
      },
      "mid": {
       "m": {
-       "n": 3291,
-       "coverage": 0.7991,
-       "width_pct": 1.9586,
-       "median_width_pct": 1.9586,
-       "interval_score": 2.9919
+       "n": 3305,
+       "coverage": 0.7976,
+       "width_pct": 1.9599,
+       "median_width_pct": 1.9591,
+       "interval_score": 2.9958
       },
       "b1": {
-       "n": 3291,
-       "coverage": 0.8116,
-       "width_pct": 2.0463,
-       "median_width_pct": 2.0471,
-       "interval_score": 3.0377
+       "n": 3305,
+       "coverage": 0.81,
+       "width_pct": 2.0484,
+       "median_width_pct": 2.0574,
+       "interval_score": 3.0403
       },
       "b2": {
-       "n": 3291,
-       "coverage": 0.7754,
-       "width_pct": 1.9202,
-       "median_width_pct": 1.8526,
-       "interval_score": 3.0334
+       "n": 3305,
+       "coverage": 0.7761,
+       "width_pct": 1.9243,
+       "median_width_pct": 1.8542,
+       "interval_score": 3.0349
       }
      },
      "high": {
       "m": {
-       "n": 3292,
-       "coverage": 0.7968,
-       "width_pct": 2.4525,
-       "median_width_pct": 2.3632,
-       "interval_score": 3.9159
+       "n": 3305,
+       "coverage": 0.797,
+       "width_pct": 2.4508,
+       "median_width_pct": 2.3613,
+       "interval_score": 3.9077
       },
       "b1": {
-       "n": 3292,
-       "coverage": 0.7348,
-       "width_pct": 2.1427,
-       "median_width_pct": 2.1362,
-       "interval_score": 4.0811
+       "n": 3305,
+       "coverage": 0.7362,
+       "width_pct": 2.142,
+       "median_width_pct": 2.134,
+       "interval_score": 4.0716
       },
       "b2": {
-       "n": 3292,
-       "coverage": 0.8156,
-       "width_pct": 2.8656,
-       "median_width_pct": 2.5841,
-       "interval_score": 4.0463
+       "n": 3305,
+       "coverage": 0.8151,
+       "width_pct": 2.8625,
+       "median_width_pct": 2.5812,
+       "interval_score": 4.0397
       }
      }
     },
@@ -522,187 +522,187 @@
      },
      "2024": {
       "m": {
-       "n": 1058,
-       "coverage": 0.7741,
-       "width_pct": 2.0626,
-       "median_width_pct": 2.0165,
-       "interval_score": 3.3021
+       "n": 1099,
+       "coverage": 0.7725,
+       "width_pct": 2.0602,
+       "median_width_pct": 2.0173,
+       "interval_score": 3.2726
       },
       "b1": {
-       "n": 1058,
-       "coverage": 0.7448,
-       "width_pct": 1.8974,
-       "median_width_pct": 1.8714,
-       "interval_score": 3.3844
+       "n": 1099,
+       "coverage": 0.748,
+       "width_pct": 1.9052,
+       "median_width_pct": 1.8747,
+       "interval_score": 3.3473
       }
      }
     },
     "events": {
-     "windows": 785,
+     "windows": 791,
      "first": "2021-01-05 19:00:00",
-     "last": "2027-11-17 19:00:00",
+     "last": "2027-11-18 19:00:00",
      "m": {
-      "n": 785,
-      "coverage": 0.7567,
-      "width_pct": 2.7053,
+      "n": 791,
+      "coverage": 0.7497,
+      "width_pct": 2.6881,
       "median_width_pct": 2.3364,
-      "interval_score": 4.7766
+      "interval_score": 4.8211
      },
      "b1": {
-      "n": 785,
-      "coverage": 0.7554,
-      "width_pct": 2.5558,
+      "n": 791,
+      "coverage": 0.7522,
+      "width_pct": 2.5574,
       "median_width_pct": 2.3088,
-      "interval_score": 4.8784
+      "interval_score": 4.9008
      },
      "b2": {
-      "n": 785,
-      "coverage": 0.7121,
-      "width_pct": 2.6752,
+      "n": 791,
+      "coverage": 0.7105,
+      "width_pct": 2.667,
       "median_width_pct": 2.269,
-      "interval_score": 4.7611
+      "interval_score": 4.7878
      }
     },
     "calibration_quantiles": [
-     -1.346,
-     1.646
+     -1.296,
+     1.671
     ],
     "gates": {
      "G1 holdout coverage 77-83%": true,
      "G2 beats best baseline (99% CI)": true,
-     "G3 holdout beats best baseline": true,
+     "G3 holdout beats best baseline": false,
      "G4 coverage >= 72% in every volatility tercile": true
     },
-    "reason": "qualified"
+    "reason": "failed: G3 holdout beats best baseline"
    },
    "1w": {
     "version": "range-har-0.1.0",
     "horizon": "1w",
     "bars": 115,
     "qualified": false,
-    "period": "2016-04-12 -> 2026-11-06",
-    "holdout_from": "2024-09-13",
+    "period": "2016-04-12 -> 2026-11-13",
+    "holdout_from": "2024-09-24",
     "walk_forward": {
      "m": {
-      "n": 1201,
-      "coverage": 0.7952,
-      "width_pct": 5.0691,
-      "median_width_pct": 4.9472,
-      "interval_score": 7.7517
+      "n": 1208,
+      "coverage": 0.7947,
+      "width_pct": 5.0649,
+      "median_width_pct": 4.9426,
+      "interval_score": 7.7436
      },
      "b1": {
-      "n": 1201,
-      "coverage": 0.7818,
-      "width_pct": 5.0583,
-      "median_width_pct": 4.9127,
-      "interval_score": 7.9662
+      "n": 1208,
+      "coverage": 0.7815,
+      "width_pct": 5.0586,
+      "median_width_pct": 4.9131,
+      "interval_score": 7.9518
      },
      "b2": {
-      "n": 1201,
-      "coverage": 0.7685,
-      "width_pct": 5.0074,
-      "median_width_pct": 4.4443,
-      "interval_score": 7.7847
+      "n": 1208,
+      "coverage": 0.7682,
+      "width_pct": 5.0051,
+      "median_width_pct": 4.4441,
+      "interval_score": 7.7774
      },
      "best_baseline": "b2"
     },
     "holdout": {
      "m": {
-      "n": 539,
-      "coverage": 0.7495,
-      "width_pct": 6.9538,
-      "median_width_pct": 6.8317,
-      "interval_score": 11.4246
+      "n": 541,
+      "coverage": 0.7449,
+      "width_pct": 6.9957,
+      "median_width_pct": 6.8419,
+      "interval_score": 11.757
      },
      "b1": {
-      "n": 539,
-      "coverage": 0.7236,
-      "width_pct": 6.4083,
-      "median_width_pct": 5.7046,
-      "interval_score": 11.5192
+      "n": 541,
+      "coverage": 0.7153,
+      "width_pct": 6.3228,
+      "median_width_pct": 5.77,
+      "interval_score": 11.5813
      },
      "b2": {
-      "n": 539,
-      "coverage": 0.718,
-      "width_pct": 7.2209,
+      "n": 541,
+      "coverage": 0.7079,
+      "width_pct": 7.2192,
       "median_width_pct": 6.4099,
-      "interval_score": 11.7898
+      "interval_score": 11.8685
      },
      "best_baseline": "b1"
     },
-    "score_diff_vs_best": -0.033,
+    "score_diff_vs_best": -0.0338,
     "score_diff_ci99": [
-     -0.3173,
-     0.2755
+     -0.3285,
+     0.2731
     ],
     "regimes": {
      "low": {
       "m": {
-       "n": 401,
-       "coverage": 0.7706,
-       "width_pct": 4.2624,
-       "median_width_pct": 4.1845,
-       "interval_score": 7.1227
+       "n": 403,
+       "coverage": 0.7692,
+       "width_pct": 4.2576,
+       "median_width_pct": 4.1823,
+       "interval_score": 7.1257
       },
       "b1": {
-       "n": 401,
-       "coverage": 0.8204,
-       "width_pct": 4.8071,
+       "n": 403,
+       "coverage": 0.8189,
+       "width_pct": 4.8059,
        "median_width_pct": 4.6354,
-       "interval_score": 6.9451
+       "interval_score": 6.9367
       },
       "b2": {
-       "n": 401,
-       "coverage": 0.6858,
-       "width_pct": 3.5271,
-       "median_width_pct": 3.4099,
-       "interval_score": 7.4363
+       "n": 403,
+       "coverage": 0.6824,
+       "width_pct": 3.5243,
+       "median_width_pct": 3.4033,
+       "interval_score": 7.4476
       }
      },
      "mid": {
       "m": {
-       "n": 400,
-       "coverage": 0.79,
-       "width_pct": 4.9403,
-       "median_width_pct": 4.9109,
-       "interval_score": 7.197
+       "n": 402,
+       "coverage": 0.7935,
+       "width_pct": 4.9357,
+       "median_width_pct": 4.9086,
+       "interval_score": 7.1881
       },
       "b1": {
-       "n": 400,
-       "coverage": 0.7925,
-       "width_pct": 5.1503,
-       "median_width_pct": 4.9528,
-       "interval_score": 7.2182
+       "n": 402,
+       "coverage": 0.7935,
+       "width_pct": 5.1528,
+       "median_width_pct": 4.9565,
+       "interval_score": 7.2071
       },
       "b2": {
-       "n": 400,
-       "coverage": 0.775,
-       "width_pct": 4.6547,
-       "median_width_pct": 4.46,
-       "interval_score": 7.1785
+       "n": 402,
+       "coverage": 0.7786,
+       "width_pct": 4.6571,
+       "median_width_pct": 4.4718,
+       "interval_score": 7.1487
       }
      },
      "high": {
       "m": {
-       "n": 400,
-       "coverage": 0.825,
-       "width_pct": 6.0066,
-       "median_width_pct": 5.7628,
-       "interval_score": 8.9368
+       "n": 403,
+       "coverage": 0.8213,
+       "width_pct": 6.0012,
+       "median_width_pct": 5.7605,
+       "interval_score": 8.9156
       },
       "b1": {
-       "n": 400,
-       "coverage": 0.7325,
-       "width_pct": 5.2181,
-       "median_width_pct": 5.0473,
-       "interval_score": 9.7377
+       "n": 403,
+       "coverage": 0.732,
+       "width_pct": 5.2172,
+       "median_width_pct": 5.0462,
+       "interval_score": 9.71
       },
       "b2": {
-       "n": 400,
-       "coverage": 0.845,
-       "width_pct": 6.8443,
-       "median_width_pct": 6.0202,
-       "interval_score": 8.7401
+       "n": 403,
+       "coverage": 0.8437,
+       "width_pct": 6.8329,
+       "median_width_pct": 6.0174,
+       "interval_score": 8.7342
       }
      }
     },
@@ -773,58 +773,58 @@
      },
      "2024": {
       "m": {
-       "n": 181,
-       "coverage": 0.8066,
-       "width_pct": 4.6141,
-       "median_width_pct": 4.5265,
-       "interval_score": 6.7789
+       "n": 188,
+       "coverage": 0.8032,
+       "width_pct": 4.6043,
+       "median_width_pct": 4.5236,
+       "interval_score": 6.7632
       },
       "b2": {
-       "n": 181,
-       "coverage": 0.7735,
-       "width_pct": 4.7798,
-       "median_width_pct": 4.3917,
-       "interval_score": 7.2867
+       "n": 188,
+       "coverage": 0.7713,
+       "width_pct": 4.7729,
+       "median_width_pct": 4.39,
+       "interval_score": 7.2583
       }
      }
     },
     "events": {
-     "windows": 608,
+     "windows": 612,
      "first": "2021-01-05 19:00:00",
-     "last": "2027-11-17 19:00:00",
+     "last": "2027-11-18 19:00:00",
      "m": {
-      "n": 608,
-      "coverage": 0.778,
-      "width_pct": 6.0264,
-      "median_width_pct": 5.3438,
-      "interval_score": 9.4037
+      "n": 612,
+      "coverage": 0.7696,
+      "width_pct": 6.0465,
+      "median_width_pct": 5.359,
+      "interval_score": 9.6479
      },
      "b1": {
-      "n": 608,
-      "coverage": 0.7664,
-      "width_pct": 5.8282,
-      "median_width_pct": 5.2373,
-      "interval_score": 9.4698
+      "n": 612,
+      "coverage": 0.7614,
+      "width_pct": 5.7841,
+      "median_width_pct": 5.2478,
+      "interval_score": 9.5337
      },
      "b2": {
-      "n": 608,
-      "coverage": 0.7451,
-      "width_pct": 5.9745,
-      "median_width_pct": 5.086,
-      "interval_score": 9.4447
+      "n": 612,
+      "coverage": 0.7386,
+      "width_pct": 5.9624,
+      "median_width_pct": 5.0922,
+      "interval_score": 9.5372
      }
     },
     "calibration_quantiles": [
-     -1.073,
-     1.733
+     -1.0,
+     1.816
     ],
     "gates": {
      "G1 holdout coverage 77-83%": false,
      "G2 beats best baseline (99% CI)": false,
-     "G3 holdout beats best baseline": true,
+     "G3 holdout beats best baseline": false,
      "G4 coverage >= 72% in every volatility tercile": true
     },
-    "reason": "failed: G1 holdout coverage 77-83%, G2 beats best baseline (99% CI)"
+    "reason": "failed: G1 holdout coverage 77-83%, G2 beats best baseline (99% CI), G3 holdout beats best baseline"
    }
   },
   "BTC": {
@@ -833,129 +833,129 @@
     "horizon": "4h",
     "bars": 4,
     "qualified": true,
-    "period": "2018-04-03 -> 2026-11-14",
-    "holdout_from": "2025-02-24",
+    "period": "2018-04-03 -> 2026-11-20",
+    "holdout_from": "2025-02-28",
     "walk_forward": {
      "m": {
-      "n": 11279,
-      "coverage": 0.7916,
+      "n": 11307,
+      "coverage": 0.7912,
       "width_pct": 2.4813,
-      "median_width_pct": 2.2579,
-      "interval_score": 4.471
+      "median_width_pct": 2.2591,
+      "interval_score": 4.4787
      },
      "b1": {
-      "n": 11279,
-      "coverage": 0.8002,
-      "width_pct": 2.6009,
-      "median_width_pct": 2.4388,
-      "interval_score": 4.8244
+      "n": 11307,
+      "coverage": 0.7996,
+      "width_pct": 2.6,
+      "median_width_pct": 2.4356,
+      "interval_score": 4.832
      },
      "b2": {
-      "n": 11279,
-      "coverage": 0.8365,
-      "width_pct": 3.031,
-      "median_width_pct": 2.6467,
-      "interval_score": 4.6348
+      "n": 11307,
+      "coverage": 0.8361,
+      "width_pct": 3.0316,
+      "median_width_pct": 2.6484,
+      "interval_score": 4.6411
      },
      "best_baseline": "b2"
     },
     "holdout": {
      "m": {
-      "n": 3772,
-      "coverage": 0.7906,
-      "width_pct": 1.773,
-      "median_width_pct": 1.6351,
-      "interval_score": 3.1217
+      "n": 3780,
+      "coverage": 0.791,
+      "width_pct": 1.7751,
+      "median_width_pct": 1.639,
+      "interval_score": 3.0991
      },
      "b1": {
-      "n": 3772,
-      "coverage": 0.8298,
-      "width_pct": 1.9763,
-      "median_width_pct": 1.9135,
-      "interval_score": 3.3169
+      "n": 3780,
+      "coverage": 0.8296,
+      "width_pct": 1.973,
+      "median_width_pct": 1.9123,
+      "interval_score": 3.2961
      },
      "b2": {
-      "n": 3772,
-      "coverage": 0.8226,
-      "width_pct": 2.1119,
-      "median_width_pct": 1.8917,
-      "interval_score": 3.2547
+      "n": 3780,
+      "coverage": 0.8238,
+      "width_pct": 2.1151,
+      "median_width_pct": 1.8957,
+      "interval_score": 3.2386
      },
      "best_baseline": "b2"
     },
-    "score_diff_vs_best": -0.1637,
+    "score_diff_vs_best": -0.1624,
     "score_diff_ci99": [
-     -0.2109,
-     -0.1139
+     -0.2104,
+     -0.1126
     ],
     "regimes": {
      "low": {
       "m": {
-       "n": 3760,
-       "coverage": 0.7944,
-       "width_pct": 1.5746,
-       "median_width_pct": 1.5437,
-       "interval_score": 3.0351
+       "n": 3769,
+       "coverage": 0.7938,
+       "width_pct": 1.576,
+       "median_width_pct": 1.5449,
+       "interval_score": 3.0485
       },
       "b1": {
-       "n": 3760,
-       "coverage": 0.8596,
-       "width_pct": 2.1702,
-       "median_width_pct": 2.2271,
-       "interval_score": 3.2982
+       "n": 3769,
+       "coverage": 0.8586,
+       "width_pct": 2.1703,
+       "median_width_pct": 2.2282,
+       "interval_score": 3.3117
       },
       "b2": {
-       "n": 3760,
-       "coverage": 0.8215,
-       "width_pct": 1.8151,
-       "median_width_pct": 1.7375,
-       "interval_score": 3.1293
+       "n": 3769,
+       "coverage": 0.8209,
+       "width_pct": 1.8179,
+       "median_width_pct": 1.7365,
+       "interval_score": 3.141
       }
      },
      "mid": {
       "m": {
-       "n": 3759,
-       "coverage": 0.793,
-       "width_pct": 2.3069,
-       "median_width_pct": 2.2683,
-       "interval_score": 4.3133
+       "n": 3769,
+       "coverage": 0.7925,
+       "width_pct": 2.3081,
+       "median_width_pct": 2.2697,
+       "interval_score": 4.3282
       },
       "b1": {
-       "n": 3759,
-       "coverage": 0.8284,
-       "width_pct": 2.687,
-       "median_width_pct": 2.4539,
-       "interval_score": 4.472
+       "n": 3769,
+       "coverage": 0.8273,
+       "width_pct": 2.6838,
+       "median_width_pct": 2.4501,
+       "interval_score": 4.4869
       },
       "b2": {
-       "n": 3759,
-       "coverage": 0.8369,
-       "width_pct": 2.7799,
-       "median_width_pct": 2.653,
-       "interval_score": 4.4719
+       "n": 3769,
+       "coverage": 0.8363,
+       "width_pct": 2.7819,
+       "median_width_pct": 2.6537,
+       "interval_score": 4.486
       }
      },
      "high": {
       "m": {
-       "n": 3760,
+       "n": 3769,
        "coverage": 0.7872,
-       "width_pct": 3.5623,
-       "median_width_pct": 3.2679,
-       "interval_score": 6.0647
+       "width_pct": 3.5599,
+       "median_width_pct": 3.2664,
+       "interval_score": 6.0594
       },
       "b1": {
-       "n": 3760,
-       "coverage": 0.7125,
-       "width_pct": 2.9455,
-       "median_width_pct": 3.0384,
-       "interval_score": 6.7029
+       "n": 3769,
+       "coverage": 0.7129,
+       "width_pct": 2.946,
+       "median_width_pct": 3.0385,
+       "interval_score": 6.6975
       },
       "b2": {
-       "n": 3760,
-       "coverage": 0.8511,
-       "width_pct": 4.498,
-       "median_width_pct": 3.9223,
-       "interval_score": 6.303
+       "n": 3769,
+       "coverage": 0.8512,
+       "width_pct": 4.4949,
+       "median_width_pct": 3.92,
+       "interval_score": 6.2963
       }
      }
     },
@@ -1042,50 +1042,50 @@
      },
      "2025": {
       "m": {
-       "n": 325,
-       "coverage": 0.7877,
-       "width_pct": 2.1173,
-       "median_width_pct": 2.0295,
-       "interval_score": 3.5891
+       "n": 353,
+       "coverage": 0.7762,
+       "width_pct": 2.147,
+       "median_width_pct": 2.0403,
+       "interval_score": 3.9042
       },
       "b2": {
-       "n": 325,
-       "coverage": 0.8492,
-       "width_pct": 2.4966,
-       "median_width_pct": 2.3094,
-       "interval_score": 3.7821
+       "n": 353,
+       "coverage": 0.8357,
+       "width_pct": 2.5558,
+       "median_width_pct": 2.3972,
+       "interval_score": 4.0527
       }
      }
     },
     "events": {
-     "windows": 136,
+     "windows": 137,
      "first": "2021-01-05 19:00:00",
-     "last": "2027-11-17 19:00:00",
+     "last": "2027-11-18 19:00:00",
      "m": {
-      "n": 136,
-      "coverage": 0.6324,
-      "width_pct": 2.4531,
-      "median_width_pct": 2.1674,
-      "interval_score": 7.2006
+      "n": 137,
+      "coverage": 0.635,
+      "width_pct": 2.4543,
+      "median_width_pct": 2.1835,
+      "interval_score": 7.1687
      },
      "b1": {
-      "n": 136,
-      "coverage": 0.6838,
-      "width_pct": 2.3028,
-      "median_width_pct": 2.0497,
-      "interval_score": 7.6912
+      "n": 137,
+      "coverage": 0.6861,
+      "width_pct": 2.2995,
+      "median_width_pct": 2.0265,
+      "interval_score": 7.6485
      },
      "b2": {
-      "n": 136,
-      "coverage": 0.6397,
-      "width_pct": 2.6918,
-      "median_width_pct": 2.3316,
-      "interval_score": 7.123
+      "n": 137,
+      "coverage": 0.6423,
+      "width_pct": 2.69,
+      "median_width_pct": 2.3472,
+      "interval_score": 7.0888
      }
     },
     "calibration_quantiles": [
-     -1.476,
-     1.539
+     -1.491,
+     1.521
     ],
     "gates": {
      "G1 holdout coverage 77-83%": true,
@@ -1100,129 +1100,129 @@
     "horizon": "24h",
     "bars": 24,
     "qualified": true,
-    "period": "2018-04-04 -> 2026-11-13",
-    "holdout_from": "2025-02-23",
+    "period": "2018-04-04 -> 2026-11-19",
+    "holdout_from": "2025-02-28",
     "walk_forward": {
      "m": {
-      "n": 11276,
-      "coverage": 0.7982,
-      "width_pct": 7.2006,
-      "median_width_pct": 6.6338,
-      "interval_score": 11.6315
+      "n": 11304,
+      "coverage": 0.7973,
+      "width_pct": 7.1985,
+      "median_width_pct": 6.6355,
+      "interval_score": 11.6542
      },
      "b1": {
-      "n": 11276,
-      "coverage": 0.8017,
-      "width_pct": 7.1996,
-      "median_width_pct": 7.2517,
-      "interval_score": 11.9577
+      "n": 11304,
+      "coverage": 0.8009,
+      "width_pct": 7.1974,
+      "median_width_pct": 7.2483,
+      "interval_score": 11.9778
      },
      "b2": {
-      "n": 11276,
-      "coverage": 0.776,
-      "width_pct": 7.4257,
-      "median_width_pct": 6.4844,
-      "interval_score": 12.124
+      "n": 11304,
+      "coverage": 0.7753,
+      "width_pct": 7.4247,
+      "median_width_pct": 6.487,
+      "interval_score": 12.1445
      },
      "best_baseline": "b1"
     },
     "holdout": {
      "m": {
-      "n": 3770,
-      "coverage": 0.8186,
-      "width_pct": 5.2869,
-      "median_width_pct": 4.9615,
-      "interval_score": 7.9375
+      "n": 3778,
+      "coverage": 0.8203,
+      "width_pct": 5.2347,
+      "median_width_pct": 4.9144,
+      "interval_score": 7.8409
      },
      "b1": {
-      "n": 3770,
-      "coverage": 0.8151,
-      "width_pct": 5.3117,
-      "median_width_pct": 5.0943,
-      "interval_score": 8.2272
+      "n": 3778,
+      "coverage": 0.8171,
+      "width_pct": 5.301,
+      "median_width_pct": 5.0876,
+      "interval_score": 8.1445
      },
      "b2": {
-      "n": 3770,
-      "coverage": 0.7817,
-      "width_pct": 5.169,
-      "median_width_pct": 4.6289,
-      "interval_score": 8.0837
+      "n": 3778,
+      "coverage": 0.7848,
+      "width_pct": 5.1815,
+      "median_width_pct": 4.643,
+      "interval_score": 8.0177
      },
      "best_baseline": "b2"
     },
-    "score_diff_vs_best": -0.3263,
+    "score_diff_vs_best": -0.3237,
     "score_diff_ci99": [
-     -0.5311,
-     -0.1289
+     -0.534,
+     -0.1437
     ],
     "regimes": {
      "low": {
       "m": {
-       "n": 3759,
-       "coverage": 0.7728,
-       "width_pct": 4.7407,
-       "median_width_pct": 4.7717,
-       "interval_score": 8.7322
+       "n": 3768,
+       "coverage": 0.7704,
+       "width_pct": 4.7423,
+       "median_width_pct": 4.7712,
+       "interval_score": 8.7935
       },
       "b1": {
-       "n": 3759,
-       "coverage": 0.8388,
-       "width_pct": 6.2468,
+       "n": 3768,
+       "coverage": 0.8368,
+       "width_pct": 6.247,
        "median_width_pct": 6.3033,
-       "interval_score": 9.0278
+       "interval_score": 9.075
       },
       "b2": {
-       "n": 3759,
-       "coverage": 0.7313,
-       "width_pct": 4.4478,
-       "median_width_pct": 4.2589,
-       "interval_score": 8.9851
+       "n": 3768,
+       "coverage": 0.7298,
+       "width_pct": 4.4521,
+       "median_width_pct": 4.2529,
+       "interval_score": 9.0468
       }
      },
      "mid": {
       "m": {
-       "n": 3758,
-       "coverage": 0.7962,
-       "width_pct": 6.7597,
-       "median_width_pct": 6.6962,
-       "interval_score": 11.3224
+       "n": 3768,
+       "coverage": 0.7956,
+       "width_pct": 6.7595,
+       "median_width_pct": 6.6967,
+       "interval_score": 11.3342
       },
       "b1": {
-       "n": 3758,
-       "coverage": 0.8257,
-       "width_pct": 7.4006,
+       "n": 3768,
+       "coverage": 0.8248,
+       "width_pct": 7.3928,
        "median_width_pct": 7.2989,
-       "interval_score": 11.3499
+       "interval_score": 11.37
       },
       "b2": {
-       "n": 3758,
-       "coverage": 0.7741,
-       "width_pct": 6.8096,
+       "n": 3768,
+       "coverage": 0.7736,
+       "width_pct": 6.8122,
        "median_width_pct": 6.4993,
-       "interval_score": 11.7673
+       "interval_score": 11.769
       }
      },
      "high": {
       "m": {
-       "n": 3759,
-       "coverage": 0.8258,
-       "width_pct": 10.1014,
-       "median_width_pct": 9.381,
-       "interval_score": 14.8397
+       "n": 3768,
+       "coverage": 0.8259,
+       "width_pct": 10.0938,
+       "median_width_pct": 9.3721,
+       "interval_score": 14.8348
       },
       "b1": {
-       "n": 3759,
-       "coverage": 0.7406,
-       "width_pct": 7.9514,
-       "median_width_pct": 8.2215,
-       "interval_score": 15.4954
+       "n": 3768,
+       "coverage": 0.741,
+       "width_pct": 7.9525,
+       "median_width_pct": 8.2227,
+       "interval_score": 15.4886
       },
       "b2": {
-       "n": 3759,
-       "coverage": 0.8226,
-       "width_pct": 11.0196,
-       "median_width_pct": 9.6092,
-       "interval_score": 15.6195
+       "n": 3768,
+       "coverage": 0.8225,
+       "width_pct": 11.0098,
+       "median_width_pct": 9.6011,
+       "interval_score": 15.6178
       }
      }
     },
@@ -1309,50 +1309,50 @@
      },
      "2025": {
       "m": {
-       "n": 322,
-       "coverage": 0.8478,
-       "width_pct": 6.3785,
-       "median_width_pct": 6.1659,
-       "interval_score": 8.2922
+       "n": 350,
+       "coverage": 0.8143,
+       "width_pct": 6.3763,
+       "median_width_pct": 6.1932,
+       "interval_score": 9.2927
       },
       "b1": {
-       "n": 322,
-       "coverage": 0.8571,
-       "width_pct": 6.3485,
-       "median_width_pct": 6.3417,
-       "interval_score": 8.2429
+       "n": 350,
+       "coverage": 0.8257,
+       "width_pct": 6.3452,
+       "median_width_pct": 6.3319,
+       "interval_score": 9.1893
       }
      }
     },
     "events": {
-     "windows": 813,
+     "windows": 819,
      "first": "2021-01-05 19:00:00",
-     "last": "2027-11-17 19:00:00",
+     "last": "2027-11-18 19:00:00",
      "m": {
-      "n": 813,
-      "coverage": 0.7934,
-      "width_pct": 6.485,
-      "median_width_pct": 5.998,
-      "interval_score": 9.849
+      "n": 819,
+      "coverage": 0.7912,
+      "width_pct": 6.4553,
+      "median_width_pct": 5.9599,
+      "interval_score": 9.8327
      },
      "b1": {
-      "n": 813,
-      "coverage": 0.77,
-      "width_pct": 6.2251,
-      "median_width_pct": 5.6893,
-      "interval_score": 10.5874
+      "n": 819,
+      "coverage": 0.7717,
+      "width_pct": 6.2159,
+      "median_width_pct": 5.6782,
+      "interval_score": 10.5462
      },
      "b2": {
-      "n": 813,
-      "coverage": 0.7786,
-      "width_pct": 6.5842,
-      "median_width_pct": 5.7028,
-      "interval_score": 10.0124
+      "n": 819,
+      "coverage": 0.7802,
+      "width_pct": 6.5824,
+      "median_width_pct": 5.713,
+      "interval_score": 9.9855
      }
     },
     "calibration_quantiles": [
-     -1.376,
-     1.453
+     -1.418,
+     1.378
     ],
     "gates": {
      "G1 holdout coverage 77-83%": true,
@@ -1367,129 +1367,129 @@
     "horizon": "1w",
     "bars": 168,
     "qualified": false,
-    "period": "2018-04-11 -> 2026-11-07",
-    "holdout_from": "2025-02-20",
+    "period": "2018-04-11 -> 2026-11-13",
+    "holdout_from": "2025-02-25",
     "walk_forward": {
      "m": {
-      "n": 1510,
-      "coverage": 0.7828,
-      "width_pct": 20.4797,
-      "median_width_pct": 19.8326,
-      "interval_score": 32.919
+      "n": 1515,
+      "coverage": 0.7809,
+      "width_pct": 20.4576,
+      "median_width_pct": 19.7904,
+      "interval_score": 33.0529
      },
      "b1": {
-      "n": 1510,
-      "coverage": 0.8,
-      "width_pct": 20.4418,
-      "median_width_pct": 19.6402,
-      "interval_score": 31.4461
+      "n": 1515,
+      "coverage": 0.798,
+      "width_pct": 20.4286,
+      "median_width_pct": 19.5807,
+      "interval_score": 31.5758
      },
      "b2": {
-      "n": 1510,
-      "coverage": 0.7556,
-      "width_pct": 19.8984,
-      "median_width_pct": 17.8822,
-      "interval_score": 33.2174
+      "n": 1515,
+      "coverage": 0.7538,
+      "width_pct": 19.8679,
+      "median_width_pct": 17.8509,
+      "interval_score": 33.3477
      },
      "best_baseline": "b1"
     },
     "holdout": {
      "m": {
-      "n": 626,
-      "coverage": 0.8514,
-      "width_pct": 14.8302,
-      "median_width_pct": 14.3029,
-      "interval_score": 21.7182
+      "n": 627,
+      "coverage": 0.8405,
+      "width_pct": 14.5515,
+      "median_width_pct": 14.0465,
+      "interval_score": 21.8996
      },
      "b1": {
-      "n": 626,
-      "coverage": 0.8259,
-      "width_pct": 14.0481,
-      "median_width_pct": 13.7134,
-      "interval_score": 21.3309
+      "n": 627,
+      "coverage": 0.823,
+      "width_pct": 14.0135,
+      "median_width_pct": 13.7022,
+      "interval_score": 21.6288
      },
      "b2": {
-      "n": 626,
-      "coverage": 0.7955,
-      "width_pct": 13.9195,
-      "median_width_pct": 12.4671,
-      "interval_score": 22.2102
+      "n": 627,
+      "coverage": 0.7927,
+      "width_pct": 13.9404,
+      "median_width_pct": 12.4926,
+      "interval_score": 22.5117
      },
      "best_baseline": "b1"
     },
-    "score_diff_vs_best": 1.4729,
+    "score_diff_vs_best": 1.4771,
     "score_diff_ci99": [
-     0.3067,
-     2.7642
+     0.2759,
+     2.7807
     ],
     "regimes": {
      "low": {
       "m": {
-       "n": 504,
-       "coverage": 0.754,
-       "width_pct": 15.5533,
-       "median_width_pct": 15.691,
-       "interval_score": 28.3835
+       "n": 505,
+       "coverage": 0.7465,
+       "width_pct": 15.5119,
+       "median_width_pct": 15.5985,
+       "interval_score": 28.908
       },
       "b1": {
-       "n": 504,
-       "coverage": 0.8075,
-       "width_pct": 17.4073,
-       "median_width_pct": 16.6693,
-       "interval_score": 26.2544
+       "n": 505,
+       "coverage": 0.8,
+       "width_pct": 17.4045,
+       "median_width_pct": 16.6305,
+       "interval_score": 26.7719
       },
       "b2": {
-       "n": 504,
-       "coverage": 0.6905,
-       "width_pct": 12.2651,
-       "median_width_pct": 11.6752,
-       "interval_score": 28.2082
+       "n": 505,
+       "coverage": 0.6832,
+       "width_pct": 12.2039,
+       "median_width_pct": 11.592,
+       "interval_score": 28.7297
       }
      },
      "mid": {
       "m": {
-       "n": 503,
-       "coverage": 0.7594,
-       "width_pct": 20.0899,
-       "median_width_pct": 19.9384,
-       "interval_score": 33.9861
+       "n": 505,
+       "coverage": 0.7604,
+       "width_pct": 20.0605,
+       "median_width_pct": 19.928,
+       "interval_score": 33.9016
       },
       "b1": {
-       "n": 503,
-       "coverage": 0.7952,
-       "width_pct": 21.0421,
-       "median_width_pct": 19.8401,
-       "interval_score": 32.8614
+       "n": 505,
+       "coverage": 0.796,
+       "width_pct": 20.9792,
+       "median_width_pct": 19.5807,
+       "interval_score": 32.7517
       },
       "b2": {
-       "n": 503,
-       "coverage": 0.7336,
-       "width_pct": 18.22,
+       "n": 505,
+       "coverage": 0.7347,
+       "width_pct": 18.1998,
        "median_width_pct": 17.731,
-       "interval_score": 33.0767
+       "interval_score": 32.9977
       }
      },
      "high": {
       "m": {
-       "n": 503,
-       "coverage": 0.835,
-       "width_pct": 25.8057,
+       "n": 505,
+       "coverage": 0.8356,
+       "width_pct": 25.8003,
        "median_width_pct": 25.1889,
-       "interval_score": 36.3965
+       "interval_score": 36.3491
       },
       "b1": {
-       "n": 503,
-       "coverage": 0.7972,
-       "width_pct": 22.8819,
-       "median_width_pct": 23.0374,
-       "interval_score": 35.2327
+       "n": 505,
+       "coverage": 0.798,
+       "width_pct": 22.902,
+       "median_width_pct": 23.0477,
+       "interval_score": 35.2038
       },
       "b2": {
-       "n": 503,
-       "coverage": 0.8429,
-       "width_pct": 29.2252,
-       "median_width_pct": 26.2164,
-       "interval_score": 38.3773
+       "n": 505,
+       "coverage": 0.8436,
+       "width_pct": 29.2,
+       "median_width_pct": 26.2023,
+       "interval_score": 38.3159
       }
      }
     },
@@ -1560,50 +1560,50 @@
      },
      "2025": {
       "m": {
-       "n": 50,
-       "coverage": 0.9,
-       "width_pct": 18.0272,
-       "median_width_pct": 17.4209,
-       "interval_score": 18.8136
+       "n": 55,
+       "coverage": 0.8364,
+       "width_pct": 17.6394,
+       "median_width_pct": 17.2501,
+       "interval_score": 23.784
       },
       "b1": {
-       "n": 50,
-       "coverage": 0.92,
-       "width_pct": 16.8789,
-       "median_width_pct": 16.8681,
-       "interval_score": 17.731
+       "n": 55,
+       "coverage": 0.8545,
+       "width_pct": 16.8398,
+       "median_width_pct": 16.8323,
+       "interval_score": 22.5518
       }
      }
     },
     "events": {
-     "windows": 865,
+     "windows": 870,
      "first": "2021-01-05 19:00:00",
-     "last": "2027-11-17 19:00:00",
+     "last": "2027-11-18 19:00:00",
      "m": {
-      "n": 865,
-      "coverage": 0.8324,
-      "width_pct": 17.7216,
-      "median_width_pct": 16.7832,
-      "interval_score": 27.1805
+      "n": 870,
+      "coverage": 0.8253,
+      "width_pct": 17.5707,
+      "median_width_pct": 16.5555,
+      "interval_score": 27.5429
      },
      "b1": {
-      "n": 865,
-      "coverage": 0.8405,
-      "width_pct": 17.4726,
-      "median_width_pct": 15.9084,
-      "interval_score": 26.6833
+      "n": 870,
+      "coverage": 0.8356,
+      "width_pct": 17.4437,
+      "median_width_pct": 15.8703,
+      "interval_score": 27.0938
      },
      "b2": {
-      "n": 865,
-      "coverage": 0.7757,
-      "width_pct": 16.5832,
-      "median_width_pct": 14.705,
-      "interval_score": 27.511
+      "n": 870,
+      "coverage": 0.7713,
+      "width_pct": 16.5616,
+      "median_width_pct": 14.6826,
+      "interval_score": 27.9427
      }
     },
     "calibration_quantiles": [
-     -1.111,
-     1.345
+     -1.112,
+     1.299
     ],
     "gates": {
      "G1 holdout coverage 77-83%": false,
@@ -1620,129 +1620,129 @@
     "horizon": "4h",
     "bars": 4,
     "qualified": true,
-    "period": "2018-04-03 -> 2026-11-14",
-    "holdout_from": "2025-02-24",
+    "period": "2018-04-03 -> 2026-11-20",
+    "holdout_from": "2025-02-28",
     "walk_forward": {
      "m": {
-      "n": 11279,
-      "coverage": 0.7955,
-      "width_pct": 3.3317,
-      "median_width_pct": 3.0112,
-      "interval_score": 5.6777
+      "n": 11307,
+      "coverage": 0.7954,
+      "width_pct": 3.3344,
+      "median_width_pct": 3.0163,
+      "interval_score": 5.6868
      },
      "b1": {
-      "n": 11279,
-      "coverage": 0.7937,
-      "width_pct": 3.3795,
-      "median_width_pct": 3.3995,
-      "interval_score": 6.0994
+      "n": 11307,
+      "coverage": 0.7932,
+      "width_pct": 3.3784,
+      "median_width_pct": 3.3926,
+      "interval_score": 6.1092
      },
      "b2": {
-      "n": 11279,
-      "coverage": 0.8256,
-      "width_pct": 3.8523,
-      "median_width_pct": 3.3574,
-      "interval_score": 5.7957
+      "n": 11307,
+      "coverage": 0.8257,
+      "width_pct": 3.8563,
+      "median_width_pct": 3.361,
+      "interval_score": 5.805
      },
      "best_baseline": "b2"
     },
     "holdout": {
      "m": {
-      "n": 3772,
-      "coverage": 0.7943,
-      "width_pct": 2.7279,
-      "median_width_pct": 2.5724,
-      "interval_score": 4.8632
+      "n": 3780,
+      "coverage": 0.7939,
+      "width_pct": 2.7058,
+      "median_width_pct": 2.5599,
+      "interval_score": 4.8404
      },
      "b1": {
-      "n": 3772,
-      "coverage": 0.8176,
-      "width_pct": 2.9752,
-      "median_width_pct": 3.0558,
-      "interval_score": 5.1184
+      "n": 3780,
+      "coverage": 0.8175,
+      "width_pct": 2.9706,
+      "median_width_pct": 3.0554,
+      "interval_score": 5.0964
      },
      "b2": {
-      "n": 3772,
-      "coverage": 0.8277,
-      "width_pct": 3.1768,
-      "median_width_pct": 2.8901,
-      "interval_score": 5.0447
+      "n": 3780,
+      "coverage": 0.8272,
+      "width_pct": 3.1693,
+      "median_width_pct": 2.8903,
+      "interval_score": 5.024
      },
      "best_baseline": "b2"
     },
-    "score_diff_vs_best": -0.118,
+    "score_diff_vs_best": -0.1182,
     "score_diff_ci99": [
-     -0.1729,
-     -0.0627
+     -0.17,
+     -0.061
     ],
     "regimes": {
      "low": {
       "m": {
-       "n": 3760,
-       "coverage": 0.8101,
-       "width_pct": 2.0731,
-       "median_width_pct": 2.0286,
-       "interval_score": 3.705
+       "n": 3769,
+       "coverage": 0.81,
+       "width_pct": 2.0744,
+       "median_width_pct": 2.0296,
+       "interval_score": 3.713
       },
       "b1": {
-       "n": 3760,
-       "coverage": 0.8574,
-       "width_pct": 2.7981,
-       "median_width_pct": 2.5675,
-       "interval_score": 4.057
+       "n": 3769,
+       "coverage": 0.8573,
+       "width_pct": 2.8002,
+       "median_width_pct": 2.5697,
+       "interval_score": 4.0646
       },
       "b2": {
-       "n": 3760,
-       "coverage": 0.8202,
-       "width_pct": 2.2504,
-       "median_width_pct": 2.1589,
-       "interval_score": 3.7848
+       "n": 3769,
+       "coverage": 0.8201,
+       "width_pct": 2.2519,
+       "median_width_pct": 2.1605,
+       "interval_score": 3.7925
       }
      },
      "mid": {
       "m": {
-       "n": 3759,
-       "coverage": 0.789,
-       "width_pct": 3.0764,
-       "median_width_pct": 3.0193,
-       "interval_score": 5.4455
+       "n": 3769,
+       "coverage": 0.7888,
+       "width_pct": 3.0804,
+       "median_width_pct": 3.0208,
+       "interval_score": 5.4589
       },
       "b1": {
-       "n": 3759,
-       "coverage": 0.8143,
-       "width_pct": 3.4684,
-       "median_width_pct": 3.4253,
-       "interval_score": 5.6143
+       "n": 3769,
+       "coverage": 0.8135,
+       "width_pct": 3.4661,
+       "median_width_pct": 3.4243,
+       "interval_score": 5.6311
       },
       "b2": {
-       "n": 3759,
+       "n": 3769,
        "coverage": 0.818,
-       "width_pct": 3.5037,
-       "median_width_pct": 3.3692,
-       "interval_score": 5.5787
+       "width_pct": 3.5098,
+       "median_width_pct": 3.3735,
+       "interval_score": 5.5928
       }
      },
      "high": {
       "m": {
-       "n": 3760,
-       "coverage": 0.7872,
-       "width_pct": 4.8456,
-       "median_width_pct": 4.431,
-       "interval_score": 7.8824
+       "n": 3769,
+       "coverage": 0.7875,
+       "width_pct": 4.8484,
+       "median_width_pct": 4.4355,
+       "interval_score": 7.8885
       },
       "b1": {
-       "n": 3760,
-       "coverage": 0.7093,
-       "width_pct": 3.8721,
-       "median_width_pct": 4.0113,
-       "interval_score": 8.6268
+       "n": 3769,
+       "coverage": 0.7089,
+       "width_pct": 3.8688,
+       "median_width_pct": 4.0104,
+       "interval_score": 8.6318
       },
       "b2": {
-       "n": 3760,
-       "coverage": 0.8386,
-       "width_pct": 5.8027,
-       "median_width_pct": 5.0667,
-       "interval_score": 8.0234
+       "n": 3769,
+       "coverage": 0.8389,
+       "width_pct": 5.8073,
+       "median_width_pct": 5.0781,
+       "interval_score": 8.0297
       }
      }
     },
@@ -1829,50 +1829,50 @@
      },
      "2025": {
       "m": {
-       "n": 325,
-       "coverage": 0.7815,
-       "width_pct": 3.3066,
-       "median_width_pct": 3.032,
-       "interval_score": 5.6897
+       "n": 353,
+       "coverage": 0.7819,
+       "width_pct": 3.3948,
+       "median_width_pct": 3.1677,
+       "interval_score": 5.9808
       },
       "b2": {
-       "n": 325,
-       "coverage": 0.8308,
-       "width_pct": 3.8554,
-       "median_width_pct": 3.5902,
-       "interval_score": 5.8185
+       "n": 353,
+       "coverage": 0.8329,
+       "width_pct": 3.9847,
+       "median_width_pct": 3.6601,
+       "interval_score": 6.1158
       }
      }
     },
     "events": {
-     "windows": 136,
+     "windows": 137,
      "first": "2021-01-05 19:00:00",
-     "last": "2027-11-17 19:00:00",
+     "last": "2027-11-18 19:00:00",
      "m": {
-      "n": 136,
-      "coverage": 0.6471,
-      "width_pct": 3.4357,
-      "median_width_pct": 3.1498,
-      "interval_score": 9.3982
+      "n": 137,
+      "coverage": 0.6496,
+      "width_pct": 3.4252,
+      "median_width_pct": 3.1599,
+      "interval_score": 9.3678
      },
      "b1": {
-      "n": 136,
-      "coverage": 0.6838,
-      "width_pct": 3.176,
-      "median_width_pct": 3.0909,
-      "interval_score": 10.0592
+      "n": 137,
+      "coverage": 0.6861,
+      "width_pct": 3.1706,
+      "median_width_pct": 3.0877,
+      "interval_score": 10.0036
      },
      "b2": {
-      "n": 136,
-      "coverage": 0.6397,
-      "width_pct": 3.7008,
-      "median_width_pct": 3.1452,
-      "interval_score": 9.2545
+      "n": 137,
+      "coverage": 0.6423,
+      "width_pct": 3.696,
+      "median_width_pct": 3.137,
+      "interval_score": 9.2092
      }
     },
     "calibration_quantiles": [
-     -1.472,
-     1.522
+     -1.48,
+     1.494
     ],
     "gates": {
      "G1 holdout coverage 77-83%": true,
@@ -1887,129 +1887,129 @@
     "horizon": "24h",
     "bars": 24,
     "qualified": true,
-    "period": "2018-04-04 -> 2026-11-13",
-    "holdout_from": "2025-02-23",
+    "period": "2018-04-04 -> 2026-11-19",
+    "holdout_from": "2025-02-28",
     "walk_forward": {
      "m": {
-      "n": 11276,
-      "coverage": 0.7991,
-      "width_pct": 9.2721,
-      "median_width_pct": 8.6334,
-      "interval_score": 14.5643
+      "n": 11304,
+      "coverage": 0.7986,
+      "width_pct": 9.2759,
+      "median_width_pct": 8.6396,
+      "interval_score": 14.5967
      },
      "b1": {
-      "n": 11276,
-      "coverage": 0.7967,
-      "width_pct": 9.1819,
-      "median_width_pct": 9.5044,
-      "interval_score": 15.0765
+      "n": 11304,
+      "coverage": 0.7957,
+      "width_pct": 9.1784,
+      "median_width_pct": 9.4928,
+      "interval_score": 15.1129
      },
      "b2": {
-      "n": 11276,
-      "coverage": 0.775,
-      "width_pct": 9.4368,
-      "median_width_pct": 8.2251,
-      "interval_score": 15.022
+      "n": 11304,
+      "coverage": 0.7745,
+      "width_pct": 9.4445,
+      "median_width_pct": 8.232,
+      "interval_score": 15.0568
      },
      "best_baseline": "b2"
     },
     "holdout": {
      "m": {
-      "n": 3770,
-      "coverage": 0.7889,
-      "width_pct": 7.5358,
-      "median_width_pct": 7.3113,
-      "interval_score": 12.5229
+      "n": 3778,
+      "coverage": 0.7996,
+      "width_pct": 7.6874,
+      "median_width_pct": 7.4748,
+      "interval_score": 12.4442
      },
      "b1": {
-      "n": 3770,
-      "coverage": 0.8188,
-      "width_pct": 8.2288,
-      "median_width_pct": 8.4304,
-      "interval_score": 12.8303
+      "n": 3778,
+      "coverage": 0.8216,
+      "width_pct": 8.219,
+      "median_width_pct": 8.4294,
+      "interval_score": 12.6989
      },
      "b2": {
-      "n": 3770,
-      "coverage": 0.7753,
-      "width_pct": 7.7798,
-      "median_width_pct": 7.0749,
-      "interval_score": 12.8817
+      "n": 3778,
+      "coverage": 0.7774,
+      "width_pct": 7.7663,
+      "median_width_pct": 7.0793,
+      "interval_score": 12.7799
      },
      "best_baseline": "b1"
     },
-    "score_diff_vs_best": -0.4577,
+    "score_diff_vs_best": -0.4601,
     "score_diff_ci99": [
-     -0.631,
-     -0.2955
+     -0.6351,
+     -0.2855
     ],
     "regimes": {
      "low": {
       "m": {
-       "n": 3759,
-       "coverage": 0.7984,
-       "width_pct": 6.1721,
-       "median_width_pct": 6.1457,
-       "interval_score": 10.2123
+       "n": 3768,
+       "coverage": 0.7986,
+       "width_pct": 6.1759,
+       "median_width_pct": 6.1493,
+       "interval_score": 10.2086
       },
       "b1": {
-       "n": 3759,
-       "coverage": 0.8513,
-       "width_pct": 7.8711,
+       "n": 3768,
+       "coverage": 0.8516,
+       "width_pct": 7.8753,
        "median_width_pct": 7.367,
-       "interval_score": 10.7375
+       "interval_score": 10.735
       },
       "b2": {
-       "n": 3759,
-       "coverage": 0.7465,
-       "width_pct": 5.5121,
-       "median_width_pct": 5.2863,
-       "interval_score": 10.3816
+       "n": 3768,
+       "coverage": 0.7468,
+       "width_pct": 5.5155,
+       "median_width_pct": 5.2917,
+       "interval_score": 10.3776
       }
      },
      "mid": {
       "m": {
-       "n": 3758,
-       "coverage": 0.7932,
-       "width_pct": 8.7411,
-       "median_width_pct": 8.6732,
-       "interval_score": 14.3143
+       "n": 3768,
+       "coverage": 0.7917,
+       "width_pct": 8.7475,
+       "median_width_pct": 8.6799,
+       "interval_score": 14.4011
       },
       "b1": {
-       "n": 3758,
-       "coverage": 0.8121,
-       "width_pct": 9.3624,
-       "median_width_pct": 9.5552,
-       "interval_score": 14.5146
+       "n": 3768,
+       "coverage": 0.81,
+       "width_pct": 9.3553,
+       "median_width_pct": 9.5493,
+       "interval_score": 14.5964
       },
       "b2": {
-       "n": 3758,
-       "coverage": 0.7664,
-       "width_pct": 8.5838,
-       "median_width_pct": 8.2543,
-       "interval_score": 14.6397
+       "n": 3768,
+       "coverage": 0.7649,
+       "width_pct": 8.5973,
+       "median_width_pct": 8.2629,
+       "interval_score": 14.7367
       }
      },
      "high": {
       "m": {
-       "n": 3759,
-       "coverage": 0.8058,
-       "width_pct": 12.9029,
-       "median_width_pct": 12.097,
-       "interval_score": 19.1663
+       "n": 3768,
+       "coverage": 0.8055,
+       "width_pct": 12.9044,
+       "median_width_pct": 12.0964,
+       "interval_score": 19.1804
       },
       "b1": {
-       "n": 3759,
-       "coverage": 0.7268,
-       "width_pct": 10.3123,
-       "median_width_pct": 10.8228,
-       "interval_score": 19.9772
+       "n": 3768,
+       "coverage": 0.7256,
+       "width_pct": 10.3047,
+       "median_width_pct": 10.8219,
+       "interval_score": 20.0075
       },
       "b2": {
-       "n": 3759,
-       "coverage": 0.8122,
-       "width_pct": 14.2143,
-       "median_width_pct": 12.413,
-       "interval_score": 20.0447
+       "n": 3768,
+       "coverage": 0.8118,
+       "width_pct": 14.2206,
+       "median_width_pct": 12.4277,
+       "interval_score": 20.056
       }
      }
     },
@@ -2096,50 +2096,50 @@
      },
      "2025": {
       "m": {
-       "n": 322,
-       "coverage": 0.8168,
-       "width_pct": 9.1679,
-       "median_width_pct": 8.651,
-       "interval_score": 14.4377
+       "n": 350,
+       "coverage": 0.7971,
+       "width_pct": 9.3017,
+       "median_width_pct": 8.8268,
+       "interval_score": 15.4938
       },
       "b2": {
-       "n": 322,
-       "coverage": 0.8168,
-       "width_pct": 9.4689,
-       "median_width_pct": 8.8046,
-       "interval_score": 15.0873
+       "n": 350,
+       "coverage": 0.7971,
+       "width_pct": 9.7131,
+       "median_width_pct": 8.94,
+       "interval_score": 16.2036
       }
      }
     },
     "events": {
-     "windows": 813,
+     "windows": 819,
      "first": "2021-01-05 19:00:00",
-     "last": "2027-11-17 19:00:00",
+     "last": "2027-11-18 19:00:00",
      "m": {
-      "n": 813,
-      "coverage": 0.7294,
-      "width_pct": 8.6708,
-      "median_width_pct": 8.1999,
-      "interval_score": 16.0378
+      "n": 819,
+      "coverage": 0.735,
+      "width_pct": 8.7548,
+      "median_width_pct": 8.2559,
+      "interval_score": 16.021
      },
      "b1": {
-      "n": 813,
-      "coverage": 0.7208,
-      "width_pct": 8.6855,
-      "median_width_pct": 8.5202,
-      "interval_score": 16.6939
+      "n": 819,
+      "coverage": 0.7228,
+      "width_pct": 8.6721,
+      "median_width_pct": 8.5001,
+      "interval_score": 16.6218
      },
      "b2": {
-      "n": 813,
-      "coverage": 0.7245,
-      "width_pct": 9.0147,
+      "n": 819,
+      "coverage": 0.7265,
+      "width_pct": 9.0076,
       "median_width_pct": 7.9724,
-      "interval_score": 16.3571
+      "interval_score": 16.2962
      }
     },
     "calibration_quantiles": [
-     -1.374,
-     1.301
+     -1.462,
+     1.272
     ],
     "gates": {
      "G1 holdout coverage 77-83%": true,
@@ -2154,129 +2154,129 @@
     "horizon": "1w",
     "bars": 168,
     "qualified": false,
-    "period": "2018-04-11 -> 2026-11-07",
-    "holdout_from": "2025-02-20",
+    "period": "2018-04-11 -> 2026-11-13",
+    "holdout_from": "2025-02-25",
     "walk_forward": {
      "m": {
-      "n": 1510,
-      "coverage": 0.7762,
-      "width_pct": 25.1703,
-      "median_width_pct": 25.1047,
-      "interval_score": 40.5396
+      "n": 1515,
+      "coverage": 0.7736,
+      "width_pct": 25.176,
+      "median_width_pct": 25.1492,
+      "interval_score": 40.6615
      },
      "b1": {
-      "n": 1510,
-      "coverage": 0.8,
-      "width_pct": 25.3165,
+      "n": 1515,
+      "coverage": 0.7974,
+      "width_pct": 25.3032,
       "median_width_pct": 27.0435,
-      "interval_score": 39.107
+      "interval_score": 39.2663
      },
      "b2": {
-      "n": 1510,
-      "coverage": 0.7391,
-      "width_pct": 24.8352,
-      "median_width_pct": 21.7887,
-      "interval_score": 42.052
+      "n": 1515,
+      "coverage": 0.7366,
+      "width_pct": 24.8197,
+      "median_width_pct": 21.7797,
+      "interval_score": 42.2238
      },
      "best_baseline": "b1"
     },
     "holdout": {
      "m": {
-      "n": 626,
-      "coverage": 0.8147,
-      "width_pct": 22.3806,
-      "median_width_pct": 22.1821,
-      "interval_score": 34.8359
+      "n": 627,
+      "coverage": 0.8102,
+      "width_pct": 21.888,
+      "median_width_pct": 21.7035,
+      "interval_score": 34.862
      },
      "b1": {
-      "n": 626,
-      "coverage": 0.8211,
-      "width_pct": 22.1471,
-      "median_width_pct": 22.1069,
-      "interval_score": 34.8005
+      "n": 627,
+      "coverage": 0.8198,
+      "width_pct": 22.1086,
+      "median_width_pct": 22.1051,
+      "interval_score": 34.8234
      },
      "b2": {
-      "n": 626,
-      "coverage": 0.7572,
-      "width_pct": 21.1156,
-      "median_width_pct": 18.7657,
-      "interval_score": 37.201
+      "n": 627,
+      "coverage": 0.7592,
+      "width_pct": 21.1146,
+      "median_width_pct": 18.7807,
+      "interval_score": 37.1993
      },
      "best_baseline": "b1"
     },
-    "score_diff_vs_best": 1.4326,
+    "score_diff_vs_best": 1.3951,
     "score_diff_ci99": [
-     -0.0033,
-     2.916
+     0.0656,
+     2.7937
     ],
     "regimes": {
      "low": {
       "m": {
-       "n": 504,
-       "coverage": 0.7579,
-       "width_pct": 19.7489,
-       "median_width_pct": 19.1541,
-       "interval_score": 30.9258
+       "n": 505,
+       "coverage": 0.7564,
+       "width_pct": 19.7586,
+       "median_width_pct": 19.1579,
+       "interval_score": 31.0358
       },
       "b1": {
-       "n": 504,
-       "coverage": 0.8234,
-       "width_pct": 21.4325,
+       "n": 505,
+       "coverage": 0.8218,
+       "width_pct": 21.4322,
        "median_width_pct": 20.2856,
-       "interval_score": 29.5591
+       "interval_score": 29.6756
       },
       "b2": {
-       "n": 504,
-       "coverage": 0.6905,
-       "width_pct": 14.5719,
-       "median_width_pct": 13.6956,
-       "interval_score": 30.9275
+       "n": 505,
+       "coverage": 0.6891,
+       "width_pct": 14.5723,
+       "median_width_pct": 13.705,
+       "interval_score": 31.097
       }
      },
      "mid": {
       "m": {
-       "n": 503,
-       "coverage": 0.7455,
-       "width_pct": 24.5251,
-       "median_width_pct": 25.2893,
-       "interval_score": 44.6599
+       "n": 505,
+       "coverage": 0.7386,
+       "width_pct": 24.5264,
+       "median_width_pct": 25.302,
+       "interval_score": 44.9597
       },
       "b1": {
-       "n": 503,
-       "coverage": 0.7734,
-       "width_pct": 25.8892,
-       "median_width_pct": 27.0733,
-       "interval_score": 43.1419
+       "n": 505,
+       "coverage": 0.7663,
+       "width_pct": 25.8359,
+       "median_width_pct": 27.0702,
+       "interval_score": 43.5416
       },
       "b2": {
-       "n": 503,
-       "coverage": 0.6899,
-       "width_pct": 22.2714,
-       "median_width_pct": 21.433,
-       "interval_score": 44.3327
+       "n": 505,
+       "coverage": 0.6832,
+       "width_pct": 22.2461,
+       "median_width_pct": 21.3285,
+       "interval_score": 44.7509
       }
      },
      "high": {
       "m": {
-       "n": 503,
-       "coverage": 0.825,
-       "width_pct": 31.2478,
+       "n": 505,
+       "coverage": 0.8257,
+       "width_pct": 31.243,
        "median_width_pct": 30.7364,
-       "interval_score": 46.0524
+       "interval_score": 45.9889
       },
       "b1": {
-       "n": 503,
-       "coverage": 0.8032,
-       "width_pct": 28.6353,
+       "n": 505,
+       "coverage": 0.804,
+       "width_pct": 28.6415,
        "median_width_pct": 29.6548,
-       "interval_score": 44.639
+       "interval_score": 44.5818
       },
       "b2": {
-       "n": 503,
-       "coverage": 0.837,
-       "width_pct": 37.6828,
-       "median_width_pct": 33.0104,
-       "interval_score": 50.918
+       "n": 505,
+       "coverage": 0.8376,
+       "width_pct": 37.6407,
+       "median_width_pct": 32.9538,
+       "interval_score": 50.8234
       }
      }
     },
@@ -2347,50 +2347,50 @@
      },
      "2025": {
       "m": {
-       "n": 50,
-       "coverage": 0.82,
-       "width_pct": 29.2977,
-       "median_width_pct": 27.8292,
-       "interval_score": 35.4293
+       "n": 55,
+       "coverage": 0.7455,
+       "width_pct": 29.0787,
+       "median_width_pct": 27.6196,
+       "interval_score": 39.2492
       },
       "b1": {
-       "n": 50,
-       "coverage": 0.82,
-       "width_pct": 21.9091,
-       "median_width_pct": 21.8615,
-       "interval_score": 30.923
+       "n": 55,
+       "coverage": 0.7455,
+       "width_pct": 21.8542,
+       "median_width_pct": 21.8535,
+       "interval_score": 36.0552
       }
      }
     },
     "events": {
-     "windows": 865,
+     "windows": 870,
      "first": "2021-01-05 19:00:00",
-     "last": "2027-11-17 19:00:00",
+     "last": "2027-11-18 19:00:00",
      "m": {
-      "n": 865,
-      "coverage": 0.7792,
-      "width_pct": 23.7123,
-      "median_width_pct": 23.1487,
-      "interval_score": 42.8544
+      "n": 870,
+      "coverage": 0.7736,
+      "width_pct": 23.4826,
+      "median_width_pct": 22.8998,
+      "interval_score": 43.0944
      },
      "b1": {
-      "n": 865,
-      "coverage": 0.7919,
-      "width_pct": 23.7635,
-      "median_width_pct": 22.4742,
-      "interval_score": 42.3324
+      "n": 870,
+      "coverage": 0.7874,
+      "width_pct": 23.7271,
+      "median_width_pct": 22.4301,
+      "interval_score": 42.6041
      },
      "b2": {
-      "n": 865,
-      "coverage": 0.726,
-      "width_pct": 22.4433,
-      "median_width_pct": 20.1873,
-      "interval_score": 43.2279
+      "n": 870,
+      "coverage": 0.723,
+      "width_pct": 22.4244,
+      "median_width_pct": 20.1459,
+      "interval_score": 43.5327
      }
     },
     "calibration_quantiles": [
      -1.388,
-     1.241
+     1.187
     ],
     "gates": {
      "G1 holdout coverage 77-83%": true,
@@ -2407,129 +2407,129 @@
     "horizon": "4h",
     "bars": 4,
     "qualified": true,
-    "period": "2020-12-01 -> 2026-11-14",
-    "holdout_from": "2025-09-06",
+    "period": "2020-12-01 -> 2026-11-20",
+    "holdout_from": "2025-09-11",
     "walk_forward": {
      "m": {
-      "n": 5874,
-      "coverage": 0.8025,
-      "width_pct": 4.185,
-      "median_width_pct": 3.8345,
-      "interval_score": 6.6082
+      "n": 5903,
+      "coverage": 0.8026,
+      "width_pct": 4.1787,
+      "median_width_pct": 3.8275,
+      "interval_score": 6.5961
      },
      "b1": {
-      "n": 5874,
-      "coverage": 0.811,
-      "width_pct": 4.2208,
-      "median_width_pct": 4.0974,
-      "interval_score": 7.0174
+      "n": 5903,
+      "coverage": 0.8115,
+      "width_pct": 4.2189,
+      "median_width_pct": 4.0968,
+      "interval_score": 7.0039
      },
      "b2": {
-      "n": 5874,
+      "n": 5903,
       "coverage": 0.8252,
-      "width_pct": 4.6392,
-      "median_width_pct": 4.1249,
-      "interval_score": 6.7438
+      "width_pct": 4.6315,
+      "median_width_pct": 4.1176,
+      "interval_score": 6.731
      },
      "best_baseline": "b2"
     },
     "holdout": {
      "m": {
-      "n": 2609,
-      "coverage": 0.7861,
-      "width_pct": 2.9563,
-      "median_width_pct": 2.8076,
-      "interval_score": 4.8727
+      "n": 2616,
+      "coverage": 0.7886,
+      "width_pct": 2.9774,
+      "median_width_pct": 2.8288,
+      "interval_score": 4.8894
      },
      "b1": {
-      "n": 2609,
-      "coverage": 0.8417,
-      "width_pct": 3.4771,
-      "median_width_pct": 3.4506,
-      "interval_score": 5.14
+      "n": 2616,
+      "coverage": 0.8398,
+      "width_pct": 3.4647,
+      "median_width_pct": 3.4182,
+      "interval_score": 5.1509
      },
      "b2": {
-      "n": 2609,
-      "coverage": 0.8183,
-      "width_pct": 3.3257,
-      "median_width_pct": 3.0541,
-      "interval_score": 5.0032
+      "n": 2616,
+      "coverage": 0.8196,
+      "width_pct": 3.3468,
+      "median_width_pct": 3.0755,
+      "interval_score": 5.0242
      },
      "best_baseline": "b2"
     },
-    "score_diff_vs_best": -0.1356,
+    "score_diff_vs_best": -0.1349,
     "score_diff_ci99": [
-     -0.1855,
-     -0.0802
+     -0.1838,
+     -0.083
     ],
     "regimes": {
      "low": {
       "m": {
-       "n": 1958,
-       "coverage": 0.7906,
-       "width_pct": 3.0369,
+       "n": 1968,
+       "coverage": 0.7917,
+       "width_pct": 3.0303,
        "median_width_pct": 2.9718,
-       "interval_score": 5.04
+       "interval_score": 5.0204
       },
       "b1": {
-       "n": 1958,
-       "coverage": 0.8927,
-       "width_pct": 4.1837,
-       "median_width_pct": 4.06,
-       "interval_score": 5.4185
+       "n": 1968,
+       "coverage": 0.8933,
+       "width_pct": 4.179,
+       "median_width_pct": 4.0553,
+       "interval_score": 5.4028
       },
       "b2": {
-       "n": 1958,
-       "coverage": 0.8044,
-       "width_pct": 3.2537,
-       "median_width_pct": 3.1754,
-       "interval_score": 5.1206
+       "n": 1968,
+       "coverage": 0.8054,
+       "width_pct": 3.2425,
+       "median_width_pct": 3.1717,
+       "interval_score": 5.0942
       }
      },
      "mid": {
       "m": {
-       "n": 1958,
-       "coverage": 0.8069,
-       "width_pct": 3.8765,
-       "median_width_pct": 3.7812,
-       "interval_score": 5.9539
+       "n": 1967,
+       "coverage": 0.8058,
+       "width_pct": 3.8679,
+       "median_width_pct": 3.7761,
+       "interval_score": 5.9541
       },
       "b1": {
-       "n": 1958,
-       "coverage": 0.8361,
+       "n": 1967,
+       "coverage": 0.8363,
        "width_pct": 4.2076,
        "median_width_pct": 4.1341,
-       "interval_score": 6.1104
+       "interval_score": 6.1038
       },
       "b2": {
-       "n": 1958,
-       "coverage": 0.8309,
-       "width_pct": 4.2927,
-       "median_width_pct": 4.0772,
-       "interval_score": 6.1251
+       "n": 1967,
+       "coverage": 0.8292,
+       "width_pct": 4.2837,
+       "median_width_pct": 4.0721,
+       "interval_score": 6.1292
       }
      },
      "high": {
       "m": {
-       "n": 1958,
-       "coverage": 0.81,
-       "width_pct": 5.6417,
-       "median_width_pct": 5.3623,
-       "interval_score": 8.8307
+       "n": 1968,
+       "coverage": 0.8105,
+       "width_pct": 5.6377,
+       "median_width_pct": 5.3596,
+       "interval_score": 8.8134
       },
       "b1": {
-       "n": 1958,
-       "coverage": 0.7043,
-       "width_pct": 4.2711,
-       "median_width_pct": 4.0919,
-       "interval_score": 9.5232
+       "n": 1968,
+       "coverage": 0.7048,
+       "width_pct": 4.27,
+       "median_width_pct": 4.0911,
+       "interval_score": 9.5047
       },
       "b2": {
-       "n": 1958,
-       "coverage": 0.8401,
-       "width_pct": 6.3714,
-       "median_width_pct": 5.8797,
-       "interval_score": 8.9858
+       "n": 1968,
+       "coverage": 0.841,
+       "width_pct": 6.368,
+       "median_width_pct": 5.8777,
+       "interval_score": 8.9692
       }
      }
     },
@@ -2568,50 +2568,50 @@
      },
      "2025": {
       "m": {
-       "n": 1489,
-       "coverage": 0.8046,
-       "width_pct": 4.0921,
-       "median_width_pct": 3.7149,
-       "interval_score": 6.3452
+       "n": 1518,
+       "coverage": 0.805,
+       "width_pct": 4.0692,
+       "median_width_pct": 3.6978,
+       "interval_score": 6.3031
       },
       "b2": {
-       "n": 1489,
+       "n": 1518,
        "coverage": 0.8267,
-       "width_pct": 4.5397,
-       "median_width_pct": 3.9897,
-       "interval_score": 6.4886
+       "width_pct": 4.5113,
+       "median_width_pct": 3.9671,
+       "interval_score": 6.4435
       }
      }
     },
     "events": {
-     "windows": 104,
+     "windows": 105,
      "first": "2021-01-05 19:00:00",
-     "last": "2027-11-17 19:00:00",
+     "last": "2027-11-18 19:00:00",
      "m": {
-      "n": 104,
-      "coverage": 0.6154,
-      "width_pct": 3.965,
-      "median_width_pct": 3.7247,
-      "interval_score": 8.5211
+      "n": 105,
+      "coverage": 0.619,
+      "width_pct": 3.9656,
+      "median_width_pct": 3.7204,
+      "interval_score": 8.4686
      },
      "b1": {
-      "n": 104,
-      "coverage": 0.6346,
-      "width_pct": 3.8402,
-      "median_width_pct": 3.9119,
-      "interval_score": 9.1003
+      "n": 105,
+      "coverage": 0.6381,
+      "width_pct": 3.8308,
+      "median_width_pct": 3.8967,
+      "interval_score": 9.0408
      },
      "b2": {
-      "n": 104,
-      "coverage": 0.625,
-      "width_pct": 3.9975,
-      "median_width_pct": 3.6152,
-      "interval_score": 8.3797
+      "n": 105,
+      "coverage": 0.6286,
+      "width_pct": 3.9912,
+      "median_width_pct": 3.5934,
+      "interval_score": 8.3316
      }
     },
     "calibration_quantiles": [
-     -1.446,
-     1.424
+     -1.447,
+     1.432
     ],
     "gates": {
      "G1 holdout coverage 77-83%": true,
@@ -2626,129 +2626,129 @@
     "horizon": "24h",
     "bars": 24,
     "qualified": false,
-    "period": "2020-12-02 -> 2026-11-14",
-    "holdout_from": "2025-09-05",
+    "period": "2020-12-02 -> 2026-11-20",
+    "holdout_from": "2025-09-10",
     "walk_forward": {
      "m": {
-      "n": 5871,
-      "coverage": 0.8121,
-      "width_pct": 11.4533,
-      "median_width_pct": 10.723,
-      "interval_score": 17.0591
+      "n": 5900,
+      "coverage": 0.8122,
+      "width_pct": 11.4368,
+      "median_width_pct": 10.7101,
+      "interval_score": 17.0283
      },
      "b1": {
-      "n": 5871,
-      "coverage": 0.8104,
-      "width_pct": 11.3062,
-      "median_width_pct": 10.978,
-      "interval_score": 17.1994
+      "n": 5900,
+      "coverage": 0.811,
+      "width_pct": 11.3004,
+      "median_width_pct": 10.976,
+      "interval_score": 17.1662
      },
      "b2": {
-      "n": 5871,
-      "coverage": 0.7891,
-      "width_pct": 11.3633,
-      "median_width_pct": 10.1024,
-      "interval_score": 17.3247
+      "n": 5900,
+      "coverage": 0.789,
+      "width_pct": 11.3464,
+      "median_width_pct": 10.0912,
+      "interval_score": 17.297
      },
      "best_baseline": "b1"
     },
     "holdout": {
      "m": {
-      "n": 2607,
-      "coverage": 0.7971,
-      "width_pct": 8.0804,
-      "median_width_pct": 7.782,
-      "interval_score": 12.3263
+      "n": 2614,
+      "coverage": 0.798,
+      "width_pct": 8.124,
+      "median_width_pct": 7.8251,
+      "interval_score": 12.3645
      },
      "b1": {
-      "n": 2607,
-      "coverage": 0.8542,
-      "width_pct": 9.38,
-      "median_width_pct": 9.3484,
-      "interval_score": 12.6964
+      "n": 2614,
+      "coverage": 0.8523,
+      "width_pct": 9.3487,
+      "median_width_pct": 9.2491,
+      "interval_score": 12.7109
      },
      "b2": {
-      "n": 2607,
-      "coverage": 0.7833,
-      "width_pct": 8.1465,
-      "median_width_pct": 7.4748,
-      "interval_score": 12.5561
+      "n": 2614,
+      "coverage": 0.7842,
+      "width_pct": 8.1911,
+      "median_width_pct": 7.5322,
+      "interval_score": 12.5831
      },
      "best_baseline": "b2"
     },
-    "score_diff_vs_best": -0.1403,
+    "score_diff_vs_best": -0.1379,
     "score_diff_ci99": [
-     -0.5477,
-     0.2344
+     -0.508,
+     0.2022
     ],
     "regimes": {
      "low": {
       "m": {
-       "n": 1957,
-       "coverage": 0.7905,
-       "width_pct": 8.5597,
-       "median_width_pct": 8.4938,
-       "interval_score": 13.7106
+       "n": 1967,
+       "coverage": 0.7921,
+       "width_pct": 8.5408,
+       "median_width_pct": 8.4867,
+       "interval_score": 13.5993
       },
       "b1": {
-       "n": 1957,
-       "coverage": 0.8738,
-       "width_pct": 11.1892,
-       "median_width_pct": 10.8019,
-       "interval_score": 14.1528
+       "n": 1967,
+       "coverage": 0.876,
+       "width_pct": 11.1757,
+       "median_width_pct": 10.791,
+       "interval_score": 14.0525
       },
       "b2": {
-       "n": 1957,
-       "coverage": 0.7506,
-       "width_pct": 7.968,
-       "median_width_pct": 7.7702,
-       "interval_score": 13.9158
+       "n": 1967,
+       "coverage": 0.7514,
+       "width_pct": 7.9478,
+       "median_width_pct": 7.7645,
+       "interval_score": 13.8077
       }
      },
      "mid": {
       "m": {
-       "n": 1957,
-       "coverage": 0.8166,
-       "width_pct": 10.7813,
-       "median_width_pct": 10.6345,
-       "interval_score": 15.7526
+       "n": 1966,
+       "coverage": 0.8154,
+       "width_pct": 10.761,
+       "median_width_pct": 10.6171,
+       "interval_score": 15.752
       },
       "b1": {
-       "n": 1957,
-       "coverage": 0.8283,
-       "width_pct": 11.2318,
+       "n": 1966,
+       "coverage": 0.8281,
+       "width_pct": 11.231,
        "median_width_pct": 10.9873,
-       "interval_score": 15.6796
+       "interval_score": 15.6657
       },
       "b2": {
-       "n": 1957,
-       "coverage": 0.7946,
-       "width_pct": 10.515,
-       "median_width_pct": 9.9868,
-       "interval_score": 16.0262
+       "n": 1966,
+       "coverage": 0.794,
+       "width_pct": 10.489,
+       "median_width_pct": 9.9732,
+       "interval_score": 16.0274
       }
      },
      "high": {
       "m": {
-       "n": 1957,
-       "coverage": 0.8293,
-       "width_pct": 15.0189,
-       "median_width_pct": 14.5079,
-       "interval_score": 21.714
+       "n": 1967,
+       "coverage": 0.8292,
+       "width_pct": 15.0083,
+       "median_width_pct": 14.4632,
+       "interval_score": 21.733
       },
       "b1": {
-       "n": 1957,
-       "coverage": 0.7292,
-       "width_pct": 11.4976,
-       "median_width_pct": 11.0152,
-       "interval_score": 21.7658
+       "n": 1967,
+       "coverage": 0.729,
+       "width_pct": 11.4943,
+       "median_width_pct": 11.0128,
+       "interval_score": 21.7797
       },
       "b2": {
-       "n": 1957,
-       "coverage": 0.8222,
-       "width_pct": 15.6069,
+       "n": 1967,
+       "coverage": 0.8216,
+       "width_pct": 15.6018,
        "median_width_pct": 14.4014,
-       "interval_score": 22.032
+       "interval_score": 22.0553
       }
      }
     },
@@ -2787,50 +2787,50 @@
      },
      "2025": {
       "m": {
-       "n": 1486,
-       "coverage": 0.7799,
-       "width_pct": 10.5482,
-       "median_width_pct": 9.6528,
-       "interval_score": 16.6512
+       "n": 1515,
+       "coverage": 0.7809,
+       "width_pct": 10.5014,
+       "median_width_pct": 9.6089,
+       "interval_score": 16.5392
       },
       "b1": {
-       "n": 1486,
-       "coverage": 0.7974,
-       "width_pct": 10.5452,
-       "median_width_pct": 10.5252,
-       "interval_score": 16.5261
+       "n": 1515,
+       "coverage": 0.8,
+       "width_pct": 10.537,
+       "median_width_pct": 10.5233,
+       "interval_score": 16.4098
       }
      }
     },
     "events": {
-     "windows": 622,
+     "windows": 628,
      "first": "2021-01-05 19:00:00",
-     "last": "2027-11-17 19:00:00",
+     "last": "2027-11-18 19:00:00",
      "m": {
-      "n": 622,
-      "coverage": 0.7621,
-      "width_pct": 9.9847,
-      "median_width_pct": 9.2491,
-      "interval_score": 16.4937
+      "n": 628,
+      "coverage": 0.7643,
+      "width_pct": 9.9917,
+      "median_width_pct": 9.3047,
+      "interval_score": 16.4308
      },
      "b1": {
-      "n": 622,
-      "coverage": 0.7797,
-      "width_pct": 10.2927,
+      "n": 628,
+      "coverage": 0.7818,
+      "width_pct": 10.268,
       "median_width_pct": 10.4173,
-      "interval_score": 16.8101
+      "interval_score": 16.7231
      },
      "b2": {
-      "n": 622,
-      "coverage": 0.746,
-      "width_pct": 9.9623,
-      "median_width_pct": 8.9437,
-      "interval_score": 16.5972
+      "n": 628,
+      "coverage": 0.7484,
+      "width_pct": 9.9561,
+      "median_width_pct": 8.9488,
+      "interval_score": 16.5277
      }
     },
     "calibration_quantiles": [
-     -1.202,
-     1.348
+     -1.201,
+     1.354
     ],
     "gates": {
      "G1 holdout coverage 77-83%": true,
@@ -2845,129 +2845,129 @@
     "horizon": "1w",
     "bars": 168,
     "qualified": false,
-    "period": "2020-12-09 -> 2026-11-07",
-    "holdout_from": "2025-09-02",
+    "period": "2020-12-09 -> 2026-11-13",
+    "holdout_from": "2025-09-06",
     "walk_forward": {
      "m": {
-      "n": 610,
-      "coverage": 0.8295,
-      "width_pct": 32.7493,
-      "median_width_pct": 31.5171,
-      "interval_score": 42.8755
+      "n": 614,
+      "coverage": 0.8274,
+      "width_pct": 32.7038,
+      "median_width_pct": 31.4334,
+      "interval_score": 42.7939
      },
      "b1": {
-      "n": 610,
-      "coverage": 0.818,
-      "width_pct": 30.0127,
-      "median_width_pct": 29.9723,
-      "interval_score": 40.8454
+      "n": 614,
+      "coverage": 0.8176,
+      "width_pct": 29.9939,
+      "median_width_pct": 29.8804,
+      "interval_score": 40.7899
      },
      "b2": {
-      "n": 610,
-      "coverage": 0.7787,
-      "width_pct": 30.7823,
+      "n": 614,
+      "coverage": 0.7785,
+      "width_pct": 30.7614,
       "median_width_pct": 27.7426,
-      "interval_score": 44.6572
+      "interval_score": 44.586
      },
      "best_baseline": "b1"
     },
     "holdout": {
      "m": {
-      "n": 432,
-      "coverage": 0.7639,
-      "width_pct": 22.153,
-      "median_width_pct": 21.7678,
-      "interval_score": 34.9719
+      "n": 434,
+      "coverage": 0.7558,
+      "width_pct": 22.111,
+      "median_width_pct": 21.7697,
+      "interval_score": 35.6354
      },
      "b1": {
-      "n": 432,
-      "coverage": 0.8333,
-      "width_pct": 25.0874,
-      "median_width_pct": 24.4541,
-      "interval_score": 34.3921
+      "n": 434,
+      "coverage": 0.8249,
+      "width_pct": 25.0005,
+      "median_width_pct": 24.1633,
+      "interval_score": 34.9224
      },
      "b2": {
-      "n": 432,
-      "coverage": 0.7662,
-      "width_pct": 22.2587,
-      "median_width_pct": 20.2409,
-      "interval_score": 36.5477
+      "n": 434,
+      "coverage": 0.7558,
+      "width_pct": 22.178,
+      "median_width_pct": 20.1923,
+      "interval_score": 37.1741
      },
      "best_baseline": "b1"
     },
-    "score_diff_vs_best": 2.0301,
+    "score_diff_vs_best": 2.004,
     "score_diff_ci99": [
-     0.0601,
-     4.1213
+     0.2398,
+     3.9601
     ],
     "regimes": {
      "low": {
       "m": {
-       "n": 204,
-       "coverage": 0.7696,
-       "width_pct": 26.8482,
-       "median_width_pct": 26.4741,
-       "interval_score": 37.8051
+       "n": 205,
+       "coverage": 0.7707,
+       "width_pct": 26.8858,
+       "median_width_pct": 26.5156,
+       "interval_score": 37.7892
       },
       "b1": {
-       "n": 204,
-       "coverage": 0.8088,
-       "width_pct": 29.6759,
+       "n": 205,
+       "coverage": 0.8098,
+       "width_pct": 29.6765,
        "median_width_pct": 28.9857,
-       "interval_score": 38.1798
+       "interval_score": 38.1389
       },
       "b2": {
-       "n": 204,
-       "coverage": 0.701,
-       "width_pct": 23.1096,
-       "median_width_pct": 22.6498,
-       "interval_score": 38.6117
+       "n": 205,
+       "coverage": 0.7024,
+       "width_pct": 23.1143,
+       "median_width_pct": 22.6678,
+       "interval_score": 38.5409
       }
      },
      "mid": {
       "m": {
-       "n": 203,
-       "coverage": 0.8276,
-       "width_pct": 31.8412,
-       "median_width_pct": 31.7277,
-       "interval_score": 47.0276
+       "n": 204,
+       "coverage": 0.8186,
+       "width_pct": 31.683,
+       "median_width_pct": 31.5971,
+       "interval_score": 46.8849
       },
       "b1": {
-       "n": 203,
-       "coverage": 0.8177,
-       "width_pct": 30.1076,
+       "n": 204,
+       "coverage": 0.8137,
+       "width_pct": 30.0737,
        "median_width_pct": 30.7553,
-       "interval_score": 45.9028
+       "interval_score": 45.8934
       },
       "b2": {
-       "n": 203,
-       "coverage": 0.7488,
-       "width_pct": 27.9017,
-       "median_width_pct": 27.4659,
-       "interval_score": 47.8117
+       "n": 204,
+       "coverage": 0.75,
+       "width_pct": 27.8264,
+       "median_width_pct": 27.4164,
+       "interval_score": 47.756
       }
      },
      "high": {
       "m": {
-       "n": 203,
-       "coverage": 0.8916,
-       "width_pct": 39.5877,
-       "median_width_pct": 38.3212,
-       "interval_score": 43.8189
+       "n": 205,
+       "coverage": 0.8927,
+       "width_pct": 39.5378,
+       "median_width_pct": 38.3037,
+       "interval_score": 43.7277
       },
       "b1": {
-       "n": 203,
-       "coverage": 0.8276,
-       "width_pct": 30.2562,
-       "median_width_pct": 30.2825,
-       "interval_score": 38.4668
+       "n": 205,
+       "coverage": 0.8293,
+       "width_pct": 30.2317,
+       "median_width_pct": 30.2684,
+       "interval_score": 38.3623
       },
       "b2": {
-       "n": 203,
-       "coverage": 0.8867,
-       "width_pct": 41.3733,
+       "n": 205,
+       "coverage": 0.8829,
+       "width_pct": 41.3292,
        "median_width_pct": 36.2664,
-       "interval_score": 47.5779
+       "interval_score": 47.4766
       }
      }
     },
@@ -2990,50 +2990,50 @@
      },
      "2025": {
       "m": {
-       "n": 244,
-       "coverage": 0.7992,
-       "width_pct": 28.3276,
+       "n": 248,
+       "coverage": 0.7944,
+       "width_pct": 28.2862,
        "median_width_pct": 26.7829,
-       "interval_score": 39.9224
+       "interval_score": 39.768
       },
       "b1": {
-       "n": 244,
-       "coverage": 0.7828,
-       "width_pct": 28.4583,
+       "n": 248,
+       "coverage": 0.7823,
+       "width_pct": 28.4369,
        "median_width_pct": 28.4608,
-       "interval_score": 39.8034
+       "interval_score": 39.6827
       }
      }
     },
     "events": {
-     "windows": 546,
+     "windows": 551,
      "first": "2021-01-05 19:00:00",
-     "last": "2027-11-17 19:00:00",
+     "last": "2027-11-18 19:00:00",
      "m": {
-      "n": 546,
-      "coverage": 0.7729,
-      "width_pct": 26.246,
-      "median_width_pct": 25.1402,
-      "interval_score": 39.9161
+      "n": 551,
+      "coverage": 0.7659,
+      "width_pct": 26.2019,
+      "median_width_pct": 25.0731,
+      "interval_score": 40.3385
      },
      "b1": {
-      "n": 546,
-      "coverage": 0.8004,
-      "width_pct": 27.1753,
-      "median_width_pct": 27.9006,
-      "interval_score": 39.5063
+      "n": 551,
+      "coverage": 0.7949,
+      "width_pct": 27.1119,
+      "median_width_pct": 27.7683,
+      "interval_score": 39.8494
      },
      "b2": {
-      "n": 546,
-      "coverage": 0.7601,
-      "width_pct": 25.4473,
-      "median_width_pct": 23.5948,
-      "interval_score": 41.4895
+      "n": 551,
+      "coverage": 0.7532,
+      "width_pct": 25.3874,
+      "median_width_pct": 23.5627,
+      "interval_score": 41.9338
      }
     },
     "calibration_quantiles": [
-     -1.059,
-     1.149
+     -1.058,
+     1.15
     ],
     "gates": {
      "G1 holdout coverage 77-83%": false,

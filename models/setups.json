@@ -1,99 +1,102 @@
 {
  "setups": {
   "LONDON_BREAKOUT": {
-   "signals": 637,
+   "signals": 635,
    "development_raw": {
-    "accepted": 543,
+    "accepted": 541,
     "coverage": 1.0,
-    "win_rate": 0.4622,
+    "win_rate": 0.4603,
     "win_rate_ci95": [
-     0.4207,
-     0.5043
+     0.4187,
+     0.5024
     ],
-    "tp_rate": 0.3812,
-    "ev_per_trade": -0.5237,
+    "tp_rate": 0.3789,
+    "ev_per_trade": -0.5993,
     "ev_ci95": [
-     -1.0709,
-     -0.0023
+     -1.1506,
+     -0.0499
     ],
-    "total_pnl": -284.35
+    "total_pnl": -324.22
    },
    "development_model_gated_oos": {
     "accepted": 6,
-    "coverage": 0.011,
-    "win_rate": 1.0,
+    "coverage": 0.0111,
+    "win_rate": 0.8333,
     "win_rate_ci95": [
-     0.6097,
-     1.0
+     0.4365,
+     0.9699
     ],
     "tp_rate": 0.5,
-    "ev_per_trade": 10.7567,
+    "ev_per_trade": 6.8585,
     "ev_ci95": null,
-    "total_pnl": 64.54
+    "total_pnl": 41.15
    }
   },
   "SWEEP_RECLAIM": {
-   "signals": 9857,
+   "signals": 9877,
    "development_raw": {
-    "accepted": 7938,
+    "accepted": 7972,
     "coverage": 1.0,
-    "win_rate": 0.4801,
+    "win_rate": 0.4812,
     "win_rate_ci95": [
-     0.4691,
-     0.4911
+     0.4702,
+     0.4922
     ],
-    "tp_rate": 0.3777,
-    "ev_per_trade": -0.5711,
+    "tp_rate": 0.3788,
+    "ev_per_trade": -0.5582,
     "ev_ci95": [
-     -0.7783,
-     -0.3673
+     -0.7449,
+     -0.3641
     ],
-    "total_pnl": -4533.04
+    "total_pnl": -4450.04
    },
    "development_model_gated_oos": {
-    "accepted": 17,
-    "coverage": 0.0021,
-    "win_rate": 0.5294,
+    "accepted": 21,
+    "coverage": 0.0026,
+    "win_rate": 0.381,
     "win_rate_ci95": [
-     0.3096,
-     0.7384
+     0.2075,
+     0.5912
     ],
-    "tp_rate": 0.2353,
-    "ev_per_trade": -3.1866,
-    "ev_ci95": null,
-    "total_pnl": -54.17
+    "tp_rate": 0.1905,
+    "ev_per_trade": -6.0106,
+    "ev_ci95": [
+     -14.377,
+     3.3162
+    ],
+    "total_pnl": -126.22
    }
   },
   "NY_OPEN_DRIVE": {
-   "signals": 785,
+   "signals": 784,
    "development_raw": {
-    "accepted": 643,
+    "accepted": 642,
     "coverage": 1.0,
-    "win_rate": 0.4899,
+    "win_rate": 0.4875,
     "win_rate_ci95": [
-     0.4514,
-     0.5285
+     0.4491,
+     0.5262
     ],
-    "tp_rate": 0.4806,
-    "ev_per_trade": -0.3061,
+    "tp_rate": 0.4798,
+    "ev_per_trade": -0.3305,
     "ev_ci95": [
-     -0.8904,
-     0.307
+     -0.9333,
+     0.2921
     ],
-    "total_pnl": -196.85
+    "total_pnl": -212.2
    },
    "development_model_gated_oos": {
-    "accepted": 8,
-    "coverage": 0.0124,
-    "win_rate": 0.375,
+    "accepted": 7,
+    "coverage": 0.0109,
+    "win_rate": 0.2857,
     "win_rate_ci95": [
-     0.1368,
-     0.6943
+     0.0822,
+     0.6411
     ],
-    "tp_rate": 0.375,
-    "ev_per_trade": -3.9639,
+    "tp_rate": 0.2857,
+    "ev_per_trade": -5.2687,
     "ev_ci95": null,
-    "total_pnl": -31.71
+    "total_pnl": -36.88
    }
   }
  },
