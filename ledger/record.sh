@@ -25,6 +25,8 @@ for attempt in 1 2 3 4; do
   [ -f verify_copy.py ] && { python3 verify_copy.py || true; }
   # Render server life (restarts, outages, memory) kept here, because the server's own disk is wiped on restart
   [ -f "$IN/health.json" ] && { python3 server_watch.py apply "$IN/health.json" . || true; }
+  # one decision state per asset for the app (decision-state-1), after the day's ADVICE and the trade engine
+  [ -f decision_state.py ] && { python3 decision_state.py apply "$IN" . || true; }
   python3 monitor.py --issuer "$IN/issuer.txt" "$IN"/snap_XAU.json "$IN"/snap_BTC.json "$IN"/snap_ETH.json \
     "$IN"/snap_SOL.json | tee monitor.txt
   # daily external anchor (OpenTimestamps -> Bitcoin; best effort, never blocks the record)

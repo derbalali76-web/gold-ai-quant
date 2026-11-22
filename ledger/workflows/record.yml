@@ -26,6 +26,9 @@ jobs:
       - name: server health (restart / outage record; failure never blocks the range record)
         continue-on-error: true
         run: python3 server_watch.py fetch "${{ vars.SNAPSHOT_URL || 'https://gold-ai-quant.onrender.com/public/snapshot' }}" "$RUNNER_TEMP/in/health.json" || true
+      - name: decision-state inputs (PAXG price only; failure never blocks the range record)
+        continue-on-error: true
+        run: python3 decision_state.py fetch "$RUNNER_TEMP/in" || true
       - name: trade engine inputs (BTC bars + funding; failure never blocks the range record)
         continue-on-error: true
         run: python3 te_live.py fetch "$RUNNER_TEMP/in" .
