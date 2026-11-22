@@ -6,7 +6,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class UnifiedTest {
-    private fun fixture(name: String) = javaClass.classLoader!!.getResource("fixtures/$name")!!.readText()
+    private fun fixture(name: String) = javaClass.classLoader!!.getResource("ledger/$name")!!.readText()
 
     private fun one(holder: String, cash: String, radar: String) = """{"schema":"decision-state-2","updated_at":"2026-11-22T12:00:00Z",
       "assets":{"BTC":{"asset":"BTC","price":{"value":100.0,"at":"2026-11-22T11:30:00Z"},"gates":{"ok":true,"reasons":[]},
