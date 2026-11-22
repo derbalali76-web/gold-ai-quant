@@ -1,0 +1,19 @@
+{
+ "canonical": "derbalali76-web/gold-ai-quant:ledger/",
+ "files": {
+  "README.md": "d4b288b0244965526a57556ccd82fb1a8a5b6d1c3d9f98efa2821682bd3c9f7a",
+  "advice.py": "3364c5d4cec4cc768c15e7e8d02297f2e58105dee65b635ec294f88ff54b788b",
+  "advice_units.py": "f8523041f6e6b3d68689557503e897ab55b53c3723895cd30fe8e5f715d18109",
+  "decision_state.py": "52f5a1672455790080bc5538502d28c284d81cf24513359b80dd71a82c4af88f",
+  "index.html": "f53d2ed89e0484de0460ad0e48608d72408fb56ec0717fe8d60bdca37f9903a1",
+  "issue.py": "01ee30719ec3957a2f88de8a78a7ef50df658a90075ddbf2a45eb37e9c80b8bf",
+  "ledger.py": "248935972710d15c5050a106463dfb4ddd41996568de3967f795e4b6cad794d4",
+  "monitor.py": "5b307e178e3c411953227b9758814fc74f11652a010cfd3398bd27388a6cc33b",
+  "record.sh": "bf0018469c92eabd9e41ffb233e72afe6db3e0645b43ed2870b116c19d98574d",
+  "server_watch.py": "91c8c22f92390966a1d90d24c35af4f878d76e8b91e39cf823671f9d1cfe8352",
+  "signals.py": "e6d1ddc881e5675467f2f34196f7296a12afae12725a3c290e9d31567eb1d0dd",
+  "te_live.py": "f5588563b7d72bc383be4ad3ad8df9be5686e217681d9504a3afa4a18515e5a7",
+  "verify_copy.py": "c9c710b1bc0b4d78f55d33f507f3dfaa3398161cfaf74d0d31c07a80abfb9e72",
+  ".github/workflows/record.yml": "2c549d9f8f9346db6e658925ad93a283e98328b7334ed713178cbd22d8ff63c8"
+ }
+}

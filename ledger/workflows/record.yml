@@ -1,0 +1,75 @@
+name: record
+# Every hour. The crypto price ranges and the live high / low validation are computed HERE (issue.py: Binance public
+# bars + the published weekly parameters), so a sleeping or restarting free server cannot leave holes in the record.
+# The server snapshot is still fetched: gold, the daily analysis and a second, independent computation of the same
+# issues (the first recorded value stands; any disagreement is reported in crosscheck.json and as an alert).
+# Triggers: cron-job.org dispatches at :00 (reliable); GitHub's own schedule is a backup (it is often late or
+# skipped). Duplicate runs are harmless: every issue time is recorded once.
+on:
+  schedule: [{ cron: "17 * * * *" }, { cron: "41 * * * *" }]
+  workflow_dispatch:
+    inputs:
+      dry_run: { description: "compute and check only, commit nothing", default: "false" }
+permissions: { contents: write, issues: write }
+concurrency: { group: "${{ inputs.dry_run == 'true' && 'ledger-dry' || 'ledger' }}", cancel-in-progress: false }
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - name: independent issue (crypto ranges + high / low bounds; gold ranges when the Twelve Data secret is set)
+        env: { TWELVEDATA_API_KEY: "${{ secrets.TWELVEDATA_API_KEY }}" }
+        run: |
+          mkdir -p "$RUNNER_TEMP/in"
+          python3 issue.py "$RUNNER_TEMP/in" 2>&1 | tee "$RUNNER_TEMP/in/issuer.txt"
+      - name: server health (restart / outage record; failure never blocks the range record)
+        continue-on-error: true
+        run: python3 server_watch.py fetch "${{ vars.SNAPSHOT_URL || 'https://gold-ai-quant.onrender.com/public/snapshot' }}" "$RUNNER_TEMP/in/health.json" || true
+      - name: decision-state inputs (PAXG price only; failure never blocks the range record)
+        continue-on-error: true
+        run: python3 decision_state.py fetch "$RUNNER_TEMP/in" || true
+      - name: trade engine inputs (BTC bars + funding; failure never blocks the range record)
+        continue-on-error: true
+        run: python3 te_live.py fetch "$RUNNER_TEMP/in" .
+      - name: server snapshots (gold, daily analysis, backup computation; at most 8 minutes in total)
+        env:
+          URL: ${{ vars.SNAPSHOT_URL || 'https://gold-ai-quant.onrender.com/public/snapshot' }}
+        run: |
+          IN="$RUNNER_TEMP/in"; deadline=$(( $(date +%s) + 480 ))
+          for round in 1 2 3 4 5; do
+            for a in XAU BTC ETH SOL; do
+              [ -s "$IN/snap_$a.json" ] && continue
+              left=$(( deadline - $(date +%s) )); [ "$left" -le 15 ] && break 2
+              t0=$(date +%s)
+              if curl -fsS --max-time $(( left < 100 ? left : 100 )) "$URL?asset=$a" -o "$IN/snap_$a.json"; then
+                echo "$a: server answered in $(( $(date +%s) - t0 )) s"
+              else rm -f "$IN/snap_$a.json"; echo "$a: no answer after $(( $(date +%s) - t0 )) s (round $round)"; fi
+            done
+            missing=0; for a in XAU BTC ETH SOL; do [ -s "$IN/snap_$a.json" ] || missing=1; done
+            [ "$missing" = 0 ] && break
+            sleep 20
+          done
+          for a in XAU BTC ETH SOL; do [ -s "$IN/snap_$a.json" ] || { echo "$a: server not reached"; echo '{}' > "$IN/snap_$a.json"; }; done
+      - name: record, verify, monitor, anchor, commit (retries from the fresh head if a push is rejected)
+        env: { DRY_RUN: "${{ inputs.dry_run || 'false' }}" }
+        run: cp record.sh "$RUNNER_TEMP/record.sh" && bash "$RUNNER_TEMP/record.sh" "$RUNNER_TEMP/in" "$GITHUB_WORKSPACE"
+      - name: show what was computed (dry run)
+        if: ${{ inputs.dry_run == 'true' }}
+        run: |
+          for f in "$RUNNER_TEMP"/in/issue_*.json; do python3 -c "import json,sys;d=json.load(open(sys.argv[1]));print(d['asset'],d['as_of'],len(d['bars']['H1']),'H1',[ (r['horizon'],r['issued_at'],round(r['low'],2),round(r['high'],2)) for r in d['ranges']],[(r['horizon'],round(r['m_lower'],2),round(r['m_upper'],2),round(r['b2_lower'],2),round(r['b2_upper'],2)) for r in d['hilo']])" "$f"; done
+          tail -n 30 ledger.jsonl | cut -c1-400; cat monitor.txt; cat crosscheck.json 2>/dev/null | tail -c 1500
+      - name: alert (one open issue while something is wrong -> e-mail to the owner; closes itself when healthy)
+        if: ${{ always() && inputs.dry_run != 'true' }}
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: |
+          [ -f monitor.txt ] || echo "ALERT record: the recording run failed before the monitor (see the workflow log)" > monitor.txt
+          open=$(gh issue list --state open --label alert --json number -q '.[0].number' 2>/dev/null || true)
+          if grep -q '^ALERT' monitor.txt; then
+            body=$(printf "Automatic check at %s UTC\n\n%s\n\nThis issue closes itself when everything is healthy again." "$(date -u +%F\ %H:%M)" "$(grep '^ALERT' monitor.txt | sed 's/^ALERT /- /')")
+            gh label create alert --color B60205 2>/dev/null || true
+            if [ -z "$open" ]; then gh issue create --title "AI QUANT alert" --label alert --body "$body"
+            fi  # already open: no hourly repeat e-mails
+          elif [ -n "$open" ]; then
+            gh issue close "$open" --comment "All checks healthy again at $(date -u +%F\ %H:%M) UTC."
+          fi

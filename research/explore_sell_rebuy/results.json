@@ -1,0 +1,1412 @@
+{
+ "study": "explore-sell-rebuy-0.1",
+ "prereg_commit": "6d2a738",
+ "prereg_sha256": "18fb579dc0e2dd30f28d836c0944cf5b412b99f6778303db7df741ec4249acf2",
+ "cut": "2025-11-15T00:00:00+00:00",
+ "assets": {
+  "XAU": {
+   "days": 2516,
+   "first": "2016-01-19",
+   "last": "2025-11-07",
+   "variants": {
+    "k0.5_prox0.5_cost0.1": {
+     "n": 566,
+     "mean_gain_pct": -0.1504,
+     "median_gain_pct": 0.4318,
+     "beat_hold_rate": 0.5318,
+     "after_break_mean_pct": -0.1003,
+     "half1_mean": -0.1323,
+     "half2_mean": -0.1684,
+     "by_year": {
+      "2016": {
+       "n": 63,
+       "mean": -0.0742
+      },
+      "2017": {
+       "n": 57,
+       "mean": 0.0207
+      },
+      "2018": {
+       "n": 66,
+       "mean": -0.0197
+      },
+      "2019": {
+       "n": 58,
+       "mean": -0.4017
+      },
+      "2020": {
+       "n": 42,
+       "mean": -0.3216
+      },
+      "2021": {
+       "n": 58,
+       "mean": -0.249
+      },
+      "2022": {
+       "n": 70,
+       "mean": 0.0552
+      },
+      "2023": {
+       "n": 68,
+       "mean": -0.0943
+      },
+      "2024": {
+       "n": 45,
+       "mean": -0.3391
+      },
+      "2025": {
+       "n": 39,
+       "mean": -0.2887
+      }
+     },
+     "no_rebuy": 25,
+     "protection": 248,
+     "bought_back": 293,
+     "rose_no_return": 237,
+     "worst_pct": -3.7791,
+     "best_pct": 2.9166,
+     "uncond_n": 2511,
+     "uncond_mean_pct": -0.1618,
+     "primary_cost": true,
+     "p_boot": 0.9973,
+     "p_holm": 1.0,
+     "class": "NOT_SUPPORTED"
+    },
+    "k0.5_prox1.0_cost0.1": {
+     "n": 902,
+     "mean_gain_pct": -0.154,
+     "median_gain_pct": -0.0528,
+     "beat_hold_rate": 0.4967,
+     "after_break_mean_pct": -0.0827,
+     "half1_mean": -0.1761,
+     "half2_mean": -0.132,
+     "by_year": {
+      "2016": {
+       "n": 102,
+       "mean": -0.0437
+      },
+      "2017": {
+       "n": 86,
+       "mean": -0.0376
+      },
+      "2018": {
+       "n": 104,
+       "mean": -0.0048
+      },
+      "2019": {
+       "n": 96,
+       "mean": -0.4187
+      },
+      "2020": {
+       "n": 76,
+       "mean": -0.4479
+      },
+      "2021": {
+       "n": 96,
+       "mean": -0.1961
+      },
+      "2022": {
+       "n": 98,
+       "mean": 0.0057
+      },
+      "2023": {
+       "n": 94,
+       "mean": -0.0562
+      },
+      "2024": {
+       "n": 87,
+       "mean": -0.3358
+      },
+      "2025": {
+       "n": 63,
+       "mean": -0.0596
+      }
+     },
+     "no_rebuy": 69,
+     "protection": 417,
+     "bought_back": 416,
+     "rose_no_return": 430,
+     "worst_pct": -3.8002,
+     "best_pct": 3.5321,
+     "uncond_n": 2511,
+     "uncond_mean_pct": -0.1618,
+     "primary_cost": true,
+     "p_boot": 0.9989,
+     "p_holm": 1.0,
+     "class": "NOT_SUPPORTED"
+    },
+    "k1.0_prox0.5_cost0.1": {
+     "n": 566,
+     "mean_gain_pct": -0.2378,
+     "median_gain_pct": -0.8582,
+     "beat_hold_rate": 0.3905,
+     "after_break_mean_pct": -0.1978,
+     "half1_mean": -0.2162,
+     "half2_mean": -0.2593,
+     "by_year": {
+      "2016": {
+       "n": 63,
+       "mean": -0.0986
+      },
+      "2017": {
+       "n": 57,
+       "mean": -0.0544
+      },
+      "2018": {
+       "n": 66,
+       "mean": -0.0783
+      },
+      "2019": {
+       "n": 58,
+       "mean": -0.58
+      },
+      "2020": {
+       "n": 42,
+       "mean": -0.4101
+      },
+      "2021": {
+       "n": 58,
+       "mean": -0.2959
+      },
+      "2022": {
+       "n": 70,
+       "mean": 0.0569
+      },
+      "2023": {
+       "n": 68,
+       "mean": -0.1707
+      },
+      "2024": {
+       "n": 45,
+       "mean": -0.4903
+      },
+      "2025": {
+       "n": 39,
+       "mean": -0.5736
+      }
+     },
+     "no_rebuy": 85,
+     "protection": 301,
+     "bought_back": 180,
+     "rose_no_return": 360,
+     "worst_pct": -3.7791,
+     "best_pct": 3.7329,
+     "uncond_n": 2511,
+     "uncond_mean_pct": -0.1953,
+     "primary_cost": true,
+     "p_boot": 0.9999,
+     "p_holm": 1.0,
+     "class": "NOT_SUPPORTED"
+    },
+    "k1.0_prox1.0_cost0.1": {
+     "n": 902,
+     "mean_gain_pct": -0.2271,
+     "median_gain_pct": -0.8582,
+     "beat_hold_rate": 0.3858,
+     "after_break_mean_pct": -0.1649,
+     "half1_mean": -0.2334,
+     "half2_mean": -0.2209,
+     "by_year": {
+      "2016": {
+       "n": 102,
+       "mean": -0.0308
+      },
+      "2017": {
+       "n": 86,
+       "mean": -0.0973
+      },
+      "2018": {
+       "n": 104,
+       "mean": -0.0599
+      },
+      "2019": {
+       "n": 96,
+       "mean": -0.547
+      },
+      "2020": {
+       "n": 76,
+       "mean": -0.445
+      },
+      "2021": {
+       "n": 96,
+       "mean": -0.2429
+      },
+      "2022": {
+       "n": 98,
+       "mean": -0.0998
+      },
+      "2023": {
+       "n": 94,
+       "mean": -0.1157
+      },
+      "2024": {
+       "n": 87,
+       "mean": -0.4394
+      },
+      "2025": {
+       "n": 63,
+       "mean": -0.2953
+      }
+     },
+     "no_rebuy": 165,
+     "protection": 484,
+     "bought_back": 253,
+     "rose_no_return": 613,
+     "worst_pct": -3.8002,
+     "best_pct": 4.3622,
+     "uncond_n": 2511,
+     "uncond_mean_pct": -0.1953,
+     "primary_cost": true,
+     "p_boot": 0.9999,
+     "p_holm": 1.0,
+     "class": "NOT_SUPPORTED"
+    },
+    "k0.5_prox0.5_cost0.0": {
+     "n": 566,
+     "mean_gain_pct": -0.0527,
+     "median_gain_pct": 0.5325,
+     "beat_hold_rate": 0.5318,
+     "after_break_mean_pct": -0.0267,
+     "half1_mean": -0.0341,
+     "half2_mean": -0.0712,
+     "by_year": {
+      "2016": {
+       "n": 63,
+       "mean": 0.0242
+      },
+      "2017": {
+       "n": 57,
+       "mean": 0.1209
+      },
+      "2018": {
+       "n": 66,
+       "mean": 0.0796
+      },
+      "2019": {
+       "n": 58,
+       "mean": -0.3039
+      },
+      "2020": {
+       "n": 42,
+       "mean": -0.2278
+      },
+      "2021": {
+       "n": 58,
+       "mean": -0.1527
+      },
+      "2022": {
+       "n": 70,
+       "mean": 0.154
+      },
+      "2023": {
+       "n": 68,
+       "mean": 0.002
+      },
+      "2024": {
+       "n": 45,
+       "mean": -0.2417
+      },
+      "2025": {
+       "n": 39,
+       "mean": -0.1916
+      }
+     },
+     "no_rebuy": 25,
+     "protection": 248,
+     "bought_back": 293,
+     "rose_no_return": 237,
+     "worst_pct": -3.6846,
+     "best_pct": 3.0211,
+     "uncond_n": 2511,
+     "uncond_mean_pct": -0.0714,
+     "primary_cost": false,
+     "p_boot": 0.83932,
+     "class": "SENSITIVITY_ONLY"
+    },
+    "k0.5_prox1.0_cost0.0": {
+     "n": 902,
+     "mean_gain_pct": -0.058,
+     "median_gain_pct": -0.0028,
+     "beat_hold_rate": 0.4989,
+     "after_break_mean_pct": -0.0178,
+     "half1_mean": -0.0798,
+     "half2_mean": -0.0362,
+     "by_year": {
+      "2016": {
+       "n": 102,
+       "mean": 0.0523
+      },
+      "2017": {
+       "n": 86,
+       "mean": 0.0619
+      },
+      "2018": {
+       "n": 104,
+       "mean": 0.092
+      },
+      "2019": {
+       "n": 96,
+       "mean": -0.3223
+      },
+      "2020": {
+       "n": 76,
+       "mean": -0.3556
+      },
+      "2021": {
+       "n": 96,
+       "mean": -0.102
+      },
+      "2022": {
+       "n": 98,
+       "mean": 0.1048
+      },
+      "2023": {
+       "n": 94,
+       "mean": 0.0401
+      },
+      "2024": {
+       "n": 87,
+       "mean": -0.2408
+      },
+      "2025": {
+       "n": 63,
+       "mean": 0.0341
+      }
+     },
+     "no_rebuy": 69,
+     "protection": 417,
+     "bought_back": 416,
+     "rose_no_return": 430,
+     "worst_pct": -3.7058,
+     "best_pct": 3.6376,
+     "uncond_n": 2511,
+     "uncond_mean_pct": -0.0714,
+     "primary_cost": false,
+     "p_boot": 0.87311,
+     "class": "SENSITIVITY_ONLY"
+    },
+    "k1.0_prox0.5_cost0.0": {
+     "n": 566,
+     "mean_gain_pct": -0.1455,
+     "median_gain_pct": -0.7594,
+     "beat_hold_rate": 0.394,
+     "after_break_mean_pct": -0.1293,
+     "half1_mean": -0.1244,
+     "half2_mean": -0.1667,
+     "by_year": {
+      "2016": {
+       "n": 63,
+       "mean": -0.005
+      },
+      "2017": {
+       "n": 57,
+       "mean": 0.0395
+      },
+      "2018": {
+       "n": 66,
+       "mean": 0.0141
+      },
+      "2019": {
+       "n": 58,
+       "mean": -0.492
+      },
+      "2020": {
+       "n": 42,
+       "mean": -0.3188
+      },
+      "2021": {
+       "n": 58,
+       "mean": -0.204
+      },
+      "2022": {
+       "n": 70,
+       "mean": 0.1499
+      },
+      "2023": {
+       "n": 68,
+       "mean": -0.0782
+      },
+      "2024": {
+       "n": 45,
+       "mean": -0.3987
+      },
+      "2025": {
+       "n": 39,
+       "mean": -0.4795
+      }
+     },
+     "no_rebuy": 85,
+     "protection": 301,
+     "bought_back": 180,
+     "rose_no_return": 360,
+     "worst_pct": -3.6846,
+     "best_pct": 3.8387,
+     "uncond_n": 2511,
+     "uncond_mean_pct": -0.109,
+     "primary_cost": false,
+     "p_boot": 0.9841,
+     "class": "SENSITIVITY_ONLY"
+    },
+    "k1.0_prox1.0_cost0.0": {
+     "n": 902,
+     "mean_gain_pct": -0.1366,
+     "median_gain_pct": -0.7622,
+     "beat_hold_rate": 0.3902,
+     "after_break_mean_pct": -0.1051,
+     "half1_mean": -0.1426,
+     "half2_mean": -0.1305,
+     "by_year": {
+      "2016": {
+       "n": 102,
+       "mean": 0.0603
+      },
+      "2017": {
+       "n": 86,
+       "mean": -0.0026
+      },
+      "2018": {
+       "n": 104,
+       "mean": 0.03
+      },
+      "2019": {
+       "n": 96,
+       "mean": -0.4582
+      },
+      "2020": {
+       "n": 76,
+       "mean": -0.3546
+      },
+      "2021": {
+       "n": 96,
+       "mean": -0.1536
+      },
+      "2022": {
+       "n": 98,
+       "mean": -0.0065
+      },
+      "2023": {
+       "n": 94,
+       "mean": -0.0249
+      },
+      "2024": {
+       "n": 87,
+       "mean": -0.3509
+      },
+      "2025": {
+       "n": 63,
+       "mean": -0.2069
+      }
+     },
+     "no_rebuy": 165,
+     "protection": 484,
+     "bought_back": 253,
+     "rose_no_return": 613,
+     "worst_pct": -3.7058,
+     "best_pct": 4.4689,
+     "uncond_n": 2511,
+     "uncond_mean_pct": -0.109,
+     "primary_cost": false,
+     "p_boot": 0.9865,
+     "class": "SENSITIVITY_ONLY"
+    },
+    "k0.5_prox0.5_cost0.3": {
+     "n": 566,
+     "mean_gain_pct": -0.3455,
+     "median_gain_pct": 0.2307,
+     "beat_hold_rate": 0.53,
+     "after_break_mean_pct": -0.2475,
+     "half1_mean": -0.3284,
+     "half2_mean": -0.3626,
+     "by_year": {
+      "2016": {
+       "n": 63,
+       "mean": -0.2706
+      },
+      "2017": {
+       "n": 57,
+       "mean": -0.1792
+      },
+      "2018": {
+       "n": 66,
+       "mean": -0.218
+      },
+      "2019": {
+       "n": 58,
+       "mean": -0.597
+      },
+      "2020": {
+       "n": 42,
+       "mean": -0.5091
+      },
+      "2021": {
+       "n": 58,
+       "mean": -0.4414
+      },
+      "2022": {
+       "n": 70,
+       "mean": -0.142
+      },
+      "2023": {
+       "n": 68,
+       "mean": -0.2866
+      },
+      "2024": {
+       "n": 45,
+       "mean": -0.5336
+      },
+      "2025": {
+       "n": 39,
+       "mean": -0.4826
+      }
+     },
+     "no_rebuy": 25,
+     "protection": 248,
+     "bought_back": 293,
+     "rose_no_return": 237,
+     "worst_pct": -3.9678,
+     "best_pct": 2.7078,
+     "uncond_n": 2511,
+     "uncond_mean_pct": -0.3424,
+     "primary_cost": false,
+     "p_boot": 1.0,
+     "class": "SENSITIVITY_ONLY"
+    },
+    "k0.5_prox1.0_cost0.3": {
+     "n": 902,
+     "mean_gain_pct": -0.3459,
+     "median_gain_pct": -0.1528,
+     "beat_hold_rate": 0.4922,
+     "after_break_mean_pct": -0.2124,
+     "half1_mean": -0.3685,
+     "half2_mean": -0.3233,
+     "by_year": {
+      "2016": {
+       "n": 102,
+       "mean": -0.2357
+      },
+      "2017": {
+       "n": 86,
+       "mean": -0.2362
+      },
+      "2018": {
+       "n": 104,
+       "mean": -0.1979
+      },
+      "2019": {
+       "n": 96,
+       "mean": -0.6112
+      },
+      "2020": {
+       "n": 76,
+       "mean": -0.6323
+      },
+      "2021": {
+       "n": 96,
+       "mean": -0.384
+      },
+      "2022": {
+       "n": 98,
+       "mean": -0.1922
+      },
+      "2023": {
+       "n": 94,
+       "mean": -0.2485
+      },
+      "2024": {
+       "n": 87,
+       "mean": -0.5255
+      },
+      "2025": {
+       "n": 63,
+       "mean": -0.2466
+      }
+     },
+     "no_rebuy": 69,
+     "protection": 417,
+     "bought_back": 416,
+     "rose_no_return": 430,
+     "worst_pct": -3.9889,
+     "best_pct": 3.3215,
+     "uncond_n": 2511,
+     "uncond_mean_pct": -0.3424,
+     "primary_cost": false,
+     "p_boot": 1.0,
+     "class": "SENSITIVITY_ONLY"
+    },
+    "k1.0_prox0.5_cost0.3": {
+     "n": 566,
+     "mean_gain_pct": -0.422,
+     "median_gain_pct": -1.0555,
+     "beat_hold_rate": 0.3799,
+     "after_break_mean_pct": -0.3346,
+     "half1_mean": -0.3996,
+     "half2_mean": -0.4444,
+     "by_year": {
+      "2016": {
+       "n": 63,
+       "mean": -0.2853
+      },
+      "2017": {
+       "n": 57,
+       "mean": -0.2418
+      },
+      "2018": {
+       "n": 66,
+       "mean": -0.2628
+      },
+      "2019": {
+       "n": 58,
+       "mean": -0.7559
+      },
+      "2020": {
+       "n": 42,
+       "mean": -0.5925
+      },
+      "2021": {
+       "n": 58,
+       "mean": -0.4796
+      },
+      "2022": {
+       "n": 70,
+       "mean": -0.129
+      },
+      "2023": {
+       "n": 68,
+       "mean": -0.3554
+      },
+      "2024": {
+       "n": 45,
+       "mean": -0.6733
+      },
+      "2025": {
+       "n": 39,
+       "mean": -0.7616
+      }
+     },
+     "no_rebuy": 85,
+     "protection": 301,
+     "bought_back": 180,
+     "rose_no_return": 360,
+     "worst_pct": -3.9678,
+     "best_pct": 3.5217,
+     "uncond_n": 2511,
+     "uncond_mean_pct": -0.3677,
+     "primary_cost": false,
+     "p_boot": 1.0,
+     "class": "SENSITIVITY_ONLY"
+    },
+    "k1.0_prox1.0_cost0.3": {
+     "n": 902,
+     "mean_gain_pct": -0.408,
+     "median_gain_pct": -1.0555,
+     "beat_hold_rate": 0.3736,
+     "after_break_mean_pct": -0.2843,
+     "half1_mean": -0.4147,
+     "half2_mean": -0.4014,
+     "by_year": {
+      "2016": {
+       "n": 102,
+       "mean": -0.2128
+      },
+      "2017": {
+       "n": 86,
+       "mean": -0.2864
+      },
+      "2018": {
+       "n": 104,
+       "mean": -0.2394
+      },
+      "2019": {
+       "n": 96,
+       "mean": -0.7245
+      },
+      "2020": {
+       "n": 76,
+       "mean": -0.6254
+      },
+      "2021": {
+       "n": 96,
+       "mean": -0.4213
+      },
+      "2022": {
+       "n": 98,
+       "mean": -0.2861
+      },
+      "2023": {
+       "n": 94,
+       "mean": -0.297
+      },
+      "2024": {
+       "n": 87,
+       "mean": -0.6162
+      },
+      "2025": {
+       "n": 63,
+       "mean": -0.4718
+      }
+     },
+     "no_rebuy": 165,
+     "protection": 484,
+     "bought_back": 253,
+     "rose_no_return": 613,
+     "worst_pct": -3.9889,
+     "best_pct": 4.149,
+     "uncond_n": 2511,
+     "uncond_mean_pct": -0.3677,
+     "primary_cost": false,
+     "p_boot": 1.0,
+     "class": "SENSITIVITY_ONLY"
+    }
+   }
+  },
+  "BTC": {
+   "days": 2854,
+   "first": "2018-01-15",
+   "last": "2025-11-08",
+   "variants": {
+    "k0.5_prox0.5_cost0.32": {
+     "n": 736,
+     "mean_gain_pct": -0.1663,
+     "median_gain_pct": 1.5492,
+     "beat_hold_rate": 0.5489,
+     "after_break_mean_pct": -0.1782,
+     "half1_mean": -0.0654,
+     "half2_mean": -0.2672,
+     "by_year": {
+      "2018": {
+       "n": 100,
+       "mean": 0.9217
+      },
+      "2019": {
+       "n": 100,
+       "mean": 0.1536
+      },
+      "2020": {
+       "n": 58,
+       "mean": -1.5654
+      },
+      "2021": {
+       "n": 89,
+       "mean": -0.6741
+      },
+      "2022": {
+       "n": 133,
+       "mean": -0.1693
+      },
+      "2023": {
+       "n": 95,
+       "mean": -0.2446
+      },
+      "2024": {
+       "n": 82,
+       "mean": -0.1948
+      },
+      "2025": {
+       "n": 79,
+       "mean": -0.2207
+      }
+     },
+     "no_rebuy": 59,
+     "protection": 293,
+     "bought_back": 384,
+     "rose_no_return": 312,
+     "worst_pct": -15.032,
+     "best_pct": 16.9152,
+     "uncond_n": 2854,
+     "uncond_mean_pct": -0.1169,
+     "primary_cost": true,
+     "p_boot": 0.77672,
+     "p_holm": 1.0,
+     "class": "NOT_SUPPORTED"
+    },
+    "k0.5_prox1.0_cost0.32": {
+     "n": 1135,
+     "mean_gain_pct": -0.2699,
+     "median_gain_pct": -0.0159,
+     "beat_hold_rate": 0.4996,
+     "after_break_mean_pct": -0.2225,
+     "half1_mean": -0.1855,
+     "half2_mean": -0.3542,
+     "by_year": {
+      "2018": {
+       "n": 154,
+       "mean": 0.7525
+      },
+      "2019": {
+       "n": 141,
+       "mean": -0.1259
+      },
+      "2020": {
+       "n": 123,
+       "mean": -1.4223
+      },
+      "2021": {
+       "n": 129,
+       "mean": -0.3572
+      },
+      "2022": {
+       "n": 169,
+       "mean": -0.356
+      },
+      "2023": {
+       "n": 150,
+       "mean": -0.3474
+      },
+      "2024": {
+       "n": 141,
+       "mean": -0.3636
+      },
+      "2025": {
+       "n": 128,
+       "mean": -0.1559
+      }
+     },
+     "no_rebuy": 119,
+     "protection": 495,
+     "bought_back": 521,
+     "rose_no_return": 541,
+     "worst_pct": -16.3906,
+     "best_pct": 23.3416,
+     "uncond_n": 2854,
+     "uncond_mean_pct": -0.1169,
+     "primary_cost": true,
+     "p_boot": 0.90351,
+     "p_holm": 1.0,
+     "class": "NOT_SUPPORTED"
+    },
+    "k1.0_prox0.5_cost0.32": {
+     "n": 736,
+     "mean_gain_pct": -0.1002,
+     "median_gain_pct": -2.1381,
+     "beat_hold_rate": 0.4416,
+     "after_break_mean_pct": -0.159,
+     "half1_mean": 0.0744,
+     "half2_mean": -0.2748,
+     "by_year": {
+      "2018": {
+       "n": 100,
+       "mean": 1.6393
+      },
+      "2019": {
+       "n": 100,
+       "mean": 0.1169
+      },
+      "2020": {
+       "n": 58,
+       "mean": -2.4238
+      },
+      "2021": {
+       "n": 89,
+       "mean": -0.5603
+      },
+      "2022": {
+       "n": 133,
+       "mean": -0.0261
+      },
+      "2023": {
+       "n": 95,
+       "mean": -0.4273
+      },
+      "2024": {
+       "n": 82,
+       "mean": 0.0146
+      },
+      "2025": {
+       "n": 79,
+       "mean": -0.2034
+      }
+     },
+     "no_rebuy": 140,
+     "protection": 348,
+     "bought_back": 248,
+     "rose_no_return": 458,
+     "worst_pct": -15.032,
+     "best_pct": 28.5851,
+     "uncond_n": 2854,
+     "uncond_mean_pct": -0.0714,
+     "primary_cost": true,
+     "p_boot": 0.63654,
+     "p_holm": 1.0,
+     "class": "NOT_SUPPORTED"
+    },
+    "k1.0_prox1.0_cost0.32": {
+     "n": 1135,
+     "mean_gain_pct": -0.1461,
+     "median_gain_pct": -2.4241,
+     "beat_hold_rate": 0.4159,
+     "after_break_mean_pct": -0.1174,
+     "half1_mean": 0.0514,
+     "half2_mean": -0.3431,
+     "by_year": {
+      "2018": {
+       "n": 154,
+       "mean": 1.5925
+      },
+      "2019": {
+       "n": 141,
+       "mean": -0.1383
+      },
+      "2020": {
+       "n": 123,
+       "mean": -1.7938
+      },
+      "2021": {
+       "n": 129,
+       "mean": -0.0805
+      },
+      "2022": {
+       "n": 169,
+       "mean": -0.0697
+      },
+      "2023": {
+       "n": 150,
+       "mean": -0.556
+      },
+      "2024": {
+       "n": 141,
+       "mean": -0.3552
+      },
+      "2025": {
+       "n": 128,
+       "mean": -0.119
+      }
+     },
+     "no_rebuy": 232,
+     "protection": 561,
+     "bought_back": 342,
+     "rose_no_return": 745,
+     "worst_pct": -16.3906,
+     "best_pct": 31.0835,
+     "uncond_n": 2854,
+     "uncond_mean_pct": -0.0714,
+     "primary_cost": true,
+     "p_boot": 0.70673,
+     "p_holm": 1.0,
+     "class": "NOT_SUPPORTED"
+    }
+   }
+  },
+  "ETH": {
+   "days": 2854,
+   "first": "2018-01-15",
+   "last": "2025-11-08",
+   "variants": {
+    "k0.5_prox0.5_cost0.32": {
+     "n": 734,
+     "mean_gain_pct": -0.1515,
+     "median_gain_pct": 2.0935,
+     "beat_hold_rate": 0.5477,
+     "after_break_mean_pct": 0.1024,
+     "half1_mean": 0.1672,
+     "half2_mean": -0.4702,
+     "by_year": {
+      "2018": {
+       "n": 111,
+       "mean": 1.28
+      },
+      "2019": {
+       "n": 96,
+       "mean": 0.4348
+      },
+      "2020": {
+       "n": 70,
+       "mean": -1.5205
+      },
+      "2021": {
+       "n": 72,
+       "mean": -0.553
+      },
+      "2022": {
+       "n": 121,
+       "mean": 0.462
+      },
+      "2023": {
+       "n": 97,
+       "mean": -0.9979
+      },
+      "2024": {
+       "n": 88,
+       "mean": -0.7486
+      },
+      "2025": {
+       "n": 79,
+       "mean": -0.5315
+      }
+     },
+     "no_rebuy": 64,
+     "protection": 292,
+     "bought_back": 378,
+     "rose_no_return": 307,
+     "worst_pct": -19.9999,
+     "best_pct": 26.8083,
+     "uncond_n": 2854,
+     "uncond_mean_pct": -0.0281,
+     "primary_cost": true,
+     "p_boot": 0.69733,
+     "p_holm": 1.0,
+     "class": "NOT_SUPPORTED"
+    },
+    "k0.5_prox1.0_cost0.32": {
+     "n": 1153,
+     "mean_gain_pct": -0.3045,
+     "median_gain_pct": 0.149,
+     "beat_hold_rate": 0.5022,
+     "after_break_mean_pct": 0.0145,
+     "half1_mean": -0.1242,
+     "half2_mean": -0.4845,
+     "by_year": {
+      "2018": {
+       "n": 163,
+       "mean": 1.475
+      },
+      "2019": {
+       "n": 157,
+       "mean": -0.0364
+      },
+      "2020": {
+       "n": 133,
+       "mean": -1.0098
+      },
+      "2021": {
+       "n": 125,
+       "mean": -1.3903
+      },
+      "2022": {
+       "n": 159,
+       "mean": 0.2546
+      },
+      "2023": {
+       "n": 151,
+       "mean": -0.9067
+      },
+      "2024": {
+       "n": 140,
+       "mean": -0.9882
+      },
+      "2025": {
+       "n": 125,
+       "mean": -0.3436
+      }
+     },
+     "no_rebuy": 137,
+     "protection": 492,
+     "bought_back": 524,
+     "rose_no_return": 552,
+     "worst_pct": -23.1264,
+     "best_pct": 26.8083,
+     "uncond_n": 2854,
+     "uncond_mean_pct": -0.0281,
+     "primary_cost": true,
+     "p_boot": 0.87961,
+     "p_holm": 1.0,
+     "class": "NOT_SUPPORTED"
+    },
+    "k1.0_prox0.5_cost0.32": {
+     "n": 734,
+     "mean_gain_pct": 0.0803,
+     "median_gain_pct": -2.1216,
+     "beat_hold_rate": 0.4619,
+     "after_break_mean_pct": 0.0779,
+     "half1_mean": 0.4496,
+     "half2_mean": -0.289,
+     "by_year": {
+      "2018": {
+       "n": 111,
+       "mean": 3.4766
+      },
+      "2019": {
+       "n": 96,
+       "mean": 0.4124
+      },
+      "2020": {
+       "n": 70,
+       "mean": -2.6592
+      },
+      "2021": {
+       "n": 72,
+       "mean": -1.7072
+      },
+      "2022": {
+       "n": 121,
+       "mean": 0.7904
+      },
+      "2023": {
+       "n": 97,
+       "mean": -1.1933
+      },
+      "2024": {
+       "n": 88,
+       "mean": -0.3456
+      },
+      "2025": {
+       "n": 79,
+       "mean": -0.0882
+      }
+     },
+     "no_rebuy": 135,
+     "protection": 338,
+     "bought_back": 261,
+     "rose_no_return": 440,
+     "worst_pct": -20.807,
+     "best_pct": 27.535,
+     "uncond_n": 2854,
+     "uncond_mean_pct": 0.1812,
+     "primary_cost": true,
+     "p_boot": 0.40506,
+     "p_holm": 1.0,
+     "class": "NOT_SUPPORTED"
+    },
+    "k1.0_prox1.0_cost0.32": {
+     "n": 1153,
+     "mean_gain_pct": 0.0292,
+     "median_gain_pct": -2.9458,
+     "beat_hold_rate": 0.4371,
+     "after_break_mean_pct": 0.1115,
+     "half1_mean": 0.3419,
+     "half2_mean": -0.2829,
+     "by_year": {
+      "2018": {
+       "n": 163,
+       "mean": 3.3243
+      },
+      "2019": {
+       "n": 157,
+       "mean": 0.1488
+      },
+      "2020": {
+       "n": 133,
+       "mean": -1.2653
+      },
+      "2021": {
+       "n": 125,
+       "mean": -1.6407
+      },
+      "2022": {
+       "n": 159,
+       "mean": 0.5959
+      },
+      "2023": {
+       "n": 151,
+       "mean": -1.0167
+      },
+      "2024": {
+       "n": 140,
+       "mean": -0.7286
+      },
+      "2025": {
+       "n": 125,
+       "mean": 0.0208
+      }
+     },
+     "no_rebuy": 228,
+     "protection": 548,
+     "bought_back": 377,
+     "rose_no_return": 729,
+     "worst_pct": -23.1264,
+     "best_pct": 35.7332,
+     "uncond_n": 2854,
+     "uncond_mean_pct": 0.1812,
+     "primary_cost": true,
+     "p_boot": 0.45415,
+     "p_holm": 1.0,
+     "class": "NOT_SUPPORTED"
+    }
+   }
+  },
+  "SOL": {
+   "days": 1881,
+   "first": "2020-09-15",
+   "last": "2025-11-08",
+   "variants": {
+    "k0.5_prox0.5_cost0.44": {
+     "n": 542,
+     "mean_gain_pct": -0.0337,
+     "median_gain_pct": 3.3306,
+     "beat_hold_rate": 0.5664,
+     "after_break_mean_pct": -0.0323,
+     "half1_mean": 0.4984,
+     "half2_mean": -0.5659,
+     "by_year": {
+      "2020": {
+       "n": 40,
+       "mean": 2.1623
+      },
+      "2021": {
+       "n": 79,
+       "mean": -0.8637
+      },
+      "2022": {
+       "n": 138,
+       "mean": 0.9224
+      },
+      "2023": {
+       "n": 107,
+       "mean": -1.3285
+      },
+      "2024": {
+       "n": 93,
+       "mean": -0.3722
+      },
+      "2025": {
+       "n": 85,
+       "mean": 0.1521
+      }
+     },
+     "no_rebuy": 50,
+     "protection": 201,
+     "bought_back": 291,
+     "rose_no_return": 219,
+     "worst_pct": -31.9488,
+     "best_pct": 20.6417,
+     "uncond_n": 1881,
+     "uncond_mean_pct": 0.0735,
+     "primary_cost": true,
+     "p_boot": 0.51935,
+     "p_holm": 0.65454,
+     "class": "NOT_SUPPORTED"
+    },
+    "k0.5_prox1.0_cost0.44": {
+     "n": 797,
+     "mean_gain_pct": 0.3574,
+     "median_gain_pct": 3.2732,
+     "beat_hold_rate": 0.5508,
+     "after_break_mean_pct": 0.1186,
+     "half1_mean": 0.7172,
+     "half2_mean": -0.0014,
+     "by_year": {
+      "2020": {
+       "n": 55,
+       "mean": 1.6678
+      },
+      "2021": {
+       "n": 136,
+       "mean": -0.3541
+      },
+      "2022": {
+       "n": 178,
+       "mean": 0.9577
+      },
+      "2023": {
+       "n": 149,
+       "mean": -0.7555
+      },
+      "2024": {
+       "n": 149,
+       "mean": 0.2721
+      },
+      "2025": {
+       "n": 130,
+       "mean": 1.0989
+      }
+     },
+     "no_rebuy": 90,
+     "protection": 306,
+     "bought_back": 401,
+     "rose_no_return": 348,
+     "worst_pct": -31.9488,
+     "best_pct": 32.0008,
+     "uncond_n": 1881,
+     "uncond_mean_pct": 0.0735,
+     "primary_cost": true,
+     "p_boot": 0.21818,
+     "p_holm": 0.65454,
+     "class": "NOT_SUPPORTED"
+    },
+    "k1.0_prox0.5_cost0.44": {
+     "n": 542,
+     "mean_gain_pct": 0.3708,
+     "median_gain_pct": -2.7695,
+     "beat_hold_rate": 0.4649,
+     "after_break_mean_pct": 0.3545,
+     "half1_mean": 0.9467,
+     "half2_mean": -0.205,
+     "by_year": {
+      "2020": {
+       "n": 40,
+       "mean": 3.7675
+      },
+      "2021": {
+       "n": 79,
+       "mean": -1.4071
+      },
+      "2022": {
+       "n": 138,
+       "mean": 1.6433
+      },
+      "2023": {
+       "n": 107,
+       "mean": -1.3366
+      },
+      "2024": {
+       "n": 93,
+       "mean": -0.1267
+      },
+      "2025": {
+       "n": 85,
+       "mean": 1.0528
+      }
+     },
+     "no_rebuy": 98,
+     "protection": 245,
+     "bought_back": 199,
+     "rose_no_return": 321,
+     "worst_pct": -31.9488,
+     "best_pct": 52.3886,
+     "uncond_n": 1881,
+     "uncond_mean_pct": 0.3138,
+     "primary_cost": true,
+     "p_boot": 0.30187,
+     "p_holm": 0.65454,
+     "class": "NOT_SUPPORTED"
+    },
+    "k1.0_prox1.0_cost0.44": {
+     "n": 797,
+     "mean_gain_pct": 0.8002,
+     "median_gain_pct": -1.9313,
+     "beat_hold_rate": 0.4705,
+     "after_break_mean_pct": 0.5905,
+     "half1_mean": 1.2862,
+     "half2_mean": 0.3154,
+     "by_year": {
+      "2020": {
+       "n": 55,
+       "mean": 3.6298
+      },
+      "2021": {
+       "n": 136,
+       "mean": -0.7064
+      },
+      "2022": {
+       "n": 178,
+       "mean": 1.6713
+      },
+      "2023": {
+       "n": 149,
+       "mean": -0.5431
+      },
+      "2024": {
+       "n": 149,
+       "mean": 0.1342
+      },
+      "2025": {
+       "n": 130,
+       "mean": 2.2893
+      }
+     },
+     "no_rebuy": 165,
+     "protection": 355,
+     "bought_back": 277,
+     "rose_no_return": 486,
+     "worst_pct": -31.9488,
+     "best_pct": 52.3886,
+     "uncond_n": 1881,
+     "uncond_mean_pct": 0.3138,
+     "primary_cost": true,
+     "p_boot": 0.09829,
+     "p_holm": 0.39316,
+     "class": "NOT_SUPPORTED"
+    }
+   }
+  }
+ }
+}

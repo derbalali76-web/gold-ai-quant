@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI QUANT — سجل الثقة العلني</title>
+<meta name="description" content="كل توصية وتحليل من AI QUANT يُسجَّل هنا قبل معرفة نتيجته، في سجل متسلسل يكشف أي تعديل لاحق.">
+<style>
+  :root { --bg:#07070A; --card:#111014; --edge:#3A3018; --gold:#D4AF37; --text:#F4F4F4; --dim:#A3A3A8; --up:#2ECC71; --down:#E5484D; }
+  * { box-sizing:border-box }
+  body { margin:0; background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,"Segoe UI","Noto Sans Arabic",Tahoma,sans-serif; line-height:1.6 }
+  main { max-width:880px; margin:0 auto; padding:24px 16px 48px }
+  h1 { color:var(--gold); margin:0 0 4px; font-size:28px }
+  h2 { color:var(--gold); font-size:18px; margin:28px 0 10px }
+  .sub { color:var(--dim); margin:0 0 18px }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:12px }
+  .card { background:var(--card); border:1px solid var(--edge); border-radius:14px; padding:14px }
+  .k { color:var(--dim); font-size:13px }
+  .v { font-size:22px; font-weight:800 }
+  .small { font-size:12px; color:var(--dim) }
+  table { width:100%; border-collapse:collapse; font-size:13px }
+  th, td { text-align:start; padding:8px 6px; border-bottom:1px solid #222 }
+  th { color:var(--dim); font-weight:600 }
+  .tag { display:inline-block; padding:1px 8px; border-radius:10px; border:1px solid var(--edge); font-size:11px }
+  code { direction:ltr; unicode-bidi:embed; font-size:11px; color:var(--dim); word-break:break-all }
+  .ltr { direction:ltr; unicode-bidi:embed }
+  a { color:var(--gold) }
+  .note { border-inline-start:3px solid var(--gold); padding:8px 12px; background:#0f0e0a; border-radius:8px; color:var(--dim); font-size:13px }
+</style>
+</head>
+<body>
+<main>
+  <h1>سجل الثقة العلني</h1>
+  <p class="sub">كل توصية وتحليل من AI QUANT يُسجَّل هنا <b>قبل</b> معرفة نتيجته، بما في ذلك الخسائر. كل سطر مربوط بالسطر الذي قبله ببصمة SHA-256، وتُثبَّت بصمة آخر سطر يومياً خارج GitHub (OpenTimestamps على بلوكتشين البيتكوين)، فتغيير سطر قديم يظهر عند التحقق.</p>
+  <div class="note">لا يُصدر التطبيق توصية شراء أو بيع إلا بعد اجتياز اختبار صارم خارج العينة. لذلك قد يبقى عدد التوصيات صفراً لفترة طويلة، وهذا مقصود: لا إشارات عشوائية.</div>
+
+  <h2>الملخص</h2>
+  <div class="grid" id="summary"><div class="card">جارٍ التحميل…</div></div>
+
+  <h2>حسب الأصل</h2>
+  <div class="grid" id="assets"></div>
+
+  <h2>آخر السطور المسجّلة</h2>
+  <div class="card" style="overflow-x:auto"><table id="recent"><thead><tr><th>الوقت (UTC)</th><th>النوع</th><th>الأصل</th><th>التفاصيل</th></tr></thead><tbody></tbody></table></div>
+
+  <h2>تحقّق بنفسك</h2>
+  <div class="card small">
+    <p>السجل الكامل: <a href="ledger.jsonl">ledger.jsonl</a> · الإحصاءات: <a href="stats.json">stats.json</a> · الكود: <a href="ledger.py">ledger.py</a></p>
+    <p>رأس السلسلة الحالي: <code id="head">—</code></p>
+    <p class="ltr">python ledger.py verify</p>
+  </div>
+  <p class="small" id="updated"></p>
+</main>
+<script>
+const KIND = { REC:"توصية", RESULT:"نتيجة توصية", BRIEF:"تحليل يومي", BRIEF_RESULT:"نتيجة تحليل", SCENARIO:"سيناريو تجريبي", SCENARIO_RESULT:"نتيجة سيناريو" };
+const pct = v => v == null ? "—" : (v * 100).toFixed(1) + "%";
+const num = (v, d = 2) => v == null ? "—" : Number(v).toFixed(d);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
+function card(k, v, s) { return `<div class="card"><div class="k">${esc(k)}</div><div class="v">${v}</div>${s ? `<div class="small">${s}</div>` : ""}</div>`; }
+async function load() {
+  try {
+    const st = await (await fetch("stats.json", { cache: "no-store" })).json();
+    const r = st.recommendations || {}, a = st.analysis || {};
+    document.getElementById("summary").innerHTML =
+      card("توصيات مكتملة", r.completed ?? 0, `منشورة ${r.published ?? 0} · مفتوحة ${r.open ?? 0}`) +
+      card("نسبة الربح", pct(r.win_rate), `متوسط النتيجة ${num(r.avg_r)}R · أقصى تراجع ${num(r.max_drawdown_r)}R`) +
+      card("دقة التحليل اليومي", pct(a.accuracy), `مقابل ${pct(a.baseline_accuracy)} للخط الأساسي · ${a.scored ?? 0} يوماً مقيّماً`) +
+      card("أسطر السجل", st.lines ?? 0, `منذ ${esc(st.tracking_since || "—")}`);
+    const names = { XAU:"الذهب XAU", BTC:"بيتكوين BTC", ETH:"إيثريوم ETH", SOL:"سولانا SOL" };
+    document.getElementById("assets").innerHTML = Object.entries(st.assets || {}).map(([k, v]) => {
+      const rr = v.recommendations || {}, aa = v.analysis || {};
+      return card(names[k] || k, `${rr.completed ?? 0} <span class="small">توصية مكتملة</span>`,
+        `دقة التحليل ${pct(aa.accuracy)} (${aa.scored ?? 0} يوم) · منذ ${esc((v.tracking_since || "—").slice(0, 10))}`);
+    }).join("");
+    document.getElementById("head").textContent = st.chain_head || "—";
+    document.getElementById("updated").textContent = "آخر تحديث: " + (st.updated_at || "—") + " (يُحدَّث تلقائياً كل ساعة)";
+  } catch (e) { document.getElementById("summary").innerHTML = card("تعذّر التحميل", "—", esc(e.message)); }
+  try {
+    const txt = await (await fetch("ledger.jsonl", { cache: "no-store" })).text();
+    const rows = txt.trim().split("\n").filter(Boolean).slice(-40).reverse().map(l => JSON.parse(l));
+    document.querySelector("#recent tbody").innerHTML = rows.map(x => {
+      const d = x.data || {};
+      let det = "";
+      if (x.kind === "REC") det = `${esc(d.side)} ${esc(d.horizon)} · دخول ${num(d.entry_low)}–${num(d.entry_high)} · وقف ${num(d.stop)} · هدف ${num(d.target)}`;
+      else if (x.kind === "BRIEF") det = `ميل ${esc(d.bias)} · السعر ${num(d.price_at_record)}`;
+      else if (d.outcome || d.result) det = esc(d.outcome || d.result);
+      else if (d.strategy) det = esc(d.strategy);
+      return `<tr><td class="ltr">${esc((x.recorded_at || "").replace("T", " ").slice(0, 16))}</td><td><span class="tag">${esc(KIND[x.kind] || x.kind)}</span></td><td>${esc(d.asset || "XAU")}</td><td>${det}</td></tr>`;
+    }).join("");
+  } catch (e) { /* the summary above already reports problems */ }
+}
+load();
+</script>
+</body>
+</html>
