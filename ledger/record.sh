@@ -19,6 +19,10 @@ for attempt in 1 2 3 4; do
   python3 ledger.py update "$IN"/issue_*.json "$IN"/snap_XAU.json "$IN"/snap_BTC.json "$IN"/snap_ETH.json \
     "$IN"/snap_SOL.json || exit 1
   python3 ledger.py verify || exit 1
+  # trade engine live paper record (own files trade_engine/*; a failure here never blocks the range ledger)
+  [ -f "$IN/te_input.json" ] && { python3 te_live.py update "$IN/te_input.json" . || echo "trade engine: update failed"; }
+  # are the files running here the canonical ones (gold-ai-quant ledger/MANIFEST.json)? reported, never blocking
+  [ -f verify_copy.py ] && { python3 verify_copy.py || true; }
   python3 monitor.py --issuer "$IN/issuer.txt" "$IN"/snap_XAU.json "$IN"/snap_BTC.json "$IN"/snap_ETH.json \
     "$IN"/snap_SOL.json | tee monitor.txt
   # daily external anchor (OpenTimestamps -> Bitcoin; best effort, never blocks the record)

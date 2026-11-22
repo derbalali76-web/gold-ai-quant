@@ -85,3 +85,10 @@ With every daily analysis (`BRIEF`), three `SCENARIO` lines are written **in the
   market was open). Every verdict reports it; any missed issue time in the last 24 h opens the alert issue.
 - If a push is rejected because another run pushed first, the run starts again from the fresh head with the same inputs
   (`record.sh`). Triggers: an external scheduler at :00 every hour, GitHub's own schedule at :17 and :41 as a backup.
+
+## advice-0.1.0 — «ماذا أفعل؟» (pre-registered 2026-11-17, before any outcome)
+
+From this version on, the ledger records once per asset per UTC day the app's beginner instruction for a holder and
+for cash (kind `ADVICE`), built from the HOURS and WEEK views exactly as the app builds them, and scores it after
+168 hours on closed H1 bars (kind `ADVICE_RESULT`). The rules, costs, fill conventions and pass/fail criteria are
+written in `advice.py` (module docstring) and do not change after results are seen; a change is a new version.
