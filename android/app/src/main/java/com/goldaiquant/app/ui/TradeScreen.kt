@@ -82,6 +82,9 @@ internal fun TradeSheet(te: TeState?, notify: Boolean, onNotify: (Boolean) -> Un
             Column(Modifier.fillMaxWidth().background(Color(0xFF0C0B08), RoundedCornerShape(24.dp))
                 .border(1.5.dp, Gold, RoundedCornerShape(24.dp)).padding(14.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Header(onClose)
+                // phase 4 rule 9: virtual results only — no realized profit without proof of execution
+                Text(stringResource(R.string.te_virtual), color = Color(0xFFD9C78F), fontSize = 12.sp, lineHeight = 17.sp,
+                    modifier = Modifier.fillMaxWidth().border(1.dp, Color(0xFF4A3F1C), RoundedCornerShape(12.dp)).padding(10.dp))
                 val o = te?.active
                 if (o != null) OrderBody(o, onCalc) else NoTrade(notify, onNotify)
                 te?.lastClosed?.let { LastClosed(it) }
