@@ -27,6 +27,7 @@ MANIFEST = SRC / "MANIFEST.json"
 FILES = {
     "ledger.py": "ledger.py", "issue.py": "issue.py", "advice.py": "advice.py", "monitor.py": "monitor.py",
     "te_live.py": "te_live.py", "record.sh": "record.sh", "verify_copy.py": "verify_copy.py",
+    "server_watch.py": "server_watch.py",
     "README.md": "README.md", "index.html": "index.html", "workflows/record.yml": ".github/workflows/record.yml",
 }
 
