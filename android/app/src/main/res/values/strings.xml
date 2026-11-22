@@ -813,6 +813,41 @@
     <string name="rec_scen_only">Scenario results: they measure whether the forecast was right, not trading results.</string>
     <string name="rec_to_virtual">Virtual trades</string>
     <string name="te_virtual">Virtual trades on market prices after fees. No profit is counted as realized without proof of execution. Every original recommendation and all its updates stay in the public record, never edited.</string>
+    <string name="sc2_trend">Market trend: %1$s</string>
+    <string name="sc2_touch">Likely: touches %1$s before %2$s</string>
+    <string name="sa_cash">I have cash</string>
+    <string name="sa_hold">I own the asset</string>
+    <string name="sa_frame">Based on: %1$s</string>
+    <string name="sa_idea">Experimental idea</string>
+    <string name="sa_buy_now">Buy now</string>
+    <string name="sa_wait_dip">Wait for a pull-back</string>
+    <string name="sa_wait">Wait</string>
+    <string name="sa_keep">Keep it</string>
+    <string name="sa_sell_rebuy">Sell now, buy back lower</string>
+    <string name="sa_none">No idea right now</string>
+    <string name="sa_l_buy">The trend is rising and the price is not high in its range.</string>
+    <string name="sa_l_dip">The trend is rising but the price is close to resistance. Better to enter after a pull-back.</string>
+    <string name="sa_l_wait">The trend is not rising. Don\'t buy now; you can enter at support if the price holds above it.</string>
+    <string name="sa_l_keep">The price can still rise. Wait, then sell above resistance.</string>
+    <string name="sa_l_bottom">The price is at support: selling here may mean selling at the bottom. Wait for a bounce.</string>
+    <string name="sa_l_sell_up">The trend is rising but the price is high and a pull-back is possible.</string>
+    <string name="sa_l_sell_down">The trend is falling and the price still has room to drop to support.</string>
+    <string name="sa_l_none">Levels or price are missing for this period.</string>
+    <string name="sa_r_entry">Entry</string>
+    <string name="sa_r_now">now</string>
+    <string name="sa_r_target">Target (resistance)</string>
+    <string name="sa_r_enter_at">Enter near support</string>
+    <string name="sa_r_watch">Watch the support</string>
+    <string name="sa_r_invalid">Idea cancelled below</string>
+    <string name="sa_r_sell_above">Sell above</string>
+    <string name="sa_r_sell_now">Sell now</string>
+    <string name="sa_r_market">at market price</string>
+    <string name="sa_r_rebuy">Buy back near</string>
+    <string name="sa_n_chase">If the price doesn\'t come back, don\'t chase it. It may rise without returning, which is why this is an experimental idea.</string>
+    <string name="sa_n_dip">If the price doesn\'t drop to support, don\'t chase it.</string>
+    <string name="sa_n_invalid">If the price closes below the cancel level, the idea is void.</string>
+    <string name="sa_n_nosell">With cash you only buy or wait: no short selling.</string>
+    <string name="sa_foot">Educational ideas based on the trend and levels, not a guarantee. Spot buying and selling only: no leverage, no short selling.</string>
     <string name="r_w_up" formatted="false">up</string>
     <string name="r_w_down" formatted="false">down</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

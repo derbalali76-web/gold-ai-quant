@@ -812,6 +812,41 @@
     <string name="rec_scen_only">Résultats des scénarios : ils mesurent la justesse de la prévision, pas des résultats de trading.</string>
     <string name="rec_to_virtual">Trades virtuels</string>
     <string name="te_virtual">Trades virtuels aux prix du marché après frais. Aucun gain n\'est compté comme réalisé sans preuve d\'exécution. Chaque recommandation d\'origine et toutes ses mises à jour restent dans le registre public, jamais modifiées.</string>
+    <string name="sc2_trend">Tendance du marché : %1$s</string>
+    <string name="sc2_touch">Probable : touche %1$s avant %2$s</string>
+    <string name="sa_cash">J\'ai des liquidités</string>
+    <string name="sa_hold">Je possède l\'actif</string>
+    <string name="sa_frame">Selon : %1$s</string>
+    <string name="sa_idea">Idée expérimentale</string>
+    <string name="sa_buy_now">Acheter maintenant</string>
+    <string name="sa_wait_dip">Attendre un repli</string>
+    <string name="sa_wait">Attendre</string>
+    <string name="sa_keep">Conserver</string>
+    <string name="sa_sell_rebuy">Vendre maintenant, racheter plus bas</string>
+    <string name="sa_none">Pas d\'idée pour l\'instant</string>
+    <string name="sa_l_buy">La tendance est haussière et le prix n\'est pas haut dans sa fourchette.</string>
+    <string name="sa_l_dip">La tendance est haussière mais le prix est proche de la résistance. Mieux vaut entrer après un repli.</string>
+    <string name="sa_l_wait">La tendance n\'est pas haussière. N\'achetez pas maintenant ; vous pouvez entrer au support si le prix tient au-dessus.</string>
+    <string name="sa_l_keep">Le prix peut encore monter. Attendez, puis vendez au-dessus de la résistance.</string>
+    <string name="sa_l_bottom">Le prix est au support : vendre ici peut revenir à vendre au plus bas. Attendez un rebond.</string>
+    <string name="sa_l_sell_up">La tendance est haussière mais le prix est haut et un repli est possible.</string>
+    <string name="sa_l_sell_down">La tendance est baissière et le prix a encore de la marge jusqu\'au support.</string>
+    <string name="sa_l_none">Les niveaux ou le prix manquent pour cette période.</string>
+    <string name="sa_r_entry">Entrée</string>
+    <string name="sa_r_now">maintenant</string>
+    <string name="sa_r_target">Objectif (résistance)</string>
+    <string name="sa_r_enter_at">Entrer près du support</string>
+    <string name="sa_r_watch">Surveiller le support</string>
+    <string name="sa_r_invalid">Idée annulée sous</string>
+    <string name="sa_r_sell_above">Vendre au-dessus de</string>
+    <string name="sa_r_sell_now">Vendre maintenant</string>
+    <string name="sa_r_market">au prix du marché</string>
+    <string name="sa_r_rebuy">Racheter près de</string>
+    <string name="sa_n_chase">Si le prix ne revient pas, ne le poursuivez pas. Il peut monter sans revenir : c\'est pourquoi c\'est une idée expérimentale.</string>
+    <string name="sa_n_dip">Si le prix ne descend pas au support, ne le poursuivez pas.</string>
+    <string name="sa_n_invalid">Si le prix clôture sous le niveau d\'annulation, l\'idée est caduque.</string>
+    <string name="sa_n_nosell">Avec des liquidités, on achète ou on attend : pas de vente à découvert.</string>
+    <string name="sa_foot">Idées pédagogiques fondées sur la tendance et les niveaux, sans garantie. Achat et vente au comptant uniquement : ni levier, ni vente à découvert.</string>
     <string name="r_w_up" formatted="false">haussière</string>
     <string name="r_w_down" formatted="false">baissière</string>
     <string name="r_w_neutral" formatted="false">neutre</string>

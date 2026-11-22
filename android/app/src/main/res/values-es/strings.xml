@@ -812,6 +812,41 @@
     <string name="rec_scen_only">Resultados de escenarios: miden si la previsión acertó, no resultados de trading.</string>
     <string name="rec_to_virtual">Operaciones virtuales</string>
     <string name="te_virtual">Operaciones virtuales a precios de mercado tras comisiones. Ninguna ganancia cuenta como realizada sin prueba de ejecución. Cada recomendación original y todas sus actualizaciones quedan en el registro público, sin editar.</string>
+    <string name="sc2_trend">Tendencia del mercado: %1$s</string>
+    <string name="sc2_touch">Lo probable: toca %1$s antes de %2$s</string>
+    <string name="sa_cash">Tengo liquidez</string>
+    <string name="sa_hold">Tengo el activo</string>
+    <string name="sa_frame">Según: %1$s</string>
+    <string name="sa_idea">Idea experimental</string>
+    <string name="sa_buy_now">Compra ahora</string>
+    <string name="sa_wait_dip">Espera una corrección</string>
+    <string name="sa_wait">Espera</string>
+    <string name="sa_keep">Mantén</string>
+    <string name="sa_sell_rebuy">Vende ahora y recompra más abajo</string>
+    <string name="sa_none">Sin idea por ahora</string>
+    <string name="sa_l_buy">La tendencia es alcista y el precio no está alto en su rango.</string>
+    <string name="sa_l_dip">La tendencia es alcista pero el precio está cerca de la resistencia. Mejor entrar tras una corrección.</string>
+    <string name="sa_l_wait">La tendencia no es alcista. No compres ahora; puedes entrar en el soporte si el precio se mantiene encima.</string>
+    <string name="sa_l_keep">El precio aún puede subir. Espera y vende por encima de la resistencia.</string>
+    <string name="sa_l_bottom">El precio está en el soporte: vender aquí puede ser vender en el mínimo. Espera un rebote.</string>
+    <string name="sa_l_sell_up">La tendencia es alcista pero el precio está alto y es posible una corrección.</string>
+    <string name="sa_l_sell_down">La tendencia es bajista y el precio aún tiene margen hasta el soporte.</string>
+    <string name="sa_l_none">Faltan niveles o precio para este periodo.</string>
+    <string name="sa_r_entry">Entrada</string>
+    <string name="sa_r_now">ahora</string>
+    <string name="sa_r_target">Objetivo (resistencia)</string>
+    <string name="sa_r_enter_at">Entra cerca del soporte</string>
+    <string name="sa_r_watch">Vigila el soporte</string>
+    <string name="sa_r_invalid">Idea anulada por debajo de</string>
+    <string name="sa_r_sell_above">Vende por encima de</string>
+    <string name="sa_r_sell_now">Vende ahora</string>
+    <string name="sa_r_market">a precio de mercado</string>
+    <string name="sa_r_rebuy">Recompra cerca de</string>
+    <string name="sa_n_chase">Si el precio no vuelve, no lo persigas. Puede subir sin volver; por eso es una idea experimental.</string>
+    <string name="sa_n_dip">Si el precio no baja al soporte, no lo persigas.</string>
+    <string name="sa_n_invalid">Si el precio cierra por debajo del nivel de anulación, la idea queda sin efecto.</string>
+    <string name="sa_n_nosell">Con liquidez solo compras o esperas: sin ventas en corto.</string>
+    <string name="sa_foot">Ideas educativas basadas en la tendencia y los niveles, sin garantía. Solo compra y venta al contado: sin apalancamiento ni ventas en corto.</string>
     <string name="r_w_up" formatted="false">alcista</string>
     <string name="r_w_down" formatted="false">bajista</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

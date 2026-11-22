@@ -812,6 +812,41 @@
     <string name="rec_scen_only">نتائج السيناريوهات: تقيس صحة التوقع فقط، وليست نتائج تداول.</string>
     <string name="rec_to_virtual">الصفقات الافتراضية</string>
     <string name="te_virtual">صفقات افتراضية على أسعار السوق بعد الرسوم. لا يُسجَّل ربح محقق دون إثبات تنفيذ. كل توصية أصلية وجميع تحديثاتها محفوظة في السجل العلني دون تعديل.</string>
+    <string name="sc2_trend">اتجاه السوق: %1$s</string>
+    <string name="sc2_touch">الأرجح: يلمس %1$s قبل %2$s</string>
+    <string name="sa_cash">أملك سيولة</string>
+    <string name="sa_hold">أملك أصلاً</string>
+    <string name="sa_frame">بحسب إطار: %1$s</string>
+    <string name="sa_idea">فكرة تجريبية</string>
+    <string name="sa_buy_now">اشترِ الآن</string>
+    <string name="sa_wait_dip">انتظر التصحيح</string>
+    <string name="sa_wait">انتظر</string>
+    <string name="sa_keep">احتفظ</string>
+    <string name="sa_sell_rebuy">بِع الآن ثم اشترِ من القاع</string>
+    <string name="sa_none">لا فكرة الآن</string>
+    <string name="sa_l_buy">الاتجاه صاعد والسعر ليس مرتفعاً داخل النطاق.</string>
+    <string name="sa_l_dip">الاتجاه صاعد لكن السعر قرب المقاومة. الأفضل الدخول بعد تراجع.</string>
+    <string name="sa_l_wait">الاتجاه ليس صاعداً. لا شراء الآن، ويمكنك الدخول عند الدعم إذا ثبت السعر فوقه.</string>
+    <string name="sa_l_keep">السعر ما زال قادراً على الصعود. انتظر ثم بِع فوق المقاومة.</string>
+    <string name="sa_l_bottom">السعر عند الدعم، والبيع هنا قد يكون بيعاً في القاع. انتظر ارتداداً.</string>
+    <string name="sa_l_sell_up">الاتجاه صاعد لكن السعر مرتفع واحتمال التصحيح قائم.</string>
+    <string name="sa_l_sell_down">الاتجاه هابط وما زال أمام السعر مجال نحو الدعم.</string>
+    <string name="sa_l_none">المستويات أو السعر غير متوفرة لهذا الإطار.</string>
+    <string name="sa_r_entry">الدخول</string>
+    <string name="sa_r_now">الآن</string>
+    <string name="sa_r_target">الهدف (مقاومة)</string>
+    <string name="sa_r_enter_at">ادخل قرب الدعم</string>
+    <string name="sa_r_watch">راقب الدعم</string>
+    <string name="sa_r_invalid">الفكرة تُلغى تحت</string>
+    <string name="sa_r_sell_above">بِع فوق</string>
+    <string name="sa_r_sell_now">بِع الآن</string>
+    <string name="sa_r_market">بسعر السوق</string>
+    <string name="sa_r_rebuy">أعد الشراء قرب</string>
+    <string name="sa_n_chase">إن لم يعد السعر فلا تطارده. قد يصعد ولا يعود، لذلك هي فكرة تجريبية.</string>
+    <string name="sa_n_dip">إن لم ينزل السعر إلى الدعم فلا تطارده.</string>
+    <string name="sa_n_invalid">إن أغلق السعر تحت مستوى الإلغاء فالفكرة لاغية.</string>
+    <string name="sa_n_nosell">من يملك سيولة يشتري أو ينتظر فقط، بلا بيع على المكشوف.</string>
+    <string name="sa_foot">أفكار تعليمية مبنية على الاتجاه والمستويات، وليست ضماناً. شراء وبيع فوري فقط، بلا رافعة ولا بيع على المكشوف.</string>
     <string name="r_w_up" formatted="false">صاعد</string>
     <string name="r_w_down" formatted="false">هابط</string>
     <string name="r_w_neutral" formatted="false">محايد</string>

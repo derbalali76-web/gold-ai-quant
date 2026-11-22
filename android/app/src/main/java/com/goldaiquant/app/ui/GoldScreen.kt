@@ -102,6 +102,7 @@ import com.goldaiquant.app.HorizonModel
 import com.goldaiquant.app.Lang
 import com.goldaiquant.app.Level
 import com.goldaiquant.app.HorizonScenarios
+import com.goldaiquant.app.SimpleAdvice
 import androidx.compose.ui.draw.alpha
 import com.goldaiquant.app.LevelRelation
 import com.goldaiquant.app.MainViewModel
@@ -321,8 +322,7 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
                     modifier = Modifier.weight(1f).fillMaxWidth()) { c ->
                     ScenarioCard(c, s, d, compact, Modifier.fillMaxSize()) { l, sup -> sheet = Sheet.LevelSheet(l, sup) }
                 }
-                ModeToggle(s.position == "HOLD", stringResource(when (s.asset) { "BTC" -> R.string.asset_btc
-                    "ETH" -> R.string.asset_eth; "SOL" -> R.string.asset_sol; else -> R.string.asset_gold }), onPosition)
+                // beginner simplification (2026-11-22): the cash / holder choice lives inside «ماذا أفعل؟»
                 WhatButton(compact) {
                     haptic.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.LongPress)
                     sheet = Sheet.WhatSheet
@@ -333,8 +333,7 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
                         textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
                 }
                 Row(Modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(gap)) {
-                    // the opportunity radar (phase 4, 2026-11-22) replaced «trade opportunities»; the paper trades open from it
-                    RadarTile(s.unified?.assets?.get(s.asset), Modifier.weight(1f).fillMaxHeight()) { sheet = Sheet.RadarSheet }
+                    // the radar tile is off the beginner screen (2026-11-22); virtual trades open from the record
                     Tile(stringResource(R.string.rec_title), recordTile(s.briefs),
                         WaitGold, Modifier.weight(1f).fillMaxHeight()) { sheet = Sheet.TrustSheet }
                     Tile(stringResource(R.string.details), stringResource(R.string.why_title), WaitGold,
@@ -375,7 +374,7 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
             onHow = { sheet = Sheet.HowSheet }, onNews = { sheet = Sheet.NewsSheet }) { sheet = null }
         Sheet.HowSheet -> HowDialog { sheet = null }
         Sheet.ScalpSheet -> if (d != null) ScalpDialog(d) { sheet = null }
-        Sheet.WhatSheet -> if (d != null) WhatDialog(d, s, onPosition) { sheet = null }
+        Sheet.WhatSheet -> if (d != null && card != null) WhatDialog(d, card, s, onPosition) { sheet = null }
         Sheet.RadarSheet -> RadarSheet(s.unified?.assets?.get(s.asset), onPaper = { sheet = Sheet.TradeSheet }) { sheet = null }
         Sheet.TradeSheet -> TradeSheet(s.te, s.teNotify, onTeNotify, onCalc = { _ ->
             s.te?.active?.let { o -> sheet = Sheet.TradeCalc(o.limit, o.stop, o.target) } }) { sheet = null }
@@ -2121,7 +2120,7 @@ private fun RecordPage(rows: List<BriefRow>, ranges: List<RangeRow>, onMore: () 
             // phase 4 rule 9: scenario results here; virtual trades are a separate record (never mixed, no realized profit)
             Row(Modifier.fillMaxWidth().border(1.dp, Color(0xFF4A3F1C), RoundedCornerShape(12.dp)).padding(10.dp),
                 verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(stringResource(R.string.rec_scen_only), color = Color(0xFFD9C78F), fontSize = 12.sp, modifier = Modifier.weight(1f))
+                Spacer(Modifier.weight(1f))
                 Text(stringResource(R.string.rec_to_virtual) + " ←", color = Gold, fontSize = 12.sp, fontWeight = FontWeight.Bold,
                     modifier = Modifier.clickable(role = Role.Button, onClick = onVirtual).padding(6.dp))
             }
@@ -2484,16 +2483,19 @@ private fun scHorizon(h: String): String = stringResource(when (h) {
 @Composable
 private fun ScenarioCard(c: HorizonCard, s: UiState, d: Decision, compact: Boolean, modifier: Modifier,
                          onLevel: (Level, Boolean) -> Unit) {
-    val v = HorizonScenarios.of(c, d.brief, d.isDemo)
+    val v = looseLikely(HorizonScenarios.of(c, d.brief, d.isDemo), c.trend?.direction)
     Panel(modifier) {
         Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Text(stringResource(R.string.sc2_title, scHorizon(c.horizon)), color = Gold, fontSize = 15.sp, fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.sc2_trend, c.trend?.let { trendLabel(it.direction) } ?: "—"),
+                color = trendColor(c.trend?.direction), fontSize = 13.sp, fontWeight = FontWeight.Bold)
             if (d.marketClosed) Text(stringResource(R.string.closed_last_session), color = WaitGold, fontSize = 11.sp)
             else if (s.decisionFromCache || d.isExpired(Instant.now())) Text(stringResource(R.string.saved_decision), color = WaitGold, fontSize = 11.sp)
             val note = when (v.likely) {
                 HorizonScenarios.Likely.NONE -> stringResource(R.string.sc2_none)
                 HorizonScenarios.Likely.BETWEEN -> stringResource(R.string.sc2_between, ltr(v.down!!.trigger.p2()), ltr(v.up!!.trigger.p2()))
-                else -> null
+                HorizonScenarios.Likely.DOWN -> v.up?.let { stringResource(R.string.sc2_touch, ltr(v.down!!.trigger.p2()), ltr(it.trigger.p2())) }
+                HorizonScenarios.Likely.UP -> v.down?.let { stringResource(R.string.sc2_touch, ltr(v.up!!.trigger.p2()), ltr(it.trigger.p2())) }
             }
             note?.let {
                 Text(it, color = TextMain, fontSize = 12.sp, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth()
@@ -2550,48 +2552,93 @@ private fun WhatButton(compact: Boolean, onClick: () -> Unit) {
             .padding(vertical = if (compact) 9.dp else 12.dp))
 }
 
+/** No validated evidence for a side: the beginner screen still marks the side the trend points to (owner, 2026-11-22). */
+private fun looseLikely(v: HorizonScenarios.View, trend: String?): HorizonScenarios.View {
+    if (v.likely != HorizonScenarios.Likely.NONE) return v
+    val l = when (SimpleAdvice.trendCodeOf(trend)) {
+        "UP" -> if (v.up != null) HorizonScenarios.Likely.UP else null
+        "DOWN" -> if (v.down != null) HorizonScenarios.Likely.DOWN else null
+        else -> null
+    } ?: return v
+    return v.copy(likely = l)
+}
+
 @Composable
-private fun WhatDialog(d: Decision, s: UiState, onPosition: (String) -> Unit, onClose: () -> Unit) {
-    // AI QUANT 2.0 (approved 2026-11-22): the decision comes only from the ledger's unified state (QUALIFIED → plan,
-    // otherwise «انتظر» + why). The client-side scenario reading below is shown as a forecast, never as an order.
+private fun WhatDialog(d: Decision, c: HorizonCard, s: UiState, onPosition: (String) -> Unit, onClose: () -> Unit) {
+    // beginner «ماذا أفعل؟» (owner-approved 2026-11-22): trend × price position on the selected horizon, cash or holder.
     val hold = s.position == "HOLD"
-    val hours = HorizonScenarios.of(HorizonModel.card(d, "HOURS"), d.brief, d.isDemo)
-    val week = d.outlooks.firstOrNull { it.horizon == "WEEK" }?.let { HorizonScenarios.of(HorizonModel.card(d, "WEEK"), d.brief, d.isDemo) }
-    val plan = HorizonScenarios.decide(hours, week, hold)
-    val assetName = stringResource(when (s.asset) { "BTC" -> R.string.asset_btc; "ETH" -> R.string.asset_eth
-        "SOL" -> R.string.asset_sol; else -> R.string.asset_gold })
+    val price = s.live[s.asset]?.price ?: d.quote
+    val idea = SimpleAdvice.decide(c.trend?.direction, price, c.levels?.supports.orEmpty().map { it.price },
+        c.levels?.resistances.orEmpty().map { it.price }, hold)
+    val down = SimpleAdvice.trendCodeOf(c.trend?.direction) != "UP"
     DialogFrame(stringResource(R.string.ask), onClose) {
-        ModeToggle(hold, assetName, onPosition)
-        DecisionBlock(s.unified?.assets?.get(s.asset), hold)
-        Row(Modifier.fillMaxWidth().padding(top = 4.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text(stringResource(R.string.q_scen_title), color = TextDim, fontSize = 13.sp, modifier = Modifier.weight(1f))
-            Text(stringResource(R.string.q_badge_forecast), color = Color(0xFFC9C6BC), fontSize = 11.sp, fontWeight = FontWeight.Bold,
-                modifier = Modifier.border(1.dp, Color(0xFF55534D), RoundedCornerShape(50)).padding(horizontal = 8.dp, vertical = 2.dp))
-        }
-        val dip = plan.mix == HorizonScenarios.Mix.DIP_IN_UPTREND
-        if (plan.mix != null) {
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                val hDown = dip
-                listOf(Triple(R.string.h_hours, if (hDown) R.string.wd_short_down else R.string.wd_short_up, if (hDown) SellRed else BuyGreen),
-                    Triple(R.string.h_week, if (hDown) R.string.wd_w_up else R.string.wd_w_down, if (hDown) BuyGreen else SellRed))
-                    .forEach { (name, word, c) ->
-                        Column(Modifier.weight(1f).border(1.dp, CardEdge, RoundedCornerShape(10.dp)).padding(5.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(stringResource(name), color = TextMain, fontSize = 12.sp)
-                            Text(stringResource(word), color = c, fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                        }
-                    }
+        Text(stringResource(R.string.sa_frame, scHorizon(c.horizon)), color = TextDim, fontSize = 13.sp)
+        Row(Modifier.fillMaxWidth().background(Color(0xFF161618), RoundedCornerShape(14.dp))
+            .border(1.dp, CardEdge, RoundedCornerShape(14.dp)).padding(4.dp), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+            listOf(false to R.string.sa_cash, true to R.string.sa_hold).forEach { (h, label) ->
+                val on = h == hold
+                Text(stringResource(label), color = if (on) Color.Black else TextMain, fontSize = 15.sp, fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center, modifier = Modifier.weight(1f).background(if (on) Gold else Color.Transparent,
+                        RoundedCornerShape(10.dp)).clickable(role = Role.Button) { onPosition(if (h) "HOLD" else "CASH") }
+                        .padding(vertical = 11.dp))
             }
-            Text(stringResource(if (dip) R.string.wd_mix_dip else R.string.wd_mix_bounce), color = TextDim, fontSize = 11.sp,
-                textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
-        } else plan.basis?.let {
-            Text(stringResource(R.string.wd_basis, scHorizon(it)), color = TextDim, fontSize = 11.sp,
-                textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
         }
-        plan.at?.let { Text(stringResource(R.string.q_scen_level, ltr(it.p2())), color = TextMain, fontSize = 13.sp,
-            textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth()) }
-        Text(stringResource(R.string.q_scen_more), color = TextDim, fontSize = 11.sp, textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth())
+        val (title, color) = when (idea.kind) {
+            SimpleAdvice.Kind.BUY_NOW -> R.string.sa_buy_now to BuyGreen
+            SimpleAdvice.Kind.WAIT_DIP -> R.string.sa_wait_dip to WaitGold
+            SimpleAdvice.Kind.WAIT -> R.string.sa_wait to WaitGold
+            SimpleAdvice.Kind.HOLD_SELL_ABOVE -> R.string.sa_keep to Color(0xFF8FC1EA)
+            SimpleAdvice.Kind.SELL_REBUY -> R.string.sa_sell_rebuy to Color(0xFFF0A46A)
+            SimpleAdvice.Kind.NONE -> R.string.sa_none to TextDim
+        }
+        val line = when (idea.kind) {
+            SimpleAdvice.Kind.BUY_NOW -> R.string.sa_l_buy
+            SimpleAdvice.Kind.WAIT_DIP -> R.string.sa_l_dip
+            SimpleAdvice.Kind.WAIT -> R.string.sa_l_wait
+            SimpleAdvice.Kind.HOLD_SELL_ABOVE -> if ((idea.position ?: 1.0) < SimpleAdvice.LOW && down) R.string.sa_l_bottom else R.string.sa_l_keep
+            SimpleAdvice.Kind.SELL_REBUY -> if (down) R.string.sa_l_sell_down else R.string.sa_l_sell_up
+            SimpleAdvice.Kind.NONE -> R.string.sa_l_none
+        }
+        fun f(v: Double?) = v?.let { ltr(it.p2()) } ?: "—"
+        val rows: List<Pair<Int, String>> = when (idea.kind) {
+            SimpleAdvice.Kind.BUY_NOW -> listOf(R.string.sa_r_entry to stringResource(R.string.sa_r_now),
+                R.string.sa_r_target to f(idea.sellAt), R.string.sa_r_invalid to f(idea.invalid))
+            SimpleAdvice.Kind.WAIT_DIP -> listOf(R.string.sa_r_enter_at to f(idea.buyAt), R.string.sa_r_target to f(idea.sellAt),
+                R.string.sa_r_invalid to f(idea.invalid))
+            SimpleAdvice.Kind.WAIT -> listOf(R.string.sa_r_watch to f(idea.buyAt), R.string.sa_r_invalid to f(idea.invalid))
+            SimpleAdvice.Kind.HOLD_SELL_ABOVE -> listOf(R.string.sa_r_sell_above to f(idea.sellAt))
+            SimpleAdvice.Kind.SELL_REBUY -> listOf(R.string.sa_r_sell_now to stringResource(R.string.sa_r_market),
+                R.string.sa_r_rebuy to f(idea.buyAt))
+            SimpleAdvice.Kind.NONE -> emptyList()
+        }
+        val note = when (idea.kind) {
+            SimpleAdvice.Kind.SELL_REBUY -> R.string.sa_n_chase
+            SimpleAdvice.Kind.WAIT_DIP -> R.string.sa_n_dip
+            SimpleAdvice.Kind.WAIT -> R.string.sa_n_nosell
+            SimpleAdvice.Kind.BUY_NOW -> R.string.sa_n_invalid
+            else -> null
+        }
+        Column(Modifier.fillMaxWidth().background(Color(0xFF161618), RoundedCornerShape(18.dp))
+            .border(1.dp, Color(0xFF3A3018), RoundedCornerShape(18.dp)).padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(stringResource(title), color = color, fontSize = 22.sp, fontWeight = FontWeight.ExtraBold, modifier = Modifier.weight(1f))
+                if (idea.kind != SimpleAdvice.Kind.NONE) Text(stringResource(R.string.sa_idea), color = Color(0xFFF0B45A), fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold, modifier = Modifier.border(1.dp, Color(0xFF8A6424), RoundedCornerShape(50))
+                        .padding(horizontal = 8.dp, vertical = 2.dp))
+            }
+            Text(stringResource(line), color = TextMain, fontSize = 15.sp, lineHeight = 22.sp)
+            if (rows.isNotEmpty()) {
+                Divider()
+                rows.forEach { (k, v) ->
+                    Row(Modifier.fillMaxWidth()) {
+                        Text(stringResource(k), color = TextDim, fontSize = 14.sp, modifier = Modifier.weight(1f))
+                        Text(v, color = TextMain, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                    }
+                }
+            }
+            note?.let { Text(stringResource(it), color = Color(0xFFB5A877), fontSize = 12.sp, lineHeight = 18.sp) }
+        }
+        Text(stringResource(R.string.sa_foot), color = TextDim, fontSize = 11.sp, lineHeight = 16.sp)
         if (d.isDemo) Text(stringResource(R.string.demo_banner), color = WaitGold, fontSize = 11.sp, textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth())
     }
