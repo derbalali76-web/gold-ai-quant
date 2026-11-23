@@ -847,6 +847,10 @@
     <string name="sa_n_invalid">إن أغلق السعر تحت مستوى الإلغاء فالفكرة لاغية.</string>
     <string name="sa_n_nosell">من يملك سيولة يشتري أو ينتظر فقط، بلا بيع على المكشوف.</string>
     <string name="sa_foot">أفكار تعليمية مبنية على الاتجاه والمستويات، وليست ضماناً. شراء وبيع فوري فقط، بلا رافعة ولا بيع على المكشوف.</string>
+    <string name="sc2_lean_up">الأرجح حسب الاتجاه: الصعود نحو %1$s</string>
+    <string name="sc2_lean_down">الأرجح حسب الاتجاه: الهبوط نحو %1$s</string>
+    <string name="fd_up_down">الساعات تميل للصعود والأسبوع يميل للهبوط: قد يكون صعوداً قصيراً داخل هبوط أسبوعي. لا تعتمد على إطار واحد.</string>
+    <string name="fd_down_up">الساعات تميل للهبوط والأسبوع يميل للصعود: قد يكون تراجعاً قصيراً داخل صعود أسبوعي. لا تعتمد على إطار واحد.</string>
     <string name="r_w_up" formatted="false">صاعد</string>
     <string name="r_w_down" formatted="false">هابط</string>
     <string name="r_w_neutral" formatted="false">محايد</string>

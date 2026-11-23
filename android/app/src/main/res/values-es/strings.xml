@@ -847,6 +847,10 @@
     <string name="sa_n_invalid">Si el precio cierra por debajo del nivel de anulación, la idea queda sin efecto.</string>
     <string name="sa_n_nosell">Con liquidez solo compras o esperas: sin ventas en corto.</string>
     <string name="sa_foot">Ideas educativas basadas en la tendencia y los niveles, sin garantía. Solo compra y venta al contado: sin apalancamiento ni ventas en corto.</string>
+    <string name="sc2_lean_up">Lo probable según la tendencia: subida hacia %1$s</string>
+    <string name="sc2_lean_down">Lo probable según la tendencia: bajada hacia %1$s</string>
+    <string name="fd_up_down">Las horas tienden al alza y la semana a la baja: puede ser una subida corta dentro de una caída semanal. No te fíes de un solo marco.</string>
+    <string name="fd_down_up">Las horas tienden a la baja y la semana al alza: puede ser una caída corta dentro de una subida semanal. No te fíes de un solo marco.</string>
     <string name="r_w_up" formatted="false">alcista</string>
     <string name="r_w_down" formatted="false">bajista</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

@@ -848,6 +848,10 @@
     <string name="sa_n_invalid">If the price closes below the cancel level, the idea is void.</string>
     <string name="sa_n_nosell">With cash you only buy or wait: no short selling.</string>
     <string name="sa_foot">Educational ideas based on the trend and levels, not a guarantee. Spot buying and selling only: no leverage, no short selling.</string>
+    <string name="sc2_lean_up">Likely, by the trend: up toward %1$s</string>
+    <string name="sc2_lean_down">Likely, by the trend: down toward %1$s</string>
+    <string name="fd_up_down">Hours lean up, the week leans down: this may be a short rise inside a weekly fall. Don\'t rely on one frame alone.</string>
+    <string name="fd_down_up">Hours lean down, the week leans up: this may be a short dip inside a weekly rise. Don\'t rely on one frame alone.</string>
     <string name="r_w_up" formatted="false">up</string>
     <string name="r_w_down" formatted="false">down</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

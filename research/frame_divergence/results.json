@@ -1,0 +1,457 @@
+{
+ "study": "frame-divergence-0.1",
+ "prereg_commit": "a54d9a1",
+ "prereg_sha256": "89ef19e251f4a4f62d4c969a4da487f90a00769dc67888a17687987bb6e40c21",
+ "assets": {
+  "BTC": {
+   "period": [
+    "2021-01-02",
+    "2025-11-07"
+   ],
+   "groups": {
+    "AD": {
+     "n": 184,
+     "hours_hit_24h": 0.397,
+     "week_hit_7d": 0.429,
+     "btd": 0.196,
+     "mean_r24_pct": 0.435,
+     "mean_r7_pct": 1.059
+    },
+    "AU": {
+     "n": 331,
+     "hours_hit_24h": 0.45,
+     "week_hit_7d": 0.538,
+     "btd": 0.193,
+     "mean_r24_pct": 0.161,
+     "mean_r7_pct": 1.06
+    },
+    "D1": {
+     "n": 51,
+     "hours_hit_24h": 0.353,
+     "week_hit_7d": 0.49,
+     "btd": 0.098,
+     "mean_r24_pct": -0.544,
+     "mean_r7_pct": 1.861
+    },
+    "D2": {
+     "n": 56,
+     "hours_hit_24h": 0.339,
+     "week_hit_7d": 0.464,
+     "btd": 0.232,
+     "mean_r24_pct": 0.39,
+     "mean_r7_pct": -0.31
+    },
+    "OTHER": {
+     "n": 1149,
+     "hours_hit_24h": 0.475,
+     "week_hit_7d": 0.507,
+     "btd": 0.173,
+     "mean_r24_pct": 0.072,
+     "mean_r7_pct": 0.645
+    },
+    "ALL": {
+     "n": 1771,
+     "btd": 0.179
+    }
+   },
+   "H2": {
+    "0.16": {
+     "mean_d1_pct": -1.738,
+     "mean_all_pct": -0.477,
+     "n_d1": 31,
+     "n_all": 253
+    }
+   },
+   "H3": {
+    "0.16": {
+     "mean_d1_pct": -1.56,
+     "mean_all_pct": -0.331,
+     "n_d1": 31,
+     "n_all": 253
+    }
+   }
+  },
+  "ETH": {
+   "period": [
+    "2021-01-02",
+    "2025-11-07"
+   ],
+   "groups": {
+    "AD": {
+     "n": 193,
+     "hours_hit_24h": 0.456,
+     "week_hit_7d": 0.43,
+     "btd": 0.176,
+     "mean_r24_pct": 0.317,
+     "mean_r7_pct": 1.778
+    },
+    "AU": {
+     "n": 298,
+     "hours_hit_24h": 0.507,
+     "week_hit_7d": 0.55,
+     "btd": 0.181,
+     "mean_r24_pct": 0.205,
+     "mean_r7_pct": 2.249
+    },
+    "D1": {
+     "n": 52,
+     "hours_hit_24h": 0.423,
+     "week_hit_7d": 0.538,
+     "btd": 0.115,
+     "mean_r24_pct": -0.644,
+     "mean_r7_pct": 1.405
+    },
+    "D2": {
+     "n": 56,
+     "hours_hit_24h": 0.339,
+     "week_hit_7d": 0.482,
+     "btd": 0.304,
+     "mean_r24_pct": 0.879,
+     "mean_r7_pct": 1.014
+    },
+    "OTHER": {
+     "n": 1172,
+     "hours_hit_24h": 0.453,
+     "week_hit_7d": 0.526,
+     "btd": 0.185,
+     "mean_r24_pct": 0.146,
+     "mean_r7_pct": 0.647
+    },
+    "ALL": {
+     "n": 1771,
+     "btd": 0.185
+    }
+   },
+   "H2": {
+    "0.16": {
+     "mean_d1_pct": -0.351,
+     "mean_all_pct": -0.306,
+     "n_d1": 30,
+     "n_all": 253
+    }
+   },
+   "H3": {
+    "0.16": {
+     "mean_d1_pct": 0.6,
+     "mean_all_pct": -0.229,
+     "n_d1": 30,
+     "n_all": 253
+    }
+   }
+  },
+  "SOL": {
+   "period": [
+    "2021-06-28",
+    "2025-11-07"
+   ],
+   "groups": {
+    "AD": {
+     "n": 220,
+     "hours_hit_24h": 0.486,
+     "week_hit_7d": 0.514,
+     "btd": 0.159,
+     "mean_r24_pct": -0.342,
+     "mean_r7_pct": -0.673
+    },
+    "AU": {
+     "n": 215,
+     "hours_hit_24h": 0.54,
+     "week_hit_7d": 0.567,
+     "btd": 0.233,
+     "mean_r24_pct": 1.107,
+     "mean_r7_pct": 5.904
+    },
+    "D1": {
+     "n": 50,
+     "hours_hit_24h": 0.46,
+     "week_hit_7d": 0.5,
+     "btd": 0.06,
+     "mean_r24_pct": -0.279,
+     "mean_r7_pct": 0.707
+    },
+    "D2": {
+     "n": 49,
+     "hours_hit_24h": 0.367,
+     "week_hit_7d": 0.51,
+     "btd": 0.204,
+     "mean_r24_pct": 1.296,
+     "mean_r7_pct": 2.968
+    },
+    "OTHER": {
+     "n": 1060,
+     "hours_hit_24h": 0.497,
+     "week_hit_7d": 0.481,
+     "btd": 0.197,
+     "mean_r24_pct": 0.166,
+     "mean_r7_pct": 1.472
+    },
+    "ALL": {
+     "n": 1594,
+     "btd": 0.193
+    }
+   },
+   "H2": {
+    "0.22": {
+     "mean_d1_pct": 1.957,
+     "mean_all_pct": 0.066,
+     "n_d1": 27,
+     "n_all": 228
+    }
+   },
+   "H3": {
+    "0.22": {
+     "mean_d1_pct": -1.939,
+     "mean_all_pct": -0.758,
+     "n_d1": 27,
+     "n_all": 228
+    }
+   }
+  },
+  "XAU": {
+   "period": [
+    "2017-03-07",
+    "2025-11-07"
+   ],
+   "groups": {
+    "AD": {
+     "n": 143,
+     "hours_hit_24h": 0.49,
+     "week_hit_7d": 0.42,
+     "btd": 0.154,
+     "mean_r24_pct": -0.004,
+     "mean_r7_pct": 0.387
+    },
+    "AU": {
+     "n": 440,
+     "hours_hit_24h": 0.475,
+     "week_hit_7d": 0.557,
+     "btd": 0.168,
+     "mean_r24_pct": 0.028,
+     "mean_r7_pct": 0.258
+    },
+    "D1": {
+     "n": 32,
+     "hours_hit_24h": 0.531,
+     "week_hit_7d": 0.188,
+     "btd": 0.094,
+     "mean_r24_pct": 0.14,
+     "mean_r7_pct": 1.014
+    },
+    "D2": {
+     "n": 68,
+     "hours_hit_24h": 0.441,
+     "week_hit_7d": 0.441,
+     "btd": 0.221,
+     "mean_r24_pct": -0.065,
+     "mean_r7_pct": -0.289
+    },
+    "OTHER": {
+     "n": 1105,
+     "hours_hit_24h": 0.429,
+     "week_hit_7d": 0.549,
+     "btd": 0.155,
+     "mean_r24_pct": 0.079,
+     "mean_r7_pct": 0.298
+    },
+    "ALL": {
+     "n": 1788,
+     "btd": 0.159
+    }
+   },
+   "H2": {
+    "0.05": {
+     "mean_d1_pct": -0.75,
+     "mean_all_pct": -0.344,
+     "n_d1": 23,
+     "n_all": 452
+    },
+    "0.0": {
+     "mean_d1_pct": -0.651,
+     "mean_all_pct": -0.244,
+     "n_d1": 23,
+     "n_all": 452
+    },
+    "0.15": {
+     "mean_d1_pct": -0.949,
+     "mean_all_pct": -0.543,
+     "n_d1": 23,
+     "n_all": 452
+    }
+   },
+   "H3": {
+    "0.05": {
+     "mean_d1_pct": -0.496,
+     "mean_all_pct": -0.175,
+     "n_d1": 23,
+     "n_all": 452
+    },
+    "0.0": {
+     "mean_d1_pct": -0.422,
+     "mean_all_pct": -0.118,
+     "n_d1": 23,
+     "n_all": 452
+    },
+    "0.15": {
+     "mean_d1_pct": -0.642,
+     "mean_all_pct": -0.289,
+     "n_d1": 23,
+     "n_all": 452
+    }
+   }
+  }
+ },
+ "verdict": {
+  "BTC": {
+   "H1": {
+    "n_d1": 51,
+    "effect": -8.096,
+    "unit": "pp",
+    "p_raw": 0.9405,
+    "p_holm": 1.0,
+    "halves": [
+     -5.938,
+     -16.704
+    ],
+    "class": "NOT_SUPPORTED"
+   },
+   "H2": {
+    "n_d1": 31,
+    "effect": -1.738,
+    "unit": "%",
+    "p_raw": 0.9269,
+    "p_holm": 1.0,
+    "halves": [
+     -2.245,
+     -1.263
+    ],
+    "class": "NOT_SUPPORTED"
+   },
+   "H3": {
+    "n_d1": 31,
+    "effect": -1.56,
+    "unit": "%",
+    "p_raw": 0.9806,
+    "p_holm": 1.0,
+    "halves": [
+     -2.766,
+     -0.43
+    ],
+    "class": "NOT_SUPPORTED"
+   }
+  },
+  "ETH": {
+   "H1": {
+    "n_d1": 52,
+    "effect": -6.982,
+    "unit": "pp",
+    "p_raw": 0.9288,
+    "p_holm": 1.0,
+    "halves": [
+     -1.977,
+     -13.852
+    ],
+    "class": "NOT_SUPPORTED"
+   },
+   "H2": {
+    "n_d1": 30,
+    "effect": -0.351,
+    "unit": "%",
+    "p_raw": 0.5825,
+    "p_holm": 1.0,
+    "halves": [
+     -2.857,
+     2.155
+    ],
+    "class": "NOT_SUPPORTED"
+   },
+   "H3": {
+    "n_d1": 30,
+    "effect": 0.6,
+    "unit": "%",
+    "p_raw": 0.3597,
+    "p_holm": 1.0,
+    "halves": [
+     -0.347,
+     1.546
+    ],
+    "class": "NOT_SUPPORTED"
+   }
+  },
+  "SOL": {
+   "H1": {
+    "n_d1": 50,
+    "effect": -13.26,
+    "unit": "pp",
+    "p_raw": 0.9997,
+    "p_holm": 1.0,
+    "halves": [
+     -16.323,
+     -7.96
+    ],
+    "class": "NOT_SUPPORTED"
+   },
+   "H2": {
+    "n_d1": 27,
+    "effect": 1.957,
+    "unit": "%",
+    "p_raw": 0.3873,
+    "p_holm": 1.0,
+    "halves": [
+     6.828,
+     -2.565
+    ],
+    "class": "NOT_SUPPORTED"
+   },
+   "H3": {
+    "n_d1": 27,
+    "effect": -1.939,
+    "unit": "%",
+    "p_raw": 0.8988,
+    "p_holm": 1.0,
+    "halves": [
+     -3.251,
+     -0.72
+    ],
+    "class": "NOT_SUPPORTED"
+   }
+  },
+  "XAU": {
+   "H1": {
+    "n_d1": 32,
+    "effect": -6.565,
+    "unit": "pp",
+    "p_raw": 0.8946,
+    "p_holm": 1.0,
+    "halves": [
+     -7.988,
+     -4.676
+    ],
+    "class": "NOT_SUPPORTED"
+   },
+   "H2": {
+    "n_d1": 23,
+    "effect": -0.75,
+    "unit": "%",
+    "p_raw": 0.9652,
+    "p_holm": 1.0,
+    "halves": [
+     -0.284,
+     -1.178
+    ],
+    "class": "NOT_SUPPORTED"
+   },
+   "H3": {
+    "n_d1": 23,
+    "effect": -0.496,
+    "unit": "%",
+    "p_raw": 0.9785,
+    "p_holm": 1.0,
+    "halves": [
+     -0.49,
+     -0.501
+    ],
+    "class": "NOT_SUPPORTED"
+   }
+  }
+ }
+}

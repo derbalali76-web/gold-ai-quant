@@ -318,6 +318,7 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
             s.error?.let { ErrorStrip(it, onAsk) }
             if (d != null && card != null) {
                 HorizonTabs(d, selected, s.loading, onHorizon)
+                FrameDivergence(d)
                 Crossfade(targetState = card, animationSpec = tween(240), label = "horizon",
                     modifier = Modifier.weight(1f).fillMaxWidth()) { c ->
                     ScenarioCard(c, s, d, compact, Modifier.fillMaxSize()) { l, sup -> sheet = Sheet.LevelSheet(l, sup) }
@@ -2483,7 +2484,9 @@ private fun scHorizon(h: String): String = stringResource(when (h) {
 @Composable
 private fun ScenarioCard(c: HorizonCard, s: UiState, d: Decision, compact: Boolean, modifier: Modifier,
                          onLevel: (Level, Boolean) -> Unit) {
-    val v = looseLikely(HorizonScenarios.of(c, d.brief, d.isDemo), c.trend?.direction)
+    val ev = HorizonScenarios.of(c, d.brief, d.isDemo)
+    val v = looseLikely(ev, c.trend?.direction)
+    val byTrend = ev.likely == HorizonScenarios.Likely.NONE && v.likely != HorizonScenarios.Likely.NONE
     Panel(modifier) {
         Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Text(stringResource(R.string.sc2_title, scHorizon(c.horizon)), color = Gold, fontSize = 15.sp, fontWeight = FontWeight.Bold)
@@ -2494,8 +2497,8 @@ private fun ScenarioCard(c: HorizonCard, s: UiState, d: Decision, compact: Boole
             val note = when (v.likely) {
                 HorizonScenarios.Likely.NONE -> stringResource(R.string.sc2_none)
                 HorizonScenarios.Likely.BETWEEN -> stringResource(R.string.sc2_between, ltr(v.down!!.trigger.p2()), ltr(v.up!!.trigger.p2()))
-                HorizonScenarios.Likely.DOWN -> v.up?.let { stringResource(R.string.sc2_touch, ltr(v.down!!.trigger.p2()), ltr(it.trigger.p2())) }
-                HorizonScenarios.Likely.UP -> v.down?.let { stringResource(R.string.sc2_touch, ltr(v.up!!.trigger.p2()), ltr(it.trigger.p2())) }
+                HorizonScenarios.Likely.DOWN -> if (byTrend) stringResource(R.string.sc2_lean_down, ltr(v.down!!.trigger.p2())) else v.up?.let { stringResource(R.string.sc2_touch, ltr(v.down!!.trigger.p2()), ltr(it.trigger.p2())) }
+                HorizonScenarios.Likely.UP -> if (byTrend) stringResource(R.string.sc2_lean_up, ltr(v.up!!.trigger.p2())) else v.down?.let { stringResource(R.string.sc2_touch, ltr(v.up!!.trigger.p2()), ltr(it.trigger.p2())) }
             }
             note?.let {
                 Text(it, color = TextMain, fontSize = 12.sp, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth()
@@ -2552,6 +2555,26 @@ private fun WhatButton(compact: Boolean, onClick: () -> Unit) {
             .padding(vertical = if (compact) 9.dp else 12.dp))
 }
 
+/** +1 / -1 / 0: the side marked «الأرجح» on [h] (validated evidence first, else the trend). */
+private fun frameLean(d: Decision, h: String): Int {
+    if (h != "HOURS" && d.outlooks.none { it.horizon == h }) return 0
+    val c = HorizonModel.card(d, h)
+    return when (looseLikely(HorizonScenarios.of(c, d.brief, d.isDemo), c.trend?.direction).likely) {
+        HorizonScenarios.Likely.UP -> 1; HorizonScenarios.Likely.DOWN -> -1; else -> 0
+    }
+}
+
+/** Frame divergence (2026-11-23): the frames are never forced to agree; when hours and week lean opposite ways a
+ *  short plain notice says so. It is information only and never creates a buy or a sell. */
+@Composable
+private fun FrameDivergence(d: Decision) {
+    val h = frameLean(d, "HOURS"); val w = frameLean(d, "WEEK")
+    if (h == 0 || w == 0 || h == w) return
+    Text(stringResource(if (h > 0) R.string.fd_up_down else R.string.fd_down_up), color = Color(0xFFF0B45A), fontSize = 12.sp,
+        lineHeight = 17.sp, modifier = Modifier.fillMaxWidth().background(Color(0xFF1D1708), RoundedCornerShape(10.dp))
+            .border(1.dp, Color(0xFF6B5A22), RoundedCornerShape(10.dp)).padding(horizontal = 10.dp, vertical = 6.dp))
+}
+
 /** No validated evidence for a side: the beginner screen still marks the side the trend points to (owner, 2026-11-22). */
 private fun looseLikely(v: HorizonScenarios.View, trend: String?): HorizonScenarios.View {
     if (v.likely != HorizonScenarios.Likely.NONE) return v
@@ -2573,6 +2596,7 @@ private fun WhatDialog(d: Decision, c: HorizonCard, s: UiState, onPosition: (Str
     val down = SimpleAdvice.trendCodeOf(c.trend?.direction) != "UP"
     DialogFrame(stringResource(R.string.ask), onClose) {
         Text(stringResource(R.string.sa_frame, scHorizon(c.horizon)), color = TextDim, fontSize = 13.sp)
+        FrameDivergence(d)
         Row(Modifier.fillMaxWidth().background(Color(0xFF161618), RoundedCornerShape(14.dp))
             .border(1.dp, CardEdge, RoundedCornerShape(14.dp)).padding(4.dp), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
             listOf(false to R.string.sa_cash, true to R.string.sa_hold).forEach { (h, label) ->
