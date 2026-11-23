@@ -847,6 +847,10 @@
     <string name="sa_n_invalid">Se o preço fechar abaixo do nível de cancelamento, a ideia perde a validade.</string>
     <string name="sa_n_nosell">Com dinheiro você só compra ou aguarda: sem venda a descoberto.</string>
     <string name="sa_foot">Ideias educativas baseadas na tendência e nos níveis, sem garantia. Apenas compra e venda à vista: sem alavancagem nem venda a descoberto.</string>
+    <string name="sc2_lean_up">Tendência atual: alta rumo a %1$s</string>
+    <string name="sc2_lean_down">Tendência atual: baixa rumo a %1$s</string>
+    <string name="fd_up_down">As horas tendem à alta e a semana à baixa: pode ser uma alta curta dentro de uma queda semanal. Não confie em um só período.</string>
+    <string name="fd_down_up">As horas tendem à baixa e a semana à alta: pode ser uma queda curta dentro de uma alta semanal. Não confie em um só período.</string>
     <string name="r_w_up" formatted="false">de alta</string>
     <string name="r_w_down" formatted="false">de baixa</string>
     <string name="r_w_neutral" formatted="false">neutra</string>

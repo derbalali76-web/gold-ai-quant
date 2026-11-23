@@ -847,6 +847,10 @@
     <string name="sa_n_invalid">Si le prix clôture sous le niveau d\'annulation, l\'idée est caduque.</string>
     <string name="sa_n_nosell">Avec des liquidités, on achète ou on attend : pas de vente à découvert.</string>
     <string name="sa_foot">Idées pédagogiques fondées sur la tendance et les niveaux, sans garantie. Achat et vente au comptant uniquement : ni levier, ni vente à découvert.</string>
+    <string name="sc2_lean_up">Tendance actuelle : hausse vers %1$s</string>
+    <string name="sc2_lean_down">Tendance actuelle : baisse vers %1$s</string>
+    <string name="fd_up_down">Les heures penchent à la hausse, la semaine à la baisse : ce peut être une courte hausse dans une baisse hebdomadaire. Ne vous fiez pas à un seul horizon.</string>
+    <string name="fd_down_up">Les heures penchent à la baisse, la semaine à la hausse : ce peut être un court repli dans une hausse hebdomadaire. Ne vous fiez pas à un seul horizon.</string>
     <string name="r_w_up" formatted="false">haussière</string>
     <string name="r_w_down" formatted="false">baissière</string>
     <string name="r_w_neutral" formatted="false">neutre</string>
