@@ -509,6 +509,10 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
         blk = d.levels if o.horizon == "HOURS" else o.levels
         return (blk.supports, blk.resistances) if blk is not None else ([], [])
 
+    def _tr(d: Decision, o) -> str | None:
+        t = d.market_trend if o.horizon == "HOURS" else o.trend
+        return getattr(t, "direction", None) if t is not None else None
+
     def public_snapshot(d: Decision, with_bars: bool = True) -> dict:
         """What the public trust ledger records: only published recommendations, today's analysis and closed bars.
         No token needed: it contains nothing that is not shown in the app, and it is what makes the record checkable."""
@@ -546,7 +550,9 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
                                             and d.mode == Mode.LIVE else None),
                               # the app's HOURS card shows the decision's own levels; WEEK / MONTH their outlook's
                               "supports": [lv.price for lv in _lv(d, o)[0]][:2],
-                              "resistances": [lv.price for lv in _lv(d, o)[1]][:2]}
+                              "resistances": [lv.price for lv in _lv(d, o)[1]][:2],
+                              # beginner-ideas-0.1: the trend the app shows under this horizon (HOURS: the decision's)
+                              "trend": _tr(d, o)}
                              for o in d.outlooks]}
 
     crash_log = st.data_dir / "crashes.jsonl"
