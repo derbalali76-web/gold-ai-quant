@@ -29,6 +29,8 @@ for attempt in 1 2 3 4; do
   [ -f decision_state.py ] && { python3 decision_state.py apply "$IN" . || true; }
   # study advice-units-0.1 (pre-registered): pre-emptive sell vs hold vs sell-after-break, in units after fees
   [ -f advice_units.py ] && { python3 advice_units.py . || true; }
+  # beginner-ideas-0.1 (pre-registered): every «ماذا أفعل؟» idea and what happened after it
+  [ -f ideas.py ] && { python3 ideas.py "$IN" . || true; }
   python3 monitor.py --issuer "$IN/issuer.txt" "$IN"/snap_XAU.json "$IN"/snap_BTC.json "$IN"/snap_ETH.json \
     "$IN"/snap_SOL.json | tee monitor.txt
   # daily external anchor (OpenTimestamps -> Bitcoin; best effort, never blocks the record)
