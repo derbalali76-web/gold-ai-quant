@@ -1,0 +1,223 @@
+{
+ "study": "rsi-cooldown-0.1",
+ "prereg_commit": "6f39a2e",
+ "prereg_sha256": "285ea91bbcb8549d9ce99298fabcc9347a3e1083546efbe97392ba943553fa00",
+ "assets": {
+  "BTC": {
+   "period": [
+    "2023-01-01 20:00:00+00:00",
+    "2025-11-11 00:00:00+00:00"
+   ],
+   "buy_now_events": 214,
+   "hot": 54,
+   "not_hot": 160,
+   "hot_desc": {
+    "mean_r24_pct": 0.342,
+    "mean_r72_pct": 0.612,
+    "B1_gain_pct": -0.2,
+    "B2_gain_pct": -0.279,
+    "B1_fill_rate": 0.63
+   },
+   "not_hot_desc": {
+    "mean_r24_pct": 0.152,
+    "mean_r72_pct": 0.311,
+    "B1_gain_pct": 0.219,
+    "B2_gain_pct": -0.1,
+    "B1_fill_rate": 0.463
+   }
+  },
+  "ETH": {
+   "period": [
+    "2023-01-01 20:00:00+00:00",
+    "2025-11-07 20:00:00+00:00"
+   ],
+   "buy_now_events": 196,
+   "hot": 64,
+   "not_hot": 132,
+   "hot_desc": {
+    "mean_r24_pct": 0.127,
+    "mean_r72_pct": 0.503,
+    "B1_gain_pct": 0.082,
+    "B2_gain_pct": 0.014,
+    "B1_fill_rate": 0.625
+   },
+   "not_hot_desc": {
+    "mean_r24_pct": -0.106,
+    "mean_r72_pct": 0.22,
+    "B1_gain_pct": -0.499,
+    "B2_gain_pct": 0.182,
+    "B1_fill_rate": 0.455
+   }
+  },
+  "SOL": {
+   "period": [
+    "2023-01-02 08:00:00+00:00",
+    "2025-11-11 04:00:00+00:00"
+   ],
+   "buy_now_events": 189,
+   "hot": 44,
+   "not_hot": 145,
+   "hot_desc": {
+    "mean_r24_pct": 1.097,
+    "mean_r72_pct": 2.529,
+    "B1_gain_pct": 0.341,
+    "B2_gain_pct": -0.876,
+    "B1_fill_rate": 0.682
+   },
+   "not_hot_desc": {
+    "mean_r24_pct": 0.013,
+    "mean_r72_pct": 0.792,
+    "B1_gain_pct": -0.005,
+    "B2_gain_pct": 0.174,
+    "B1_fill_rate": 0.414
+   }
+  },
+  "XAU": {
+   "period": [
+    "2018-01-03 00:00:00+00:00",
+    "2025-11-10 04:00:00+00:00"
+   ],
+   "buy_now_events": 482,
+   "hot": 145,
+   "not_hot": 337,
+   "hot_desc": {
+    "mean_r24_pct": 0.065,
+    "mean_r72_pct": 0.259,
+    "B1_gain_pct": -0.096,
+    "B2_gain_pct": -0.057,
+    "B1_fill_rate": 0.724
+   },
+   "not_hot_desc": {
+    "mean_r24_pct": 0.053,
+    "mean_r72_pct": 0.126,
+    "B1_gain_pct": 0.002,
+    "B2_gain_pct": -0.047,
+    "B1_fill_rate": 0.457
+   }
+  }
+ },
+ "verdict": {
+  "BTC": {
+   "H1": {
+    "n_hot": 54,
+    "mean_gain_pct": -0.2,
+    "not_hot_gain_pct": 0.219,
+    "p_raw": 0.7198,
+    "p_holm": 1.0,
+    "halves_pct": [
+     0.071,
+     -0.471
+    ],
+    "class": "NOT_SUPPORTED"
+   },
+   "H2": {
+    "n_hot": 54,
+    "mean_gain_pct": -0.279,
+    "not_hot_gain_pct": -0.1,
+    "p_raw": 0.7989,
+    "p_holm": 1.0,
+    "halves_pct": [
+     -0.24,
+     -0.318
+    ],
+    "class": "NOT_SUPPORTED"
+   }
+  },
+  "ETH": {
+   "H1": {
+    "n_hot": 64,
+    "mean_gain_pct": 0.082,
+    "not_hot_gain_pct": -0.499,
+    "p_raw": 0.4304,
+    "p_holm": 1.0,
+    "halves_pct": [
+     0.026,
+     0.137
+    ],
+    "class": "NOT_SUPPORTED"
+   },
+   "H2": {
+    "n_hot": 64,
+    "mean_gain_pct": 0.014,
+    "not_hot_gain_pct": 0.182,
+    "p_raw": 0.5029,
+    "p_holm": 1.0,
+    "halves_pct": [
+     0.059,
+     -0.031
+    ],
+    "class": "NOT_SUPPORTED"
+   }
+  },
+  "SOL": {
+   "H1": {
+    "n_hot": 44,
+    "mean_gain_pct": 0.341,
+    "not_hot_gain_pct": -0.005,
+    "p_raw": 0.2612,
+    "p_holm": 1.0,
+    "halves_pct": [
+     -0.135,
+     0.817
+    ],
+    "class": "NOT_SUPPORTED"
+   },
+   "H2": {
+    "n_hot": 44,
+    "mean_gain_pct": -0.876,
+    "not_hot_gain_pct": 0.174,
+    "p_raw": 0.8704,
+    "p_holm": 1.0,
+    "halves_pct": [
+     -2.129,
+     0.378
+    ],
+    "class": "NOT_SUPPORTED"
+   }
+  },
+  "XAU": {
+   "H1": {
+    "n_hot": 145,
+    "mean_gain_pct": -0.096,
+    "not_hot_gain_pct": 0.002,
+    "p_raw": 0.9098,
+    "p_holm": 1.0,
+    "halves_pct": [
+     0.011,
+     -0.202
+    ],
+    "class": "NOT_SUPPORTED"
+   },
+   "H2": {
+    "n_hot": 145,
+    "mean_gain_pct": -0.057,
+    "not_hot_gain_pct": -0.047,
+    "p_raw": 0.7905,
+    "p_holm": 1.0,
+    "halves_pct": [
+     -0.023,
+     -0.092
+    ],
+    "class": "NOT_SUPPORTED"
+   }
+  }
+ },
+ "app_rule": {
+  "add_cooldown": false,
+  "promising": {
+   "H1": [],
+   "H2": []
+  },
+  "negative": {
+   "H1": [
+    "BTC",
+    "XAU"
+   ],
+   "H2": [
+    "BTC",
+    "SOL",
+    "XAU"
+   ]
+  }
+ }
+}
