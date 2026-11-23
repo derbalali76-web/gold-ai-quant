@@ -2504,10 +2504,12 @@ private fun ScenarioCard(c: HorizonCard, s: UiState, d: Decision, compact: Boole
                 Text(it, color = TextMain, fontSize = 12.sp, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth()
                     .background(Color(0xFF1D1A12), RoundedCornerShape(10.dp)).padding(horizontal = 8.dp, vertical = 5.dp))
             }
-            val downBox: @Composable () -> Unit = { v.down?.let { ScenarioBox(false, it, v.likely == HorizonScenarios.Likely.DOWN,
-                v.likely == HorizonScenarios.Likely.UP) } }
-            val upBox: @Composable () -> Unit = { v.up?.let { ScenarioBox(true, it, v.likely == HorizonScenarios.Likely.UP,
-                v.likely == HorizonScenarios.Likely.DOWN) } }
+            // «الأرجح» badge only for tested evidence; a trend-only lean shows «الاتجاه الحالي» in the note (2026-11-23)
+            val lk = if (byTrend) HorizonScenarios.Likely.NONE else v.likely
+            val downBox: @Composable () -> Unit = { v.down?.let { ScenarioBox(false, it, lk == HorizonScenarios.Likely.DOWN,
+                lk == HorizonScenarios.Likely.UP) } }
+            val upBox: @Composable () -> Unit = { v.up?.let { ScenarioBox(true, it, lk == HorizonScenarios.Likely.UP,
+                lk == HorizonScenarios.Likely.DOWN) } }
             if (v.likely == HorizonScenarios.Likely.UP) { upBox(); downBox() } else { downBox(); upBox() }
             Divider()
             val lv = c.levels
