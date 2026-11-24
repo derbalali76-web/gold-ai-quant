@@ -821,6 +821,7 @@
     <string name="sa_buy_now">Compra ahora</string>
     <string name="sa_wait_dip">Espera una corrección</string>
     <string name="sa_wait">Espera</string>
+    <string name="sa_l_conflict">Las señales de esta pantalla se contradicen, por eso no mostramos idea de operación. Mantén tu posición y espera a que coincidan.</string>
     <string name="sa_keep">Mantén</string>
     <string name="sa_sell_rebuy">Vende ahora y recompra más abajo</string>
     <string name="sa_none">Sin idea por ahora</string>

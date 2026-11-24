@@ -2598,8 +2598,10 @@ private fun WhatDialog(d: Decision, c: HorizonCard, s: UiState, onPosition: (Str
     val hold = s.position == "HOLD"
     val price = s.live[s.asset]?.price ?: d.quote
     val lvl = LiveLevels.reanchor(c.levels, price)
-    val idea = SimpleAdvice.decide(c.trend?.direction, price, lvl?.supports.orEmpty().map { it.price },
-        lvl?.resistances.orEmpty().map { it.price }, hold, s.asset)
+    val tested = HorizonScenarios.of(c.copy(levels = lvl), d.brief.takeIf { LiveLevels.briefConsistent(it, price) }, d.isDemo).likely
+    val idea = SimpleAdvice.resolve(SimpleAdvice.decide(c.trend?.direction, price, lvl?.supports.orEmpty().map { it.price },
+        lvl?.resistances.orEmpty().map { it.price }, hold, s.asset),
+        when (tested) { HorizonScenarios.Likely.UP -> true; HorizonScenarios.Likely.DOWN -> false; else -> null })
     val down = SimpleAdvice.trendCodeOf(c.trend?.direction) != "UP"
     DialogFrame(stringResource(R.string.ask), onClose) {
         Text(stringResource(R.string.sa_frame, scHorizon(c.horizon)), color = TextDim, fontSize = 13.sp)
@@ -2620,6 +2622,7 @@ private fun WhatDialog(d: Decision, c: HorizonCard, s: UiState, onPosition: (Str
             SimpleAdvice.Kind.WAIT -> R.string.sa_wait to WaitGold
             SimpleAdvice.Kind.HOLD_SELL_ABOVE -> R.string.sa_keep to Color(0xFF8FC1EA)
             SimpleAdvice.Kind.SELL_REBUY -> R.string.sa_sell_rebuy to Color(0xFFF0A46A)
+            SimpleAdvice.Kind.CONFLICT -> (if (hold) R.string.sa_keep else R.string.sa_wait) to WaitGold
             SimpleAdvice.Kind.NONE -> R.string.sa_none to TextDim
         }
         val line = when (idea.kind) {
@@ -2628,6 +2631,7 @@ private fun WhatDialog(d: Decision, c: HorizonCard, s: UiState, onPosition: (Str
             SimpleAdvice.Kind.WAIT -> R.string.sa_l_wait
             SimpleAdvice.Kind.HOLD_SELL_ABOVE -> if ((idea.position ?: 1.0) < SimpleAdvice.LOW && down) R.string.sa_l_bottom else R.string.sa_l_keep
             SimpleAdvice.Kind.SELL_REBUY -> if (down) R.string.sa_l_sell_down else R.string.sa_l_sell_up
+            SimpleAdvice.Kind.CONFLICT -> R.string.sa_l_conflict
             SimpleAdvice.Kind.NONE -> R.string.sa_l_none
         }
         fun f(v: Double?) = v?.let { ltr(it.p2()) } ?: "—"
@@ -2640,7 +2644,7 @@ private fun WhatDialog(d: Decision, c: HorizonCard, s: UiState, onPosition: (Str
             SimpleAdvice.Kind.HOLD_SELL_ABOVE -> listOf(R.string.sa_r_sell_above to f(idea.sellAt))
             SimpleAdvice.Kind.SELL_REBUY -> listOf(R.string.sa_r_sell_now to stringResource(R.string.sa_r_market),
                 R.string.sa_r_rebuy to f(idea.buyAt))
-            SimpleAdvice.Kind.NONE -> emptyList()
+            SimpleAdvice.Kind.CONFLICT, SimpleAdvice.Kind.NONE -> emptyList()
         }
         val note = when (idea.kind) {
             SimpleAdvice.Kind.SELL_REBUY -> R.string.sa_n_chase

@@ -67,4 +67,20 @@ class SimpleAdviceTest {
         assertEquals(Kind.NONE, SimpleAdvice.decide("UP", null, sup, res, false).kind)
         assertEquals(Kind.NONE, SimpleAdvice.decide("UP", 110.0, emptyList(), res, false).kind)
     }
+
+    // owner rule 2026-11-24: tested likely side contradicting the idea withdraws the idea
+    @Test fun testedUpWithdrawsSellRebuy() {
+        val i = SimpleAdvice.decide("DOWN", 116.0, sup, res, true)
+        assertEquals(Kind.SELL_REBUY, i.kind)
+        assertEquals(Kind.CONFLICT, SimpleAdvice.resolve(i, true).kind)
+        assertEquals(Kind.SELL_REBUY, SimpleAdvice.resolve(i, false).kind)
+        assertEquals(Kind.SELL_REBUY, SimpleAdvice.resolve(i, null).kind)
+    }
+
+    @Test fun testedDownWithdrawsBuyNow() {
+        val i = SimpleAdvice.decide("UP", 105.0, sup, res, false)
+        assertEquals(Kind.BUY_NOW, i.kind)
+        assertEquals(Kind.CONFLICT, SimpleAdvice.resolve(i, false).kind)
+        assertEquals(Kind.BUY_NOW, SimpleAdvice.resolve(i, true).kind)
+    }
 }
