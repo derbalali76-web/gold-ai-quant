@@ -2482,9 +2482,12 @@ private fun scHorizon(h: String): String = stringResource(when (h) {
     "WEEK" -> R.string.sc2_h_week; "MONTH" -> R.string.sc2_h_month; else -> R.string.sc2_h_hours })
 
 @Composable
-private fun ScenarioCard(c: HorizonCard, s: UiState, d: Decision, compact: Boolean, modifier: Modifier,
+private fun ScenarioCard(c0: HorizonCard, s: UiState, d: Decision, compact: Boolean, modifier: Modifier,
                          onLevel: (Level, Boolean) -> Unit) {
-    val ev = HorizonScenarios.of(c, d.brief, d.isDemo)
+    // levels the live price already crossed change role (2026-11-24); stale hours triggers are dropped
+    val px = s.live[s.asset]?.price ?: d.quote
+    val c = c0.copy(levels = LiveLevels.reanchor(c0.levels, px))
+    val ev = HorizonScenarios.of(c, d.brief.takeIf { LiveLevels.briefConsistent(it, px) }, d.isDemo)
     val v = looseLikely(ev, c.trend?.direction)
     val byTrend = ev.likely == HorizonScenarios.Likely.NONE && v.likely != HorizonScenarios.Likely.NONE
     Panel(modifier) {
@@ -2593,8 +2596,9 @@ private fun WhatDialog(d: Decision, c: HorizonCard, s: UiState, onPosition: (Str
     // beginner «ماذا أفعل؟» (owner-approved 2026-11-22): trend × price position on the selected horizon, cash or holder.
     val hold = s.position == "HOLD"
     val price = s.live[s.asset]?.price ?: d.quote
-    val idea = SimpleAdvice.decide(c.trend?.direction, price, c.levels?.supports.orEmpty().map { it.price },
-        c.levels?.resistances.orEmpty().map { it.price }, hold, s.asset)
+    val lvl = LiveLevels.reanchor(c.levels, price)
+    val idea = SimpleAdvice.decide(c.trend?.direction, price, lvl?.supports.orEmpty().map { it.price },
+        lvl?.resistances.orEmpty().map { it.price }, hold, s.asset)
     val down = SimpleAdvice.trendCodeOf(c.trend?.direction) != "UP"
     DialogFrame(stringResource(R.string.ask), onClose) {
         Text(stringResource(R.string.sa_frame, scHorizon(c.horizon)), color = TextDim, fontSize = 13.sp)
