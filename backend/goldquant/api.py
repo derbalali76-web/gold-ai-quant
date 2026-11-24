@@ -167,9 +167,24 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
                 cache[key] = fn()
             return cache[key]
 
+    boot = {"id": os.urandom(6).hex(), "started_at": utcnow().isoformat()}
+
+    def _memory_mb() -> dict:
+        """Resident memory now and the peak, in MB (Render free = 512 MB; a restart near the limit points to memory)."""
+        out = {}
+        try:
+            for line in Path("/proc/self/status").read_text().splitlines():
+                if line.startswith(("VmRSS:", "VmHWM:")):
+                    out["rss" if line.startswith("VmRSS") else "peak"] = round(int(line.split()[1]) / 1024, 1)
+        except Exception:  # noqa: BLE001  (not Linux)
+            pass
+        return out
+
     @app.get("/health")
     def health():
-        return {"status": "ok", "app_version": APP_VERSION, "schema_version": SCHEMA_VERSION,
+        # boot: a new id after every process start, so the public ledger can count restarts (additive field)
+        return {"status": "ok", "boot": dict(boot, uptime_s=round((utcnow() - datetime.fromisoformat(boot["started_at"])).total_seconds()),
+                                               memory_mb=_memory_mb()), "app_version": APP_VERSION, "schema_version": SCHEMA_VERSION,
                 "model_version": P.PATH_VERSION, "server_time_utc": utcnow().isoformat(),
                 "live_provider_configured": live_provider is not None, "auth_required": bool(st.token),
                 "precision_layer": {"promoted": sorted(precision.promoted()) if precision else [],
