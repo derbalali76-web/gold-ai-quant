@@ -102,6 +102,7 @@ import com.goldaiquant.app.HorizonModel
 import com.goldaiquant.app.Lang
 import com.goldaiquant.app.Level
 import com.goldaiquant.app.HorizonScenarios
+import com.goldaiquant.app.LiveLevels
 import com.goldaiquant.app.SimpleAdvice
 import androidx.compose.ui.draw.alpha
 import com.goldaiquant.app.LevelRelation
