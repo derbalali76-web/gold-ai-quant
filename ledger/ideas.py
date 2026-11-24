@@ -39,7 +39,8 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Optional
 
-VERSION = "beginner-ideas-0.1"
+VERSION = "beginner-ideas-0.2"  # 0.2 (2026-11-24): sell-and-rebuy only with a gap of 15 USD (gold) / 0.65 % (digital)
+GOLD_MIN_GAP_USD, CRYPTO_MIN_GAP_PCT = 15.0, 0.0065
 ASSETS = ("XAU", "BTC", "ETH", "SOL")
 HORIZONS = {"HOURS": 24, "WEEK": 168, "MONTH": 720}
 FEE = {"XAU": 0.0005, "BTC": 0.0016, "ETH": 0.0016, "SOL": 0.0022}
@@ -55,7 +56,8 @@ def trend_code(d: Optional[str]) -> Optional[str]:
     return {"UP": "UP", "DOWN": "DOWN", "SIDEWAYS": "SIDEWAYS", "NEUTRAL": "SIDEWAYS"}.get(d or "")
 
 
-def decide(trend: Optional[str], price: Optional[float], supports: list, resistances: list, hold: bool) -> dict:
+def decide(trend: Optional[str], price: Optional[float], supports: list, resistances: list, hold: bool,
+           asset: str = "XAU") -> dict:
     none = {"kind": "NONE", "buy_at": None, "sell_at": None, "invalid": None, "position": None}
     if price is None:
         return none
@@ -80,16 +82,19 @@ def decide(trend: Optional[str], price: Optional[float], supports: list, resista
         if d == "SIDEWAYS" and low:
             return I("BUY_NOW", p, r, inv)
         return I("WAIT", s, None, inv)
+    # sell now and buy back at s only when the gap covers the minimum; otherwise hold (same as SimpleAdvice.kt)
+    gap_ok = (p - s) >= (GOLD_MIN_GAP_USD if asset == "XAU" else p * CRYPTO_MIN_GAP_PCT)
+    sell_rebuy = lambda: I("SELL_REBUY", s, p, None) if gap_ok else I("HOLD_SELL_ABOVE", None, r, inv)  # noqa: E731
     if d == "UP" and high:
-        return I("SELL_REBUY", s, p, None)
+        return sell_rebuy()
     if d == "UP":
         return I("HOLD_SELL_ABOVE", None, r, inv)
     if low:
         return I("HOLD_SELL_ABOVE", None, r, inv)
     if d == "DOWN":
-        return I("SELL_REBUY", s, p, None)
+        return sell_rebuy()
     if high:
-        return I("SELL_REBUY", s, p, None)
+        return sell_rebuy()
     return I("HOLD_SELL_ABOVE", None, r, inv)
 
 
@@ -218,7 +223,7 @@ def record(snaps: dict, repo: Path, now: datetime, lines: list) -> int:
                     continue
                 sup = [float(x) for x in o.get("supports") or []]
                 res = [float(x) for x in o.get("resistances") or []]
-                i = decide(o.get("trend"), s["price"], sup, res, mode == "holder")
+                i = decide(o.get("trend"), s["price"], sup, res, mode == "holder", a)
                 if i["kind"] == "NONE":
                     continue
                 data = {"version": VERSION, "asset": a, "horizon": h, "mode": mode, "price": float(s["price"]),

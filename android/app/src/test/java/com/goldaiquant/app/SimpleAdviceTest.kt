@@ -31,7 +31,27 @@ class SimpleAdviceTest {
         assertEquals(Kind.SELL_REBUY, i.kind); assertEquals(100.0, i.buyAt!!, 1e-9)
     }
 
-    @Test fun holderFallingSellsThenRebuys() = assertEquals(Kind.SELL_REBUY, SimpleAdvice.decide("DOWN", 112.0, sup, res, true).kind)
+    @Test fun holderFallingSellsThenRebuys() = assertEquals(Kind.SELL_REBUY, SimpleAdvice.decide("DOWN", 116.0, sup, res, true).kind)
+
+    // owner rule 2026-11-24: gold gap of at least 15 USD before a sell-and-rebuy is shown
+    @Test fun goldGapBelowFifteenHolds() {
+        val i = SimpleAdvice.decide("DOWN", 112.0, sup, res, true, "XAU")
+        assertEquals(Kind.HOLD_SELL_ABOVE, i.kind); assertEquals(120.0, i.sellAt!!, 1e-9)
+    }
+
+    @Test fun goldGapOfFiveDollarsHoldsLikeTheSeenCase() =
+        assertEquals(Kind.HOLD_SELL_ABOVE, SimpleAdvice.decide("DOWN", 105.0, sup, res, true, "XAU").kind)
+
+    // digital assets: gap of at least 0.65 % of the price
+    @Test fun cryptoGapBelowPointSixFivePercentHolds() {
+        val sup2 = listOf(60000.0); val res2 = listOf(61000.0)
+        assertEquals(Kind.HOLD_SELL_ABOVE, SimpleAdvice.decide("DOWN", 60300.0, sup2, res2, true, "BTC").kind)   // gap 0.50 %, pos 0.30
+    }
+
+    @Test fun cryptoGapAtLeastPointSixFivePercentSellsThenRebuys() {
+        val sup2 = listOf(60000.0); val res2 = listOf(61000.0)
+        assertEquals(Kind.SELL_REBUY, SimpleAdvice.decide("DOWN", 60500.0, sup2, res2, true, "BTC").kind)   // gap 0.83 %, pos 0.50
+    }
 
     @Test fun holderFallingAtSupportDoesNotSellAtTheBottom() =
         assertEquals(Kind.HOLD_SELL_ABOVE, SimpleAdvice.decide("DOWN", 101.0, sup, res, true).kind)
