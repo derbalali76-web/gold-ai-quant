@@ -2594,7 +2594,7 @@ private fun WhatDialog(d: Decision, c: HorizonCard, s: UiState, onPosition: (Str
     val hold = s.position == "HOLD"
     val price = s.live[s.asset]?.price ?: d.quote
     val idea = SimpleAdvice.decide(c.trend?.direction, price, c.levels?.supports.orEmpty().map { it.price },
-        c.levels?.resistances.orEmpty().map { it.price }, hold)
+        c.levels?.resistances.orEmpty().map { it.price }, hold, s.asset)
     val down = SimpleAdvice.trendCodeOf(c.trend?.direction) != "UP"
     DialogFrame(stringResource(R.string.ask), onClose) {
         Text(stringResource(R.string.sa_frame, scHorizon(c.horizon)), color = TextDim, fontSize = 13.sp)

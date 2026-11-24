@@ -23,7 +23,10 @@ def test_rule_matches_android_simpleadvice_cases():
     assert k("DOWN", 110.0, False) == "WAIT"
     assert k("UP", 105.0, True) == "HOLD_SELL_ABOVE"
     assert k("UP", 118.0, True) == "SELL_REBUY"
-    assert k("DOWN", 112.0, True) == "SELL_REBUY"
+    assert k("DOWN", 116.0, True) == "SELL_REBUY"
+    assert k("DOWN", 112.0, True) == "HOLD_SELL_ABOVE"  # gold gap 12 < 15 USD (owner rule 2026-11-24)
+    assert I.decide("DOWN", 60500.0, [60000.0], [61000.0], True, "BTC")["kind"] == "SELL_REBUY"  # gap 0.83 % >= 0.65 %
+    assert I.decide("DOWN", 60300.0, [60000.0], [61000.0], True, "BTC")["kind"] == "HOLD_SELL_ABOVE"  # gap 0.50 %
     assert k("DOWN", 101.0, True) == "HOLD_SELL_ABOVE"
     assert k("UP", None, False) == "NONE" and I.decide("UP", 110.0, [], RES, False)["kind"] == "NONE"
 
