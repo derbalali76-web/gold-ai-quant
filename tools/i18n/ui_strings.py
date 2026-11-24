@@ -964,6 +964,7 @@ UI = {
 "sa_buy_now": ("Buy now", "اشترِ الآن", "Acheter maintenant", "Compra ahora", "Compre agora"),
 "sa_wait_dip": ("Wait for a pull-back", "انتظر التصحيح", "Attendre un repli", "Espera una corrección", "Aguarde uma correção"),
 "sa_wait": ("Wait", "انتظر", "Attendre", "Espera", "Aguarde"),
+"sa_l_conflict": ("The signals on this screen disagree, so no trade idea is shown. Hold your position and wait for them to agree.", "الإشارات على هذه الشاشة متعارضة، لذلك لا نعرض فكرة صفقة. ابقَ على وضعك وانتظر حتى تتفق.", "Les signaux de cet écran se contredisent : aucune idée de trade. Gardez votre position et attendez qu'ils s'accordent.", "Las señales de esta pantalla se contradicen, por eso no mostramos idea de operación. Mantén tu posición y espera a que coincidan.", "Os sinais desta tela se contradizem, por isso não mostramos ideia de operação. Mantenha sua posição e aguarde que concordem."),
 "sa_keep": ("Keep it", "احتفظ", "Conserver", "Mantén", "Mantenha"),
 "sa_sell_rebuy": ("Sell now, buy back lower", "بِع الآن ثم اشترِ من القاع", "Vendre maintenant, racheter plus bas", "Vende ahora y recompra más abajo", "Venda agora e recompre mais baixo"),
 "sa_none": ("No idea right now", "لا فكرة الآن", "Pas d'idée pour l'instant", "Sin idea por ahora", "Sem ideia agora"),

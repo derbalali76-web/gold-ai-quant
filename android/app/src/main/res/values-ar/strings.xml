@@ -821,6 +821,7 @@
     <string name="sa_buy_now">اشترِ الآن</string>
     <string name="sa_wait_dip">انتظر التصحيح</string>
     <string name="sa_wait">انتظر</string>
+    <string name="sa_l_conflict">الإشارات على هذه الشاشة متعارضة، لذلك لا نعرض فكرة صفقة. ابقَ على وضعك وانتظر حتى تتفق.</string>
     <string name="sa_keep">احتفظ</string>
     <string name="sa_sell_rebuy">بِع الآن ثم اشترِ من القاع</string>
     <string name="sa_none">لا فكرة الآن</string>

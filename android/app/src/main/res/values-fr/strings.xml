@@ -821,6 +821,7 @@
     <string name="sa_buy_now">Acheter maintenant</string>
     <string name="sa_wait_dip">Attendre un repli</string>
     <string name="sa_wait">Attendre</string>
+    <string name="sa_l_conflict">Les signaux de cet écran se contredisent : aucune idée de trade. Gardez votre position et attendez qu\'ils s\'accordent.</string>
     <string name="sa_keep">Conserver</string>
     <string name="sa_sell_rebuy">Vendre maintenant, racheter plus bas</string>
     <string name="sa_none">Pas d\'idée pour l\'instant</string>

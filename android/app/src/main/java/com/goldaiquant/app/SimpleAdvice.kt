@@ -12,6 +12,7 @@ object SimpleAdvice {
         WAIT,             // cash · falling (or sideways and not low) → wait, watch the support
         HOLD_SELL_ABOVE,  // holder · rising (or at support) → keep, sell above the resistance
         SELL_REBUY,       // holder · high in a rise, or falling with room down → sell now, buy back near the support
+        CONFLICT,         // tested «most likely» side contradicts the idea: show hold/wait, no trade idea
         NONE,             // no levels or no price
     }
 
@@ -62,5 +63,15 @@ object SimpleAdvice {
 
     fun trendCodeOf(dir: String?): String? = when (dir) {
         "UP" -> "UP"; "DOWN" -> "DOWN"; "SIDEWAYS", "NEUTRAL" -> "SIDEWAYS"; else -> null
+    }
+
+    /**
+     * Owner-approved 2026-11-24: when the tested «most likely» side of the same screen contradicts the idea
+     * (tested UP vs sell-now, tested DOWN vs buy-now) the idea is withdrawn. [testedUp] = true UP, false DOWN, null none.
+     */
+    fun resolve(idea: Idea, testedUp: Boolean?): Idea = when {
+        testedUp == true && idea.kind == Kind.SELL_REBUY -> Idea(Kind.CONFLICT, null, null, null, idea.position)
+        testedUp == false && idea.kind == Kind.BUY_NOW -> Idea(Kind.CONFLICT, null, null, null, idea.position)
+        else -> idea
     }
 }
