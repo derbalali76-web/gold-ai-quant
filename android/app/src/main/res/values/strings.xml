@@ -853,6 +853,23 @@
     <string name="sc2_lean_down">Current trend: down toward %1$s</string>
     <string name="fd_up_down">Hours lean up, the week leans down: this may be a short rise inside a weekly fall. Don\'t rely on one frame alone.</string>
     <string name="fd_down_up">Hours lean down, the week leans up: this may be a short dip inside a weekly rise. Don\'t rely on one frame alone.</string>
+    <string name="ia_name_xau">gold</string>
+    <string name="ia_name_btc">bitcoin</string>
+    <string name="ia_name_eth">ether</string>
+    <string name="ia_name_sol">solana</string>
+    <string name="ia_t_hold">Holding %1$s?</string>
+    <string name="ia_t_cash">Cash to buy %1$s?</string>
+    <string name="ia_buy">Buy now at the market price %1$s, and sell near %2$s. The idea is cancelled if the price falls below %3$s.</string>
+    <string name="ia_dip">Don\'t buy now. Wait for a buying chance near %1$s; the target after that is %2$s.</string>
+    <string name="ia_wait">Don\'t buy now. Wait for a buying chance near %1$s.</string>
+    <string name="ia_keep">Keep it, and sell near %1$s. The idea is cancelled if the price falls below %2$s.</string>
+    <string name="ia_sell">Sell now at the market price %1$s, and wait for a buying chance near %2$s. The idea is cancelled if the price rises above %3$s.</string>
+    <string name="ia_tgt">The idea reached its target %1$s.</string>
+    <string name="ia_tgt_rebuy">The price reached the buy-back area near %1$s.</string>
+    <string name="ia_fail_stop">The idea did not work: the price touched %1$s. Check the screen.</string>
+    <string name="ia_fail_turn">The idea did not work: the outlook changed. Check the screen.</string>
+    <string name="ia_expired">The idea ended after 24 hours without reaching its target. Check the screen.</string>
+    <string name="ia_note">An educational idea, not a guarantee.</string>
     <string name="r_w_up" formatted="false">up</string>
     <string name="r_w_down" formatted="false">down</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

@@ -852,6 +852,23 @@
     <string name="sc2_lean_down">Tendência atual: baixa rumo a %1$s</string>
     <string name="fd_up_down">As horas tendem à alta e a semana à baixa: pode ser uma alta curta dentro de uma queda semanal. Não confie em um só período.</string>
     <string name="fd_down_up">As horas tendem à baixa e a semana à alta: pode ser uma queda curta dentro de uma alta semanal. Não confie em um só período.</string>
+    <string name="ia_name_xau">ouro</string>
+    <string name="ia_name_btc">bitcoin</string>
+    <string name="ia_name_eth">ether</string>
+    <string name="ia_name_sol">solana</string>
+    <string name="ia_t_hold">Você tem %1$s?</string>
+    <string name="ia_t_cash">Dinheiro para comprar %1$s?</string>
+    <string name="ia_buy">Compre agora a preço de mercado %1$s e venda perto de %2$s. A ideia é cancelada se o preço cair abaixo de %3$s.</string>
+    <string name="ia_dip">Não compre agora. Espere uma chance de compra perto de %1$s; o alvo depois é %2$s.</string>
+    <string name="ia_wait">Não compre agora. Espere uma chance de compra perto de %1$s.</string>
+    <string name="ia_keep">Mantenha e venda perto de %1$s. A ideia é cancelada se o preço cair abaixo de %2$s.</string>
+    <string name="ia_sell">Venda agora a preço de mercado %1$s e espere uma chance de compra perto de %2$s. A ideia é cancelada se o preço subir acima de %3$s.</string>
+    <string name="ia_tgt">A ideia atingiu o alvo %1$s.</string>
+    <string name="ia_tgt_rebuy">O preço chegou à zona de recompra perto de %1$s.</string>
+    <string name="ia_fail_stop">A ideia não funcionou: o preço tocou %1$s. Confira a tela.</string>
+    <string name="ia_fail_turn">A ideia não funcionou: a tendência mudou. Confira a tela.</string>
+    <string name="ia_expired">A ideia terminou após 24 horas sem atingir o alvo. Confira a tela.</string>
+    <string name="ia_note">Uma ideia educativa, não uma garantia.</string>
     <string name="r_w_up" formatted="false">de alta</string>
     <string name="r_w_down" formatted="false">de baixa</string>
     <string name="r_w_neutral" formatted="false">neutra</string>

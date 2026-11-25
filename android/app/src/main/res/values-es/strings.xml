@@ -852,6 +852,23 @@
     <string name="sc2_lean_down">Tendencia actual: bajada hacia %1$s</string>
     <string name="fd_up_down">Las horas tienden al alza y la semana a la baja: puede ser una subida corta dentro de una caída semanal. No te fíes de un solo marco.</string>
     <string name="fd_down_up">Las horas tienden a la baja y la semana al alza: puede ser una caída corta dentro de una subida semanal. No te fíes de un solo marco.</string>
+    <string name="ia_name_xau">oro</string>
+    <string name="ia_name_btc">bitcoin</string>
+    <string name="ia_name_eth">ether</string>
+    <string name="ia_name_sol">solana</string>
+    <string name="ia_t_hold">¿Tienes %1$s?</string>
+    <string name="ia_t_cash">¿Liquidez para comprar %1$s?</string>
+    <string name="ia_buy">Compra ahora a precio de mercado %1$s y vende cerca de %2$s. La idea se anula si el precio baja de %3$s.</string>
+    <string name="ia_dip">No compres ahora. Espera una oportunidad de compra cerca de %1$s; el objetivo después es %2$s.</string>
+    <string name="ia_wait">No compres ahora. Espera una oportunidad de compra cerca de %1$s.</string>
+    <string name="ia_keep">Consérvalo y vende cerca de %1$s. La idea se anula si el precio baja de %2$s.</string>
+    <string name="ia_sell">Vende ahora a precio de mercado %1$s y espera una oportunidad de compra cerca de %2$s. La idea se anula si el precio sube de %3$s.</string>
+    <string name="ia_tgt">La idea alcanzó su objetivo %1$s.</string>
+    <string name="ia_tgt_rebuy">El precio llegó a la zona de recompra cerca de %1$s.</string>
+    <string name="ia_fail_stop">La idea no funcionó: el precio tocó %1$s. Revisa la pantalla.</string>
+    <string name="ia_fail_turn">La idea no funcionó: cambió la tendencia. Revisa la pantalla.</string>
+    <string name="ia_expired">La idea terminó tras 24 horas sin alcanzar su objetivo. Revisa la pantalla.</string>
+    <string name="ia_note">Una idea educativa, no una garantía.</string>
     <string name="r_w_up" formatted="false">alcista</string>
     <string name="r_w_down" formatted="false">bajista</string>
     <string name="r_w_neutral" formatted="false">neutral</string>
