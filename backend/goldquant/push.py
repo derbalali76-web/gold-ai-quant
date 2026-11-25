@@ -5,7 +5,7 @@ language. No e-mail, phone number or name. Phones re-register on every app open 
 restart of the free server (which wipes its disk) heals itself within ~15 minutes.
 
 Messages are DATA messages: the phone builds the localized text and removes a fired price alert from its own list.
-Nothing here is a recommendation by itself: it relays price alerts the user set, scenario triggers and — only if one
+Nothing here is a recommendation by itself: it relays price alerts the user set, a «check your idea now» wake-up when an hour closes across a level, and — only if one
 ever exists — validated recommendations.
 
 Credentials: env FIREBASE_CREDENTIALS = the service-account JSON (never logged, never returned by any endpoint).
@@ -184,13 +184,12 @@ class PushService:
                     d = decisions.get(a)
                     if d is None:
                         continue
-                    b = getattr(d, "daily_brief", None)  # 2) a scenario triggered on the last closed hour
-                    for e in (getattr(b, "events", None) or []) if b is not None and not d.market_closed else []:
-                        key = f"event|{a}|{day}|{e.hour_utc}|{e.kind}|{e.level_name}"
+                    b = getattr(d, "daily_brief", None)  # 2) an hour closed across a level: ask the phone to
+                    # re-check its opportunity idea (owner 2026-11-25: replaces the «scenario triggered» text)
+                    for e in (getattr(b, "events", None) or [])[:1] if b is not None and not d.market_closed else []:
+                        key = f"check|{a}|{day}|{e.hour_utc}"
                         if not self._seen(c, tok, key):
-                            msgs.append((key, {"type": "event", "asset": a, "kind": e.kind, "level": e.level,
-                                               "level_name": e.level_name, "target": e.target or "",
-                                               "target_name": e.target_name or ""}))
+                            msgs.append((key, {"type": "check", "asset": a}))
                     z = zone_update(d) if not getattr(d, "market_closed", False) else None  # 2b) price entered a zone
                     if z is not None:
                         key = f"zone|{a}|{day}|{z['name']}|{z['low']}"

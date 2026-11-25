@@ -26,6 +26,9 @@ class FcmService : FirebaseMessagingService() {
 
     override fun onMessageReceived(m: RemoteMessage) {
         val d = m.data
+        // an hour closed across a level: re-check the opportunity idea now (owner 2026-11-25: replaces the old
+        // «scenario triggered» text, which could contradict the screen)
+        if (d["type"] == "check" || d["type"] == "event") { SignalWorker.runNow(applicationContext); return }
         val asset = d["asset"] ?: return
         val label = if (asset == "XAU") "XAU/USD" else "$asset/USD"
         val ctx = LanguageStore.wrap(applicationContext, LanguageStore.resolve(applicationContext))
@@ -39,13 +42,6 @@ class FcmService : FirebaseMessagingService() {
                 }
                 ctx.getString(R.string.notif_price_title, label, p2(d["level"])) to
                     ctx.getString(R.string.notif_price_text, d["label"].orEmpty(), p2(d["price"]))
-            }
-            "event" -> {
-                val up = d["kind"] == "BULL"
-                ctx.getString(if (up) R.string.notif_trig_up else R.string.notif_trig_down, label) to
-                    (ctx.getString(if (up) R.string.notif_trig_up_text else R.string.notif_trig_down_text,
-                        p2(d["level"]), d["level_name"].orEmpty(), p2(d["target"]), d["target_name"].orEmpty()) +
-                        "\n" + ctx.getString(R.string.pos_watch_note))
             }
             "zone" -> {  // the price entered a support / resistance zone: what breaks it, what holds it (watch only)
                 val sup = d["side"] == "SUPPORT"

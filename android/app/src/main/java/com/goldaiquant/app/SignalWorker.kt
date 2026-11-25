@@ -33,6 +33,7 @@ class SignalWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx
         for (asset in follow + alerts.map { it.asset }.toSet()) {  // followed markets + markets with a "Alert me" alert
             val f = try { api.decision("LIVE", 0, asset) } catch (e: Exception) { continue }
             if (asset in follow) check(prefs, asset, f, pushOn)
+            if (asset in follow) try { checkIdea(prefs, asset, f) } catch (e: Exception) { }
             if (!pushOn) checkPriceAlerts(prefs, asset, f)
         }
         try { PriceWidget.refresh(applicationContext) } catch (e: Exception) { }
@@ -57,7 +58,7 @@ class SignalWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx
             val seen = prefs.getString("events$sfx", "")!!.split(';').filter { it.startsWith(day) }.toMutableSet()
             b.events.forEach { e ->
                 val key = "$day|${e.hourUtc}|${e.kind}|${e.levelName}"
-                if (key !in seen) { seen += key; if (!pushOn) notifyEvent(e, label) }
+                seen += key  // owner 2026-11-25: no «scenario triggered» text any more; the idea alerts replace it
             }
             prefs.edit().putString("events$sfx", seen.joinToString(";")).apply()
             // 3) price reached a watch level of today's scenarios (once per level per day)
@@ -80,6 +81,51 @@ class SignalWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx
             }
         }
     }
+
+    /** Opportunity idea of the HOURS card for the user's own position (cash / holder) on this asset: sent once,
+     *  then one follow-up when it ends (target, failed, expired). See IdeaAlerts. */
+    private fun checkIdea(prefs: android.content.SharedPreferences, asset: String, f: Fetched) { synchronized(LOCK) {
+        val price = f.decision.quote ?: return
+        val hold = prefs.getString("position_$asset", "CASH") == "HOLD"
+        val n = IdeaAlerts.now(f.decision, asset, hold, price) ?: return
+        val key = "idea_${asset}_" + if (hold) "H" else "C"
+        val ck = "idea_cool_$asset"
+        val st = IdeaAlerts.step(IdeaAlerts.decode(prefs.getString(key, null)), prefs.getLong(ck, 0L), n, price,
+            System.currentTimeMillis())
+        prefs.edit().putString(key, IdeaAlerts.encode(st.state)).putLong(ck, st.coolUntil).apply()
+        val m = st.msg ?: return
+        val a = st.idea ?: return
+        val ctx = LanguageStore.wrap(applicationContext, LanguageStore.resolve(applicationContext))
+        if (!ready(ctx)) return
+        val p = { v: Double? -> v?.let { String.format(java.util.Locale.US, "%.2f", it) } ?: "—" }
+        val name = ctx.getString(when (asset) { "BTC" -> R.string.ia_name_btc; "ETH" -> R.string.ia_name_eth
+            "SOL" -> R.string.ia_name_sol; else -> R.string.ia_name_xau })
+        val title = ctx.getString(if (hold) R.string.ia_t_hold else R.string.ia_t_cash, name)
+        val body = when (m) {
+            IdeaAlerts.Msg.NEW -> when (a.kind) {
+                SimpleAdvice.Kind.BUY_NOW -> ctx.getString(R.string.ia_buy, p(a.price), p(a.sellAt), p(a.stop))
+                SimpleAdvice.Kind.WAIT_DIP -> ctx.getString(R.string.ia_dip, p(a.buyAt), p(a.sellAt))
+                SimpleAdvice.Kind.WAIT -> ctx.getString(R.string.ia_wait, p(a.buyAt))
+                SimpleAdvice.Kind.HOLD_SELL_ABOVE -> ctx.getString(R.string.ia_keep, p(a.sellAt), p(a.stop))
+                SimpleAdvice.Kind.SELL_REBUY -> ctx.getString(R.string.ia_sell, p(a.price), p(a.buyAt), p(a.stop))
+                else -> return
+            }
+            IdeaAlerts.Msg.TARGET -> if (a.kind == SimpleAdvice.Kind.SELL_REBUY) ctx.getString(R.string.ia_tgt_rebuy, p(a.buyAt))
+                else ctx.getString(R.string.ia_tgt, p(a.sellAt))
+            IdeaAlerts.Msg.FAILED_STOP -> ctx.getString(R.string.ia_fail_stop, p(a.stop))
+            IdeaAlerts.Msg.FAILED_TURN -> ctx.getString(R.string.ia_fail_turn)
+            IdeaAlerts.Msg.EXPIRED -> ctx.getString(R.string.ia_expired)
+        }
+        val text = body + "\n" + ctx.getString(R.string.ia_note)
+        val open = PendingIntent.getActivity(applicationContext, 9,
+            Intent(applicationContext, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),
+            PendingIntent.FLAG_IMMUTABLE)
+        val n2 = NotificationCompat.Builder(applicationContext, CHANNEL)
+            .setSmallIcon(android.R.drawable.stat_notify_more).setContentTitle(title)
+            .setContentText(body).setStyle(NotificationCompat.BigTextStyle().bigText(text))
+            .setContentIntent(open).setAutoCancel(true).private(applicationContext).build()
+        NotificationManagerCompat.from(applicationContext).notify("idea$asset${a.at}$m".hashCode(), n2)
+    } }
 
     /** One-shot "Alert me" alerts: fire once when the price is at/through the level, then removed. */
     private fun checkPriceAlerts(prefs: android.content.SharedPreferences, asset: String, f: Fetched) {
@@ -135,23 +181,6 @@ class SignalWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx
         applicationContext.getSystemService(NotificationManager::class.java).createNotificationChannel(
             NotificationChannel(CHANNEL, ctx.getString(R.string.notif_channel), NotificationManager.IMPORTANCE_HIGH))
         return true
-    }
-
-    private fun notifyEvent(e: ScenarioEvent, label: String) {
-        val ctx = LanguageStore.wrap(applicationContext, LanguageStore.resolve(applicationContext))
-        if (!ready(ctx)) return
-        val p2 = { v: Double -> String.format(java.util.Locale.US, "%.2f", v) }
-        val title = ctx.getString(if (e.kind == "BULL") R.string.notif_trig_up else R.string.notif_trig_down, label)
-        val text = ctx.getString(if (e.kind == "BULL") R.string.notif_trig_up_text else R.string.notif_trig_down_text,
-            p2(e.level), e.levelName, e.target?.let(p2) ?: "—", e.targetName ?: "") + "\n" + ctx.getString(R.string.pos_watch_note)
-        val open = PendingIntent.getActivity(applicationContext, 3,
-            Intent(applicationContext, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),
-            PendingIntent.FLAG_IMMUTABLE)
-        val n = NotificationCompat.Builder(applicationContext, CHANNEL)
-            .setSmallIcon(android.R.drawable.stat_notify_more).setContentTitle(title)
-            .setContentText(text.substringBefore("\n")).setStyle(NotificationCompat.BigTextStyle().bigText(text))
-            .setContentIntent(open).setAutoCancel(true).private(applicationContext).build()
-        NotificationManagerCompat.from(applicationContext).notify(("evt$label${e.kind}${e.levelName}").hashCode(), n)
     }
 
     private fun notify(signals: List<SignalWatch.Signal>, label: String) {
@@ -230,6 +259,15 @@ class SignalWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx
         private const val BRIEF_ID = 4711
         private const val CHANNEL = "signals"
         private const val WORK = "signal-watch"
+        private val LOCK = Any()
+
+        /** One extra check now (the server asks for it when an hour closes across a level). */
+        fun runNow(ctx: Context) {
+            val req = androidx.work.OneTimeWorkRequestBuilder<SignalWorker>()
+                .setConstraints(androidx.work.Constraints.Builder()
+                    .setRequiredNetworkType(androidx.work.NetworkType.CONNECTED).build()).build()
+            WorkManager.getInstance(ctx).enqueueUniqueWork("signal-now", androidx.work.ExistingWorkPolicy.KEEP, req)
+        }
 
         /** Assets this trader receives alerts for (default: gold only). Stored on the phone only. */
         fun alertAssets(prefs: android.content.SharedPreferences): Set<String> =

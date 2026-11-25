@@ -852,6 +852,23 @@
     <string name="sc2_lean_down">الاتجاه الحالي: هبوط نحو %1$s</string>
     <string name="fd_up_down">الساعات تميل للصعود والأسبوع يميل للهبوط: قد يكون صعوداً قصيراً داخل هبوط أسبوعي. لا تعتمد على إطار واحد.</string>
     <string name="fd_down_up">الساعات تميل للهبوط والأسبوع يميل للصعود: قد يكون تراجعاً قصيراً داخل صعود أسبوعي. لا تعتمد على إطار واحد.</string>
+    <string name="ia_name_xau">ذهب</string>
+    <string name="ia_name_btc">بيتكوين</string>
+    <string name="ia_name_eth">إيثريوم</string>
+    <string name="ia_name_sol">سولانا</string>
+    <string name="ia_t_hold">تملك %1$s؟</string>
+    <string name="ia_t_cash">تملك سيولة لشراء %1$s؟</string>
+    <string name="ia_buy">اشترِ الآن بسعر السوق %1$s، وبِع قرب %2$s. تُلغى الفكرة إن نزل السعر تحت %3$s.</string>
+    <string name="ia_dip">لا تشترِ الآن. انتظر فرصة شراء قرب %1$s، والهدف بعدها %2$s.</string>
+    <string name="ia_wait">لا تشترِ الآن. انتظر فرصة شراء قرب %1$s.</string>
+    <string name="ia_keep">احتفظ به، وبِع قرب %1$s. تُلغى الفكرة إن نزل السعر تحت %2$s.</string>
+    <string name="ia_sell">بِع الآن بسعر السوق %1$s، وانتظر فرصة شراء قرب %2$s. تُلغى الفكرة إن صعد السعر فوق %3$s.</string>
+    <string name="ia_tgt">وصلت الفكرة هدفها %1$s.</string>
+    <string name="ia_tgt_rebuy">وصل السعر إلى منطقة إعادة الشراء قرب %1$s.</string>
+    <string name="ia_fail_stop">لم تنجح الفكرة: لمس السعر %1$s. راجع الشاشة.</string>
+    <string name="ia_fail_turn">لم تنجح الفكرة: تغيّر الترجيح. راجع الشاشة.</string>
+    <string name="ia_expired">انتهت مدة الفكرة (24 ساعة) دون أن تصل هدفها. راجع الشاشة.</string>
+    <string name="ia_note">فكرة للتعليم وليست ضماناً.</string>
     <string name="r_w_up" formatted="false">صاعد</string>
     <string name="r_w_down" formatted="false">هابط</string>
     <string name="r_w_neutral" formatted="false">محايد</string>
