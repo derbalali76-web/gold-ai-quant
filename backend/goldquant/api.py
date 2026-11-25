@@ -167,6 +167,18 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
                 cache[key] = fn()
             return cache[key]
 
+    # Memory guard (2026-11-25, Render free tier = 512 MB): concurrent heavy requests each hold their own pandas
+    # working set, so 6 at once added ~95 MB locally. At most 2 run together; the rest wait their turn.
+    import functools as _ft
+    _heavy = threading.BoundedSemaphore(int(os.environ.get("GOLDQUANT_HEAVY_SLOTS", "2")))
+
+    def _gated(fn):
+        @_ft.wraps(fn)
+        def inner(*args, **kwargs):
+            with _heavy:
+                return fn(*args, **kwargs)
+        return inner
+
     boot = {"id": os.urandom(6).hex(), "started_at": utcnow().isoformat()}
 
     def _memory_mb() -> dict:
@@ -492,6 +504,7 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
         return d
 
     @app.get("/decision", response_model=Decision, dependencies=[Depends(auth)])
+    @_gated
     def decision(mode: Mode = Query(Mode.DEMO), demo_step: int = Query(0), asset: str = Query("XAU")):
         a = asset.upper()
         if a != "XAU":
@@ -568,6 +581,7 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
     bars_cache: dict = {}
 
     @app.get("/bars", dependencies=[Depends(auth)])
+    @_gated
     def bars_endpoint(asset: str = Query("XAU"), tf: str = Query("H1"), limit: int = Query(120, ge=20, le=300)):
         """Closed candles for the in-app chart (no look-ahead: only complete bars). Cached 60 s."""
         a, tf = asset.upper(), tf.upper()
