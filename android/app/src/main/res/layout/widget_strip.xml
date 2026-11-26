@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- One-row version of the wide widget (shown when it is resized to a single row). -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/w_root" android:layout_width="match_parent" android:layout_height="match_parent"
-    android:background="@drawable/wf_strip">
+    android:id="@+id/w_root" android:layout_width="match_parent" android:layout_height="match_parent">
+  <FrameLayout android:id="@+id/w_card" android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical" android:background="@drawable/wf_strip">
     <ImageView android:id="@+id/w_art" android:layout_width="wrap_content" android:layout_height="52dp"
         android:layout_gravity="bottom|left" android:layout_marginLeft="8dp" android:layout_marginBottom="5dp"
         android:adjustViewBounds="true" android:importantForAccessibility="no" />
-    <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:layoutDirection="rtl"
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layoutDirection="rtl"
         android:orientation="horizontal" android:gravity="center_vertical"
-        android:paddingLeft="12dp" android:paddingRight="16dp" android:paddingVertical="6dp">
+        android:paddingLeft="12dp" android:paddingRight="16dp" android:paddingVertical="8dp">
         <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical">
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
                 <TextView android:id="@+id/w_pair" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"
@@ -34,4 +35,5 @@
                 android:maxLines="1" android:ellipsize="end" android:textColor="#F3F1EA" android:textSize="11sp" />
         </LinearLayout>
     </LinearLayout>
+  </FrameLayout>
 </FrameLayout>
