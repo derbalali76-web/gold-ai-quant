@@ -878,6 +878,21 @@
     <string name="w_cancel_below">تُلغى تحت %1$s</string>
     <string name="w_conflict">الإشارات متعارضة</string>
     <string name="w_today">اليوم</string>
+    <string name="widget_desc_small">السعر وحركة اليوم وخطها</string>
+    <string name="widget_desc_list">كل الأصول بنظرة واحدة مع فكرتك لكل أصل</string>
+    <string name="w_label_small">AI QUANT · السعر</string>
+    <string name="w_label_wide">AI QUANT · السعر والفكرة</string>
+    <string name="w_label_list">AI QUANT · قائمة الأصول</string>
+    <string name="w_w_buy">اشترِ</string>
+    <string name="w_w_wait">انتظر</string>
+    <string name="w_w_keep">احتفظ</string>
+    <string name="w_w_sell">بِع</string>
+    <string name="w_w_none">—</string>
+    <string name="w_cfg_title">إعداد الويدجت</string>
+    <string name="w_cfg_asset">الأصل</string>
+    <string name="w_cfg_pos">وضعك</string>
+    <string name="w_cfg_pos_note">نفس الاختيار يُستعمل في شاشة «ماذا أفعل؟» وفي الإشعارات.</string>
+    <string name="w_cfg_save">حفظ</string>
     <string name="r_w_up" formatted="false">صاعد</string>
     <string name="r_w_down" formatted="false">هابط</string>
     <string name="r_w_neutral" formatted="false">محايد</string>

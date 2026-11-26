@@ -1,138 +1,125 @@
 package com.goldaiquant.app
 
-import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
-import android.appwidget.AppWidgetProvider
-import android.content.ComponentName
 import android.content.Context
-import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.Path
-import android.os.Bundle
+import android.content.SharedPreferences
 import android.view.View
 import android.widget.RemoteViews
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 
-/** Home-screen widget (owner-approved 2026-11-26, design board «ويدجت مقترح» option 2): the «ماذا أفعل؟» idea of the
- *  HOURS card for the user's position on the selected asset (same rule as the screen and the idea notifications),
- *  next to the price, today's move and a 24 h sparkline. Narrow widgets show the price side only. Built from the
- *  last analysis the app saved; refreshed by the app and the background worker, it never fetches on its own. */
-class PriceWidget : AppWidgetProvider() {
-    override fun onUpdate(ctx: Context, mgr: AppWidgetManager, ids: IntArray) = render(ctx, mgr, ids)
-
-    override fun onAppWidgetOptionsChanged(ctx: Context, mgr: AppWidgetManager, id: Int, opts: Bundle) =
-        render(ctx, mgr, intArrayOf(id))
-
+/** Wide widget (4×2): the idea for your position | price, today's move, 24 h sparkline. Tap the pair to change the
+ *  asset, tap «تملك …؟» to switch cash / holder. Narrow sizes show the price side only. */
+class PriceWidget : BaseWidget() {
     companion object {
         private const val WIDE_DP = 230
-        private val GREEN = 0xFF3DD68C.toInt()
-        private val RED = 0xFFF07A7E.toInt()
-        private val DIM = 0xFF8C8A83.toInt()
 
-        fun refresh(ctx: Context) {
-            val mgr = AppWidgetManager.getInstance(ctx)
-            val ids = mgr.getAppWidgetIds(ComponentName(ctx, PriceWidget::class.java))
-            if (ids.isNotEmpty()) render(ctx, mgr, ids)
-        }
-
-        /** Kept for older callers: first scenario trigger, else the plan's watch price, else nearest level. */
-        fun watch(d: Decision): Double? {
-            d.brief?.scenarios?.firstOrNull()?.let { return it.trigger }
-            val c = d.outlooks.firstOrNull()
-            c?.plan?.watchPrice?.let { return it }
-            return d.levels?.supports?.firstOrNull()?.price ?: d.levels?.resistances?.firstOrNull()?.price
-        }
+        /** Called by the app and the workers after new data. */
+        fun refresh(ctx: Context) = Widgets.refreshAll(ctx)
 
         /** Title + up to two lines for the idea, as on the «ماذا أفعل؟» sheet. */
-        fun ideaLines(ctx: Context, i: SimpleAdvice.Idea, p: (Double?) -> String): Triple<Int, String, String> = when (i.kind) {
-            SimpleAdvice.Kind.BUY_NOW -> Triple(R.string.sa_buy_now, ctx.getString(R.string.w_target, p(i.sellAt)),
-                ctx.getString(R.string.w_cancel_below, p(i.invalid)))
-            SimpleAdvice.Kind.WAIT_DIP -> Triple(R.string.sa_wait_dip, ctx.getString(R.string.w_buy_near, p(i.buyAt)),
-                ctx.getString(R.string.w_target_after, p(i.sellAt)))
-            SimpleAdvice.Kind.WAIT -> Triple(R.string.sa_wait, ctx.getString(R.string.w_buy_near, p(i.buyAt)), "")
-            SimpleAdvice.Kind.HOLD_SELL_ABOVE -> Triple(R.string.sa_keep, ctx.getString(R.string.w_sell_near, p(i.sellAt)),
-                i.invalid?.let { ctx.getString(R.string.w_cancel_below, p(it)) } ?: "")
-            SimpleAdvice.Kind.SELL_REBUY -> Triple(R.string.sa_sell_rebuy, ctx.getString(R.string.w_buy_market),
-                ctx.getString(R.string.w_rebuy_near, p(i.buyAt)))
-            SimpleAdvice.Kind.CONFLICT -> Triple(R.string.sa_wait, ctx.getString(R.string.w_conflict), "")
-            SimpleAdvice.Kind.NONE -> Triple(R.string.sa_none, "", "")
+        fun ideaLines(ctx: Context, i: SimpleAdvice.Idea): Triple<Int, String, String> {
+            val p = Widgets::p2
+            return when (i.kind) {
+                SimpleAdvice.Kind.BUY_NOW -> Triple(R.string.sa_buy_now, ctx.getString(R.string.w_target, p(i.sellAt)),
+                    ctx.getString(R.string.w_cancel_below, p(i.invalid)))
+                SimpleAdvice.Kind.WAIT_DIP -> Triple(R.string.sa_wait_dip, ctx.getString(R.string.w_buy_near, p(i.buyAt)),
+                    ctx.getString(R.string.w_target_after, p(i.sellAt)))
+                SimpleAdvice.Kind.WAIT -> Triple(R.string.sa_wait, ctx.getString(R.string.w_buy_near, p(i.buyAt)), "")
+                SimpleAdvice.Kind.HOLD_SELL_ABOVE -> Triple(R.string.sa_keep, ctx.getString(R.string.w_sell_near, p(i.sellAt)),
+                    i.invalid?.let { ctx.getString(R.string.w_cancel_below, p(it)) } ?: "")
+                SimpleAdvice.Kind.SELL_REBUY -> Triple(R.string.sa_sell_rebuy, ctx.getString(R.string.w_buy_market),
+                    ctx.getString(R.string.w_rebuy_near, p(i.buyAt)))
+                SimpleAdvice.Kind.CONFLICT -> Triple(R.string.sa_wait, ctx.getString(R.string.w_conflict), "")
+                SimpleAdvice.Kind.NONE -> Triple(R.string.sa_none, "", "")
+            }
         }
 
-        private fun spark(values: List<Double>, color: Int): Bitmap? {
-            if (values.size < 2) return null
-            val w = 300; val h = 60
-            val bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
-            val lo = values.min(); val hi = values.max(); val span = (hi - lo).takeIf { it > 0 } ?: 1.0
-            val path = Path()
-            values.forEachIndexed { k, v ->
-                val x = k * (w - 4f) / (values.size - 1) + 2f
-                val y = (h - 4f) - ((v - lo) / span).toFloat() * (h - 8f)
-                if (k == 0) path.moveTo(x, y) else path.lineTo(x, y)
+        fun build(ctx0: Context, ctx: Context, p: SharedPreferences, mgr: AppWidgetManager, id: Int): RemoteViews {
+            val a = Widgets.asset(p, id)
+            val d = Widgets.decision(p, a)
+            val hold = Widgets.hold(p, a)
+            val v = RemoteViews(ctx0.packageName, R.layout.widget_price)
+            v.setTextViewText(R.id.w_pair, Widgets.pair(a) + " ▾")
+            v.setTextViewText(R.id.w_price, Widgets.p2(d?.quote))
+            val (chg, col) = Widgets.change(ctx, d)
+            v.setTextViewText(R.id.w_chg, chg); v.setTextColor(R.id.w_chg, col)
+            Widgets.setSpark(v, R.id.w_spark, Widgets.closes(p, a))
+            v.setTextViewText(R.id.w_time, Widgets.time(ctx, d))
+            val wide = mgr.getAppWidgetOptions(id).getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 250) >= WIDE_DP
+            val show = if (wide) View.VISIBLE else View.GONE
+            v.setViewVisibility(R.id.w_idea_col, show)
+            v.setViewVisibility(R.id.w_sep, show)
+            v.setTextViewText(R.id.w_who, ctx.getString(if (hold) R.string.ia_t_hold else R.string.ia_t_cash, Widgets.name(ctx, a)) + "  ⇄")
+            val idea = Widgets.idea(d, a, hold)
+            if (idea != null) {
+                val (t, l1, l2) = ideaLines(ctx, idea)
+                v.setTextViewText(R.id.w_act, ctx.getString(t))
+                v.setTextColor(R.id.w_act, Widgets.word(idea.kind).second)
+                v.setTextViewText(R.id.w_l1, l1)
+                v.setTextViewText(R.id.w_l2, l2)
+                v.setViewVisibility(R.id.w_l2, if (l2.isEmpty()) View.GONE else View.VISIBLE)
+                v.setTextViewText(R.id.w_note, ctx.getString(R.string.sa_idea))
+            } else {
+                v.setTextViewText(R.id.w_act, "—"); v.setTextColor(R.id.w_act, Widgets.DIM)
+                v.setTextViewText(R.id.w_l1, ctx.getString(R.string.widget_empty))
+                v.setViewVisibility(R.id.w_l2, View.GONE)
+                v.setTextViewText(R.id.w_note, "")
             }
-            Canvas(bmp).drawPath(path, Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                style = Paint.Style.STROKE; strokeWidth = 4f; this.color = color; strokeCap = Paint.Cap.ROUND; strokeJoin = Paint.Join.ROUND
-            })
-            return bmp
+            v.setOnClickPendingIntent(R.id.w_root, Widgets.openApp(ctx0))
+            v.setOnClickPendingIntent(R.id.w_pair, Widgets.action(ctx0, PriceWidget::class.java, id, Widgets.ACT_NEXT))
+            v.setOnClickPendingIntent(R.id.w_who, Widgets.action(ctx0, PriceWidget::class.java, id, Widgets.ACT_POS))
+            return v
         }
+    }
+}
 
-        private fun render(ctx0: Context, mgr: AppWidgetManager, ids: IntArray) {
-            val ctx = LanguageStore.wrap(ctx0, LanguageStore.resolve(ctx0))
-            val prefs = ctx0.getSharedPreferences("gold_ai_quant", Context.MODE_PRIVATE)
-            val asset = prefs.getString("asset", "XAU") ?: "XAU"
-            val raw = prefs.getString(if (asset == "XAU") "last_decision" else "last_decision_$asset", null)
-            val d = raw?.let { try { DecisionParser.parse(it) } catch (e: Exception) { null } }
-            val p2 = { v: Double? -> v?.let { String.format(Locale.US, "%,.2f", it) } ?: "—" }
-            val hold = prefs.getString("position_$asset", "CASH") == "HOLD"
-            val name = ctx.getString(when (asset) { "BTC" -> R.string.ia_name_btc; "ETH" -> R.string.ia_name_eth
-                "SOL" -> R.string.ia_name_sol; else -> R.string.ia_name_xau })
-            val idea = d?.let { try { IdeaAlerts.now(it, asset, hold)?.idea } catch (e: Exception) { null } }
-            val chg = d?.quoteChangePct
-            val up = (chg ?: 0.0) >= 0
-            val closes = prefs.getString("spark_$asset", null)?.split(',')?.mapNotNull { it.toDoubleOrNull() }.orEmpty()
-            val sparkColor = if (closes.size >= 2) (if (closes.last() >= closes.first()) GREEN else RED) else DIM
-            val bmp = spark(closes, sparkColor)
-            val open = PendingIntent.getActivity(ctx0, 11, Intent(ctx0, MainActivity::class.java)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP), PendingIntent.FLAG_IMMUTABLE)
-            for (id in ids) {
-                val v = RemoteViews(ctx0.packageName, R.layout.widget_price)
-                v.setTextViewText(R.id.w_pair, if (asset == "XAU") "XAU/USD" else "$asset/USD")
-                v.setTextViewText(R.id.w_price, d?.quote?.let(p2) ?: "—")
-                v.setTextViewText(R.id.w_chg, chg?.let {
-                    (if (up) "▲ " else "▼ ") + String.format(Locale.US, "%.2f%%", kotlin.math.abs(it)) + " · " + ctx.getString(R.string.w_today)
-                } ?: "")
-                v.setTextColor(R.id.w_chg, if (up) GREEN else RED)
-                if (bmp != null) { v.setImageViewBitmap(R.id.w_spark, bmp); v.setViewVisibility(R.id.w_spark, View.VISIBLE) }
-                else v.setViewVisibility(R.id.w_spark, View.GONE)
-                v.setTextViewText(R.id.w_time, d?.quoteTime?.let {
-                    ctx.getString(R.string.updated_at, DateTimeFormatter.ofPattern("HH:mm").format(it.atZone(ZoneId.systemDefault())))
-                } ?: ctx.getString(R.string.widget_empty))
-                val wide = mgr.getAppWidgetOptions(id).getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 250) >= WIDE_DP
-                val show = if (wide && idea != null) View.VISIBLE else View.GONE
-                v.setViewVisibility(R.id.w_idea_col, show)
-                v.setViewVisibility(R.id.w_sep, show)
-                if (idea != null) {
-                    val (t, l1, l2) = ideaLines(ctx, idea, p2)
-                    v.setTextViewText(R.id.w_who, ctx.getString(if (hold) R.string.ia_t_hold else R.string.ia_t_cash, name))
-                    v.setTextViewText(R.id.w_act, ctx.getString(t))
-                    v.setTextColor(R.id.w_act, when (idea.kind) {
-                        SimpleAdvice.Kind.BUY_NOW -> GREEN
-                        SimpleAdvice.Kind.SELL_REBUY -> 0xFFF0A46A.toInt()
-                        SimpleAdvice.Kind.HOLD_SELL_ABOVE -> 0xFF8FC1EA.toInt()
-                        SimpleAdvice.Kind.NONE -> DIM
-                        else -> 0xFFE6C55A.toInt()
-                    })
-                    v.setTextViewText(R.id.w_l1, l1)
-                    v.setTextViewText(R.id.w_l2, l2)
-                    v.setViewVisibility(R.id.w_l2, if (l2.isEmpty()) View.GONE else View.VISIBLE)
-                    v.setTextViewText(R.id.w_note, ctx.getString(R.string.sa_idea))
-                }
-                v.setOnClickPendingIntent(R.id.w_root, open)
-                mgr.updateAppWidget(id, v)
+/** Small widget (2×2): price, today's move, sparkline. Tap the pair to change the asset. */
+class PriceWidgetSmall : BaseWidget() {
+    companion object {
+        fun build(ctx0: Context, ctx: Context, p: SharedPreferences, id: Int): RemoteViews {
+            val a = Widgets.asset(p, id)
+            val d = Widgets.decision(p, a)
+            val v = RemoteViews(ctx0.packageName, R.layout.widget_small)
+            v.setTextViewText(R.id.ws_pair, a + " ▾")
+            v.setTextViewText(R.id.ws_price, Widgets.p2(d?.quote))
+            val (chg, col) = Widgets.change(ctx, d)
+            v.setTextViewText(R.id.ws_chg, chg); v.setTextColor(R.id.ws_chg, col)
+            Widgets.setSpark(v, R.id.ws_spark, Widgets.closes(p, a))
+            v.setTextViewText(R.id.ws_time, Widgets.time(ctx, d))
+            v.setOnClickPendingIntent(R.id.ws_root, Widgets.openApp(ctx0))
+            v.setOnClickPendingIntent(R.id.ws_pair, Widgets.action(ctx0, PriceWidgetSmall::class.java, id, Widgets.ACT_NEXT))
+            return v
+        }
+    }
+}
+
+/** List widget (4×2): every asset — price, today's move, sparkline and one word for your idea on it. */
+class PriceWidgetList : BaseWidget() {
+    companion object {
+        private val ROWS = listOf(
+            intArrayOf(R.id.wl_n0, R.id.wl_s0, R.id.wl_p0, R.id.wl_c0, R.id.wl_i0),
+            intArrayOf(R.id.wl_n1, R.id.wl_s1, R.id.wl_p1, R.id.wl_c1, R.id.wl_i1),
+            intArrayOf(R.id.wl_n2, R.id.wl_s2, R.id.wl_p2, R.id.wl_c2, R.id.wl_i2),
+            intArrayOf(R.id.wl_n3, R.id.wl_s3, R.id.wl_p3, R.id.wl_c3, R.id.wl_i3))
+
+        fun build(ctx0: Context, ctx: Context, p: SharedPreferences): RemoteViews {
+            val v = RemoteViews(ctx0.packageName, R.layout.widget_list)
+            var latest: Decision? = null
+            Widgets.ASSETS.forEachIndexed { k, a ->
+                val r = ROWS[k]
+                val d = Widgets.decision(p, a)
+                if (d?.quoteTime != null && (latest?.quoteTime == null || d.quoteTime!! > latest!!.quoteTime!!)) latest = d
+                v.setTextViewText(r[0], if (a == "XAU") Widgets.name(ctx, a) else a)
+                Widgets.setSpark(v, r[1], Widgets.closes(p, a))
+                v.setTextViewText(r[2], Widgets.p2(d?.quote))
+                val c = d?.quoteChangePct
+                v.setTextViewText(r[3], c?.let { (if (it >= 0) "▲ " else "▼ ") + String.format(java.util.Locale.US, "%.1f%%", kotlin.math.abs(it)) } ?: "")
+                v.setTextColor(r[3], if ((c ?: 0.0) >= 0) Widgets.GREEN else Widgets.RED)
+                val (w, col) = Widgets.word(Widgets.idea(d, a, Widgets.hold(p, a))?.kind)
+                v.setTextViewText(r[4], ctx.getString(w)); v.setTextColor(r[4], col)
             }
+            v.setTextViewText(R.id.wl_time, Widgets.time(ctx, latest))
+            v.setOnClickPendingIntent(R.id.wl_root, Widgets.openApp(ctx0))
+            return v
         }
     }
 }

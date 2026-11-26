@@ -878,6 +878,21 @@
     <string name="w_cancel_below">Annulée sous %1$s</string>
     <string name="w_conflict">Signaux contradictoires</string>
     <string name="w_today">aujourd\'hui</string>
+    <string name="widget_desc_small">Prix, variation du jour et sa courbe</string>
+    <string name="widget_desc_list">Tous les actifs d\'un coup d\'œil, avec votre idée pour chacun</string>
+    <string name="w_label_small">AI QUANT · Prix</string>
+    <string name="w_label_wide">AI QUANT · Prix et idée</string>
+    <string name="w_label_list">AI QUANT · Actifs</string>
+    <string name="w_w_buy">Acheter</string>
+    <string name="w_w_wait">Attendre</string>
+    <string name="w_w_keep">Garder</string>
+    <string name="w_w_sell">Vendre</string>
+    <string name="w_w_none">—</string>
+    <string name="w_cfg_title">Réglages du widget</string>
+    <string name="w_cfg_asset">Actif</string>
+    <string name="w_cfg_pos">Votre position</string>
+    <string name="w_cfg_pos_note">Le même choix sert sur l\'écran « Que faire ? » et dans les notifications.</string>
+    <string name="w_cfg_save">Enregistrer</string>
     <string name="r_w_up" formatted="false">haussière</string>
     <string name="r_w_down" formatted="false">baissière</string>
     <string name="r_w_neutral" formatted="false">neutre</string>
