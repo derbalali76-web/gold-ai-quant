@@ -897,6 +897,31 @@
     <string name="ia_upd_target">الهدف الجديد %1$s (كان %2$s).</string>
     <string name="ia_upd_buy">الشراء الآن قرب %1$s (كان %2$s).</string>
     <string name="ia_upd_cancel">مستوى الإلغاء الجديد %1$s (كان %2$s).</string>
+    <string name="h2_ask">ماذا أفعل الآن؟</string>
+    <string name="h2_trend">الاتجاه الحالي</string>
+    <string name="h2_likely">السيناريو المرجّح</string>
+    <string name="h2_untested">غير مختبر</string>
+    <string name="h2_up">صعود</string>
+    <string name="h2_down">هبوط</string>
+    <string name="h2_side">عرضي</string>
+    <string name="h2_between">بين المستويين</string>
+    <string name="h2_toward">نحو</string>
+    <string name="h2_sc_up">⬆ سيناريو الصعود</string>
+    <string name="h2_sc_down">⬇ سيناريو الهبوط</string>
+    <string name="h2_if_up">إذا اخترق %1$s</string>
+    <string name="h2_if_down">إذا كسر %1$s</string>
+    <string name="h2_levels">أهم المستويات</string>
+    <string name="h2_levels_title">الدعوم والمقاومات · %1$s</string>
+    <string name="h2_levels_hint">المربعات = قوة المستوى (كم مرة ارتد منه السعر). اضغط على مستوى للتفاصيل.</string>
+    <string name="h2_levels_foot">المستويات من الأسعار السابقة، وليست توقعاً.</string>
+    <string name="h2_now">— السعر الآن %1$s —</string>
+    <string name="h2_res_strong">مقاومة قوية</string>
+    <string name="h2_res">مقاومة</string>
+    <string name="h2_sup_strong">دعم رئيسي</string>
+    <string name="h2_sup">دعم</string>
+    <string name="h2_alert">نبّهني</string>
+    <string name="h2_alert_on">مفعّل</string>
+    <string name="h2_radar_none">لا توجد فرصة مؤهلة الآن</string>
     <string name="r_w_up" formatted="false">صاعد</string>
     <string name="r_w_down" formatted="false">هابط</string>
     <string name="r_w_neutral" formatted="false">محايد</string>

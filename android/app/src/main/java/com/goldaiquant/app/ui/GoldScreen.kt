@@ -60,6 +60,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
@@ -149,13 +150,22 @@ val Track = Color(0xFF2A2A30)
 
 @Composable
 fun GoldTheme(content: @Composable () -> Unit) {
+    // Cairo everywhere (owner 2026-11-26: a clearer, nicer Arabic font)
+    val t = androidx.compose.material3.Typography()
+    val c = { st: androidx.compose.ui.text.TextStyle -> st.copy(fontFamily = Cairo) }
     MaterialTheme(colorScheme = darkColorScheme(primary = Gold, background = Bg, surface = Card,
-        onPrimary = Color.Black, onBackground = TextMain, onSurface = TextMain), content = content)
+        onPrimary = Color.Black, onBackground = TextMain, onSurface = TextMain),
+        typography = t.copy(displayLarge = c(t.displayLarge), displayMedium = c(t.displayMedium), displaySmall = c(t.displaySmall),
+            headlineLarge = c(t.headlineLarge), headlineMedium = c(t.headlineMedium), headlineSmall = c(t.headlineSmall),
+            titleLarge = c(t.titleLarge), titleMedium = c(t.titleMedium), titleSmall = c(t.titleSmall),
+            bodyLarge = c(t.bodyLarge), bodyMedium = c(t.bodyMedium), bodySmall = c(t.bodySmall),
+            labelLarge = c(t.labelLarge), labelMedium = c(t.labelMedium), labelSmall = c(t.labelSmall)),
+        content = content)
 }
 
 private val clock = DateTimeFormatter.ofPattern("HH:mm:ss", Locale.US)
 private fun Instant.hms(): String = clock.format(atZone(ZoneId.systemDefault()))
-private fun Double.p2(): String = String.format(Locale.US, "%.2f", this)
+internal fun Double.p2(): String = String.format(Locale.US, "%.2f", this)
 private fun Double.p0(): String = String.format(Locale.US, "%.0f", this)
 
 /** Keeps numbers, signs and ranges in reading order inside any layout direction. */
@@ -178,7 +188,7 @@ private fun reasonStrings(): ReasonStrings {
 private fun rt(r: Reason?): String = if (r == null) "" else ReasonText.render(r, reasonStrings())
 
 @Composable
-private fun horizonName(h: String): String = stringResource(when (h) {
+internal fun horizonName(h: String): String = stringResource(when (h) {
     "WEEK" -> R.string.h_week; "MONTH" -> R.string.h_month; else -> R.string.h_hours
 })
 
@@ -206,13 +216,13 @@ private fun errorText(e: ApiException): String {
     return if (e.detail.isNullOrBlank()) main else main + "\n" + stringResource(R.string.err_detail, ltr(e.detail!!))
 }
 
-private enum class Health(val label: Int, val color: Color) {
+internal enum class Health(val label: Int, val color: Color) {
     LIVE(R.string.health_live, BuyGreen), STALE(R.string.health_stale, WaitGold), DEMO(R.string.health_demo, WaitGold),
     NONE(R.string.health_none, SellRed), SAVED(R.string.health_saved, Grey),
     PARTIAL(R.string.health_partial, WaitGold), CLOSED(R.string.health_closed, Grey)
 }
 
-private fun health(s: UiState): Health {
+internal fun health(s: UiState): Health {
     val d = s.decision
     return when {
         s.error != null && d == null -> Health.NONE
@@ -258,6 +268,7 @@ fun GoldScreen(vm: MainViewModel, lang: Lang, onLanguage: (Lang) -> Unit) {
 
 private sealed interface Sheet {
     data class LevelSheet(val level: Level, val isSupport: Boolean) : Sheet
+    data object LevelsAll : Sheet
     data object Probabilities : Sheet
     data object TradeSheet : Sheet
     data object RadarSheet : Sheet
@@ -297,7 +308,11 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
     }
     val d = s.decision
     val selected = HorizonModel.resolve(s.selectedHorizon, d)
-    BoxWithConstraints(Modifier.fillMaxSize().background(Bg).watermark(LocalWatermark.current).safeDrawingPadding()) {
+    BoxWithConstraints(Modifier.fillMaxSize().background(Color.Black).drawBehind {
+        // warm gold light behind the title (home v2)
+        drawRect(androidx.compose.ui.graphics.Brush.radialGradient(listOf(Color(0x73F5AA28), Color.Transparent),
+            center = androidx.compose.ui.geometry.Offset(size.width / 2, 0f), radius = size.width * 0.75f))
+    }.watermark(LocalWatermark.current).safeDrawingPadding()) {
         // Compact layout on short screens: secondary details are dropped instead of shrinking the text.
         val compact = maxHeight < 700.dp
         val gap = if (compact) 6.dp else 8.dp
@@ -306,41 +321,38 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
             Modifier.fillMaxSize().padding(horizontal = 12.dp, vertical = 6.dp),
             verticalArrangement = Arrangement.spacedBy(gap),
         ) {
-            TopBar(s, compact, onAsset = { sheet = Sheet.Assets }, onCalendar = { onCalendar(); sheet = Sheet.CalendarSheet }) { sheet = Sheet.Settings }
-            val card = d?.let { HorizonModel.card(it, selected) }
-            // beginner screen (approved 2026-11-17): price, horizon tabs, two scenarios, «ماذا أفعل؟», three tiles.
-            // The trend card, the range strip, market activity, the 3-outcome odds and the calculator stay in the code
-            // but are no longer on this screen.
-            PriceCard(d, s, Modifier.fillMaxWidth()) { onBars(s.asset, "H1"); sheet = Sheet.ChartSheet }
+            // home v2 (owner design 2026-11-26): one screen, no scrolling; the levels card opens all levels
+            H2Header(s, onSettings = { sheet = Sheet.Settings }, onCalendar = { onCalendar(); sheet = Sheet.CalendarSheet })
+            H2PositionAndAsset(s, onPosition, onAsset = { sheet = Sheet.Assets })
+            H2PriceCard(d, s, Modifier.fillMaxWidth()) { onBars(s.asset, "H1"); sheet = Sheet.ChartSheet }
             if (d?.isDemo == true) Text(stringResource(R.string.demo_banner),
                 color = Color.Black, fontSize = 12.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth().background(WaitGold, RoundedCornerShape(8.dp)).padding(vertical = 4.dp))
             val haptic = androidx.compose.ui.platform.LocalHapticFeedback.current
             s.error?.let { ErrorStrip(it, onAsk) }
+            val card = d?.let { HorizonModel.card(it, selected) }
             if (d != null && card != null) {
-                HorizonTabs(d, selected, s.loading, onHorizon)
-                FrameDivergence(d)
-                Crossfade(targetState = card, animationSpec = tween(240), label = "horizon",
-                    modifier = Modifier.weight(1f).fillMaxWidth()) { c ->
-                    ScenarioCard(c, s, d, compact, Modifier.fillMaxSize()) { l, sup -> sheet = Sheet.LevelSheet(l, sup) }
-                }
-                // beginner simplification (2026-11-22): the cash / holder choice lives inside «ماذا أفعل؟»
-                WhatButton(compact) {
+                H2Tabs(selected, onHorizon)
+                H2AskButton {
                     haptic.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.LongPress)
                     sheet = Sheet.WhatSheet
                 }
-                s.receivedAt?.let { t ->
-                    Text(stringResource(R.string.sc2_updated, ltr(java.time.format.DateTimeFormatter.ofPattern("HH:mm")
-                        .withZone(java.time.ZoneId.systemDefault()).format(t))), color = TextDim, fontSize = 10.sp,
-                        textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+                FrameDivergence(d)
+                val x = h2View(card, s, d)
+                H2TrendBar(x) { sheet = Sheet.Details }
+                H2ScenarioPair(x)
+                H2LevelsCard(x, s, Modifier.fillMaxWidth().weight(1f).heightIn(min = 96.dp)) {
+                    if (s.candles["${s.asset}/H1"] == null) onBars(s.asset, "H1")
+                    sheet = Sheet.LevelsAll
                 }
-                Row(Modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(gap)) {
-                    // the radar tile is off the beginner screen (2026-11-22); virtual trades open from the record
-                    Tile(stringResource(R.string.rec_title), recordTile(s.briefs),
-                        WaitGold, Modifier.weight(1f).fillMaxHeight()) { sheet = Sheet.TrustSheet }
-                    Tile(stringResource(R.string.details), stringResource(R.string.why_title), WaitGold,
-                        Modifier.weight(1f).fillMaxHeight()) { sheet = Sheet.Details }
+                val st = s.unified?.assets?.get(s.asset)
+                val radar = when {
+                    st == null -> stringResource(R.string.h2_radar_none)
+                    st.qualified.isNotEmpty() -> stringResource(R.string.rd_tile_q, st.qualified.size)
+                    st.forming.isNotEmpty() -> stringResource(R.string.rd_tile_f, st.forming.size)
+                    else -> stringResource(R.string.h2_radar_none)
                 }
+                H2Bottom(s, radar, onRadar = { sheet = Sheet.RadarSheet }, onRecord = { sheet = Sheet.TrustSheet })
             } else {
                 // no analysis yet: the same big button loads it
                 AskButton(s.loading, compact) { onAsk() }
@@ -391,6 +403,8 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
             } else onAlertAsset(s.asset)
         }) { sheet = null }
         Sheet.CalendarSheet -> CalendarDialog(s.calendar) { sheet = null }
+        Sheet.LevelsAll -> if (d != null && card != null) LevelsSheet(h2View(card, s, d), s, s.live[s.asset]?.price ?: d.quote,
+            onBell, onLevel = { l, sup -> sheet = Sheet.LevelSheet(l, sup) }) { sheet = null }
         null -> Unit
     }
     if (!s.onboarded) OnboardingDialog(onDone = onOnboarded)
@@ -651,7 +665,7 @@ private fun AskButton(loading: Boolean, compact: Boolean, onClick: () -> Unit) {
 }
 
 @Composable
-private fun ErrorStrip(e: ApiException, onRetry: () -> Unit) {
+internal fun ErrorStrip(e: ApiException, onRetry: () -> Unit) {
     Row(Modifier.fillMaxWidth().background(SellRed.copy(alpha = 0.22f), RoundedCornerShape(10.dp)).padding(8.dp),
         verticalAlignment = Alignment.CenterVertically) {
         Text(errorText(e), color = TextMain, fontSize = 13.sp, modifier = Modifier.weight(1f))
@@ -1685,7 +1699,7 @@ private fun android.content.Context.findActivity(): android.app.Activity? {
 // ---------------------------------------------------------------- chart, calendar, onboarding
 /** Thin price line of the last closes (inside the price card). */
 @Composable
-private fun Sparkline(c: Candles?, modifier: Modifier) {
+internal fun Sparkline(c: Candles?, modifier: Modifier) {
     if (c == null || c.size < 5) return
     val xs = c.c.takeLast(48)
     val up = xs.last() >= xs.first()
@@ -2007,7 +2021,7 @@ private fun OnboardingDialog(onDone: () -> Unit) {
 
 // ---------------------------------------------------------------- results record (daily direction calls vs outcome)
 @Composable
-private fun recordTile(rows: List<BriefRow>): String {
+internal fun recordTile(rows: List<BriefRow>): String {
     val sm = Record.summary(rows)
     return if (sm.settled == 0) stringResource(R.string.record_tile_none)
            else ltr(stringResource(R.string.record_tile, sm.correct, sm.settled))
@@ -2479,7 +2493,7 @@ private fun RangeDialog(s: UiState, now: Double?, onClose: () -> Unit) {
 private const val AUTO_REFRESH_MIN = 10L
 
 @Composable
-private fun scHorizon(h: String): String = stringResource(when (h) {
+internal fun scHorizon(h: String): String = stringResource(when (h) {
     "WEEK" -> R.string.sc2_h_week; "MONTH" -> R.string.sc2_h_month; else -> R.string.sc2_h_hours })
 
 @Composable
@@ -2573,7 +2587,7 @@ private fun frameLean(d: Decision, h: String): Int {
 /** Frame divergence (2026-11-23): the frames are never forced to agree; when hours and week lean opposite ways a
  *  short plain notice says so. It is information only and never creates a buy or a sell. */
 @Composable
-private fun FrameDivergence(d: Decision) {
+internal fun FrameDivergence(d: Decision) {
     val h = frameLean(d, "HOURS"); val w = frameLean(d, "WEEK")
     if (h == 0 || w == 0 || h == w) return
     Text(stringResource(if (h > 0) R.string.fd_up_down else R.string.fd_down_up), color = Color(0xFFF0B45A), fontSize = 12.sp,
@@ -2582,7 +2596,7 @@ private fun FrameDivergence(d: Decision) {
 }
 
 /** No validated evidence for a side: the beginner screen still marks the side the trend points to (owner, 2026-11-22). */
-private fun looseLikely(v: HorizonScenarios.View, trend: String?): HorizonScenarios.View {
+internal fun looseLikely(v: HorizonScenarios.View, trend: String?): HorizonScenarios.View {
     if (v.likely != HorizonScenarios.Likely.NONE) return v
     val l = when (SimpleAdvice.trendCodeOf(trend)) {
         "UP" -> if (v.up != null) HorizonScenarios.Likely.UP else null

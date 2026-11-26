@@ -898,6 +898,31 @@
     <string name="ia_upd_target">New target %1$s (was %2$s).</string>
     <string name="ia_upd_buy">Buy near %1$s now (was %2$s).</string>
     <string name="ia_upd_cancel">New cancel level %1$s (was %2$s).</string>
+    <string name="h2_ask">What should I do now?</string>
+    <string name="h2_trend">Current trend</string>
+    <string name="h2_likely">Likely scenario</string>
+    <string name="h2_untested">not tested</string>
+    <string name="h2_up">Up</string>
+    <string name="h2_down">Down</string>
+    <string name="h2_side">Sideways</string>
+    <string name="h2_between">In range</string>
+    <string name="h2_toward">toward</string>
+    <string name="h2_sc_up">⬆ Up scenario</string>
+    <string name="h2_sc_down">⬇ Down scenario</string>
+    <string name="h2_if_up">if it breaks above %1$s</string>
+    <string name="h2_if_down">if it breaks below %1$s</string>
+    <string name="h2_levels">Key levels</string>
+    <string name="h2_levels_title">Supports and resistances · %1$s</string>
+    <string name="h2_levels_hint">Squares = level strength (how often the price turned there). Tap a level for details.</string>
+    <string name="h2_levels_foot">Levels come from past prices; they are not a forecast.</string>
+    <string name="h2_now">— Price now %1$s —</string>
+    <string name="h2_res_strong">Strong resistance</string>
+    <string name="h2_res">Resistance</string>
+    <string name="h2_sup_strong">Key support</string>
+    <string name="h2_sup">Support</string>
+    <string name="h2_alert">Alert me</string>
+    <string name="h2_alert_on">On</string>
+    <string name="h2_radar_none">No qualified opportunity now</string>
     <string name="r_w_up" formatted="false">up</string>
     <string name="r_w_down" formatted="false">down</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

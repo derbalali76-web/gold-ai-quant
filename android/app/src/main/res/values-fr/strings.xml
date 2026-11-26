@@ -897,6 +897,31 @@
     <string name="ia_upd_target">Nouvel objectif %1$s (était %2$s).</string>
     <string name="ia_upd_buy">Achat désormais près de %1$s (était %2$s).</string>
     <string name="ia_upd_cancel">Nouveau niveau d\'annulation %1$s (était %2$s).</string>
+    <string name="h2_ask">Que faire maintenant ?</string>
+    <string name="h2_trend">Tendance actuelle</string>
+    <string name="h2_likely">Scénario probable</string>
+    <string name="h2_untested">non testé</string>
+    <string name="h2_up">Hausse</string>
+    <string name="h2_down">Baisse</string>
+    <string name="h2_side">Latéral</string>
+    <string name="h2_between">Dans la zone</string>
+    <string name="h2_toward">vers</string>
+    <string name="h2_sc_up">⬆ Scénario de hausse</string>
+    <string name="h2_sc_down">⬇ Scénario de baisse</string>
+    <string name="h2_if_up">s\'il franchit %1$s</string>
+    <string name="h2_if_down">s\'il casse %1$s</string>
+    <string name="h2_levels">Niveaux clés</string>
+    <string name="h2_levels_title">Supports et résistances · %1$s</string>
+    <string name="h2_levels_hint">Carrés = force du niveau (combien de fois le prix y a rebondi). Touchez un niveau pour les détails.</string>
+    <string name="h2_levels_foot">Les niveaux viennent des prix passés ; ce n\'est pas une prévision.</string>
+    <string name="h2_now">— Prix actuel %1$s —</string>
+    <string name="h2_res_strong">Résistance forte</string>
+    <string name="h2_res">Résistance</string>
+    <string name="h2_sup_strong">Support clé</string>
+    <string name="h2_sup">Support</string>
+    <string name="h2_alert">M\'alerter</string>
+    <string name="h2_alert_on">Activé</string>
+    <string name="h2_radar_none">Aucune opportunité qualifiée</string>
     <string name="r_w_up" formatted="false">haussière</string>
     <string name="r_w_down" formatted="false">baissière</string>
     <string name="r_w_neutral" formatted="false">neutre</string>
