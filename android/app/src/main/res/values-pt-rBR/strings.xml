@@ -893,6 +893,10 @@
     <string name="w_cfg_pos">Sua posição</string>
     <string name="w_cfg_pos_note">A mesma escolha é usada na tela “O que fazer?” e nas notificações.</string>
     <string name="w_cfg_save">Salvar</string>
+    <string name="ia_upd_head">Os níveis da ideia mudaram. Atualize seu plano:</string>
+    <string name="ia_upd_target">Novo alvo %1$s (era %2$s).</string>
+    <string name="ia_upd_buy">Compra agora perto de %1$s (era %2$s).</string>
+    <string name="ia_upd_cancel">Novo nível de cancelamento %1$s (era %2$s).</string>
     <string name="r_w_up" formatted="false">de alta</string>
     <string name="r_w_down" formatted="false">de baixa</string>
     <string name="r_w_neutral" formatted="false">neutra</string>

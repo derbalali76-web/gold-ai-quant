@@ -1109,4 +1109,8 @@ UI = {
 "w_cfg_pos": ("Your position", "وضعك", "Votre position", "Tu posición", "Sua posição"),
 "w_cfg_pos_note": ("The same choice is used on the «What should I do?» screen and in notifications.", "نفس الاختيار يُستعمل في شاشة «ماذا أفعل؟» وفي الإشعارات.", "Le même choix sert sur l'écran « Que faire ? » et dans les notifications.", "La misma elección se usa en la pantalla «¿Qué hago?» y en las notificaciones.", "A mesma escolha é usada na tela “O que fazer?” e nas notificações."),
 "w_cfg_save": ("Save", "حفظ", "Enregistrer", "Guardar", "Salvar"),
+"ia_upd_head": ("The idea's levels changed. Update your plan:", "تغيّرت مستويات الفكرة. حدّث خطتك:", "Les niveaux de l'idée ont changé. Mettez votre plan à jour :", "Cambiaron los niveles de la idea. Actualiza tu plan:", "Os níveis da ideia mudaram. Atualize seu plano:"),
+"ia_upd_target": ("New target %1$s (was %2$s).", "الهدف الجديد %1$s (كان %2$s).", "Nouvel objectif %1$s (était %2$s).", "Nuevo objetivo %1$s (era %2$s).", "Novo alvo %1$s (era %2$s)."),
+"ia_upd_buy": ("Buy near %1$s now (was %2$s).", "الشراء الآن قرب %1$s (كان %2$s).", "Achat désormais près de %1$s (était %2$s).", "Compra ahora cerca de %1$s (era %2$s).", "Compra agora perto de %1$s (era %2$s)."),
+"ia_upd_cancel": ("New cancel level %1$s (was %2$s).", "مستوى الإلغاء الجديد %1$s (كان %2$s).", "Nouveau niveau d'annulation %1$s (était %2$s).", "Nuevo nivel de anulación %1$s (era %2$s).", "Novo nível de cancelamento %1$s (era %2$s)."),
 }

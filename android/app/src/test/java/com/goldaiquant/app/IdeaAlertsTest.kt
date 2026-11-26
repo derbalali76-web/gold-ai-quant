@@ -61,3 +61,29 @@ class IdeaAlertsTest {
         assertNull(IdeaAlerts.decode(""))
     }
 }
+
+class IdeaAlertsUpdateTest {
+    private val H = 3600_000L
+    private fun now(sell: Double, inv: Double = 67.2) =
+        IdeaAlerts.Now(SimpleAdvice.Idea(SimpleAdvice.Kind.BUY_NOW, 71.0, sell, inv, 0.3), 80.0, null, "UP")
+
+    @Test fun targetMoveIsAnnouncedOncePerHour() {
+        val a = IdeaAlerts.step(null, 0, now(79.68), 71.0, 0).state!!
+        val u = IdeaAlerts.step(a, 0, now(78.57), 71.2, H)
+        assertEquals(IdeaAlerts.Msg.UPDATED, u.msg)
+        assertEquals(78.57, u.state!!.sellAt!!, 0.0)
+        assertEquals(79.68, u.before!!.sellAt!!, 0.0)
+        assertEquals(67.2, u.state!!.stop!!, 0.0)
+        // moved again 10 minutes later: wait for the hour
+        assertNull(IdeaAlerts.step(u.state, 0, now(76.80), 71.2, H + 600_000).msg)
+        val u2 = IdeaAlerts.step(u.state, 0, now(76.80), 71.2, 2 * H + 1)
+        assertEquals(IdeaAlerts.Msg.UPDATED, u2.msg)
+        assertEquals(76.80, u2.state!!.sellAt!!, 0.0)
+    }
+
+    @Test fun tinyMoveIsIgnoredAndNewTargetCanBeReached() {
+        val a = IdeaAlerts.step(null, 0, now(76.80), 71.0, 0).state!!
+        assertNull(IdeaAlerts.step(a, 0, now(76.85), 71.0, 2 * H).msg)
+        assertEquals(IdeaAlerts.Msg.TARGET, IdeaAlerts.step(a, 0, now(76.80), 76.9, 3 * H).msg)
+    }
+}

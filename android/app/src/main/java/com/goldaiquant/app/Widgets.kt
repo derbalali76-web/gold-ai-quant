@@ -62,11 +62,16 @@ object Widgets {
         d?.let { try { IdeaAlerts.now(it, a, hold)?.idea } catch (e: Exception) { null } }
 
     fun change(ctx: Context, d: Decision?): Pair<String, Int> {
-        val c = d?.quoteChangePct ?: return "" to DIM
-        val up = c >= 0
-        return ((if (up) "▲ " else "▼ ") + String.format(Locale.US, "%.2f%%", kotlin.math.abs(c)) + " · " +
-            ctx.getString(R.string.w_today)) to (if (up) GREEN else RED)
+        val pct = d?.quoteChangePct ?: return "" to DIM
+        val up = pct >= 0
+        val abs = d.quoteChange?.let { (if (it >= 0) "+" else "−") + String.format(Locale.US, "%,.2f", kotlin.math.abs(it)) + "  " } ?: ""
+        return (abs + "(" + (if (up) "+" else "−") + String.format(Locale.US, "%.2f%%", kotlin.math.abs(pct)) + ") " +
+            (if (up) "▲" else "▼")) to (if (up) GREEN else RED)
     }
+
+    /** Artwork of the asset (owner-supplied, 2026-11-26). */
+    fun art(a: String): Int = when (a) { "BTC" -> R.drawable.wa_btc; "ETH" -> R.drawable.wa_eth; "SOL" -> R.drawable.wa_sol
+        else -> R.drawable.wa_xau }
 
     fun time(ctx: Context, d: Decision?): String = d?.quoteTime?.let {
         ctx.getString(R.string.updated_at, DateTimeFormatter.ofPattern("HH:mm").format(it.atZone(ZoneId.systemDefault())))
@@ -75,17 +80,27 @@ object Widgets {
     fun spark(values: List<Double>): Bitmap? {
         if (values.size < 2) return null
         val color = if (values.last() >= values.first()) GREEN else RED
-        val w = 300; val h = 60
+        val w = 600; val h = 120
         val bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
         val lo = values.min(); val span = (values.max() - lo).takeIf { it > 0 } ?: 1.0
-        val path = Path()
+        val line = Path()
         values.forEachIndexed { k, v ->
-            val x = k * (w - 4f) / (values.size - 1) + 2f
-            val y = (h - 4f) - ((v - lo) / span).toFloat() * (h - 8f)
-            if (k == 0) path.moveTo(x, y) else path.lineTo(x, y)
+            val x = k * (w - 6f) / (values.size - 1) + 3f
+            val y = (h - 6f) - ((v - lo) / span).toFloat() * (h - 14f)
+            if (k == 0) line.moveTo(x, y) else line.lineTo(x, y)
         }
-        Canvas(bmp).drawPath(path, Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            style = Paint.Style.STROKE; strokeWidth = 4f; this.color = color; strokeCap = Paint.Cap.ROUND; strokeJoin = Paint.Join.ROUND
+        val fill = Path(line).apply { lineTo(w - 3f, h.toFloat()); lineTo(3f, h.toFloat()); close() }
+        val c = Canvas(bmp)
+        c.drawPath(fill, Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            shader = android.graphics.LinearGradient(0f, 0f, 0f, h.toFloat(), (color and 0x00FFFFFF) or 0x66000000,
+                color and 0x00FFFFFF, android.graphics.Shader.TileMode.CLAMP)
+        })
+        c.drawPath(line, Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            style = Paint.Style.STROKE; strokeWidth = 10f; this.color = (color and 0x00FFFFFF) or 0x44000000
+            strokeCap = Paint.Cap.ROUND; strokeJoin = Paint.Join.ROUND
+        })
+        c.drawPath(line, Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            style = Paint.Style.STROKE; strokeWidth = 5f; this.color = color; strokeCap = Paint.Cap.ROUND; strokeJoin = Paint.Join.ROUND
         })
         return bmp
     }
