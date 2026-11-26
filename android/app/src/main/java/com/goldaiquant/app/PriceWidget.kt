@@ -59,9 +59,9 @@ class PriceWidget : BaseWidget() {
             val wDp = o.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 250)
             val hDp = o.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, 0).takeIf { it > 0 }
                 ?: o.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, 110)
-            val strip = hDp in 1..99
+            val strip = hDp in 1..109
             val v = RemoteViews(ctx0.packageName, if (strip) R.layout.widget_strip else R.layout.widget_price)
-            if (!strip && wDp.toDouble() / hDp < 1.7) v.setInt(R.id.w_root, "setBackgroundResource", R.drawable.wf_compact)
+            if (!strip && wDp < 260) v.setInt(R.id.w_card, "setBackgroundResource", R.drawable.wf_compact)
             v.setImageViewResource(R.id.w_art, Widgets.art(a))
             v.setTextViewText(R.id.w_pair, Widgets.pair(a) + " ▾")
             v.setTextViewText(R.id.w_price, Widgets.p2(d?.quote))
