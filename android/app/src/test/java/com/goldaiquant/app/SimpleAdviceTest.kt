@@ -84,3 +84,42 @@ class SimpleAdviceTest {
         assertEquals(Kind.BUY_NOW, SimpleAdvice.resolve(i, true).kind)
     }
 }
+
+class SimpleAdviceFiltersTest {
+    private val sup = listOf(66.0, 68.0)
+    private val res = listOf(76.0, 78.0)
+
+    @Test fun altcoinBuyNowWaitsWhenBitcoinFalls() {
+        val i = SimpleAdvice.decide("UP", 70.0, sup, res, hold = false, asset = "SOL", btcTrend = "DOWN")
+        org.junit.Assert.assertEquals(SimpleAdvice.Kind.WAIT_DIP, i.kind)
+        org.junit.Assert.assertEquals(SimpleAdvice.Note.BTC_DOWN, i.note)
+        org.junit.Assert.assertEquals(68.0, i.buyAt!!, 0.0)
+        // bitcoin itself and gold are not filtered
+        org.junit.Assert.assertEquals(SimpleAdvice.Kind.BUY_NOW,
+            SimpleAdvice.decide("UP", 70.0, sup, res, false, "BTC", btcTrend = "DOWN").kind)
+        org.junit.Assert.assertEquals(SimpleAdvice.Kind.BUY_NOW,
+            SimpleAdvice.decide("UP", 70.0, sup, res, false, "SOL", btcTrend = "UP").kind)
+    }
+
+    @Test fun atrRaisesTheGapAndSetsTheCancelBuffer() {
+        // holder, falling, gap 2.0 (68 → 70): 0.65 % floor = 0.455 passes, but 1 ATR of 2.5 does not
+        org.junit.Assert.assertEquals(SimpleAdvice.Kind.SELL_REBUY, SimpleAdvice.decide("DOWN", 70.0, sup, res, true, "SOL").kind)
+        org.junit.Assert.assertEquals(SimpleAdvice.Kind.HOLD_SELL_ABOVE,
+            SimpleAdvice.decide("DOWN", 70.0, sup, res, true, "SOL", atr = 2.5).kind)
+        // no lower support: cancel = support − 1.5 ATR
+        val i = SimpleAdvice.decide("UP", 70.0, listOf(68.0), res, false, "SOL", atr = 0.4)
+        org.junit.Assert.assertEquals(68.0 - 0.6, i.invalid!!, 1e-9)
+    }
+
+    @Test fun majorEventHoldsTradeNowIdeas() {
+        val now = java.time.Instant.parse("2026-11-26T12:00:00Z")
+        val cal = CalendarInfo("OK", now, listOf(CalEvent(now.plusSeconds(90 * 60), "CPI", 3)))
+        val ev = SimpleAdvice.eventSoon(cal, now)
+        org.junit.Assert.assertNotNull(ev)
+        val buy = SimpleAdvice.decide("UP", 70.0, sup, res, false, "XAU")
+        org.junit.Assert.assertEquals(SimpleAdvice.Kind.EVENT, SimpleAdvice.withEvent(buy, ev).kind)
+        org.junit.Assert.assertNull(SimpleAdvice.eventSoon(cal, now.minusSeconds(3 * 3600)))
+        val low = CalendarInfo("OK", now, listOf(CalEvent(now.plusSeconds(600), "minor", 1)))
+        org.junit.Assert.assertNull(SimpleAdvice.eventSoon(low, now))
+    }
+}

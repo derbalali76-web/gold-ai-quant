@@ -925,6 +925,18 @@
     <string name="h2_badge_trend">الاتجاه</string>
     <string name="h2_badge_likely">المرجّح</string>
     <string name="h2_frames_differ">الساعات والأسبوع مختلفان · اضغط</string>
+    <string name="sa_event">انتظر الحدث</string>
+    <string name="sa_l_event_cash">حدث اقتصادي كبير قريب، والسعر يقفز غالباً في الاتجاهين حوله. لا فكرة «اشترِ الآن» حتى ساعة بعده.</string>
+    <string name="sa_l_event_hold">حدث اقتصادي كبير قريب، والسعر يقفز غالباً في الاتجاهين حوله. لا فكرة «بِع الآن» حتى ساعة بعده.</string>
+    <string name="sa_note_event">الحدث: %1$s الساعة %2$s.</string>
+    <string name="sa_note_btc">اتجاه بيتكوين هابط، وهذه العملة تتبعه غالباً: انتظر نزولاً بدل الشراء الآن.</string>
+    <string name="sa_note_crowd_long">كثير من المتداولين يراهنون على الصعود (تمويل مرتفع): الهبوط المفاجئ أرجح من المعتاد.</string>
+    <string name="sa_note_crowd_short">كثير من المتداولين يراهنون على الهبوط (تمويل سالب): القفزة المفاجئة أرجح من المعتاد.</string>
+    <string name="sa_note_weekend">عطلة نهاية الأسبوع: تداول أضعف وحركات خادعة أكثر.</string>
+    <string name="sa_rec_none">السجل العام لهذه الفكرة: لا نتائج بعد.</string>
+    <string name="sa_rec_few">السجل العام لهذه الفكرة: %1$d نتيجة من 30 لازمة للحكم.</string>
+    <string name="sa_rec">السجل العام: أفضل من البديل في %1$d%% من %2$d حالة، بمتوسط %3$s نقطة بعد العمولات.</string>
+    <string name="w_event">حدث كبير قريب</string>
     <string name="r_w_up" formatted="false">صاعد</string>
     <string name="r_w_down" formatted="false">هابط</string>
     <string name="r_w_neutral" formatted="false">محايد</string>

@@ -56,16 +56,11 @@ object IdeaAlerts {
      *  nearest resistance above the price) and the tested side (true UP, false DOWN, null none). */
     data class Now(val idea: SimpleAdvice.Idea, val upStop: Double?, val testedUp: Boolean?, val trend: String?)
 
-    fun now(d: Decision, asset: String, hold: Boolean, price: Double? = d.quote): Now? {
+    fun now(d: Decision, asset: String, hold: Boolean, price: Double? = d.quote,
+            prefs: android.content.SharedPreferences? = null): Now? {
         if (d.isDemo || d.marketClosed || price == null) return null
-        val c = HorizonModel.card(d, "HOURS")
-        val lvl = LiveLevels.reanchor(c.levels, price)
-        val tested = HorizonScenarios.of(c.copy(levels = lvl), d.brief.takeIf { LiveLevels.briefConsistent(it, price) }, d.isDemo).likely
-        val testedUp = when (tested) { HorizonScenarios.Likely.UP -> true; HorizonScenarios.Likely.DOWN -> false; else -> null }
-        val sup = lvl?.supports.orEmpty().map { it.price }
-        val res = lvl?.resistances.orEmpty().map { it.price }
-        val idea = SimpleAdvice.resolve(SimpleAdvice.decide(c.trend?.direction, price, sup, res, hold, asset), testedUp)
-        return Now(idea, res.filter { it > price }.minOrNull(), testedUp, SimpleAdvice.trendCodeOf(c.trend?.direction))
+        val b = IdeaCtx.build(d, HorizonModel.card(d, "HOURS"), asset, hold, price, prefs)
+        return Now(b.idea, b.upStop, b.testedUp, b.trend)
     }
 
     fun step(prev: Active?, coolUntil: Long, n: Now, price: Double, nowMs: Long): Step {

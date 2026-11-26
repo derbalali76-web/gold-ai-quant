@@ -19,7 +19,8 @@ data class Level(val name: String, val price: Double, val zoneLow: Double, val z
                  val lastTest: Instant? = null, val roleFlip: Boolean = false, val distanceAtr: Double? = null,
                  val holdProbability: Double? = null)
 
-data class Levels(val supports: List<Level>, val resistances: List<Level>, val validated: Boolean, val validationAr: String?)
+data class Levels(val supports: List<Level>, val resistances: List<Level>, val validated: Boolean, val validationAr: String?,
+                  val atrH1: Double? = null)
 
 data class Judgement(val judge: String, val passed: Boolean, val reasonsAr: List<String>, val refs: List<Reason> = emptyList()) {
     val reasons: List<Reason> get() = if (refs.isNotEmpty()) refs else reasonsAr.map { Reason("raw", emptyList(), it) }
@@ -312,7 +313,8 @@ object DecisionParser {
     }
 
     private fun parseLevels(lv: JSONObject): Levels =
-        Levels(lv.levelList("supports"), lv.levelList("resistances"), lv.getBoolean("validated"), lv.str("validation_ar"))
+        Levels(lv.levelList("supports"), lv.levelList("resistances"), lv.getBoolean("validated"), lv.str("validation_ar"),
+            lv.dbl("atr_h1")?.takeIf { it > 0 })
 
     private fun validate(d: Decision) {
         if (d.isDemo && d.spotOrProxy != "SYNTHETIC") throw ParseException("demo mode without SYNTHETIC label")

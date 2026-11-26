@@ -926,6 +926,18 @@
     <string name="h2_badge_trend">trend</string>
     <string name="h2_badge_likely">likely</string>
     <string name="h2_frames_differ">Hours and week disagree · tap</string>
+    <string name="sa_event">Wait for the event</string>
+    <string name="sa_l_event_cash">A major economic event is close. Prices often jump both ways around it, so no buy-now idea until an hour after it.</string>
+    <string name="sa_l_event_hold">A major economic event is close. Prices often jump both ways around it, so no sell-now idea until an hour after it.</string>
+    <string name="sa_note_event">Event: %1$s at %2$s.</string>
+    <string name="sa_note_btc">Bitcoin\'s trend is down, and this coin usually follows it: wait for a dip instead of buying now.</string>
+    <string name="sa_note_crowd_long">Many traders are betting on a rise (high funding): sharp drops are more likely than usual.</string>
+    <string name="sa_note_crowd_short">Many traders are betting on a fall (negative funding): sharp jumps are more likely than usual.</string>
+    <string name="sa_note_weekend">Weekend: thinner trading, more false moves.</string>
+    <string name="sa_rec_none">Public record of this idea: no result yet.</string>
+    <string name="sa_rec_few">Public record of this idea: %1$d results of the 30 needed for a verdict.</string>
+    <string name="sa_rec">Public record: better than the alternative in %1$d%% of %2$d cases, average %3$s points after fees.</string>
+    <string name="w_event">Major event soon</string>
     <string name="r_w_up" formatted="false">up</string>
     <string name="r_w_down" formatted="false">down</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

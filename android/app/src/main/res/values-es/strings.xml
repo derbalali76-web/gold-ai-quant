@@ -925,6 +925,18 @@
     <string name="h2_badge_trend">tendencia</string>
     <string name="h2_badge_likely">probable</string>
     <string name="h2_frames_differ">Horas y semana difieren · toca</string>
+    <string name="sa_event">Espera al evento</string>
+    <string name="sa_l_event_cash">Se acerca un evento económico importante; el precio suele saltar en ambos sentidos. Ninguna idea de «comprar ahora» hasta una hora después.</string>
+    <string name="sa_l_event_hold">Se acerca un evento económico importante; el precio suele saltar en ambos sentidos. Ninguna idea de «vender ahora» hasta una hora después.</string>
+    <string name="sa_note_event">Evento: %1$s a las %2$s.</string>
+    <string name="sa_note_btc">La tendencia de bitcoin es bajista y esta moneda suele seguirlo: espera una bajada en vez de comprar ahora.</string>
+    <string name="sa_note_crowd_long">Muchos apuestan a la subida (financiación alta): las caídas bruscas son más probables de lo normal.</string>
+    <string name="sa_note_crowd_short">Muchos apuestan a la bajada (financiación negativa): los saltos bruscos son más probables de lo normal.</string>
+    <string name="sa_note_weekend">Fin de semana: menos volumen y más movimientos falsos.</string>
+    <string name="sa_rec_none">Registro público de esta idea: aún sin resultados.</string>
+    <string name="sa_rec_few">Registro público de esta idea: %1$d resultados de los 30 necesarios.</string>
+    <string name="sa_rec">Registro público: mejor que la alternativa en el %1$d %% de %2$d casos, media %3$s puntos tras comisiones.</string>
+    <string name="w_event">Evento importante cerca</string>
     <string name="r_w_up" formatted="false">alcista</string>
     <string name="r_w_down" formatted="false">bajista</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

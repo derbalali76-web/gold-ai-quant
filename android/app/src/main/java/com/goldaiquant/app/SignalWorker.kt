@@ -30,8 +30,11 @@ class SignalWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx
         val pushOn = Push.active(applicationContext)  // the server sends price/scenario/signal alerts instantly
         val follow = alertAssets(prefs)
         val alerts = if (pushOn) emptyList() else PriceAlerts.load(prefs)
+        // bitcoin trend (altcoin filter), calendar (event filter), crowding and the public record: same inputs as the screen
+        try { IdeaCtx.refresh(prefs, needBtc = follow.any { it in SimpleAdvice.FOLLOWS_BTC }) } catch (e: Exception) { }
         for (asset in follow + alerts.map { it.asset }.toSet()) {  // followed markets + markets with a "Alert me" alert
             val f = try { api.decision("LIVE", 0, asset) } catch (e: Exception) { continue }
+            if (asset == "BTC") prefs.edit().putString("last_decision_BTC", f.raw).putLong("ctx_btc_at", System.currentTimeMillis()).apply()
             if (asset in follow) check(prefs, asset, f, pushOn)
             if (asset in follow) try { checkIdea(prefs, asset, f) } catch (e: Exception) { }
             if (!pushOn) checkPriceAlerts(prefs, asset, f)
@@ -87,7 +90,7 @@ class SignalWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx
     private fun checkIdea(prefs: android.content.SharedPreferences, asset: String, f: Fetched) { synchronized(LOCK) {
         val price = f.decision.quote ?: return
         val hold = prefs.getString("position_$asset", "CASH") == "HOLD"
-        val n = IdeaAlerts.now(f.decision, asset, hold, price) ?: return
+        val n = IdeaAlerts.now(f.decision, asset, hold, price, prefs) ?: return
         val key = "idea_${asset}_" + if (hold) "H" else "C"
         val ck = "idea_cool_$asset"
         val st = IdeaAlerts.step(IdeaAlerts.decode(prefs.getString(key, null)), prefs.getLong(ck, 0L), n, price,
@@ -104,7 +107,8 @@ class SignalWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx
         val body = when (m) {
             IdeaAlerts.Msg.NEW -> when (a.kind) {
                 SimpleAdvice.Kind.BUY_NOW -> ctx.getString(R.string.ia_buy, p(a.price), p(a.sellAt), p(a.stop))
-                SimpleAdvice.Kind.WAIT_DIP -> ctx.getString(R.string.ia_dip, p(a.buyAt), p(a.sellAt))
+                SimpleAdvice.Kind.WAIT_DIP -> ctx.getString(R.string.ia_dip, p(a.buyAt), p(a.sellAt)) +
+                    if (n.idea.note == SimpleAdvice.Note.BTC_DOWN) " " + ctx.getString(R.string.sa_note_btc) else ""
                 SimpleAdvice.Kind.WAIT -> ctx.getString(R.string.ia_wait, p(a.buyAt))
                 SimpleAdvice.Kind.HOLD_SELL_ABOVE -> ctx.getString(R.string.ia_keep, p(a.sellAt), p(a.stop))
                 SimpleAdvice.Kind.SELL_REBUY -> ctx.getString(R.string.ia_sell, p(a.price), p(a.buyAt), p(a.stop))

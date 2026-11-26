@@ -58,8 +58,8 @@ object Widgets {
         "SOL" -> R.string.ia_name_sol; else -> R.string.ia_name_xau })
     fun lang(ctx: Context): Context = LanguageStore.wrap(ctx, LanguageStore.resolve(ctx))
 
-    fun idea(d: Decision?, a: String, hold: Boolean): SimpleAdvice.Idea? =
-        d?.let { try { IdeaAlerts.now(it, a, hold)?.idea } catch (e: Exception) { null } }
+    fun idea(d: Decision?, a: String, hold: Boolean, p: SharedPreferences? = null): SimpleAdvice.Idea? =
+        d?.let { try { IdeaAlerts.now(it, a, hold, it.quote, p)?.idea } catch (e: Exception) { null } }
 
     fun change(ctx: Context, d: Decision?): Pair<String, Int> {
         val pct = d?.quoteChangePct ?: return "" to DIM
@@ -192,6 +192,7 @@ class WidgetWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx
         val url = p.getString("server_url", null) ?: return Result.success()
         val tok = p.getString("token", "") ?: ""
         val now = System.currentTimeMillis()
+        try { IdeaCtx.refresh(p, needBtc = Widgets.assetsInUse(applicationContext).any { it in SimpleAdvice.FOLLOWS_BTC }) } catch (e: Exception) { }
         for (a in Widgets.assetsInUse(applicationContext)) {
             if (now - p.getLong("w_fetched_$a", 0L) < 10 * 60_000L) continue
             try {

@@ -30,6 +30,17 @@ VERDICT per idea kind (all assets and horizons together, and per horizon), shown
   USEFUL when mean edge > 0 AND success rate >= 50 %; otherwise NOT_USEFUL; below 30: INSUFFICIENT.
   Ideas of different horizons overlap in time; that is reported, not corrected. USEFUL is evidence to keep watching,
   not a proven edge. Standard library only.
+
+ADDENDUM 2026-11-26 (owner: «نفذ كل ما ذكرته», before any 0.3 idea was recorded): version beginner-ideas-0.3.
+Records made under 0.1 / 0.2 stay as they are and keep being scored under their own rule; verdicts are reported per
+version (the top-level verdicts are the current version's). The 0.3 rule (same as SimpleAdvice.kt) adds:
+  ATR       atr = the snapshot's atr_h1 (the decision's hourly range). Sell-and-rebuy gap = max(owner floor, 1 ATR).
+            Cancel level when there is no lower support = support − 1.5 ATR (0.2: support × 0.985).
+  BTC       ETH / SOL: a cash BUY_NOW becomes WAIT_DIP (buy near the support, same target) while BTC's trend on the
+            same horizon (from the same run's BTC snapshot) is DOWN. The idea that would have been shown without the
+            filter is stored as `shadow` and scored the same way, so the filter is measured: «btc_filter» in the
+            stats compares the shown ideas with their shadows (n, mean edge of each, share where the filter did better).
+  Not scored (display only, as the conflict filter): the major-event hold and the crypto crowding / weekend notes.
 """
 from __future__ import annotations
 
@@ -39,8 +50,10 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Optional
 
-VERSION = "beginner-ideas-0.2"  # 0.2 (2026-11-24): sell-and-rebuy only with a gap of 15 USD (gold) / 0.65 % (digital)
+VERSION = "beginner-ideas-0.3"  # 0.2 (2026-11-24): sell-and-rebuy gap 15 USD / 0.65 %; 0.3 (2026-11-26): ATR, BTC filter
 GOLD_MIN_GAP_USD, CRYPTO_MIN_GAP_PCT = 15.0, 0.0065
+ATR_GAP_K, ATR_INV_K = 1.0, 1.5
+FOLLOWS_BTC = ("ETH", "SOL")
 ASSETS = ("XAU", "BTC", "ETH", "SOL")
 HORIZONS = {"HOURS": 24, "WEEK": 168, "MONTH": 720}
 FEE = {"XAU": 0.0005, "BTC": 0.0016, "ETH": 0.0016, "SOL": 0.0022}
@@ -57,7 +70,7 @@ def trend_code(d: Optional[str]) -> Optional[str]:
 
 
 def decide(trend: Optional[str], price: Optional[float], supports: list, resistances: list, hold: bool,
-           asset: str = "XAU") -> dict:
+           asset: str = "XAU", atr: Optional[float] = None, btc_trend: Optional[str] = None) -> dict:
     none = {"kind": "NONE", "buy_at": None, "sell_at": None, "invalid": None, "position": None}
     if price is None:
         return none
@@ -71,19 +84,24 @@ def decide(trend: Optional[str], price: Optional[float], supports: list, resista
     pos = min(1.0, max(0.0, (p - s) / (r - s)))
     high, low = pos > HIGH, pos < LOW
     lower = [x for x in supports if x < s]
-    inv = max(lower) if lower else s * 0.985
+    inv = max(lower) if lower else (s - ATR_INV_K * atr if atr and atr > 0 else s * 0.985)
+    btc_down = asset in FOLLOWS_BTC and trend_code(btc_trend) == "DOWN"
     d = trend_code(trend)
     I = lambda k, b, se, i: {"kind": k, "buy_at": b, "sell_at": se, "invalid": i, "position": round(pos, 4)}  # noqa: E731
     if not hold:
+        if d == "UP" and not high and btc_down:
+            return dict(I("WAIT_DIP", s, r, inv), note="BTC_DOWN")
         if d == "UP" and not high:
             return I("BUY_NOW", p, r, inv)
         if d == "UP":
             return I("WAIT_DIP", s, r, inv)
+        if d == "SIDEWAYS" and low and btc_down:
+            return dict(I("WAIT_DIP", s, r, inv), note="BTC_DOWN")
         if d == "SIDEWAYS" and low:
             return I("BUY_NOW", p, r, inv)
         return I("WAIT", s, None, inv)
     # sell now and buy back at s only when the gap covers the minimum; otherwise hold (same as SimpleAdvice.kt)
-    gap_ok = (p - s) >= (GOLD_MIN_GAP_USD if asset == "XAU" else p * CRYPTO_MIN_GAP_PCT)
+    gap_ok = (p - s) >= max(GOLD_MIN_GAP_USD if asset == "XAU" else p * CRYPTO_MIN_GAP_PCT, ATR_GAP_K * (atr or 0.0))
     sell_rebuy = lambda: I("SELL_REBUY", s, p, None) if gap_ok else I("HOLD_SELL_ABOVE", None, r, inv)  # noqa: E731
     if d == "UP" and high:
         return sell_rebuy()
@@ -205,6 +223,7 @@ def record(snaps: dict, repo: Path, now: datetime, lines: list) -> int:
     open_keys = {(e["data"]["asset"], e["data"]["horizon"], e["data"]["mode"]) for e in lines
                  if e["kind"] == "IDEA" and _ts(e["data"]["expires"]) > now}
     added = 0
+    btc_trends = {o.get("horizon"): o.get("trend") for o in (snaps.get("BTC") or {}).get("outlooks") or []}
     for a in ASSETS:
         s = snaps.get(a)
         if not s or s.get("price") is None or s.get("market_closed") or s.get("mode", "LIVE") != "LIVE":
@@ -223,11 +242,18 @@ def record(snaps: dict, repo: Path, now: datetime, lines: list) -> int:
                     continue
                 sup = [float(x) for x in o.get("supports") or []]
                 res = [float(x) for x in o.get("resistances") or []]
-                i = decide(o.get("trend"), s["price"], sup, res, mode == "holder", a)
+                atr = s.get("atr_h1")
+                atr = float(atr) if isinstance(atr, (int, float)) and atr > 0 else None
+                btc_trend = btc_trends.get(h) if a in FOLLOWS_BTC else None
+                i = decide(o.get("trend"), s["price"], sup, res, mode == "holder", a, atr, btc_trend)
                 if i["kind"] == "NONE":
                     continue
+                extra = {"atr_h1": atr, "btc_trend": btc_trend}
+                if i.get("note") == "BTC_DOWN":
+                    sh = decide(o.get("trend"), s["price"], sup, res, mode == "holder", a, atr, None)
+                    extra["shadow"] = {k: sh[k] for k in ("kind", "buy_at", "sell_at", "invalid")}
                 data = {"version": VERSION, "asset": a, "horizon": h, "mode": mode, "price": float(s["price"]),
-                        "trend": o.get("trend"), "supports": sup, "resistances": res, **i,
+                        "trend": o.get("trend"), "supports": sup, "resistances": res, **i, **extra,
                         "source_as_of": s["as_of"], "expires": (now + timedelta(hours=HORIZONS[h])).strftime("%Y-%m-%dT%H:%M:%SZ")}
                 _append(p, lines, "IDEA", data, now)
                 open_keys.add((a, h, mode))
@@ -250,24 +276,45 @@ def settle(repo: Path, now: datetime, lines: list) -> int:
             continue
         bars = [b for b in json.loads(f.read_text()) if rec <= _ts(b[0]) and _ts(b[0]) + timedelta(hours=1) <= exp]
         r = score(d, bars)
-        _append(p, lines, "IDEA_RESULT", {"ref": e["seq"], "asset": d["asset"], "horizon": d["horizon"], "mode": d["mode"],
-                                          "kind": d["kind"], "bars": len(bars), "outcome": "SCORED" if r else "NO_DATA",
-                                          "result": r}, now)
+        res = {"ref": e["seq"], "asset": d["asset"], "horizon": d["horizon"], "mode": d["mode"],
+               "kind": d["kind"], "bars": len(bars), "outcome": "SCORED" if r else "NO_DATA", "result": r,
+               "version": d.get("version", "beginner-ideas-0.1")}
+        if d.get("shadow"):
+            res["shadow_result"] = score(dict(d, **d["shadow"]), bars)
+            res["shadow_kind"] = d["shadow"]["kind"]
+        _append(p, lines, "IDEA_RESULT", res, now)
         n += 1
     return n
 
 
-def stats(lines: list) -> dict:
-    rows = [dict(e["data"]["result"], kind=e["data"]["kind"], horizon=e["data"]["horizon"]) for e in lines
-            if e["kind"] == "IDEA_RESULT" and e["data"]["outcome"] == "SCORED"]
+def _by_kind(rows: list) -> dict:
     kinds = sorted({r["kind"] for r in rows})
+    return {"by_kind": {k: verdict([r for r in rows if r["kind"] == k]) for k in kinds},
+            "by_kind_horizon": {f"{k}|{h}": verdict([r for r in rows if r["kind"] == k and r["horizon"] == h])
+                                for k in kinds for h in HORIZONS if any(r["kind"] == k and r["horizon"] == h for r in rows)}}
+
+
+def stats(lines: list) -> dict:
+    ver = {e["seq"]: e["data"].get("version", "beginner-ideas-0.1") for e in lines if e["kind"] == "IDEA"}
+    res = [e["data"] for e in lines if e["kind"] == "IDEA_RESULT" and e["data"]["outcome"] == "SCORED"]
+    rows = [dict(x["result"], kind=x["kind"], horizon=x["horizon"], version=ver.get(x["ref"], "beginner-ideas-0.1"))
+            for x in res]
+    cur = [r for r in rows if r["version"] == VERSION]
     out = {"version": VERSION, "ideas": sum(1 for e in lines if e["kind"] == "IDEA"), "scored": len(rows),
-           "by_kind": {k: verdict([r for r in rows if r["kind"] == k]) for k in kinds},
-           "by_kind_horizon": {f"{k}|{h}": verdict([r for r in rows if r["kind"] == k and r["horizon"] == h])
-                               for k in kinds for h in HORIZONS if any(r["kind"] == k and r["horizon"] == h for r in rows)}}
-    sr = [r for r in rows if r["kind"] == "SELL_REBUY"]
+           "scored_current_version": len(cur), **_by_kind(cur),
+           "by_version": {v: dict(scored=sum(1 for r in rows if r["version"] == v), **_by_kind([r for r in rows if r["version"] == v]))
+                          for v in sorted({r["version"] for r in rows})}}
+    sr = [r for r in cur if r["kind"] == "SELL_REBUY"]
     if sr:
         out["sell_rebuy_rose_no_return"] = round(sum(1 for r in sr if r.get("rose_no_return")) / len(sr), 3)
+    pairs = [(x["result"], x["shadow_result"]) for x in res if x.get("shadow_result")]
+    if pairs:
+        n = len(pairs)
+        out["btc_filter"] = {"n": n, "shown_mean_edge_pct": round(sum(a["edge_pct"] for a, _ in pairs) / n, 3),
+                             "shadow_mean_edge_pct": round(sum(b["edge_pct"] for _, b in pairs) / n, 3),
+                             "filter_better_share": round(sum(1 for a, b in pairs if a["idea_pct"] > b["idea_pct"]) / n, 3),
+                             "verdict": "INSUFFICIENT" if n < MIN_N else ("HELPS" if sum(a["idea_pct"] - b["idea_pct"]
+                                                                          for a, b in pairs) > 0 else "DOES_NOT_HELP")}
     return out
 
 
