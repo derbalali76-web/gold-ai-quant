@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- One-row version of the wide widget (shown when it is resized to a single row). -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/w_root" android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@drawable/wf_strip">
+    <ImageView android:id="@+id/w_art" android:layout_width="wrap_content" android:layout_height="52dp"
+        android:layout_gravity="bottom|left" android:layout_marginLeft="8dp" android:layout_marginBottom="5dp"
+        android:adjustViewBounds="true" android:importantForAccessibility="no" />
+    <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:layoutDirection="rtl"
+        android:orientation="horizontal" android:gravity="center_vertical"
+        android:paddingLeft="12dp" android:paddingRight="16dp" android:paddingVertical="6dp">
+        <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+                <TextView android:id="@+id/w_pair" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"
+                    android:textColor="#F3F1EA" android:textSize="12sp" android:textStyle="bold" />
+                <TextView android:id="@+id/w_chg" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:textDirection="ltr" android:maxLines="1" android:textSize="11sp" android:textStyle="bold" />
+            </LinearLayout>
+            <TextView android:id="@+id/w_price" android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:gravity="right" android:textDirection="ltr" android:maxLines="1" android:autoSizeTextType="uniform"
+                android:autoSizeMinTextSize="16sp" android:autoSizeMaxTextSize="26sp"
+                android:textColor="#FFFFFF" android:textSize="24sp" android:textStyle="bold" />
+        </LinearLayout>
+        <FrameLayout android:id="@+id/w_sep" android:layout_width="1dp" android:layout_height="40dp"
+            android:layout_marginHorizontal="10dp" android:background="#332A2A2D" />
+        <LinearLayout android:id="@+id/w_idea_col" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"
+            android:orientation="vertical" android:paddingLeft="40dp">
+            <TextView android:id="@+id/w_who" android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:maxLines="1" android:ellipsize="end" android:textColor="#B5B3AC" android:textSize="11sp" />
+            <TextView android:id="@+id/w_act" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:paddingHorizontal="8dp" android:background="@drawable/wchip_blue" android:maxLines="1"
+                android:textSize="14sp" android:textStyle="bold" />
+            <TextView android:id="@+id/w_l1" android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:maxLines="1" android:ellipsize="end" android:textColor="#F3F1EA" android:textSize="11sp" />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>
