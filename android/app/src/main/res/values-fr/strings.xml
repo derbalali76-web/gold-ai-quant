@@ -937,6 +937,10 @@
     <string name="sa_rec_few">Registre public de cette idée : %1$d résultats sur les 30 nécessaires.</string>
     <string name="sa_rec">Registre public : meilleure que l\'alternative dans %1$d %% de %2$d cas, en moyenne %3$s points après frais.</string>
     <string name="w_event">Événement majeur proche</string>
+    <string name="ia_withdrawn_buy">Ce n\'est plus une nouvelle occasion d\'achat (tendance affaiblie). Si vous avez acheté : gardez, vendez près de %1$s ; idée annulée sous %2$s.</string>
+    <string name="ia_withdrawn_sell">Ce n\'est plus une nouvelle occasion de vente. Si vous avez vendu : attendez de racheter près de %1$s ; idée annulée au-dessus de %2$s.</string>
+    <string name="sa_hint_bought">Si vous avez acheté sur le « acheter maintenant » précédent, vous le détenez : choisissez « Je le détiens » pour voir quand vendre et où l\'idée s\'annule.</string>
+    <string name="sa_hint_sold">Si vous avez vendu sur le « vendre maintenant » précédent, vous avez des liquidités : choisissez « J\'ai des liquidités » pour voir où racheter.</string>
     <string name="r_w_up" formatted="false">haussière</string>
     <string name="r_w_down" formatted="false">baissière</string>
     <string name="r_w_neutral" formatted="false">neutre</string>

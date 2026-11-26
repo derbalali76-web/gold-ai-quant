@@ -87,3 +87,19 @@ class IdeaAlertsUpdateTest {
         assertEquals(IdeaAlerts.Msg.TARGET, IdeaAlerts.step(a, 0, now(76.80), 76.9, 3 * H).msg)
     }
 }
+
+class IdeaAlertsWithdrawnTest {
+    private val H = 3600_000L
+    private fun idea(k: SimpleAdvice.Kind) = SimpleAdvice.Idea(k, 68.52, 76.80, 67.20, 0.3)
+
+    @Test fun buyNowWithdrawnOnceThenStillFollowed() {
+        val buy = IdeaAlerts.Now(idea(SimpleAdvice.Kind.BUY_NOW), 80.0, null, "UP")
+        val wait = IdeaAlerts.Now(idea(SimpleAdvice.Kind.WAIT), 80.0, null, "SIDEWAYS")
+        val a = IdeaAlerts.step(null, 0, buy, 70.8, 0).state!!
+        val w = IdeaAlerts.step(a, 0, wait, 70.8, H)
+        assertEquals(IdeaAlerts.Msg.WITHDRAWN, w.msg)
+        assertNull(IdeaAlerts.step(w.state, 0, wait, 70.8, 2 * H).msg)          // said once
+        assertEquals(IdeaAlerts.Msg.TARGET, IdeaAlerts.step(w.state, 0, wait, 76.9, 3 * H).msg)  // target still followed
+        assertEquals(w.state, IdeaAlerts.decode(IdeaAlerts.encode(w.state)))
+    }
+}

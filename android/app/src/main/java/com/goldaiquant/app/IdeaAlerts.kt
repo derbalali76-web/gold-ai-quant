@@ -12,10 +12,10 @@ package com.goldaiquant.app
  * Educational ideas only: never a guarantee, never an order.
  */
 object IdeaAlerts {
-    enum class Msg { NEW, UPDATED, TARGET, FAILED_STOP, FAILED_TURN, EXPIRED }
+    enum class Msg { NEW, UPDATED, WITHDRAWN, TARGET, FAILED_STOP, FAILED_TURN, EXPIRED }
 
     data class Active(val kind: SimpleAdvice.Kind, val price: Double, val buyAt: Double?, val sellAt: Double?,
-                      val stop: Double?, val at: Long, val updAt: Long = 0L)
+                      val stop: Double?, val at: Long, val updAt: Long = 0L, val withdrawn: Boolean = false)
 
     /** [before] = the idea as it was announced, for an UPDATED message («new level instead of the old one»). */
     data class Step(val msg: Msg?, val idea: Active?, val state: Active?, val coolUntil: Long, val before: Active? = null)
@@ -87,6 +87,17 @@ object IdeaAlerts {
                 }
             } ?: if (nowMs - prev.at >= WINDOW_MS) Msg.EXPIRED else null
             if (end != null) return Step(end, prev, null, nowMs + COOL_MS)
+            // owner 2026-11-26: the screen no longer offers this trade (e.g. buy-now → wait) but nothing ended it:
+            // say so once, with what to do if it was followed; keep following its target and cancel level.
+            val offered = when (prev.kind) {
+                SimpleAdvice.Kind.BUY_NOW -> i.kind == SimpleAdvice.Kind.BUY_NOW
+                SimpleAdvice.Kind.SELL_REBUY -> i.kind == SimpleAdvice.Kind.SELL_REBUY
+                else -> true
+            }
+            if (!offered && !prev.withdrawn) {
+                val w = prev.copy(withdrawn = true)
+                return Step(Msg.WITHDRAWN, w, w, coolUntil)
+            }
             val u = update(prev, n, price, nowMs) ?: return Step(null, null, prev, coolUntil)
             return Step(Msg.UPDATED, u, u, coolUntil, prev)
         }
@@ -103,14 +114,16 @@ object IdeaAlerts {
     }
 
     fun encode(a: Active?): String = a?.let {
-        listOf(it.kind.name, it.price, it.buyAt ?: "", it.sellAt ?: "", it.stop ?: "", it.at, it.updAt).joinToString("|")
+        listOf(it.kind.name, it.price, it.buyAt ?: "", it.sellAt ?: "", it.stop ?: "", it.at, it.updAt,
+            if (it.withdrawn) 1 else 0).joinToString("|")
     } ?: ""
 
     fun decode(s: String?): Active? {
         val p = s?.split('|') ?: return null
-        if (p.size != 6 && p.size != 7) return null
+        if (p.size !in 6..8) return null
         val k = SimpleAdvice.Kind.values().firstOrNull { it.name == p[0] } ?: return null
         return Active(k, p[1].toDoubleOrNull() ?: return null, p[2].toDoubleOrNull(), p[3].toDoubleOrNull(),
-            p[4].toDoubleOrNull(), p[5].toLongOrNull() ?: return null, p.getOrNull(6)?.toLongOrNull() ?: 0L)
+            p[4].toDoubleOrNull(), p[5].toLongOrNull() ?: return null, p.getOrNull(6)?.toLongOrNull() ?: 0L,
+            p.getOrNull(7) == "1")
     }
 }

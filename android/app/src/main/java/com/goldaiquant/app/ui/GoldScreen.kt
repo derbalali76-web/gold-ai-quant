@@ -2668,7 +2668,8 @@ private fun WhatDialog(d: Decision, c: HorizonCard, s: UiState, onPosition: (Str
             SimpleAdvice.Kind.WAIT_DIP -> listOf(R.string.sa_r_enter_at to f(idea.buyAt), R.string.sa_r_target to f(idea.sellAt),
                 R.string.sa_r_invalid to f(idea.invalid))
             SimpleAdvice.Kind.WAIT -> listOf(R.string.sa_r_watch to f(idea.buyAt), R.string.sa_r_invalid to f(idea.invalid))
-            SimpleAdvice.Kind.HOLD_SELL_ABOVE -> listOf(R.string.sa_r_sell_above to f(idea.sellAt))
+            SimpleAdvice.Kind.HOLD_SELL_ABOVE -> listOfNotNull(R.string.sa_r_sell_above to f(idea.sellAt),
+                idea.invalid?.let { R.string.sa_r_invalid to f(it) })
             SimpleAdvice.Kind.SELL_REBUY -> listOf(R.string.sa_r_sell_now to stringResource(R.string.sa_r_market),
                 R.string.sa_r_rebuy to f(idea.buyAt))
             SimpleAdvice.Kind.CONFLICT, SimpleAdvice.Kind.EVENT, SimpleAdvice.Kind.NONE -> emptyList()
@@ -2699,6 +2700,18 @@ private fun WhatDialog(d: Decision, c: HorizonCard, s: UiState, onPosition: (Str
                 }
             }
             note?.let { Text(stringResource(it), color = Color(0xFFB5A877), fontSize = 12.sp, lineHeight = 18.sp) }
+            // owner 2026-11-26: «قبل لحظات قال اشترِ الآن والآن انتظر»: say what to do if the earlier idea was followed
+            val lastKey = "last_shown_${s.asset}_${if (hold) "H" else "C"}"
+            val last = remember(s.asset, hold) { prefs.getString(lastKey, null)?.split('|') }
+            val lastKind = last?.getOrNull(0)
+            val lastFresh = (last?.getOrNull(1)?.toLongOrNull() ?: 0L) > System.currentTimeMillis() - 24 * 3600_000L
+            LaunchedEffect(idea.kind, s.asset, hold) {
+                if (idea.kind != SimpleAdvice.Kind.NONE) prefs.edit().putString(lastKey, idea.kind.name + "|" + System.currentTimeMillis()).apply()
+            }
+            if (lastFresh && !hold && lastKind == SimpleAdvice.Kind.BUY_NOW.name && idea.kind != SimpleAdvice.Kind.BUY_NOW)
+                Text("ⓘ " + stringResource(R.string.sa_hint_bought), color = Color(0xFF8FC1EA), fontSize = 13.sp, lineHeight = 19.sp)
+            if (lastFresh && hold && lastKind == SimpleAdvice.Kind.SELL_REBUY.name && idea.kind != SimpleAdvice.Kind.SELL_REBUY)
+                Text("ⓘ " + stringResource(R.string.sa_hint_sold), color = Color(0xFF8FC1EA), fontSize = 13.sp, lineHeight = 19.sp)
             // filters and context (owner 2026-11-26): why the idea changed, crowding, weekend, the idea's public record
             val warn = Color(0xFFF0B45A)
             if (idea.note == SimpleAdvice.Note.BTC_DOWN) Text("⚠ " + stringResource(R.string.sa_note_btc), color = warn,
