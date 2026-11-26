@@ -411,7 +411,7 @@
     <string name="ob_skip">Skip</string>
     <string name="ob_next">Next</string>
     <string name="ob_start">Start</string>
-    <string name="widget_desc">Price and the level to watch</string>
+    <string name="widget_desc">Price, today\'s move and the idea for your position</string>
     <string name="widget_empty">Open the app to update</string>
     <string name="health_partial">Some data is out of date</string>
     <string name="health_partial_hint">Some data is old — tap for details</string>
@@ -870,6 +870,15 @@
     <string name="ia_fail_turn">The idea did not work: the outlook changed. Check the screen.</string>
     <string name="ia_expired">The idea ended after 24 hours without reaching its target. Check the screen.</string>
     <string name="ia_note">An educational idea, not a guarantee.</string>
+    <string name="w_buy_near">Buy near %1$s</string>
+    <string name="w_buy_market">At the market price</string>
+    <string name="w_target">Target %1$s</string>
+    <string name="w_target_after">Then target %1$s</string>
+    <string name="w_sell_near">Sell near %1$s</string>
+    <string name="w_rebuy_near">Buy back near %1$s</string>
+    <string name="w_cancel_below">Void below %1$s</string>
+    <string name="w_conflict">Signals disagree</string>
+    <string name="w_today">today</string>
     <string name="r_w_up" formatted="false">up</string>
     <string name="r_w_down" formatted="false">down</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

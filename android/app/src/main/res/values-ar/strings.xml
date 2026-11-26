@@ -410,7 +410,7 @@
     <string name="ob_skip">تخطٍّ</string>
     <string name="ob_next">التالي</string>
     <string name="ob_start">ابدأ</string>
-    <string name="widget_desc">السعر والمستوى الذي تراقبه</string>
+    <string name="widget_desc">السعر وحركة اليوم وفكرة وضعك</string>
     <string name="widget_empty">افتح التطبيق للتحديث</string>
     <string name="health_partial">بعض البيانات قديمة</string>
     <string name="health_partial_hint">بعض البيانات قديمة — اضغط للتفاصيل</string>
@@ -869,6 +869,15 @@
     <string name="ia_fail_turn">لم تنجح الفكرة: تغيّر الترجيح. راجع الشاشة.</string>
     <string name="ia_expired">انتهت مدة الفكرة (24 ساعة) دون أن تصل هدفها. راجع الشاشة.</string>
     <string name="ia_note">فكرة للتعليم وليست ضماناً.</string>
+    <string name="w_buy_near">شراء قرب %1$s</string>
+    <string name="w_buy_market">بسعر السوق</string>
+    <string name="w_target">الهدف %1$s</string>
+    <string name="w_target_after">الهدف بعدها %1$s</string>
+    <string name="w_sell_near">بِع قرب %1$s</string>
+    <string name="w_rebuy_near">أعد الشراء قرب %1$s</string>
+    <string name="w_cancel_below">تُلغى تحت %1$s</string>
+    <string name="w_conflict">الإشارات متعارضة</string>
+    <string name="w_today">اليوم</string>
     <string name="r_w_up" formatted="false">صاعد</string>
     <string name="r_w_down" formatted="false">هابط</string>
     <string name="r_w_neutral" formatted="false">محايد</string>
