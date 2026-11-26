@@ -341,6 +341,7 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
                 val fd = frameDivergenceText(d)
                 H2Divergence(fd) { fd?.let { sheet = Sheet.NoteSheet(it) } }
                 val x = h2View(card, s, d)
+                H2TrendBar(x) { sheet = Sheet.Details }
                 H2ScenarioPair(x) { sheet = Sheet.Details }
                 H2LevelsCard(x, s, Modifier.fillMaxWidth().weight(1f).heightIn(min = 96.dp)) {
                     if (s.candles["${s.asset}/H1"] == null) onBars(s.asset, "H1")

@@ -303,6 +303,8 @@ internal fun h2View(c0: HorizonCard, s: UiState, d: Decision): H2View {
     return H2View(c, v, ev.likely != HorizonScenarios.Likely.NONE)
 }
 
+/** One slim line (owner 2026-11-26: keep the price-lean line, but light): «الاتجاه الحالي (ساعات): ⬆ صعود نحو X».
+ *  «السيناريو المرجّح» only with tested evidence. */
 @Composable
 internal fun H2TrendBar(x: H2View, onClick: () -> Unit) {
     val (word, color, up) = when (x.v.likely) {
@@ -314,32 +316,25 @@ internal fun H2TrendBar(x: H2View, onClick: () -> Unit) {
     val target = when (x.v.likely) {
         HorizonScenarios.Likely.UP -> x.v.up?.trigger; HorizonScenarios.Likely.DOWN -> x.v.down?.trigger; else -> null
     }
-    val bg = Brush.verticalGradient(listOf(color.copy(alpha = 0.10f), Color(0xFF030805)))
-    GlowCard(Modifier.fillMaxWidth(), RoundedCornerShape(18.dp), glow = color,
-        edge = Brush.verticalGradient(listOf(color, color.copy(alpha = 0.6f))), bg = bg, onClick = onClick) {
-        Row(Modifier.padding(horizontal = 12.dp, vertical = 7.dp), verticalAlignment = Alignment.CenterVertically) {
-            Column {
-                Text(stringResource(if (x.tested) R.string.h2_likely else R.string.h2_trend), color = Color.White,
-                    fontFamily = Cairo, fontWeight = FontWeight.Bold, fontSize = 13.sp, lineHeight = 15.sp, maxLines = 1)
-                Text("(" + scHorizon(x.c.horizon) + ")" + if (!x.tested) " · " + stringResource(R.string.h2_untested) else "",
-                    color = Color(0xFFBDBDBD), fontFamily = Cairo, fontSize = 10.sp, lineHeight = 12.sp, maxLines = 1)
-            }
-            Spacer(Modifier.width(8.dp))
-            Text((if (up == true) "⬆ " else if (up == false) "⬇ " else "") + stringResource(word), color = Color.White,
-                fontFamily = Cairo, fontWeight = FontWeight.ExtraBold, fontSize = 14.sp, lineHeight = 17.sp, maxLines = 1,
-                modifier = Modifier.background(color.copy(alpha = if (up == null) 0.35f else 0.85f), RoundedCornerShape(16.dp))
-                    .padding(horizontal = 10.dp, vertical = 1.dp))
-            Spacer(Modifier.width(8.dp))
-            Row(Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
-                if (target != null) {
-                    Text(stringResource(R.string.h2_toward), color = Color.White, fontFamily = Cairo, fontSize = 12.sp, lineHeight = 14.sp)
-                    Spacer(Modifier.width(4.dp))
-                    Text(ltr(target.p2()), color = Color.White, fontFamily = Cairo, fontWeight = FontWeight.Black, fontSize = 21.sp,
-                        lineHeight = 24.sp, maxLines = 1)
-                }
-            }
-            if (up != null) Arrow(up, color, Modifier.size(width = 44.dp, height = 26.dp))
+    val shape = RoundedCornerShape(14.dp)
+    Row(Modifier.fillMaxWidth().clip(shape).background(color.copy(alpha = 0.10f)).border(1.dp, color.copy(alpha = 0.7f), shape)
+        .clickable(role = Role.Button, onClick = onClick).padding(horizontal = 12.dp, vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically) {
+        Text(stringResource(if (x.tested) R.string.h2_likely else R.string.h2_trend) + " (" + horizonName(x.c.horizon) + "):",
+            color = Color.White, fontFamily = Cairo, fontWeight = FontWeight.Bold, fontSize = 13.sp, lineHeight = 16.sp, maxLines = 1)
+        Spacer(Modifier.width(6.dp))
+        Text((if (up == true) "⬆ " else if (up == false) "⬇ " else "") + stringResource(word), color = color,
+            fontFamily = Cairo, fontWeight = FontWeight.ExtraBold, fontSize = 14.sp, lineHeight = 16.sp, maxLines = 1)
+        if (target != null) {
+            Spacer(Modifier.width(4.dp))
+            Text(stringResource(R.string.h2_toward), color = Color.White, fontFamily = Cairo, fontSize = 13.sp, lineHeight = 16.sp)
+            Spacer(Modifier.width(4.dp))
+            Text(ltr(target.p2()), color = Color.White, fontFamily = Cairo, fontWeight = FontWeight.Black, fontSize = 16.sp,
+                lineHeight = 18.sp, maxLines = 1)
         }
+        Spacer(Modifier.weight(1f))
+        if (!x.tested && up != null) Text(stringResource(R.string.h2_untested), color = Color(0xFF9A9A9A), fontFamily = Cairo,
+            fontSize = 10.sp, lineHeight = 12.sp, maxLines = 1)
     }
 }
 
@@ -349,9 +344,9 @@ internal fun H2ScenarioPair(x: H2View, modifier: Modifier = Modifier, onClick: (
     val badge = stringResource(if (x.tested) R.string.h2_badge_likely else R.string.h2_badge_trend)
     Row(modifier.fillMaxWidth().height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         H2Scenario(true, x.v.up, faint = lk == HorizonScenarios.Likely.DOWN,
-            badge.takeIf { x.v.likely == HorizonScenarios.Likely.UP }, Modifier.weight(1f).fillMaxHeight(), onClick)
+            null, Modifier.weight(1f).fillMaxHeight(), onClick)
         H2Scenario(false, x.v.down, faint = lk == HorizonScenarios.Likely.UP,
-            badge.takeIf { x.v.likely == HorizonScenarios.Likely.DOWN }, Modifier.weight(1f).fillMaxHeight(), onClick)
+            null, Modifier.weight(1f).fillMaxHeight(), onClick)
     }
 }
 
