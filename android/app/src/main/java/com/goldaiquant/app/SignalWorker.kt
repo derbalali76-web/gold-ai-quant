@@ -110,6 +110,23 @@ class SignalWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx
                 SimpleAdvice.Kind.SELL_REBUY -> ctx.getString(R.string.ia_sell, p(a.price), p(a.buyAt), p(a.stop))
                 else -> return
             }
+            IdeaAlerts.Msg.UPDATED -> {
+                val b = st.before ?: return
+                val parts = mutableListOf<String>()
+                fun mv(x: Double?, y: Double?) = x != y
+                when (a.kind) {
+                    SimpleAdvice.Kind.BUY_NOW, SimpleAdvice.Kind.HOLD_SELL_ABOVE ->
+                        if (mv(a.sellAt, b.sellAt)) parts += ctx.getString(R.string.ia_upd_target, p(a.sellAt), p(b.sellAt))
+                    SimpleAdvice.Kind.WAIT_DIP -> {
+                        if (mv(a.buyAt, b.buyAt)) parts += ctx.getString(R.string.ia_upd_buy, p(a.buyAt), p(b.buyAt))
+                        if (mv(a.sellAt, b.sellAt)) parts += ctx.getString(R.string.ia_upd_target, p(a.sellAt), p(b.sellAt))
+                    }
+                    else -> if (mv(a.buyAt, b.buyAt)) parts += ctx.getString(R.string.ia_upd_buy, p(a.buyAt), p(b.buyAt))
+                }
+                if (mv(a.stop, b.stop) && a.stop != null) parts += ctx.getString(R.string.ia_upd_cancel, p(a.stop), p(b.stop))
+                if (parts.isEmpty()) return
+                ctx.getString(R.string.ia_upd_head) + "\n" + parts.joinToString("\n")
+            }
             IdeaAlerts.Msg.TARGET -> if (a.kind == SimpleAdvice.Kind.SELL_REBUY) ctx.getString(R.string.ia_tgt_rebuy, p(a.buyAt))
                 else ctx.getString(R.string.ia_tgt, p(a.sellAt))
             IdeaAlerts.Msg.FAILED_STOP -> ctx.getString(R.string.ia_fail_stop, p(a.stop))

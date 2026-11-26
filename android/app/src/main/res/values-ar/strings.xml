@@ -893,6 +893,10 @@
     <string name="w_cfg_pos">وضعك</string>
     <string name="w_cfg_pos_note">نفس الاختيار يُستعمل في شاشة «ماذا أفعل؟» وفي الإشعارات.</string>
     <string name="w_cfg_save">حفظ</string>
+    <string name="ia_upd_head">تغيّرت مستويات الفكرة. حدّث خطتك:</string>
+    <string name="ia_upd_target">الهدف الجديد %1$s (كان %2$s).</string>
+    <string name="ia_upd_buy">الشراء الآن قرب %1$s (كان %2$s).</string>
+    <string name="ia_upd_cancel">مستوى الإلغاء الجديد %1$s (كان %2$s).</string>
     <string name="r_w_up" formatted="false">صاعد</string>
     <string name="r_w_down" formatted="false">هابط</string>
     <string name="r_w_neutral" formatted="false">محايد</string>
