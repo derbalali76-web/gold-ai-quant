@@ -879,6 +879,21 @@
     <string name="w_cancel_below">Void below %1$s</string>
     <string name="w_conflict">Signals disagree</string>
     <string name="w_today">today</string>
+    <string name="widget_desc_small">Price, today\'s move and its line</string>
+    <string name="widget_desc_list">All assets at a glance with your idea on each</string>
+    <string name="w_label_small">AI QUANT · Price</string>
+    <string name="w_label_wide">AI QUANT · Price and idea</string>
+    <string name="w_label_list">AI QUANT · Assets</string>
+    <string name="w_w_buy">Buy</string>
+    <string name="w_w_wait">Wait</string>
+    <string name="w_w_keep">Keep</string>
+    <string name="w_w_sell">Sell</string>
+    <string name="w_w_none">—</string>
+    <string name="w_cfg_title">Widget settings</string>
+    <string name="w_cfg_asset">Asset</string>
+    <string name="w_cfg_pos">Your position</string>
+    <string name="w_cfg_pos_note">The same choice is used on the «What should I do?» screen and in notifications.</string>
+    <string name="w_cfg_save">Save</string>
     <string name="r_w_up" formatted="false">up</string>
     <string name="r_w_down" formatted="false">down</string>
     <string name="r_w_neutral" formatted="false">neutral</string>
