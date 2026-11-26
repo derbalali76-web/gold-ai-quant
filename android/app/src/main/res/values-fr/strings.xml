@@ -410,7 +410,7 @@
     <string name="ob_skip">Passer</string>
     <string name="ob_next">Suivant</string>
     <string name="ob_start">Commencer</string>
-    <string name="widget_desc">Prix et niveau à surveiller</string>
+    <string name="widget_desc">Prix, variation du jour et idée pour votre position</string>
     <string name="widget_empty">Ouvrez l\'app pour mettre à jour</string>
     <string name="health_partial">Certaines données sont anciennes</string>
     <string name="health_partial_hint">Données anciennes — touchez pour détails</string>
@@ -869,6 +869,15 @@
     <string name="ia_fail_turn">L\'idée n\'a pas marché : la tendance a changé. Consultez l\'écran.</string>
     <string name="ia_expired">L\'idée a pris fin après 24 heures sans atteindre son objectif. Consultez l\'écran.</string>
     <string name="ia_note">Une idée pédagogique, pas une garantie.</string>
+    <string name="w_buy_near">Achat près de %1$s</string>
+    <string name="w_buy_market">Au prix du marché</string>
+    <string name="w_target">Objectif %1$s</string>
+    <string name="w_target_after">Puis objectif %1$s</string>
+    <string name="w_sell_near">Vendre près de %1$s</string>
+    <string name="w_rebuy_near">Racheter près de %1$s</string>
+    <string name="w_cancel_below">Annulée sous %1$s</string>
+    <string name="w_conflict">Signaux contradictoires</string>
+    <string name="w_today">aujourd\'hui</string>
     <string name="r_w_up" formatted="false">haussière</string>
     <string name="r_w_down" formatted="false">baissière</string>
     <string name="r_w_neutral" formatted="false">neutre</string>

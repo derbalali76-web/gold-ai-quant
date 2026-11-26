@@ -410,7 +410,7 @@
     <string name="ob_skip">Pular</string>
     <string name="ob_next">Próximo</string>
     <string name="ob_start">Começar</string>
-    <string name="widget_desc">Preço e nível a observar</string>
+    <string name="widget_desc">Preço, variação do dia e ideia para sua posição</string>
     <string name="widget_empty">Abra o app para atualizar</string>
     <string name="health_partial">Alguns dados estão desatualizados</string>
     <string name="health_partial_hint">Dados antigos — toque para detalhes</string>
@@ -869,6 +869,15 @@
     <string name="ia_fail_turn">A ideia não funcionou: a tendência mudou. Confira a tela.</string>
     <string name="ia_expired">A ideia terminou após 24 horas sem atingir o alvo. Confira a tela.</string>
     <string name="ia_note">Uma ideia educativa, não uma garantia.</string>
+    <string name="w_buy_near">Compra perto de %1$s</string>
+    <string name="w_buy_market">A preço de mercado</string>
+    <string name="w_target">Alvo %1$s</string>
+    <string name="w_target_after">Depois alvo %1$s</string>
+    <string name="w_sell_near">Venda perto de %1$s</string>
+    <string name="w_rebuy_near">Recompre perto de %1$s</string>
+    <string name="w_cancel_below">Cancelada abaixo de %1$s</string>
+    <string name="w_conflict">Sinais contraditórios</string>
+    <string name="w_today">hoje</string>
     <string name="r_w_up" formatted="false">de alta</string>
     <string name="r_w_down" formatted="false">de baixa</string>
     <string name="r_w_neutral" formatted="false">neutra</string>

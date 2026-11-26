@@ -73,6 +73,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         val a = _state.value.asset
         prefs.edit().putString("position_$a", p).apply()
         _state.update { it.copy(positions = it.positions + (a to p)) }
+        try { PriceWidget.refresh(getApplication()) } catch (e: Exception) { }
     }
 
     init {
@@ -209,6 +210,10 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch {
             val c = MarketClient(s.serverUrl, s.token).bars(asset, tf) ?: return@launch
             _state.update { it.copy(candles = it.candles + ("$asset/$tf" to c)) }
+            if (tf == "H1" && c.size >= 2) {  // the widget's sparkline: last 24 closed hours, kept on the phone
+                prefs.edit().putString("spark_$asset", c.c.takeLast(24).joinToString(",")).apply()
+                try { PriceWidget.refresh(getApplication()) } catch (e: Exception) { }
+            }
         }
     }
 
