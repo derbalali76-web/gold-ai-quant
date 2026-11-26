@@ -1,8 +1,8 @@
 {
- "trained_at": "2026-11-25T14:44:23.138514+00:00",
+ "trained_at": "2026-11-26T14:07:16.585385+00:00",
  "dataset": "LIVE HISTORY (Dukascopy)",
- "trained_until": "2026-11-25T00:00:00+00:00",
- "qualified": false,
- "reason": "المعايرة غير كافية (فجوة منحنى الموثوقية كبيرة)",
+ "trained_until": "2026-11-26T00:00:00+00:00",
+ "qualified": true,
+ "reason": "مؤهل",
  "n_oos": 95796
 }
