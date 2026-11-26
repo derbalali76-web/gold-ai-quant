@@ -28,7 +28,7 @@ FILES = {
     "ledger.py": "ledger.py", "issue.py": "issue.py", "advice.py": "advice.py", "monitor.py": "monitor.py",
     "te_live.py": "te_live.py", "record.sh": "record.sh", "verify_copy.py": "verify_copy.py",
     "server_watch.py": "server_watch.py", "decision_state.py": "decision_state.py",
-    "signals.py": "signals.py", "advice_units.py": "advice_units.py", "ideas.py": "ideas.py",
+    "signals.py": "signals.py", "advice_units.py": "advice_units.py", "ideas.py": "ideas.py", "lean.py": "lean.py",
     "README.md": "README.md", "index.html": "index.html", "workflows/record.yml": ".github/workflows/record.yml",
 }
 
