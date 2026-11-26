@@ -42,6 +42,7 @@ data class UiState(
     val touchFailed: Boolean = false,
     val live: Map<String, LiveTick> = emptyMap(),  // crypto live price (Binance public ticker), display only
     val onboarded: Boolean = true,
+    val ctxAt: Long = 0L,  // last refresh of the idea context (bitcoin trend, calendar, crowding, public record)
 ) {
     val trust: Trust? get() = trustAll[asset]
     val position: String get() = positions[asset] ?: "CASH"
@@ -58,6 +59,14 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         try { DecisionParser.parse(it) } catch (e: Exception) { null }
     }
 
+    /** Bitcoin trend, calendar, crowding and the public record for the «ماذا أفعل؟» filters (IdeaCtx). */
+    fun refreshCtx() {
+        viewModelScope.launch {
+            try { IdeaCtx.refresh(prefs, needBtc = _state.value.asset in SimpleAdvice.FOLLOWS_BTC) } catch (e: Exception) { }
+            _state.update { it.copy(ctxAt = System.currentTimeMillis(), calendar = it.calendar ?: IdeaCtx.calendar(prefs)) }
+        }
+    }
+
     /** Switch the analysed asset: show its last saved analysis at once, then refresh it. */
     fun setAsset(a: String) {
         if (a == _state.value.asset) return
@@ -66,6 +75,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         _state.update { it.copy(asset = a, decision = cached, decisionFromCache = cached != null, error = null,
             selectedHorizon = HorizonModel.resolve(it.selectedHorizon, cached)) }
         ask()
+        refreshCtx()
     }
 
     /** How the analysis is phrased for this asset: the user has cash, or already holds it. Display only. */
@@ -106,6 +116,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             )
         }
         startPrefetchLoop()
+        refreshCtx()
         loadTrust()
         syncPush()
     }
@@ -246,6 +257,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch {
             val c = MarketClient(s.serverUrl, s.token).calendar() ?: return@launch
             _state.update { it.copy(calendar = c) }
+            refreshCtx()
         }
     }
 

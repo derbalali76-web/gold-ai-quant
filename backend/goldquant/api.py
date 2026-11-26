@@ -557,6 +557,8 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
                 "health": d.data_health.status if d.data_health else None, "action": d.action.value,
                 "quote_time": d.quote_timestamp_utc.isoformat() if d.quote_timestamp_utc else None,
                 "app_crashes_7d": crashes_recent(),
+                # beginner-ideas-0.3: the hourly range the app scales its gaps and cancel levels with
+                "atr_h1": (d.levels.atr_h1 if d.levels is not None else None),
                 # beginner advice (advice-0.1.0): what the app's «ماذا أفعل؟» is built from, per horizon
                 "outlooks": [{"horizon": o.horizon, "action": o.action.value,
                               "plan_side": (o.plan.side if o.plan is not None and o.plan.recommendation
@@ -742,6 +744,12 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
         disp = PRG.display_horizon({h: h in out for h in ("4h", "24h")})
         return {"asset": a, "available": bool(out), "experimental": True, "display": disp,
                 "reason": None if out else "NOT_VALIDATED", "horizons": out}
+
+    @app.get("/derivs", dependencies=[Depends(auth)])
+    def derivs_endpoint():
+        """Funding rate and open interest of BTC / ETH / SOL perpetuals (display only: crowding warning)."""
+        from .sources import derivs as DV
+        return DV.snapshot()
 
     @app.get("/calendar", dependencies=[Depends(auth)])
     def calendar_endpoint():

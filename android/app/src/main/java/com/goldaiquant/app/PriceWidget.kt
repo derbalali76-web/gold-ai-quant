@@ -39,6 +39,7 @@ class PriceWidget : BaseWidget() {
                 SimpleAdvice.Kind.SELL_REBUY -> Triple(R.string.sa_sell_rebuy, ctx.getString(R.string.w_buy_market),
                     arrow(ctx.getString(R.string.w_rebuy_near, p(i.buyAt)), false, y))
                 SimpleAdvice.Kind.CONFLICT -> Triple(R.string.sa_wait, ctx.getString(R.string.w_conflict), "")
+                SimpleAdvice.Kind.EVENT -> Triple(R.string.sa_event, ctx.getString(R.string.w_event), "")
                 SimpleAdvice.Kind.NONE -> Triple(R.string.sa_none, "", "")
             }
         }
@@ -76,7 +77,7 @@ class PriceWidget : BaseWidget() {
             v.setViewVisibility(R.id.w_sep, show)
             v.setViewVisibility(R.id.w_art, show)
             v.setTextViewText(R.id.w_who, ctx.getString(if (hold) R.string.ia_t_hold else R.string.ia_t_cash, Widgets.name(ctx, a)) + "  ⇄")
-            val idea = Widgets.idea(d, a, hold)
+            val idea = Widgets.idea(d, a, hold, p)
             v.setInt(R.id.w_act, "setBackgroundResource", chip(idea?.kind))
             if (idea != null) {
                 val (t, l1, l2) = ideaLines(ctx, idea)
@@ -145,7 +146,7 @@ class PriceWidgetList : BaseWidget() {
                 val c = d?.quoteChangePct
                 v.setTextViewText(r[3], c?.let { (if (it >= 0) "▲ " else "▼ ") + String.format(java.util.Locale.US, "%.1f%%", kotlin.math.abs(it)) } ?: "")
                 v.setTextColor(r[3], if ((c ?: 0.0) >= 0) Widgets.GREEN else Widgets.RED)
-                val (w, col) = Widgets.word(Widgets.idea(d, a, Widgets.hold(p, a))?.kind)
+                val (w, col) = Widgets.word(Widgets.idea(d, a, Widgets.hold(p, a), p)?.kind)
                 v.setTextViewText(r[4], ctx.getString(w)); v.setTextColor(r[4], col)
             }
             v.setTextViewText(R.id.wl_time, Widgets.time(ctx, latest))

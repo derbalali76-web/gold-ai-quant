@@ -105,6 +105,7 @@ import com.goldaiquant.app.Level
 import com.goldaiquant.app.HorizonScenarios
 import com.goldaiquant.app.LiveLevels
 import com.goldaiquant.app.SimpleAdvice
+import com.goldaiquant.app.IdeaCtx
 import androidx.compose.ui.draw.alpha
 import com.goldaiquant.app.LevelRelation
 import com.goldaiquant.app.MainViewModel
@@ -2622,11 +2623,10 @@ private fun WhatDialog(d: Decision, c: HorizonCard, s: UiState, onPosition: (Str
     // beginner «ماذا أفعل؟» (owner-approved 2026-11-22): trend × price position on the selected horizon, cash or holder.
     val hold = s.position == "HOLD"
     val price = s.live[s.asset]?.price ?: d.quote
-    val lvl = LiveLevels.reanchor(c.levels, price)
-    val tested = HorizonScenarios.of(c.copy(levels = lvl), d.brief.takeIf { LiveLevels.briefConsistent(it, price) }, d.isDemo).likely
-    val idea = SimpleAdvice.resolve(SimpleAdvice.decide(c.trend?.direction, price, lvl?.supports.orEmpty().map { it.price },
-        lvl?.resistances.orEmpty().map { it.price }, hold, s.asset),
-        when (tested) { HorizonScenarios.Likely.UP -> true; HorizonScenarios.Likely.DOWN -> false; else -> null })
+    val prefs = androidx.compose.ui.platform.LocalContext.current.getSharedPreferences("gold_ai_quant", android.content.Context.MODE_PRIVATE)
+    @Suppress("UNUSED_EXPRESSION") s.ctxAt  // recompose when the context (bitcoin, calendar, record) was refreshed
+    val built = IdeaCtx.build(d, c, s.asset, hold, price, prefs)
+    val idea = built.idea
     val down = SimpleAdvice.trendCodeOf(c.trend?.direction) != "UP"
     DialogFrame(stringResource(R.string.ask), onClose) {
         Text(stringResource(R.string.sa_frame, scHorizon(c.horizon)), color = TextDim, fontSize = 13.sp)
@@ -2648,6 +2648,7 @@ private fun WhatDialog(d: Decision, c: HorizonCard, s: UiState, onPosition: (Str
             SimpleAdvice.Kind.HOLD_SELL_ABOVE -> R.string.sa_keep to Color(0xFF8FC1EA)
             SimpleAdvice.Kind.SELL_REBUY -> R.string.sa_sell_rebuy to Color(0xFFF0A46A)
             SimpleAdvice.Kind.CONFLICT -> (if (hold) R.string.sa_keep else R.string.sa_wait) to WaitGold
+            SimpleAdvice.Kind.EVENT -> R.string.sa_event to WaitGold
             SimpleAdvice.Kind.NONE -> R.string.sa_none to TextDim
         }
         val line = when (idea.kind) {
@@ -2657,6 +2658,7 @@ private fun WhatDialog(d: Decision, c: HorizonCard, s: UiState, onPosition: (Str
             SimpleAdvice.Kind.HOLD_SELL_ABOVE -> if ((idea.position ?: 1.0) < SimpleAdvice.LOW && down) R.string.sa_l_bottom else R.string.sa_l_keep
             SimpleAdvice.Kind.SELL_REBUY -> if (down) R.string.sa_l_sell_down else R.string.sa_l_sell_up
             SimpleAdvice.Kind.CONFLICT -> R.string.sa_l_conflict
+            SimpleAdvice.Kind.EVENT -> if (hold) R.string.sa_l_event_hold else R.string.sa_l_event_cash
             SimpleAdvice.Kind.NONE -> R.string.sa_l_none
         }
         fun f(v: Double?) = v?.let { ltr(it.p2()) } ?: "—"
@@ -2669,7 +2671,7 @@ private fun WhatDialog(d: Decision, c: HorizonCard, s: UiState, onPosition: (Str
             SimpleAdvice.Kind.HOLD_SELL_ABOVE -> listOf(R.string.sa_r_sell_above to f(idea.sellAt))
             SimpleAdvice.Kind.SELL_REBUY -> listOf(R.string.sa_r_sell_now to stringResource(R.string.sa_r_market),
                 R.string.sa_r_rebuy to f(idea.buyAt))
-            SimpleAdvice.Kind.CONFLICT, SimpleAdvice.Kind.NONE -> emptyList()
+            SimpleAdvice.Kind.CONFLICT, SimpleAdvice.Kind.EVENT, SimpleAdvice.Kind.NONE -> emptyList()
         }
         val note = when (idea.kind) {
             SimpleAdvice.Kind.SELL_REBUY -> R.string.sa_n_chase
@@ -2697,6 +2699,37 @@ private fun WhatDialog(d: Decision, c: HorizonCard, s: UiState, onPosition: (Str
                 }
             }
             note?.let { Text(stringResource(it), color = Color(0xFFB5A877), fontSize = 12.sp, lineHeight = 18.sp) }
+            // filters and context (owner 2026-11-26): why the idea changed, crowding, weekend, the idea's public record
+            val warn = Color(0xFFF0B45A)
+            if (idea.note == SimpleAdvice.Note.BTC_DOWN) Text("⚠ " + stringResource(R.string.sa_note_btc), color = warn,
+                fontSize = 13.sp, lineHeight = 19.sp)
+            built.event?.let { ev ->
+                val t = java.time.format.DateTimeFormatter.ofPattern("HH:mm").format(ev.time.atZone(java.time.ZoneId.systemDefault()))
+                Text("⚠ " + stringResource(R.string.sa_note_event, ev.name, ltr(t)), color = warn, fontSize = 13.sp, lineHeight = 19.sp)
+            }
+            if (s.asset != "XAU") {
+                val dv = IdeaCtx.derivs(prefs, s.asset)
+                val buying = idea.kind == SimpleAdvice.Kind.BUY_NOW || idea.kind == SimpleAdvice.Kind.WAIT_DIP ||
+                    idea.kind == SimpleAdvice.Kind.HOLD_SELL_ABOVE
+                if (dv != null && dv.crowdedLong && buying) Text("⚠ " + stringResource(R.string.sa_note_crowd_long), color = warn,
+                    fontSize = 13.sp, lineHeight = 19.sp)
+                if (dv != null && dv.crowdedShort && idea.kind == SimpleAdvice.Kind.SELL_REBUY) Text("⚠ " +
+                    stringResource(R.string.sa_note_crowd_short), color = warn, fontSize = 13.sp, lineHeight = 19.sp)
+                val dow = java.time.ZonedDateTime.now(java.time.ZoneOffset.UTC).dayOfWeek
+                if (dow == java.time.DayOfWeek.SATURDAY || dow == java.time.DayOfWeek.SUNDAY)
+                    Text("ⓘ " + stringResource(R.string.sa_note_weekend), color = TextDim, fontSize = 12.sp, lineHeight = 18.sp)
+            }
+            if (idea.kind != SimpleAdvice.Kind.NONE && idea.kind != SimpleAdvice.Kind.CONFLICT && idea.kind != SimpleAdvice.Kind.EVENT) {
+                val rec = IdeaCtx.record(prefs, idea.kind.name, c.horizon)
+                Divider()
+                Text(when {
+                    rec == null || rec.n == 0 -> stringResource(R.string.sa_rec_none)
+                    rec.n < 30 -> stringResource(R.string.sa_rec_few, rec.n)
+                    else -> stringResource(R.string.sa_rec, Math.round((rec.successRate ?: 0.0) * 100).toInt(), rec.n,
+                        ltr(String.format(java.util.Locale.US, "%+.2f", rec.meanEdgePct ?: 0.0)))
+                }, color = if (rec != null && rec.n >= 30) (if (rec.verdict == "USEFUL") BuyGreen else WaitGold) else TextDim,
+                    fontSize = 12.sp, lineHeight = 18.sp)
+            }
         }
         Text(stringResource(R.string.sa_foot), color = TextDim, fontSize = 11.sp, lineHeight = 16.sp)
         if (d.isDemo) Text(stringResource(R.string.demo_banner), color = WaitGold, fontSize = 11.sp, textAlign = TextAlign.Center,
