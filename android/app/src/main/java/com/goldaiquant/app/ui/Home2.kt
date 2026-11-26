@@ -105,7 +105,7 @@ internal fun GlowCard(modifier: Modifier = Modifier, shape: Shape = RoundedCorne
 
 @Composable
 private fun Circle(onClick: () -> Unit, cd: String, dot: Boolean = false, content: @Composable () -> Unit) {
-    Box(Modifier.size(44.dp).shadow(8.dp, CircleShape, ambientColor = H2Gold, spotColor = H2Gold)
+    Box(Modifier.size(40.dp).shadow(6.dp, CircleShape, ambientColor = H2Gold, spotColor = H2Gold)
         .background(Color(0xFF0A0A0A), CircleShape).border(2.dp, EdgeBrush, CircleShape).clip(CircleShape)
         .clickable(role = Role.Button, onClick = onClick).semantics { contentDescription = cd },
         contentAlignment = Alignment.Center) {
@@ -136,11 +136,9 @@ internal fun H2Header(s: UiState, onSettings: () -> Unit, onCalendar: () -> Unit
                 Bars(Modifier.size(width = 24.dp, height = 22.dp))
                 Spacer(Modifier.width(6.dp))
                 Text(stringResource(R.string.app_name), color = H2Gold, fontFamily = Cairo, fontWeight = FontWeight.Black,
-                    fontSize = 26.sp, maxLines = 1, style = androidx.compose.ui.text.TextStyle(
+                    fontSize = 24.sp, maxLines = 1, style = androidx.compose.ui.text.TextStyle(
                         shadow = androidx.compose.ui.graphics.Shadow(H2Gold.copy(alpha = 0.6f), blurRadius = 18f)))
             }
-            Text(stringResource(if (s.asset == "XAU") R.string.tagline else R.string.tagline_crypto), color = Color.White,
-                fontFamily = Cairo, fontSize = 12.sp, maxLines = 1, lineHeight = 14.sp)
         }
         Circle(onSettings, stringResource(R.string.cd_settings)) { Text("⚙", color = H2Gold, fontSize = 22.sp) }
     }
@@ -216,15 +214,18 @@ internal fun H2PriceCard(d: Decision?, s: UiState, modifier: Modifier, onChart: 
     GlowCard(modifier, onClick = onChart) {
         Row(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
             // the chart on the right in RTL (first child), the price on the left
-            CandleChart(s.candles["${s.asset}/H1"], Modifier.weight(1f).height(64.dp))
+            CandleChart(s.candles["${s.asset}/H1"], Modifier.weight(1f).height(56.dp))
             Spacer(Modifier.width(10.dp))
             Column(horizontalAlignment = Alignment.Start) {
                 Text(ltr(price?.p2() ?: "—"), color = Color.White, fontFamily = Cairo, fontWeight = FontWeight.Black,
-                    fontSize = 38.sp, lineHeight = 40.sp, maxLines = 1)
-                val ch = d?.quoteChange
+                    fontSize = 34.sp, lineHeight = 36.sp, maxLines = 1)
+                val cc = s.candles["${s.asset}/H1"]
+                val ref = d?.quoteChange?.let { null } ?: cc?.takeIf { it.size >= 25 }?.c?.let { it[it.size - 25] }
+                val ch = d?.quoteChange ?: if (ref != null && price != null) price - ref else null
+                val pctV = d?.quoteChangePct ?: if (ref != null && ch != null && ref > 0) 100 * ch / ref else null
                 if (ch != null) {
                     val up = ch >= 0
-                    val pct = d.quoteChangePct?.let { " (${if (up) "+" else ""}${String.format(Locale.US, "%.2f", it)}%)" } ?: ""
+                    val pct = pctV?.let { " (${if (up) "+" else ""}${String.format(Locale.US, "%.2f", it)}%)" } ?: ""
                     Text(ltr("${if (up) "+" else ""}${ch.p2()}$pct ${if (up) "▲" else "▼"}"), color = if (up) H2Green else H2Red,
                         fontFamily = Cairo, fontWeight = FontWeight.ExtraBold, fontSize = 15.sp, lineHeight = 17.sp, maxLines = 1)
                 }
@@ -266,13 +267,13 @@ internal fun H2AskButton(onClick: () -> Unit) {
     Row(Modifier.fillMaxWidth().shadow(18.dp, shape, ambientColor = Color(0xFFFAC83C), spotColor = Color(0xFFFAC83C))
         .background(ButtonBrush, shape).border(2.dp, Color(0xFFFFE58A), shape).clip(shape)
         .clickable(role = Role.Button, onClick = onClick).semantics { contentDescription = label }
-        .padding(horizontal = 16.dp, vertical = 6.dp), verticalAlignment = Alignment.CenterVertically) {
+        .padding(horizontal = 16.dp, vertical = 3.dp), verticalAlignment = Alignment.CenterVertically) {
         Text(ltr("»"), color = Color(0xFF140E00), fontSize = 28.sp, fontWeight = FontWeight.Black)
-        Text(label, color = Color(0xFF140E00), fontFamily = Cairo, fontWeight = FontWeight.Black, fontSize = 27.sp,
-            lineHeight = 32.sp, textAlign = TextAlign.Center, maxLines = 1, modifier = Modifier.weight(1f))
+        Text(label, color = Color(0xFF140E00), fontFamily = Cairo, fontWeight = FontWeight.Black, fontSize = 25.sp,
+            lineHeight = 30.sp, textAlign = TextAlign.Center, maxLines = 1, modifier = Modifier.weight(1f))
         Box(Modifier.width(1.dp).height(38.dp).background(Color(0x40000000)))
         Spacer(Modifier.width(10.dp))
-        Image(painterResource(R.drawable.hi_target), null, Modifier.size(54.dp))
+        Image(painterResource(R.drawable.hi_target), null, Modifier.size(48.dp))
     }
 }
 
@@ -343,33 +344,41 @@ internal fun H2TrendBar(x: H2View, onClick: () -> Unit) {
 }
 
 @Composable
-internal fun H2ScenarioPair(x: H2View, modifier: Modifier = Modifier) {
+internal fun H2ScenarioPair(x: H2View, modifier: Modifier = Modifier, onClick: () -> Unit = {}) {
     val lk = if (x.tested) x.v.likely else HorizonScenarios.Likely.NONE
+    val badge = stringResource(if (x.tested) R.string.h2_badge_likely else R.string.h2_badge_trend)
     Row(modifier.fillMaxWidth().height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        H2Scenario(true, x.v.up, faint = lk == HorizonScenarios.Likely.DOWN, Modifier.weight(1f).fillMaxHeight())
-        H2Scenario(false, x.v.down, faint = lk == HorizonScenarios.Likely.UP, Modifier.weight(1f).fillMaxHeight())
+        H2Scenario(true, x.v.up, faint = lk == HorizonScenarios.Likely.DOWN,
+            badge.takeIf { x.v.likely == HorizonScenarios.Likely.UP }, Modifier.weight(1f).fillMaxHeight(), onClick)
+        H2Scenario(false, x.v.down, faint = lk == HorizonScenarios.Likely.UP,
+            badge.takeIf { x.v.likely == HorizonScenarios.Likely.DOWN }, Modifier.weight(1f).fillMaxHeight(), onClick)
     }
 }
 
 @Composable
-private fun H2Scenario(up: Boolean, side: HorizonScenarios.Side?, faint: Boolean, modifier: Modifier) {
+private fun H2Scenario(up: Boolean, side: HorizonScenarios.Side?, faint: Boolean, badge: String?, modifier: Modifier,
+                       onClick: () -> Unit) {
     val color = if (up) H2Green else H2Red
     val bg = Brush.linearGradient(listOf(if (up) Color(0xFF06311A) else Color(0xFF3A0709), Color(0xFF050505)))
     GlowCard(modifier.alpha(if (faint) 0.5f else 1f), RoundedCornerShape(16.dp), glow = color,
-        edge = Brush.verticalGradient(listOf(color, color.copy(alpha = 0.6f))), bg = bg) {
-        Row(Modifier.padding(horizontal = 10.dp, vertical = 7.dp), verticalAlignment = Alignment.CenterVertically) {
-            Column(Modifier.weight(1f)) {
+        edge = Brush.verticalGradient(listOf(color, color.copy(alpha = 0.6f))), bg = bg, onClick = onClick) {
+        Column(Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 6.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(stringResource(if (up) R.string.h2_sc_up else R.string.h2_sc_down), color = color, fontFamily = Cairo,
-                    fontWeight = FontWeight.ExtraBold, fontSize = 14.sp, lineHeight = 16.sp, maxLines = 1,
-                    overflow = TextOverflow.Ellipsis)
-                if (side != null) {
-                    Text(ltr((side.target ?: side.trigger).p2()), color = Color.White, fontFamily = Cairo,
-                        fontWeight = FontWeight.Black, fontSize = 26.sp, lineHeight = 29.sp, maxLines = 1)
-                    Text(stringResource(if (up) R.string.h2_if_up else R.string.h2_if_down, ltr(side.trigger.p2())),
-                        color = Color.White, fontFamily = Cairo, fontSize = 12.sp, lineHeight = 14.sp, maxLines = 1)
-                } else Text("—", color = Color.White, fontSize = 22.sp)
+                    fontWeight = FontWeight.ExtraBold, fontSize = 13.sp, lineHeight = 15.sp, maxLines = 1, modifier = Modifier.weight(1f))
+                if (badge != null) Text(badge, color = Color.White, fontFamily = Cairo, fontWeight = FontWeight.Bold, fontSize = 10.sp,
+                    lineHeight = 12.sp, maxLines = 1, modifier = Modifier.background(color.copy(alpha = 0.75f), RoundedCornerShape(10.dp))
+                        .padding(horizontal = 6.dp, vertical = 1.dp))
             }
-            Arrow(up, color, Modifier.size(width = 44.dp, height = 30.dp))
+            if (side != null) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(ltr((side.target ?: side.trigger).p2()), color = Color.White, fontFamily = Cairo,
+                        fontWeight = FontWeight.Black, fontSize = 24.sp, lineHeight = 27.sp, maxLines = 1, modifier = Modifier.weight(1f))
+                    Arrow(up, color, Modifier.size(width = 34.dp, height = 22.dp))
+                }
+                Text(stringResource(if (up) R.string.h2_if_up else R.string.h2_if_down, ltr(side.trigger.p2())),
+                    color = Color(0xFFDADADA), fontFamily = Cairo, fontSize = 11.sp, lineHeight = 13.sp, maxLines = 1)
+            } else Text("—", color = Color.White, fontSize = 22.sp)
         }
     }
 }
@@ -415,10 +424,8 @@ private fun LevelChip(l: Level, support: Boolean) {
 internal fun H2LevelsCard(x: H2View, s: UiState, modifier: Modifier, onOpen: () -> Unit) {
     val lv = x.c.levels
     val rows = buildList {
-        lv?.resistances?.getOrNull(1)?.let { add(it to false) }
         lv?.resistances?.getOrNull(0)?.let { add(it to false) }
         lv?.supports?.getOrNull(0)?.let { add(it to true) }
-        if (size < 3) lv?.supports?.getOrNull(1)?.let { add(it to true) }
     }
     GlowCard(modifier, onClick = onOpen) {
         Row(Modifier.fillMaxSize().padding(horizontal = 12.dp, vertical = 8.dp)) {
@@ -427,7 +434,7 @@ internal fun H2LevelsCard(x: H2View, s: UiState, modifier: Modifier, onOpen: () 
                     Image(painterResource(R.drawable.hi_levels), null, Modifier.size(28.dp))
                     Spacer(Modifier.width(6.dp))
                     Text(stringResource(R.string.h2_levels), color = Color.White, fontFamily = Cairo, fontWeight = FontWeight.ExtraBold,
-                        fontSize = 17.sp, lineHeight = 20.sp, maxLines = 1)
+                        fontSize = 16.sp, lineHeight = 19.sp, maxLines = 1)
                 }
                 AreaChart(s.candles["${s.asset}/H1"], Modifier.fillMaxWidth().weight(1f).padding(top = 4.dp))
             }
@@ -453,11 +460,11 @@ internal fun H2Bottom(s: UiState, radarText: String, onRadar: () -> Unit, onReco
         Row(Modifier.height(IntrinsicSize.Min).padding(horizontal = 10.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
             Row(Modifier.weight(1f).clip(RoundedCornerShape(12.dp)).clickable(role = Role.Button, onClick = onRadar),
                 verticalAlignment = Alignment.CenterVertically) {
-                Image(painterResource(R.drawable.hi_target), null, Modifier.size(40.dp))
+                Image(painterResource(R.drawable.hi_target), null, Modifier.size(34.dp))
                 Spacer(Modifier.width(8.dp))
                 Column {
                     Text(stringResource(R.string.rd_tile), color = Color.White, fontFamily = Cairo, fontWeight = FontWeight.ExtraBold,
-                        fontSize = 16.sp, lineHeight = 19.sp, maxLines = 1)
+                        fontSize = 15.sp, lineHeight = 18.sp, maxLines = 1)
                     Text(radarText, color = Color.White, fontFamily = Cairo, fontSize = 11.sp, lineHeight = 13.sp, maxLines = 1,
                         overflow = TextOverflow.Ellipsis)
                 }
@@ -466,7 +473,7 @@ internal fun H2Bottom(s: UiState, radarText: String, onRadar: () -> Unit, onReco
             Spacer(Modifier.width(8.dp))
             Row(Modifier.weight(1f).clip(RoundedCornerShape(12.dp)).clickable(role = Role.Button, onClick = onRecord),
                 verticalAlignment = Alignment.CenterVertically) {
-                Image(painterResource(R.drawable.hi_record), null, Modifier.size(38.dp))
+                Image(painterResource(R.drawable.hi_record), null, Modifier.size(32.dp))
                 Spacer(Modifier.width(8.dp))
                 Column {
                     Text(stringResource(R.string.rec_title), color = Color.White, fontFamily = Cairo, fontWeight = FontWeight.ExtraBold,
@@ -550,4 +557,15 @@ private fun LevelRow(l: Level, support: Boolean, s: UiState, price: Double?, onB
                 .clickable(role = Role.Button) { onBell(PriceAlerts.make(s.asset, l.price, price, name + " " + l.price.p2())) }
                 .padding(horizontal = 8.dp, vertical = 3.dp))
     }
+}
+
+/** One-line notice when hours and week lean opposite ways; tap for the full sentence. */
+@Composable
+internal fun H2Divergence(text: String?, onClick: () -> Unit) {
+    if (text == null) return
+    Text("⚠  " + stringResource(R.string.h2_frames_differ), color = Color(0xFFF0B45A), fontFamily = Cairo, fontSize = 12.sp,
+        lineHeight = 14.sp, fontWeight = FontWeight.Bold, maxLines = 1, textAlign = TextAlign.Center,
+        modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp)).background(Color(0xFF1D1708))
+            .border(1.dp, Color(0xFF6B5A22), RoundedCornerShape(12.dp)).clickable(role = Role.Button, onClick = onClick)
+            .padding(vertical = 4.dp))
 }

@@ -921,7 +921,10 @@
     <string name="h2_sup">دعم</string>
     <string name="h2_alert">نبّهني</string>
     <string name="h2_alert_on">مفعّل</string>
-    <string name="h2_radar_none">لا توجد فرصة مؤهلة الآن</string>
+    <string name="h2_radar_none">لا فرصة مؤهلة الآن</string>
+    <string name="h2_badge_trend">الاتجاه</string>
+    <string name="h2_badge_likely">المرجّح</string>
+    <string name="h2_frames_differ">الساعات والأسبوع مختلفان · اضغط</string>
     <string name="r_w_up" formatted="false">صاعد</string>
     <string name="r_w_down" formatted="false">هابط</string>
     <string name="r_w_neutral" formatted="false">محايد</string>
