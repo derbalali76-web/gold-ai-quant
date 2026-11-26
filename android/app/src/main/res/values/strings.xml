@@ -922,7 +922,10 @@
     <string name="h2_sup">Support</string>
     <string name="h2_alert">Alert me</string>
     <string name="h2_alert_on">On</string>
-    <string name="h2_radar_none">No qualified opportunity now</string>
+    <string name="h2_radar_none">None qualified now</string>
+    <string name="h2_badge_trend">trend</string>
+    <string name="h2_badge_likely">likely</string>
+    <string name="h2_frames_differ">Hours and week disagree · tap</string>
     <string name="r_w_up" formatted="false">up</string>
     <string name="r_w_down" formatted="false">down</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

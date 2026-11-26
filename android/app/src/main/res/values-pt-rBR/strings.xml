@@ -921,7 +921,10 @@
     <string name="h2_sup">Suporte</string>
     <string name="h2_alert">Avise-me</string>
     <string name="h2_alert_on">Ativado</string>
-    <string name="h2_radar_none">Nenhuma oportunidade qualificada</string>
+    <string name="h2_radar_none">Nenhuma qualificada</string>
+    <string name="h2_badge_trend">tendência</string>
+    <string name="h2_badge_likely">provável</string>
+    <string name="h2_frames_differ">Horas e semana divergem · toque</string>
     <string name="r_w_up" formatted="false">de alta</string>
     <string name="r_w_down" formatted="false">de baixa</string>
     <string name="r_w_neutral" formatted="false">neutra</string>

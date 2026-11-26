@@ -269,6 +269,7 @@ fun GoldScreen(vm: MainViewModel, lang: Lang, onLanguage: (Lang) -> Unit) {
 private sealed interface Sheet {
     data class LevelSheet(val level: Level, val isSupport: Boolean) : Sheet
     data object LevelsAll : Sheet
+    data class NoteSheet(val text: String) : Sheet
     data object Probabilities : Sheet
     data object TradeSheet : Sheet
     data object RadarSheet : Sheet
@@ -315,7 +316,7 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
     }.watermark(LocalWatermark.current).safeDrawingPadding()) {
         // Compact layout on short screens: secondary details are dropped instead of shrinking the text.
         val compact = maxHeight < 700.dp
-        val gap = if (compact) 6.dp else 8.dp
+        val gap = if (compact) 6.dp else 9.dp
         // One screen, no scrolling: everything secondary opens from the three tiles at the bottom.
         Column(
             Modifier.fillMaxSize().padding(horizontal = 12.dp, vertical = 6.dp),
@@ -337,10 +338,10 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
                     haptic.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.LongPress)
                     sheet = Sheet.WhatSheet
                 }
-                FrameDivergence(d)
+                val fd = frameDivergenceText(d)
+                H2Divergence(fd) { fd?.let { sheet = Sheet.NoteSheet(it) } }
                 val x = h2View(card, s, d)
-                H2TrendBar(x) { sheet = Sheet.Details }
-                H2ScenarioPair(x)
+                H2ScenarioPair(x) { sheet = Sheet.Details }
                 H2LevelsCard(x, s, Modifier.fillMaxWidth().weight(1f).heightIn(min = 96.dp)) {
                     if (s.candles["${s.asset}/H1"] == null) onBars(s.asset, "H1")
                     sheet = Sheet.LevelsAll
@@ -349,7 +350,6 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
                 val radar = when {
                     st == null -> stringResource(R.string.h2_radar_none)
                     st.qualified.isNotEmpty() -> stringResource(R.string.rd_tile_q, st.qualified.size)
-                    st.forming.isNotEmpty() -> stringResource(R.string.rd_tile_f, st.forming.size)
                     else -> stringResource(R.string.h2_radar_none)
                 }
                 H2Bottom(s, radar, onRadar = { sheet = Sheet.RadarSheet }, onRecord = { sheet = Sheet.TrustSheet })
@@ -403,6 +403,9 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
             } else onAlertAsset(s.asset)
         }) { sheet = null }
         Sheet.CalendarSheet -> CalendarDialog(s.calendar) { sheet = null }
+        is Sheet.NoteSheet -> DialogFrame("⚠", { sheet = null }) {
+            Text(sh.text, color = TextMain, fontSize = 15.sp, lineHeight = 22.sp)
+        }
         Sheet.LevelsAll -> if (d != null && card != null) LevelsSheet(h2View(card, s, d), s, s.live[s.asset]?.price ?: d.quote,
             onBell, onLevel = { l, sup -> sheet = Sheet.LevelSheet(l, sup) }) { sheet = null }
         null -> Unit
@@ -2593,6 +2596,13 @@ internal fun FrameDivergence(d: Decision) {
     Text(stringResource(if (h > 0) R.string.fd_up_down else R.string.fd_down_up), color = Color(0xFFF0B45A), fontSize = 12.sp,
         lineHeight = 17.sp, modifier = Modifier.fillMaxWidth().background(Color(0xFF1D1708), RoundedCornerShape(10.dp))
             .border(1.dp, Color(0xFF6B5A22), RoundedCornerShape(10.dp)).padding(horizontal = 10.dp, vertical = 6.dp))
+}
+
+@Composable
+internal fun frameDivergenceText(d: Decision): String? {
+    val h = frameLean(d, "HOURS"); val w = frameLean(d, "WEEK")
+    if (h == 0 || w == 0 || h == w) return null
+    return stringResource(if (h > 0) R.string.fd_up_down else R.string.fd_down_up)
 }
 
 /** No validated evidence for a side: the beginner screen still marks the side the trend points to (owner, 2026-11-22). */

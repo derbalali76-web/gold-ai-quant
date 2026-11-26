@@ -1137,5 +1137,8 @@ UI = {
 "h2_sup": ("Support", "دعم", "Support", "Soporte", "Suporte"),
 "h2_alert": ("Alert me", "نبّهني", "M'alerter", "Avísame", "Avise-me"),
 "h2_alert_on": ("On", "مفعّل", "Activé", "Activado", "Ativado"),
-"h2_radar_none": ("No qualified opportunity now", "لا توجد فرصة مؤهلة الآن", "Aucune opportunité qualifiée", "Ninguna oportunidad calificada", "Nenhuma oportunidade qualificada"),
+"h2_radar_none": ("None qualified now", "لا فرصة مؤهلة الآن", "Aucune qualifiée", "Ninguna calificada", "Nenhuma qualificada"),
+"h2_badge_trend": ("trend", "الاتجاه", "tendance", "tendencia", "tendência"),
+"h2_badge_likely": ("likely", "المرجّح", "probable", "probable", "provável"),
+"h2_frames_differ": ("Hours and week disagree · tap", "الساعات والأسبوع مختلفان · اضغط", "Heures et semaine divergent · touchez", "Horas y semana difieren · toca", "Horas e semana divergem · toque"),
 }
