@@ -937,6 +937,10 @@
     <string name="sa_rec_few">Registro público de esta idea: %1$d resultados de los 30 necesarios.</string>
     <string name="sa_rec">Registro público: mejor que la alternativa en el %1$d %% de %2$d casos, media %3$s puntos tras comisiones.</string>
     <string name="w_event">Evento importante cerca</string>
+    <string name="ia_withdrawn_buy">Ya no es una nueva oportunidad de compra (tendencia más débil). Si compraste: mantén, vende cerca de %1$s; la idea se anula bajo %2$s.</string>
+    <string name="ia_withdrawn_sell">Ya no es una nueva oportunidad de venta. Si vendiste: espera recomprar cerca de %1$s; la idea se anula sobre %2$s.</string>
+    <string name="sa_hint_bought">Si compraste con el «comprar ahora» anterior, ya lo tienes: elige «Lo tengo» para ver cuándo vender y dónde se anula la idea.</string>
+    <string name="sa_hint_sold">Si vendiste con el «vender ahora» anterior, tienes liquidez: elige «Tengo liquidez» para ver dónde recomprar.</string>
     <string name="r_w_up" formatted="false">alcista</string>
     <string name="r_w_down" formatted="false">bajista</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

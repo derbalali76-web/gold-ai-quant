@@ -937,6 +937,10 @@
     <string name="sa_rec_few">السجل العام لهذه الفكرة: %1$d نتيجة من 30 لازمة للحكم.</string>
     <string name="sa_rec">السجل العام: أفضل من البديل في %1$d%% من %2$d حالة، بمتوسط %3$s نقطة بعد العمولات.</string>
     <string name="w_event">حدث كبير قريب</string>
+    <string name="ia_withdrawn_buy">لم تعد فرصة شراء جديدة (ضعف الاتجاه). إن اشتريت: احتفظ وبِع قرب %1$s، وتُلغى الفكرة تحت %2$s.</string>
+    <string name="ia_withdrawn_sell">لم تعد فرصة بيع جديدة. إن بعت: انتظر إعادة الشراء قرب %1$s، وتُلغى الفكرة فوق %2$s.</string>
+    <string name="sa_hint_bought">إن اشتريت عند «اشترِ الآن» السابقة فأنت تملك الأصل الآن: اختر «أملك أصلاً» لترى متى تبيع وأين تُلغى الفكرة.</string>
+    <string name="sa_hint_sold">إن بعت عند «بِع الآن» السابقة فأنت تملك سيولة الآن: اختر «أملك سيولة» لترى أين تعيد الشراء.</string>
     <string name="r_w_up" formatted="false">صاعد</string>
     <string name="r_w_down" formatted="false">هابط</string>
     <string name="r_w_neutral" formatted="false">محايد</string>

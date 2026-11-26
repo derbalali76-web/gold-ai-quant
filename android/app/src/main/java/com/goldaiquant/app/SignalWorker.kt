@@ -131,6 +131,9 @@ class SignalWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx
                 if (parts.isEmpty()) return
                 ctx.getString(R.string.ia_upd_head) + "\n" + parts.joinToString("\n")
             }
+            IdeaAlerts.Msg.WITHDRAWN -> if (a.kind == SimpleAdvice.Kind.SELL_REBUY)
+                ctx.getString(R.string.ia_withdrawn_sell, p(a.buyAt), p(a.stop))
+                else ctx.getString(R.string.ia_withdrawn_buy, p(a.sellAt), p(a.stop))
             IdeaAlerts.Msg.TARGET -> if (a.kind == SimpleAdvice.Kind.SELL_REBUY) ctx.getString(R.string.ia_tgt_rebuy, p(a.buyAt))
                 else ctx.getString(R.string.ia_tgt, p(a.sellAt))
             IdeaAlerts.Msg.FAILED_STOP -> ctx.getString(R.string.ia_fail_stop, p(a.stop))

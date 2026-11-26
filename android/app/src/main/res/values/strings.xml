@@ -938,6 +938,10 @@
     <string name="sa_rec_few">Public record of this idea: %1$d results of the 30 needed for a verdict.</string>
     <string name="sa_rec">Public record: better than the alternative in %1$d%% of %2$d cases, average %3$s points after fees.</string>
     <string name="w_event">Major event soon</string>
+    <string name="ia_withdrawn_buy">No longer a new buying chance (the trend weakened). If you bought: keep it, sell near %1$s; the idea is cancelled below %2$s.</string>
+    <string name="ia_withdrawn_sell">No longer a new selling chance. If you sold: wait to buy back near %1$s; the idea is cancelled above %2$s.</string>
+    <string name="sa_hint_bought">If you bought on the earlier «buy now», you now hold it: choose «I hold it» to see when to sell and where the idea is cancelled.</string>
+    <string name="sa_hint_sold">If you sold on the earlier «sell now», you now hold cash: choose «I have cash» to see where to buy back.</string>
     <string name="r_w_up" formatted="false">up</string>
     <string name="r_w_down" formatted="false">down</string>
     <string name="r_w_neutral" formatted="false">neutral</string>
