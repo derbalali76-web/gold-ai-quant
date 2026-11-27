@@ -1,0 +1,336 @@
+{
+ "version": "entry-0.1",
+ "S0": {
+  "dev|all": {
+   "signals": 2280,
+   "entries": 2280,
+   "mean_net_per_signal": -0.147,
+   "mean_net_per_entry": -0.147,
+   "stuck_share": 0.016,
+   "total": -334.7
+  },
+  "dev|XAU": {
+   "signals": 430,
+   "entries": 430,
+   "mean_net_per_signal": 0.239,
+   "mean_net_per_entry": 0.239,
+   "stuck_share": 0.007,
+   "total": 102.6
+  },
+  "dev|BTC": {
+   "signals": 642,
+   "entries": 642,
+   "mean_net_per_signal": -0.334,
+   "mean_net_per_entry": -0.334,
+   "stuck_share": 0.026,
+   "total": -214.3
+  },
+  "dev|ETH": {
+   "signals": 621,
+   "entries": 621,
+   "mean_net_per_signal": -0.178,
+   "mean_net_per_entry": -0.178,
+   "stuck_share": 0.014,
+   "total": -110.6
+  },
+  "dev|SOL": {
+   "signals": 587,
+   "entries": 587,
+   "mean_net_per_signal": -0.191,
+   "mean_net_per_entry": -0.191,
+   "stuck_share": 0.012,
+   "total": -112.4
+  },
+  "holdout|all": {
+   "signals": 591,
+   "entries": 591,
+   "mean_net_per_signal": -0.702,
+   "mean_net_per_entry": -0.702,
+   "stuck_share": 0.012,
+   "total": -414.8
+  },
+  "holdout|XAU": {
+   "signals": 102,
+   "entries": 102,
+   "mean_net_per_signal": -0.258,
+   "mean_net_per_entry": -0.258,
+   "stuck_share": 0.029,
+   "total": -26.3
+  },
+  "holdout|BTC": {
+   "signals": 185,
+   "entries": 185,
+   "mean_net_per_signal": -1.466,
+   "mean_net_per_entry": -1.466,
+   "stuck_share": 0.011,
+   "total": -271.3
+  },
+  "holdout|ETH": {
+   "signals": 125,
+   "entries": 125,
+   "mean_net_per_signal": -0.645,
+   "mean_net_per_entry": -0.645,
+   "stuck_share": 0.008,
+   "total": -80.6
+  },
+  "holdout|SOL": {
+   "signals": 179,
+   "entries": 179,
+   "mean_net_per_signal": -0.205,
+   "mean_net_per_entry": -0.205,
+   "stuck_share": 0.006,
+   "total": -36.7
+  }
+ },
+ "L04": {
+  "dev|all": {
+   "signals": 2280,
+   "entries": 1915,
+   "mean_net_per_signal": -0.127,
+   "mean_net_per_entry": -0.152,
+   "stuck_share": 0.015,
+   "total": -290.6
+  },
+  "dev|XAU": {
+   "signals": 430,
+   "entries": 275,
+   "mean_net_per_signal": 0.108,
+   "mean_net_per_entry": 0.169,
+   "stuck_share": 0.011,
+   "total": 46.4
+  },
+  "dev|BTC": {
+   "signals": 642,
+   "entries": 538,
+   "mean_net_per_signal": -0.111,
+   "mean_net_per_entry": -0.133,
+   "stuck_share": 0.019,
+   "total": -71.4
+  },
+  "dev|ETH": {
+   "signals": 621,
+   "entries": 552,
+   "mean_net_per_signal": -0.29,
+   "mean_net_per_entry": -0.327,
+   "stuck_share": 0.018,
+   "total": -180.3
+  },
+  "dev|SOL": {
+   "signals": 587,
+   "entries": 550,
+   "mean_net_per_signal": -0.145,
+   "mean_net_per_entry": -0.155,
+   "stuck_share": 0.011,
+   "total": -85.3
+  },
+  "holdout|all": {
+   "signals": 591,
+   "entries": 492,
+   "mean_net_per_signal": -0.691,
+   "mean_net_per_entry": -0.83,
+   "stuck_share": 0.01,
+   "total": -408.4
+  },
+  "holdout|XAU": {
+   "signals": 102,
+   "entries": 82,
+   "mean_net_per_signal": -0.244,
+   "mean_net_per_entry": -0.304,
+   "stuck_share": 0.024,
+   "total": -24.9
+  },
+  "holdout|BTC": {
+   "signals": 185,
+   "entries": 144,
+   "mean_net_per_signal": -1.65,
+   "mean_net_per_entry": -2.119,
+   "stuck_share": 0.014,
+   "total": -305.2
+  },
+  "holdout|ETH": {
+   "signals": 125,
+   "entries": 108,
+   "mean_net_per_signal": -0.365,
+   "mean_net_per_entry": -0.422,
+   "stuck_share": 0.0,
+   "total": -45.6
+  },
+  "holdout|SOL": {
+   "signals": 179,
+   "entries": 158,
+   "mean_net_per_signal": -0.183,
+   "mean_net_per_entry": -0.207,
+   "stuck_share": 0.006,
+   "total": -32.7
+  },
+  "verdict_better": true
+ },
+ "D2": {
+  "dev|all": {
+   "signals": 2280,
+   "entries": 2280,
+   "mean_net_per_signal": -0.117,
+   "mean_net_per_entry": -0.117,
+   "stuck_share": 0.011,
+   "total": -267.8
+  },
+  "dev|XAU": {
+   "signals": 430,
+   "entries": 430,
+   "mean_net_per_signal": 0.106,
+   "mean_net_per_entry": 0.106,
+   "stuck_share": 0.007,
+   "total": 45.6
+  },
+  "dev|BTC": {
+   "signals": 642,
+   "entries": 642,
+   "mean_net_per_signal": -0.253,
+   "mean_net_per_entry": -0.253,
+   "stuck_share": 0.019,
+   "total": -162.2
+  },
+  "dev|ETH": {
+   "signals": 621,
+   "entries": 621,
+   "mean_net_per_signal": -0.012,
+   "mean_net_per_entry": -0.012,
+   "stuck_share": 0.006,
+   "total": -7.7
+  },
+  "dev|SOL": {
+   "signals": 587,
+   "entries": 587,
+   "mean_net_per_signal": -0.244,
+   "mean_net_per_entry": -0.244,
+   "stuck_share": 0.01,
+   "total": -143.5
+  },
+  "holdout|all": {
+   "signals": 591,
+   "entries": 591,
+   "mean_net_per_signal": -0.483,
+   "mean_net_per_entry": -0.483,
+   "stuck_share": 0.005,
+   "total": -285.5
+  },
+  "holdout|XAU": {
+   "signals": 102,
+   "entries": 102,
+   "mean_net_per_signal": -0.164,
+   "mean_net_per_entry": -0.164,
+   "stuck_share": 0.02,
+   "total": -16.7
+  },
+  "holdout|BTC": {
+   "signals": 185,
+   "entries": 185,
+   "mean_net_per_signal": -1.044,
+   "mean_net_per_entry": -1.044,
+   "stuck_share": 0.0,
+   "total": -193.2
+  },
+  "holdout|ETH": {
+   "signals": 125,
+   "entries": 125,
+   "mean_net_per_signal": -0.455,
+   "mean_net_per_entry": -0.455,
+   "stuck_share": 0.0,
+   "total": -56.9
+  },
+  "holdout|SOL": {
+   "signals": 179,
+   "entries": 179,
+   "mean_net_per_signal": -0.105,
+   "mean_net_per_entry": -0.105,
+   "stuck_share": 0.006,
+   "total": -18.8
+  },
+  "dev|per_dollar_invested": -0.177,
+  "holdout|per_dollar_invested": -0.726,
+  "verdict_better": true
+ },
+ "TB": {
+  "dev|all": {
+   "signals": 2280,
+   "entries": 1440,
+   "mean_net_per_signal": -0.038,
+   "mean_net_per_entry": -0.06,
+   "stuck_share": 0.014,
+   "total": -87.0
+  },
+  "dev|XAU": {
+   "signals": 430,
+   "entries": 430,
+   "mean_net_per_signal": 0.239,
+   "mean_net_per_entry": 0.239,
+   "stuck_share": 0.007,
+   "total": 102.6
+  },
+  "dev|BTC": {
+   "signals": 642,
+   "entries": 325,
+   "mean_net_per_signal": -0.187,
+   "mean_net_per_entry": -0.369,
+   "stuck_share": 0.028,
+   "total": -120.0
+  },
+  "dev|ETH": {
+   "signals": 621,
+   "entries": 353,
+   "mean_net_per_signal": -0.082,
+   "mean_net_per_entry": -0.144,
+   "stuck_share": 0.014,
+   "total": -50.9
+  },
+  "dev|SOL": {
+   "signals": 587,
+   "entries": 332,
+   "mean_net_per_signal": -0.032,
+   "mean_net_per_entry": -0.056,
+   "stuck_share": 0.009,
+   "total": -18.7
+  },
+  "holdout|all": {
+   "signals": 591,
+   "entries": 422,
+   "mean_net_per_signal": -0.236,
+   "mean_net_per_entry": -0.33,
+   "stuck_share": 0.009,
+   "total": -139.3
+  },
+  "holdout|XAU": {
+   "signals": 102,
+   "entries": 102,
+   "mean_net_per_signal": -0.258,
+   "mean_net_per_entry": -0.258,
+   "stuck_share": 0.029,
+   "total": -26.3
+  },
+  "holdout|BTC": {
+   "signals": 185,
+   "entries": 115,
+   "mean_net_per_signal": -0.776,
+   "mean_net_per_entry": -1.248,
+   "stuck_share": 0.009,
+   "total": -143.5
+  },
+  "holdout|ETH": {
+   "signals": 125,
+   "entries": 87,
+   "mean_net_per_signal": 0.348,
+   "mean_net_per_entry": 0.5,
+   "stuck_share": 0.0,
+   "total": 43.5
+  },
+  "holdout|SOL": {
+   "signals": 179,
+   "entries": 118,
+   "mean_net_per_signal": -0.073,
+   "mean_net_per_entry": -0.111,
+   "stuck_share": 0.0,
+   "total": -13.0
+  },
+  "verdict_better": true
+ }
+}

@@ -18,3 +18,11 @@ Reported per variant, period and asset: signals, entries, mean net per signal (n
 stuck share (open > 30 days), total.
 Verdict: a variant is BETTER than S0 when its mean net per signal is higher in BOTH periods (all assets together)
 and its stuck share is not higher in either. Only a BETTER variant may reach the app.
+
+## Note added after the first run (2026-11-27), not a change of the rule
+The pre-registered verdict (mean net per signal, no trade = 0) marks L04, D2 and TB as BETTER. But while S0 loses on
+average, any variant that trades less looks better per signal. Looking at the money actually used:
+- L04 per entry: dev −0.152 % (S0 −0.147), holdout −0.830 % (S0 −0.702) → worse per trade.
+- D2 per dollar invested: dev −0.177 %, holdout −0.726 % → worse; its gain came only from investing half the time.
+- TB per entry: dev −0.060 %, holdout −0.330 % → better per trade in both periods (it selects better trades).
+So only TB improves the quality of an entry. None makes the method profitable.
