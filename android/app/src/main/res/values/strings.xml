@@ -942,6 +942,37 @@
     <string name="ia_withdrawn_sell">No longer a new selling chance. If you sold: wait to buy back near %1$s; the idea is cancelled above %2$s.</string>
     <string name="sa_hint_bought">If you bought on the earlier «buy now», you now hold it: choose «I hold it» to see when to sell and where the idea is cancelled.</string>
     <string name="sa_hint_sold">If you sold on the earlier «sell now», you now hold cash: choose «I have cash» to see where to buy back.</string>
+    <string name="j_title">My trades</string>
+    <string name="j_tile">My trades</string>
+    <string name="j_tile_sub">%1$d open</string>
+    <string name="j_realized">Closed: %1$d (won %2$d)</string>
+    <string name="j_open">Open: %1$d · money locked</string>
+    <string name="j_unrealized">Open trades if sold now</string>
+    <string name="j_stuck">%1$d buys open for more than %2$d days.</string>
+    <string name="j_costs">Costs: digital %1$s for buy + sell, gold %2$s per trade (tap to change)</string>
+    <string name="j_costs_title">Your costs</string>
+    <string name="j_cost_crypto">Digital assets: % for buy + sell together</string>
+    <string name="j_cost_gold">Gold: dollars per trade for buy + sell together</string>
+    <string name="j_add">Add a buy</string>
+    <string name="j_amount">Amount in dollars</string>
+    <string name="j_buy_price">Buy price</string>
+    <string name="j_sell_price">Sell price</string>
+    <string name="j_sell">Sell</string>
+    <string name="j_save">Save</string>
+    <string name="j_delete">Delete</string>
+    <string name="j_result">Net result: %1$s</string>
+    <string name="j_target">Your target %1$s · open %2$d days</string>
+    <string name="j_now">now %1$s</string>
+    <string name="j_open_list">Open</string>
+    <string name="j_closed_list">Closed</string>
+    <string name="j_empty">No trade yet. Add each real buy here to see your true result after costs.</string>
+    <string name="j_private">Kept only on this phone; nothing is sent.</string>
+    <string name="j_auto_on">Record buy-now opportunities automatically</string>
+    <string name="j_auto_amount">Test amount per buy (dollars, digital assets)</string>
+    <string name="j_auto_note">🤖 Automatic: each «buy now» of a followed asset is recorded as a test buy of %1$s (gold: 1 ounce) and sold at +0.65 %% / +15 $, with a notification. Not real money: it shows what following the app gives.</string>
+    <string name="j_auto_off_note">Automatic test buys are off (%1$s). Tap to turn them on.</string>
+    <string name="j_auto_sold_title">%1$s: target reached, time to sell</string>
+    <string name="j_auto_sold">The price is %1$s (bought at %2$s). Test trade closed: %3$s $ after costs.</string>
     <string name="r_w_up" formatted="false">up</string>
     <string name="r_w_down" formatted="false">down</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

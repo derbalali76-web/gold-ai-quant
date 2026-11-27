@@ -21,6 +21,16 @@ import java.util.concurrent.TimeUnit
  *  did not receive from the server. */
 class SignalWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx, params) {
     override suspend fun doWork(): Result {
+        val r = work()
+        val p = applicationContext.getSharedPreferences("gold_ai_quant", Context.MODE_PRIVATE)
+        if (p.getBoolean("push_dirty", false)) {
+            p.edit().putBoolean("push_dirty", false).apply()
+            try { Push.sync(applicationContext) } catch (e: Exception) { }
+        }
+        return r
+    }
+
+    private suspend fun work(): Result {
         val prefs = applicationContext.getSharedPreferences("gold_ai_quant", Context.MODE_PRIVATE)
         if (prefs.getBoolean("te_notify", false)) try { checkTrade(prefs) } catch (e: Exception) { }
         if (!prefs.getBoolean("notify", false)) return Result.success()
@@ -96,6 +106,12 @@ class SignalWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx
         val st = IdeaAlerts.step(IdeaAlerts.decode(prefs.getString(key, null)), prefs.getLong(ck, 0L), n, price,
             System.currentTimeMillis())
         prefs.edit().putString(key, IdeaAlerts.encode(st.state)).putLong(ck, st.coolUntil).apply()
+        // automatic test trades (owner 2026-11-27): sell those that reached the target, record a new buy-now
+        Journal.closeReached(prefs, asset, price).forEach { t ->
+            AutoSell.notify(applicationContext, t); prefs.edit().putBoolean("push_dirty", true).apply()
+        }
+        if (st.msg == IdeaAlerts.Msg.NEW && st.idea?.kind == SimpleAdvice.Kind.BUY_NOW && !hold &&
+            Journal.addAuto(prefs, asset, price) != null) prefs.edit().putBoolean("push_dirty", true).apply()
         val m = st.msg ?: return
         val a = st.idea ?: return
         val ctx = LanguageStore.wrap(applicationContext, LanguageStore.resolve(applicationContext))
@@ -310,7 +326,7 @@ class SignalWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx
 }
 
 /** On a locked screen, show only "AI QUANT — new alert", never the analysis text (the user unlocks to read it). */
-private fun NotificationCompat.Builder.private(ctx: android.content.Context): NotificationCompat.Builder =
+internal fun NotificationCompat.Builder.private(ctx: android.content.Context): NotificationCompat.Builder =
     setVisibility(NotificationCompat.VISIBILITY_PRIVATE).setPublicVersion(
         NotificationCompat.Builder(ctx, "signals").setSmallIcon(android.R.drawable.stat_notify_more)
             .setContentTitle("AI QUANT").setContentText(ctx.getString(R.string.notif_locked)).build())

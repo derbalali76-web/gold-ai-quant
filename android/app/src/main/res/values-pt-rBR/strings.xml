@@ -941,6 +941,37 @@
     <string name="ia_withdrawn_sell">Não é mais uma nova chance de venda. Se vendeu: espere recomprar perto de %1$s; a ideia é cancelada acima de %2$s.</string>
     <string name="sa_hint_bought">Se comprou no «comprar agora» anterior, você já tem: escolha «Eu tenho» para ver quando vender e onde a ideia é cancelada.</string>
     <string name="sa_hint_sold">Se vendeu no «vender agora» anterior, você tem dinheiro: escolha «Tenho dinheiro» para ver onde recomprar.</string>
+    <string name="j_title">Minhas operações</string>
+    <string name="j_tile">Meus trades</string>
+    <string name="j_tile_sub">%1$d abertas</string>
+    <string name="j_realized">Fechadas: %1$d (vencedoras %2$d)</string>
+    <string name="j_open">Abertas: %1$d · dinheiro preso</string>
+    <string name="j_unrealized">Abertas se vender agora</string>
+    <string name="j_stuck">%1$d compras abertas há mais de %2$d dias.</string>
+    <string name="j_costs">Custos: cripto %1$s compra + venda, ouro %2$s por operação (toque para mudar)</string>
+    <string name="j_costs_title">Seus custos</string>
+    <string name="j_cost_crypto">Cripto: % compra + venda</string>
+    <string name="j_cost_gold">Ouro: dólares por operação compra + venda</string>
+    <string name="j_add">Adicionar compra</string>
+    <string name="j_amount">Valor em dólares</string>
+    <string name="j_buy_price">Preço de compra</string>
+    <string name="j_sell_price">Preço de venda</string>
+    <string name="j_sell">Vender</string>
+    <string name="j_save">Salvar</string>
+    <string name="j_delete">Excluir</string>
+    <string name="j_result">Resultado líquido: %1$s</string>
+    <string name="j_target">Seu alvo %1$s · aberta há %2$d dias</string>
+    <string name="j_now">agora %1$s</string>
+    <string name="j_open_list">Abertas</string>
+    <string name="j_closed_list">Fechadas</string>
+    <string name="j_empty">Nenhuma operação. Adicione cada compra real para ver seu resultado real após custos.</string>
+    <string name="j_private">Somente neste telefone; nada é enviado.</string>
+    <string name="j_auto_on">Registrar oportunidades automaticamente</string>
+    <string name="j_auto_amount">Valor de teste por compra (dólares, cripto)</string>
+    <string name="j_auto_note">🤖 Automático: cada «comprar agora» de um ativo seguido vira compra de teste de %1$s (ouro: 1 onça), vendida a +0,65 %% / +15 $, com aviso. Não é dinheiro real.</string>
+    <string name="j_auto_off_note">Compras de teste automáticas desligadas (%1$s). Toque para ligar.</string>
+    <string name="j_auto_sold_title">%1$s: alvo atingido, hora de vender</string>
+    <string name="j_auto_sold">O preço é %1$s (compra a %2$s). Teste fechado: %3$s $ após custos.</string>
     <string name="r_w_up" formatted="false">de alta</string>
     <string name="r_w_down" formatted="false">de baixa</string>
     <string name="r_w_neutral" formatted="false">neutra</string>

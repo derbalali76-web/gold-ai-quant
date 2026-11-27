@@ -267,6 +267,12 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         if (a == "XAU") return
         val p = MarketClient.livePrice(a) ?: return
         _state.update { it.copy(live = it.live + (a to LiveTick(p, System.currentTimeMillis()))) }
+        // automatic test buys: sell at once while the app is open (owner 2026-11-27: «لحظياً»)
+        try {
+            val closed = Journal.closeReached(prefs, a, p)
+            closed.forEach { AutoSell.notify(getApplication(), it) }
+            if (closed.isNotEmpty()) viewModelScope.launch { try { Push.sync(getApplication()) } catch (e: Exception) { } }
+        } catch (e: Exception) { }
     }
 
     /** Keep the server's copy of this phone's alerts current (Firebase push); silent, best effort. */

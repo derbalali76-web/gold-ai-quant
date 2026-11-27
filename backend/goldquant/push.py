@@ -52,14 +52,44 @@ def zone_update(d) -> Optional[dict]:
     return None
 
 
+
+BINANCE_DATA = "https://data-api.binance.vision/api/v3/klines"
+SYMBOLS = {"BTC": "BTCUSDT", "ETH": "ETHUSDT", "SOL": "SOLUSDT"}
+
+
+def recent_extremes(asset: str, since: float, now: float, fetch=None):
+    """(highest, lowest) price of 1-minute bars from `since` to `now` (max 3 h), or (None, None). Never raises."""
+    sym = SYMBOLS.get(asset)
+    if sym is None:
+        return None, None
+    since = max(since, now - 3 * 3600)
+    try:
+        if fetch is None:
+            import httpx
+            r = httpx.get(BINANCE_DATA, params={"symbol": sym, "interval": "1m", "startTime": int(since * 1000),
+                                                "limit": 200}, timeout=8.0)
+            r.raise_for_status()
+            rows = r.json()
+        else:
+            rows = fetch(sym, since)
+        if not rows:
+            return None, None
+        return max(float(k[2]) for k in rows), min(float(k[3]) for k in rows)
+    except Exception:  # noqa: BLE001
+        return None, None
+
 class PushService:
-    def __init__(self, data_dir: Path, creds_json: Optional[str] = None, sender: Optional[Callable] = None):
+    def __init__(self, data_dir: Path, creds_json: Optional[str] = None, sender: Optional[Callable] = None,
+                 extremes: Optional[Callable] = None):
         self.db_path = Path(data_dir) / "push.sqlite"
         self._lock = threading.Lock()
         self._creds = None
         self.project_id = None
         self.error: Optional[str] = None
         self.last_tick: Optional[float] = None
+        self.prev_tick: Optional[float] = None
+        # tests inject a sender: then no network unless they also inject extremes
+        self.extremes = extremes or (recent_extremes if sender is None else (lambda a, since, now: (None, None)))
         self.last_sent = 0
         self._sender = sender  # tests inject a fake sender
         raw = creds_json if creds_json is not None else os.getenv("FIREBASE_CREDENTIALS")
@@ -164,6 +194,12 @@ class PushService:
                 decisions[a] = get_decision(a)
             except Exception as exc:  # noqa: BLE001
                 log.warning("push tick: decision %s failed (%s)", a, type(exc).__name__)
+        # highest / lowest price since the previous check (crypto 1-minute bars), so a short spike that touched an
+        # alert between two checks still counts (owner 2026-11-27: test buys sold at their target within minutes)
+        since = self.prev_tick or (now - 600)
+        self.prev_tick = now
+        alert_assets = {al["asset"] for d in devs for al in d["alerts"]}
+        ext = {a: self.extremes(a, since, now) for a in alert_assets if a in ("BTC", "ETH", "SOL")}
         sent = 0
         day = time.strftime("%Y-%m-%d", time.gmtime(now))
         with self._lock, self._db() as c:
@@ -175,7 +211,8 @@ class PushService:
                     q = getattr(d, "quote", None) if d is not None else None
                     if q is None or getattr(d, "market_closed", False):
                         continue
-                    hit = q >= al["price"] if al["dir"] == "ABOVE" else q <= al["price"]
+                    hi, lo = ext.get(al["asset"]) or (None, None)
+                    hit = (max(q, hi or q) >= al["price"]) if al["dir"] == "ABOVE" else (min(q, lo or q) <= al["price"])
                     key = "price|" + (al.get("key") or f"{al['asset']}|{al['dir']}|{al['price']}")
                     if hit and not self._seen(c, tok, key):
                         msgs.append((key, {"type": "price", "asset": al["asset"], "level": al["price"],

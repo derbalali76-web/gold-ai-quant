@@ -17,10 +17,16 @@ object Push {
         return System.currentTimeMillis() - p.getLong(OK_AT, 0L) < FRESH_MS
     }
 
-    fun body(token: String, assets: Set<String>, alerts: List<PriceAlert>, lang: String): String =
+    /** [trades]: open automatic test buys; their targets go to the server as alerts keyed «jt|id», so the server
+     *  (which also looks at the highest price since its last check) can say «time to sell» within minutes. */
+    fun body(token: String, assets: Set<String>, alerts: List<PriceAlert>, lang: String,
+             trades: List<Journal.Trade> = emptyList()): String =
         JSONObject().put("token", token).put("lang", lang).put("assets", JSONArray(assets.toList()))
             .put("alerts", JSONArray(alerts.map {
                 JSONObject().put("asset", it.asset).put("dir", it.dir).put("price", it.price).put("label", it.label).put("key", it.key)
+            } + trades.takeLast(20).map {
+                JSONObject().put("asset", it.asset).put("dir", "ABOVE").put("price", Journal.target(it)).put("label", "jt")
+                    .put("key", "jt|" + it.id)
             })).toString()
 
     suspend fun sync(ctx: Context, fcmToken: String? = null) = withContext(Dispatchers.IO) {
@@ -36,7 +42,8 @@ object Push {
             p.edit().remove(OK_AT).apply()
             return@withContext
         }
-        val ok = api.pushRegister(body(tok, SignalWorker.alertAssets(p), PriceAlerts.load(p), lang))
+        val ok = api.pushRegister(body(tok, SignalWorker.alertAssets(p) + Journal.load(p).filter { it.auto && it.open }.map { it.asset },
+            PriceAlerts.load(p), lang, Journal.load(p).filter { it.auto && it.open }))
         if (ok) p.edit().putLong(OK_AT, System.currentTimeMillis()).apply() else p.edit().remove(OK_AT).apply()
     }
 }
