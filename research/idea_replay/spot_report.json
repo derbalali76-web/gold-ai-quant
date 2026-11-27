@@ -1,0 +1,405 @@
+{
+ "version": "spot-hold-0.1",
+ "variants": {
+  "S0": {
+   "dev": {
+    "all": {
+     "buys": 2280,
+     "closed_share": 0.975,
+     "median_hours_to_close": 5.0,
+     "mean_net_pct": -0.147,
+     "stuck_share": 0.016,
+     "worst_open_pct": -64.2,
+     "total_net_pct": -334.7
+    },
+    "XAU": {
+     "buys": 430,
+     "closed_share": 0.991,
+     "median_hours_to_close": 9.0,
+     "mean_net_pct": 0.239,
+     "stuck_share": 0.007,
+     "worst_open_pct": -16.6,
+     "total_net_pct": 102.6
+    },
+    "BTC": {
+     "buys": 642,
+     "closed_share": 0.967,
+     "median_hours_to_close": 7.0,
+     "mean_net_pct": -0.334,
+     "stuck_share": 0.026,
+     "worst_open_pct": -41.4,
+     "total_net_pct": -214.3
+    },
+    "ETH": {
+     "buys": 621,
+     "closed_share": 0.976,
+     "median_hours_to_close": 3.5,
+     "mean_net_pct": -0.178,
+     "stuck_share": 0.014,
+     "worst_open_pct": -52.8,
+     "total_net_pct": -110.6
+    },
+    "SOL": {
+     "buys": 587,
+     "closed_share": 0.973,
+     "median_hours_to_close": 3.0,
+     "mean_net_pct": -0.191,
+     "stuck_share": 0.012,
+     "worst_open_pct": -64.2,
+     "total_net_pct": -112.4
+    }
+   },
+   "holdout": {
+    "all": {
+     "buys": 591,
+     "closed_share": 0.956,
+     "median_hours_to_close": 6.0,
+     "mean_net_pct": -0.702,
+     "stuck_share": 0.012,
+     "worst_open_pct": -44.6,
+     "total_net_pct": -414.8
+    },
+    "XAU": {
+     "buys": 102,
+     "closed_share": 0.971,
+     "median_hours_to_close": 6.0,
+     "mean_net_pct": -0.258,
+     "stuck_share": 0.029,
+     "worst_open_pct": -19.6,
+     "total_net_pct": -26.3
+    },
+    "BTC": {
+     "buys": 185,
+     "closed_share": 0.924,
+     "median_hours_to_close": 9.0,
+     "mean_net_pct": -1.466,
+     "stuck_share": 0.011,
+     "worst_open_pct": -32.0,
+     "total_net_pct": -271.3
+    },
+    "ETH": {
+     "buys": 125,
+     "closed_share": 0.968,
+     "median_hours_to_close": 6.0,
+     "mean_net_pct": -0.645,
+     "stuck_share": 0.008,
+     "worst_open_pct": -41.7,
+     "total_net_pct": -80.6
+    },
+    "SOL": {
+     "buys": 179,
+     "closed_share": 0.972,
+     "median_hours_to_close": 5.0,
+     "mean_net_pct": -0.205,
+     "stuck_share": 0.006,
+     "worst_open_pct": -44.6,
+     "total_net_pct": -36.7
+    }
+   },
+   "verdict": {
+    "better_than_S0": false,
+    "profitable": false
+   }
+  },
+  "F1": {
+   "dev": {
+    "all": {
+     "buys": 1243,
+     "closed_share": 0.98,
+     "median_hours_to_close": 6.0,
+     "mean_net_pct": -0.046,
+     "stuck_share": 0.014,
+     "worst_open_pct": -64.2,
+     "total_net_pct": -57.8
+    },
+    "XAU": {
+     "buys": 377,
+     "closed_share": 0.992,
+     "median_hours_to_close": 9.5,
+     "mean_net_pct": 0.237,
+     "stuck_share": 0.008,
+     "worst_open_pct": -16.6,
+     "total_net_pct": 89.2
+    },
+    "BTC": {
+     "buys": 342,
+     "closed_share": 0.959,
+     "median_hours_to_close": 9.0,
+     "mean_net_pct": -0.457,
+     "stuck_share": 0.029,
+     "worst_open_pct": -41.4,
+     "total_net_pct": -156.4
+    },
+    "ETH": {
+     "buys": 303,
+     "closed_share": 0.99,
+     "median_hours_to_close": 4.0,
+     "mean_net_pct": 0.223,
+     "stuck_share": 0.007,
+     "worst_open_pct": -52.3,
+     "total_net_pct": 67.7
+    },
+    "SOL": {
+     "buys": 221,
+     "closed_share": 0.977,
+     "median_hours_to_close": 2.5,
+     "mean_net_pct": -0.264,
+     "stuck_share": 0.009,
+     "worst_open_pct": -64.2,
+     "total_net_pct": -58.3
+    }
+   },
+   "holdout": {
+    "all": {
+     "buys": 318,
+     "closed_share": 0.95,
+     "median_hours_to_close": 6.0,
+     "mean_net_pct": -1.022,
+     "stuck_share": 0.022,
+     "worst_open_pct": -44.6,
+     "total_net_pct": -324.9
+    },
+    "XAU": {
+     "buys": 36,
+     "closed_share": 0.917,
+     "median_hours_to_close": 4.0,
+     "mean_net_pct": -1.293,
+     "stuck_share": 0.083,
+     "worst_open_pct": -19.6,
+     "total_net_pct": -46.5
+    },
+    "BTC": {
+     "buys": 96,
+     "closed_share": 0.917,
+     "median_hours_to_close": 9.0,
+     "mean_net_pct": -1.909,
+     "stuck_share": 0.021,
+     "worst_open_pct": -32.0,
+     "total_net_pct": -183.2
+    },
+    "ETH": {
+     "buys": 69,
+     "closed_share": 0.942,
+     "median_hours_to_close": 9.0,
+     "mean_net_pct": -1.573,
+     "stuck_share": 0.014,
+     "worst_open_pct": -41.7,
+     "total_net_pct": -108.6
+    },
+    "SOL": {
+     "buys": 117,
+     "closed_share": 0.991,
+     "median_hours_to_close": 4.0,
+     "mean_net_pct": 0.115,
+     "stuck_share": 0.009,
+     "worst_open_pct": -44.6,
+     "total_net_pct": 13.4
+    }
+   },
+   "verdict": {
+    "better_than_S0": false,
+    "profitable": false
+   }
+  },
+  "C3": {
+   "dev": {
+    "all": {
+     "buys": 851,
+     "closed_share": 0.986,
+     "median_hours_to_close": 5.0,
+     "mean_net_pct": -0.141,
+     "stuck_share": 0.014,
+     "worst_open_pct": -64.2,
+     "total_net_pct": -120.2
+    },
+    "XAU": {
+     "buys": 247,
+     "closed_share": 0.988,
+     "median_hours_to_close": 9.0,
+     "mean_net_pct": 0.162,
+     "stuck_share": 0.012,
+     "worst_open_pct": -16.6,
+     "total_net_pct": 40.0
+    },
+    "BTC": {
+     "buys": 127,
+     "closed_share": 0.976,
+     "median_hours_to_close": 10.5,
+     "mean_net_pct": -0.483,
+     "stuck_share": 0.024,
+     "worst_open_pct": -41.4,
+     "total_net_pct": -61.4
+    },
+    "ETH": {
+     "buys": 203,
+     "closed_share": 0.985,
+     "median_hours_to_close": 3.0,
+     "mean_net_pct": -0.268,
+     "stuck_share": 0.015,
+     "worst_open_pct": -52.8,
+     "total_net_pct": -54.3
+    },
+    "SOL": {
+     "buys": 274,
+     "closed_share": 0.989,
+     "median_hours_to_close": 2.0,
+     "mean_net_pct": -0.162,
+     "stuck_share": 0.011,
+     "worst_open_pct": -64.2,
+     "total_net_pct": -44.5
+    }
+   },
+   "holdout": {
+    "all": {
+     "buys": 339,
+     "closed_share": 0.965,
+     "median_hours_to_close": 6.0,
+     "mean_net_pct": -0.604,
+     "stuck_share": 0.021,
+     "worst_open_pct": -44.6,
+     "total_net_pct": -204.7
+    },
+    "XAU": {
+     "buys": 29,
+     "closed_share": 0.897,
+     "median_hours_to_close": 6.5,
+     "mean_net_pct": -1.677,
+     "stuck_share": 0.103,
+     "worst_open_pct": -19.6,
+     "total_net_pct": -48.6
+    },
+    "BTC": {
+     "buys": 97,
+     "closed_share": 0.969,
+     "median_hours_to_close": 11.0,
+     "mean_net_pct": -0.462,
+     "stuck_share": 0.021,
+     "worst_open_pct": -32.0,
+     "total_net_pct": -44.9
+    },
+    "ETH": {
+     "buys": 89,
+     "closed_share": 0.966,
+     "median_hours_to_close": 6.0,
+     "mean_net_pct": -0.731,
+     "stuck_share": 0.011,
+     "worst_open_pct": -41.7,
+     "total_net_pct": -65.1
+    },
+    "SOL": {
+     "buys": 124,
+     "closed_share": 0.976,
+     "median_hours_to_close": 4.0,
+     "mean_net_pct": -0.372,
+     "stuck_share": 0.008,
+     "worst_open_pct": -44.6,
+     "total_net_pct": -46.1
+    }
+   },
+   "verdict": {
+    "better_than_S0": false,
+    "profitable": false
+   }
+  },
+  "F1+C3": {
+   "dev": {
+    "all": {
+     "buys": 755,
+     "closed_share": 0.984,
+     "median_hours_to_close": 5.0,
+     "mean_net_pct": -0.08,
+     "stuck_share": 0.013,
+     "worst_open_pct": -64.2,
+     "total_net_pct": -60.7
+    },
+    "XAU": {
+     "buys": 247,
+     "closed_share": 0.988,
+     "median_hours_to_close": 9.0,
+     "mean_net_pct": 0.162,
+     "stuck_share": 0.012,
+     "worst_open_pct": -16.6,
+     "total_net_pct": 40.0
+    },
+    "BTC": {
+     "buys": 120,
+     "closed_share": 0.975,
+     "median_hours_to_close": 10.0,
+     "mean_net_pct": -0.541,
+     "stuck_share": 0.025,
+     "worst_open_pct": -41.4,
+     "total_net_pct": -64.9
+    },
+    "ETH": {
+     "buys": 202,
+     "closed_share": 0.985,
+     "median_hours_to_close": 4.0,
+     "mean_net_pct": 0.085,
+     "stuck_share": 0.01,
+     "worst_open_pct": -52.3,
+     "total_net_pct": 17.2
+    },
+    "SOL": {
+     "buys": 186,
+     "closed_share": 0.984,
+     "median_hours_to_close": 2.0,
+     "mean_net_pct": -0.285,
+     "stuck_share": 0.011,
+     "worst_open_pct": -64.2,
+     "total_net_pct": -53.0
+    }
+   },
+   "holdout": {
+    "all": {
+     "buys": 245,
+     "closed_share": 0.959,
+     "median_hours_to_close": 6.0,
+     "mean_net_pct": -0.775,
+     "stuck_share": 0.029,
+     "worst_open_pct": -44.6,
+     "total_net_pct": -189.9
+    },
+    "XAU": {
+     "buys": 35,
+     "closed_share": 0.914,
+     "median_hours_to_close": 4.0,
+     "mean_net_pct": -1.338,
+     "stuck_share": 0.086,
+     "worst_open_pct": -19.6,
+     "total_net_pct": -46.8
+    },
+    "BTC": {
+     "buys": 65,
+     "closed_share": 0.954,
+     "median_hours_to_close": 10.0,
+     "mean_net_pct": -0.936,
+     "stuck_share": 0.031,
+     "worst_open_pct": -32.0,
+     "total_net_pct": -60.9
+    },
+    "ETH": {
+     "buys": 55,
+     "closed_share": 0.945,
+     "median_hours_to_close": 8.5,
+     "mean_net_pct": -1.493,
+     "stuck_share": 0.018,
+     "worst_open_pct": -41.7,
+     "total_net_pct": -82.1
+    },
+    "SOL": {
+     "buys": 90,
+     "closed_share": 0.989,
+     "median_hours_to_close": 4.0,
+     "mean_net_pct": -0.001,
+     "stuck_share": 0.011,
+     "worst_open_pct": -44.6,
+     "total_net_pct": -0.1
+    }
+   },
+   "verdict": {
+    "better_than_S0": false,
+    "profitable": false
+   }
+  }
+ }
+}
