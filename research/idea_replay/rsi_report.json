@@ -1,0 +1,31 @@
+{
+ "dev|NORMAL": {
+  "buys": 1913,
+  "hit24": 0.784,
+  "median_dip_pct": -0.61,
+  "dip_1pct_share": 0.348,
+  "mean_net_pct": -0.199
+ },
+ "dev|HOT": {
+  "buys": 367,
+  "hit24": 0.755,
+  "median_dip_pct": -0.7,
+  "dip_1pct_share": 0.401,
+  "mean_net_pct": 0.124
+ },
+ "holdout|NORMAL": {
+  "buys": 512,
+  "hit24": 0.768,
+  "median_dip_pct": -0.55,
+  "dip_1pct_share": 0.334,
+  "mean_net_pct": -0.733
+ },
+ "holdout|HOT": {
+  "buys": 79,
+  "hit24": 0.747,
+  "median_dip_pct": -0.44,
+  "dip_1pct_share": 0.354,
+  "mean_net_pct": -0.497
+ },
+ "verdict": "no clear difference"
+}
