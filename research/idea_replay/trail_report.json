@@ -1,0 +1,68 @@
+{
+ "version": "trail-0.1",
+ "dev": {
+  "buys": 2280,
+  "e0_mean_net_pct": -0.147,
+  "e1_mean_net_pct": -0.116,
+  "e0_closed_mean": 0.474,
+  "e1_closed_mean": 0.505,
+  "kept_share": 0.717,
+  "median_extra_hours_when_kept": 1.0,
+  "sold_above_target_share": 0.112,
+  "by_asset": {
+   "BTC": {
+    "e0": -0.334,
+    "e1": -0.355,
+    "n": 642
+   },
+   "ETH": {
+    "e0": -0.178,
+    "e1": -0.009,
+    "n": 621
+   },
+   "SOL": {
+    "e0": -0.191,
+    "e1": -0.261,
+    "n": 587
+   },
+   "XAU": {
+    "e0": 0.239,
+    "e1": 0.286,
+    "n": 430
+   }
+  }
+ },
+ "holdout": {
+  "buys": 591,
+  "e0_mean_net_pct": -0.702,
+  "e1_mean_net_pct": -0.722,
+  "e0_closed_mean": 0.465,
+  "e1_closed_mean": 0.445,
+  "kept_share": 0.673,
+  "median_extra_hours_when_kept": 1.0,
+  "sold_above_target_share": 0.091,
+  "by_asset": {
+   "BTC": {
+    "e0": -1.466,
+    "e1": -1.444,
+    "n": 185
+   },
+   "ETH": {
+    "e0": -0.645,
+    "e1": -0.688,
+    "n": 125
+   },
+   "SOL": {
+    "e0": -0.205,
+    "e1": -0.227,
+    "n": 179
+   },
+   "XAU": {
+    "e0": -0.258,
+    "e1": -0.321,
+    "n": 102
+   }
+  }
+ },
+ "verdict_E1_better": false
+}
