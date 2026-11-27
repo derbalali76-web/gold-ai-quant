@@ -18,7 +18,7 @@ object SimpleAdvice {
     }
 
     /** Why an idea was changed by a filter (shown to the user). */
-    enum class Note { BTC_DOWN }
+    enum class Note { BTC_DOWN, SELLERS }
 
     data class Idea(val kind: Kind, val buyAt: Double?, val sellAt: Double?, val invalid: Double?, val position: Double?,
                     val note: Note? = null)
@@ -40,12 +40,16 @@ object SimpleAdvice {
     const val ATR_INV_K = 1.5
     /** Altcoins (ETH, SOL) follow bitcoin: no «buy now» on them while bitcoin's trend on the same horizon is down. */
     val FOLLOWS_BTC = setOf("ETH", "SOL")
+    /** 2026-11-27 (research entry-0.1): on digital assets, no «buy now» while sellers dominated the last 4 hours
+     *  (taker-buy share of the volume < 0.5). On two years of history it halved the loss per trade in both periods. */
+    val CRYPTO = setOf("BTC", "ETH", "SOL")
+    const val BUYERS_MIN = 0.5
 
     fun minGap(asset: String, price: Double, atr: Double? = null): Double =
         maxOf(if (asset == "XAU") GOLD_MIN_GAP_USD else price * CRYPTO_MIN_GAP_PCT, (atr ?: 0.0) * ATR_GAP_K)
 
     fun decide(trend: String?, price: Double?, supports: List<Double>, resistances: List<Double>, hold: Boolean,
-               asset: String = "XAU", atr: Double? = null, btcTrend: String? = null): Idea {
+               asset: String = "XAU", atr: Double? = null, btcTrend: String? = null, buyPressure: Double? = null): Idea {
         val p = price ?: return Idea(Kind.NONE, null, null, null, null)
         val s = supports.filter { it < p }.maxOrNull() ?: supports.minOrNull()
         val r = resistances.filter { it > p }.minOrNull() ?: resistances.maxOrNull()
@@ -55,6 +59,7 @@ object SimpleAdvice {
         val low = pos < LOW
         val below = supports.filter { it < s }.maxOrNull() ?: atr?.takeIf { it > 0 }?.let { s - ATR_INV_K * it } ?: s * 0.985
         val btcDown = asset in FOLLOWS_BTC && trendCodeOf(btcTrend) == "DOWN"
+        val sellers = asset in CRYPTO && buyPressure != null && buyPressure < BUYERS_MIN
         val dir = trendCodeOf(trend)
         // sell now and buy back at s, only when the gap covers the minimum; otherwise hold and say so
         fun sellRebuy(): Idea =
@@ -62,9 +67,11 @@ object SimpleAdvice {
             else Idea(Kind.HOLD_SELL_ABOVE, null, r, below, pos)
         return if (!hold) when {
             dir == "UP" && !high && btcDown -> Idea(Kind.WAIT_DIP, s, r, below, pos, Note.BTC_DOWN)
+            dir == "UP" && !high && sellers -> Idea(Kind.WAIT_DIP, s, r, below, pos, Note.SELLERS)
             dir == "UP" && !high -> Idea(Kind.BUY_NOW, p, r, below, pos)
             dir == "UP" -> Idea(Kind.WAIT_DIP, s, r, below, pos)
             dir == "SIDEWAYS" && low && btcDown -> Idea(Kind.WAIT_DIP, s, r, below, pos, Note.BTC_DOWN)
+            dir == "SIDEWAYS" && low && sellers -> Idea(Kind.WAIT_DIP, s, r, below, pos, Note.SELLERS)
             dir == "SIDEWAYS" && low -> Idea(Kind.BUY_NOW, p, r, below, pos)
             else -> Idea(Kind.WAIT, s, null, below, pos)
         } else when {

@@ -972,6 +972,7 @@
     <string name="j_auto_off_note">Compras de teste automáticas desligadas (%1$s). Toque para ligar.</string>
     <string name="j_auto_sold_title">%1$s: alvo atingido, hora de vender</string>
     <string name="j_auto_sold">O preço é %1$s (compra a %2$s). Teste fechado: %3$s $ após custos.</string>
+    <string name="sa_note_sellers">Os vendedores dominaram as últimas 4 horas (compradores %1$d%% do volume): espere uma queda em vez de comprar agora.</string>
     <string name="r_w_up" formatted="false">de alta</string>
     <string name="r_w_down" formatted="false">de baixa</string>
     <string name="r_w_neutral" formatted="false">neutra</string>

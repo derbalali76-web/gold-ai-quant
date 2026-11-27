@@ -123,3 +123,15 @@ class SimpleAdviceFiltersTest {
         org.junit.Assert.assertNull(SimpleAdvice.eventSoon(low, now))
     }
 }
+
+class SimpleAdviceBuyersTest {
+    @Test fun sellersTurnBuyNowIntoWaitDip() {
+        val sup = listOf(66.0, 68.0); val res = listOf(76.0, 78.0)
+        val i = SimpleAdvice.decide("UP", 70.0, sup, res, false, "SOL", buyPressure = 0.42)
+        org.junit.Assert.assertEquals(SimpleAdvice.Kind.WAIT_DIP, i.kind)
+        org.junit.Assert.assertEquals(SimpleAdvice.Note.SELLERS, i.note)
+        org.junit.Assert.assertEquals(SimpleAdvice.Kind.BUY_NOW, SimpleAdvice.decide("UP", 70.0, sup, res, false, "SOL", buyPressure = 0.55).kind)
+        org.junit.Assert.assertEquals(SimpleAdvice.Kind.BUY_NOW, SimpleAdvice.decide("UP", 70.0, sup, res, false, "XAU", buyPressure = 0.3).kind)
+        org.junit.Assert.assertEquals(SimpleAdvice.Kind.BUY_NOW, SimpleAdvice.decide("UP", 70.0, sup, res, false, "SOL").kind)
+    }
+}

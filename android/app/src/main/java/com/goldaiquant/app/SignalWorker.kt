@@ -124,7 +124,12 @@ class SignalWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx
             IdeaAlerts.Msg.NEW -> when (a.kind) {
                 SimpleAdvice.Kind.BUY_NOW -> ctx.getString(R.string.ia_buy, p(a.price), p(a.sellAt), p(a.stop))
                 SimpleAdvice.Kind.WAIT_DIP -> ctx.getString(R.string.ia_dip, p(a.buyAt), p(a.sellAt)) +
-                    if (n.idea.note == SimpleAdvice.Note.BTC_DOWN) " " + ctx.getString(R.string.sa_note_btc) else ""
+                    when (n.idea.note) {
+                        SimpleAdvice.Note.BTC_DOWN -> " " + ctx.getString(R.string.sa_note_btc)
+                        SimpleAdvice.Note.SELLERS -> " " + ctx.getString(R.string.sa_note_sellers,
+                            Math.round((f.decision.buyPressure4h ?: 0.0) * 100).toInt())
+                        null -> ""
+                    }
                 SimpleAdvice.Kind.WAIT -> ctx.getString(R.string.ia_wait, p(a.buyAt))
                 SimpleAdvice.Kind.HOLD_SELL_ABOVE -> ctx.getString(R.string.ia_keep, p(a.sellAt), p(a.stop))
                 SimpleAdvice.Kind.SELL_REBUY -> ctx.getString(R.string.ia_sell, p(a.price), p(a.buyAt), p(a.stop))

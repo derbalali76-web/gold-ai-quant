@@ -35,7 +35,7 @@ def test_shadow_recorded_and_scored(tmp_path):
     I.apply(str(inp), str(tmp_path), now)
     lines = [json.loads(x) for x in (tmp_path / I.FILE).read_text().splitlines()]
     sol = [e["data"] for e in lines if e["kind"] == "IDEA" and e["data"]["asset"] == "SOL" and e["data"]["mode"] == "cash"][0]
-    assert sol["kind"] == "WAIT_DIP" and sol["shadow"]["kind"] == "BUY_NOW" and sol["version"] == "beginner-ideas-0.3"
+    assert sol["kind"] == "WAIT_DIP" and sol["shadow"]["kind"] == "BUY_NOW" and sol["version"] == I.VERSION
     # 24 h of bars: price rises to the target without a dip -> the shadow (buy now) wins
     start = now.replace(minute=0) + timedelta(hours=1)
     bars = [[(start + timedelta(hours=h)).strftime("%Y-%m-%dT%H:%M:%SZ"), 70 + h * 0.3, 70.5 + h * 0.3, 69.6 + h * 0.3,
@@ -44,4 +44,12 @@ def test_shadow_recorded_and_scored(tmp_path):
     st = I.apply(str(tmp_path / "empty"), str(tmp_path), now + timedelta(hours=26))
     assert st["btc_filter"]["n"] == 1 and st["btc_filter"]["verdict"] == "INSUFFICIENT"
     assert st["btc_filter"]["shadow_mean_edge_pct"] > st["btc_filter"]["shown_mean_edge_pct"]
-    assert "beginner-ideas-0.3" in st["by_version"]
+    assert I.VERSION in st["by_version"]
+
+
+def test_buyers_filter_and_its_shadow(tmp_path):
+    i = I.decide("UP", 70.0, SUP, RES, False, "SOL", None, "UP", 0.42)
+    assert i["kind"] == "WAIT_DIP" and i["note"] == "SELLERS"
+    assert I.decide("UP", 70.0, SUP, RES, False, "SOL", None, "UP", 0.55)["kind"] == "BUY_NOW"
+    assert I.decide("UP", 70.0, SUP, RES, False, "XAU", None, None, 0.30)["kind"] == "BUY_NOW"   # gold: no volume
+    assert I.decide("UP", 70.0, SUP, RES, False, "SOL", None, "UP", None)["kind"] == "BUY_NOW"   # missing: no filter

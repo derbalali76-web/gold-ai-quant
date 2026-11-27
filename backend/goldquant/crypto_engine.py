@@ -176,6 +176,12 @@ def decide(asset: str, feed: CryptoFeed, as_of: Optional[datetime] = None,
                  vol_regime=vreg,
                  levels=lv, outlooks=[hours] + _cards(daily, as_of), reason_short_ar=str(msg), warning_ar=str(msg),
                  reason_short_ref=_ref(msg), warning_ref=_ref(msg), **common)
+    try:  # who is buying: share of the last 4 closed hours' volume bought at the market (entry-0.1, 2026-11-27)
+        h = bars["H1"].tail(4)
+        v = float(h["volume"].sum())
+        d.buy_pressure_4h = round(float(h["taker_buy_volume"].sum()) / v, 4) if v > 0 and len(h) == 4 else None
+    except Exception:  # noqa: BLE001
+        d.buy_pressure_4h = None
     PL.attach(d)
     CK.attach(d, ctx)
     d.daily_brief = BR.build(d)

@@ -185,6 +185,8 @@ data class Decision(
     val levels: Levels?,
     val quoteChange: Double?,
     val quoteChangePct: Double?,
+    /** Digital assets: share of the last 4 closed hours' volume bought at the market (entry-0.1). */
+    val buyPressure4h: Double? = null,
     val reevaluateAr: List<String>,
     val outlooks: List<Outlook> = emptyList(),
     val reasonShort: Reason? = null,
@@ -283,6 +285,7 @@ object DecisionParser {
             levels = o.optJSONObject("levels")?.let { parseLevels(it) },
             quoteChange = o.dbl("quote_change"),
             quoteChangePct = o.dbl("quote_change_pct"),
+            buyPressure4h = o.dbl("buy_pressure_4h"),
             reevaluateAr = o.strings("reevaluate_ar"),
             outlooks = o.outlooks("outlooks"),
             marketClosed = o.optBoolean("market_closed", false),

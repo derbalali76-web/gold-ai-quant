@@ -972,6 +972,7 @@
     <string name="j_auto_off_note">الصفقات التجريبية التلقائية متوقفة (%1$s). اضغط لتفعيلها.</string>
     <string name="j_auto_sold_title">%1$s: وصل الهدف، وقت البيع</string>
     <string name="j_auto_sold">السعر %1$s (الشراء عند %2$s). أُغلقت الصفقة التجريبية: %3$s$ بعد العمولة.</string>
+    <string name="sa_note_sellers">البائعون غالبون في آخر 4 ساعات (المشترون %1$d%% من حجم التداول): انتظر نزولاً بدل الشراء الآن.</string>
     <string name="r_w_up" formatted="false">صاعد</string>
     <string name="r_w_down" formatted="false">هابط</string>
     <string name="r_w_neutral" formatted="false">محايد</string>
