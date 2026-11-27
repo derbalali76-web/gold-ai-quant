@@ -1,8 +1,8 @@
 {
- "trained_at": "2026-11-26T14:07:16.585385+00:00",
+ "trained_at": "2026-11-27T14:05:48.688409+00:00",
  "dataset": "LIVE HISTORY (Dukascopy)",
- "trained_until": "2026-11-26T00:00:00+00:00",
+ "trained_until": "2026-11-27T00:00:00+00:00",
  "qualified": true,
  "reason": "مؤهل",
- "n_oos": 95796
+ "n_oos": 95804
 }
