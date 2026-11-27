@@ -1,0 +1,559 @@
+{
+ "version": "idea-replay-0.1",
+ "rule": "beginner-ideas-0.3",
+ "samples": 30074,
+ "from": "2024-12-01T00:00:00Z",
+ "to": "2026-11-20T00:00:00Z",
+ "by_kind": {
+  "BUY_NOW": {
+   "dev": {
+    "n": 2280,
+    "success_rate": 0.484,
+    "mean_edge_pct": -0.428,
+    "ci95": [
+     -0.678,
+     -0.187
+    ]
+   },
+   "holdout": {
+    "n": 591,
+    "success_rate": 0.442,
+    "mean_edge_pct": -0.444,
+    "ci95": [
+     -0.918,
+     0.039
+    ]
+   },
+   "verdict": "UNCLEAR"
+  },
+  "HOLD_SELL_ABOVE": {
+   "dev": {
+    "n": 6991,
+    "success_rate": 0.607,
+    "mean_edge_pct": -0.057,
+    "ci95": [
+     -0.272,
+     0.153
+    ]
+   },
+   "holdout": {
+    "n": 2178,
+    "success_rate": 0.608,
+    "mean_edge_pct": -0.047,
+    "ci95": [
+     -0.261,
+     0.32
+    ]
+   },
+   "verdict": "UNCLEAR"
+  },
+  "SELL_REBUY": {
+   "dev": {
+    "n": 4445,
+    "success_rate": 0.473,
+    "mean_edge_pct": -0.196,
+    "ci95": [
+     -0.39,
+     0.015
+    ]
+   },
+   "holdout": {
+    "n": 1423,
+    "success_rate": 0.498,
+    "mean_edge_pct": -0.264,
+    "ci95": [
+     -0.773,
+     0.099
+    ]
+   },
+   "verdict": "UNCLEAR"
+  },
+  "WAIT": {
+   "dev": {
+    "n": 7417,
+    "success_rate": 0.554,
+    "mean_edge_pct": 0.345,
+    "ci95": [
+     0.105,
+     0.583
+    ]
+   },
+   "holdout": {
+    "n": 2503,
+    "success_rate": 0.593,
+    "mean_edge_pct": 0.457,
+    "ci95": [
+     0.023,
+     0.686
+    ]
+   },
+   "verdict": "USEFUL"
+  },
+  "WAIT_DIP": {
+   "dev": {
+    "n": 1739,
+    "success_rate": 0.56,
+    "mean_edge_pct": 0.276,
+    "ci95": [
+     -0.011,
+     0.549
+    ]
+   },
+   "holdout": {
+    "n": 507,
+    "success_rate": 0.615,
+    "mean_edge_pct": 0.029,
+    "ci95": [
+     -1.044,
+     0.827
+    ]
+   },
+   "verdict": "UNCLEAR"
+  }
+ },
+ "by_asset_kind": {
+  "BTC|BUY_NOW": {
+   "dev": {
+    "n": 642,
+    "success_rate": 0.447,
+    "mean_edge_pct": -0.43,
+    "ci95": [
+     -0.712,
+     -0.182
+    ]
+   },
+   "holdout": {
+    "n": 185,
+    "success_rate": 0.438,
+    "mean_edge_pct": -0.596,
+    "ci95": [
+     -1.146,
+     0.026
+    ]
+   },
+   "verdict": "UNCLEAR"
+  },
+  "BTC|HOLD_SELL_ABOVE": {
+   "dev": {
+    "n": 1966,
+    "success_rate": 0.612,
+    "mean_edge_pct": 0.017,
+    "ci95": [
+     -0.163,
+     0.183
+    ]
+   },
+   "holdout": {
+    "n": 592,
+    "success_rate": 0.637,
+    "mean_edge_pct": 0.049,
+    "ci95": [
+     -0.201,
+     0.464
+    ]
+   },
+   "verdict": "UNCLEAR"
+  },
+  "BTC|SELL_REBUY": {
+   "dev": {
+    "n": 1280,
+    "success_rate": 0.445,
+    "mean_edge_pct": -0.23,
+    "ci95": [
+     -0.449,
+     -0.005
+    ]
+   },
+   "holdout": {
+    "n": 438,
+    "success_rate": 0.484,
+    "mean_edge_pct": -0.176,
+    "ci95": [
+     -0.67,
+     0.111
+    ]
+   },
+   "verdict": "UNCLEAR"
+  },
+  "BTC|WAIT": {
+   "dev": {
+    "n": 2132,
+    "success_rate": 0.577,
+    "mean_edge_pct": 0.338,
+    "ci95": [
+     0.139,
+     0.536
+    ]
+   },
+   "holdout": {
+    "n": 695,
+    "success_rate": 0.606,
+    "mean_edge_pct": 0.443,
+    "ci95": [
+     0.021,
+     0.625
+    ]
+   },
+   "verdict": "USEFUL"
+  },
+  "BTC|WAIT_DIP": {
+   "dev": {
+    "n": 472,
+    "success_rate": 0.581,
+    "mean_edge_pct": 0.257,
+    "ci95": [
+     -0.051,
+     0.473
+    ]
+   },
+   "holdout": {
+    "n": 150,
+    "success_rate": 0.66,
+    "mean_edge_pct": 0.115,
+    "ci95": [
+     -0.885,
+     0.733
+    ]
+   },
+   "verdict": "UNCLEAR"
+  },
+  "ETH|BUY_NOW": {
+   "dev": {
+    "n": 621,
+    "success_rate": 0.494,
+    "mean_edge_pct": -0.359,
+    "ci95": [
+     -0.661,
+     -0.064
+    ]
+   },
+   "holdout": {
+    "n": 125,
+    "success_rate": 0.464,
+    "mean_edge_pct": -0.348,
+    "ci95": [
+     -0.803,
+     0.545
+    ]
+   },
+   "verdict": "UNCLEAR"
+  },
+  "ETH|HOLD_SELL_ABOVE": {
+   "dev": {
+    "n": 2027,
+    "success_rate": 0.601,
+    "mean_edge_pct": -0.093,
+    "ci95": [
+     -0.414,
+     0.212
+    ]
+   },
+   "holdout": {
+    "n": 543,
+    "success_rate": 0.632,
+    "mean_edge_pct": -0.052,
+    "ci95": [
+     -0.391,
+     0.512
+    ]
+   },
+   "verdict": "UNCLEAR"
+  },
+  "ETH|SELL_REBUY": {
+   "dev": {
+    "n": 1235,
+    "success_rate": 0.491,
+    "mean_edge_pct": -0.167,
+    "ci95": [
+     -0.534,
+     0.202
+    ]
+   },
+   "holdout": {
+    "n": 488,
+    "success_rate": 0.459,
+    "mean_edge_pct": -0.249,
+    "ci95": [
+     -0.823,
+     0.213
+    ]
+   },
+   "verdict": "UNCLEAR"
+  },
+  "ETH|WAIT": {
+   "dev": {
+    "n": 2173,
+    "success_rate": 0.547,
+    "mean_edge_pct": 0.384,
+    "ci95": [
+     0.071,
+     0.71
+    ]
+   },
+   "holdout": {
+    "n": 729,
+    "success_rate": 0.575,
+    "mean_edge_pct": 0.464,
+    "ci95": [
+     -0.052,
+     0.766
+    ]
+   },
+   "verdict": "UNCLEAR"
+  },
+  "ETH|WAIT_DIP": {
+   "dev": {
+    "n": 468,
+    "success_rate": 0.573,
+    "mean_edge_pct": 0.157,
+    "ci95": [
+     -0.398,
+     0.698
+    ]
+   },
+   "holdout": {
+    "n": 177,
+    "success_rate": 0.588,
+    "mean_edge_pct": 0.003,
+    "ci95": [
+     -1.13,
+     0.789
+    ]
+   },
+   "verdict": "UNCLEAR"
+  },
+  "SOL|BUY_NOW": {
+   "dev": {
+    "n": 587,
+    "success_rate": 0.428,
+    "mean_edge_pct": -0.787,
+    "ci95": [
+     -1.3,
+     -0.24
+    ]
+   },
+   "holdout": {
+    "n": 179,
+    "success_rate": 0.43,
+    "mean_edge_pct": -0.47,
+    "ci95": [
+     -0.935,
+     0.216
+    ]
+   },
+   "verdict": "UNCLEAR"
+  },
+  "SOL|HOLD_SELL_ABOVE": {
+   "dev": {
+    "n": 1910,
+    "success_rate": 0.565,
+    "mean_edge_pct": -0.17,
+    "ci95": [
+     -0.513,
+     0.166
+    ]
+   },
+   "holdout": {
+    "n": 690,
+    "success_rate": 0.586,
+    "mean_edge_pct": -0.069,
+    "ci95": [
+     -0.337,
+     0.425
+    ]
+   },
+   "verdict": "UNCLEAR"
+  },
+  "SOL|SELL_REBUY": {
+   "dev": {
+    "n": 1346,
+    "success_rate": 0.502,
+    "mean_edge_pct": -0.195,
+    "ci95": [
+     -0.548,
+     0.129
+    ]
+   },
+   "holdout": {
+    "n": 333,
+    "success_rate": 0.489,
+    "mean_edge_pct": -0.628,
+    "ci95": [
+     -1.585,
+     0.142
+    ]
+   },
+   "verdict": "UNCLEAR"
+  },
+  "SOL|WAIT": {
+   "dev": {
+    "n": 2192,
+    "success_rate": 0.563,
+    "mean_edge_pct": 0.463,
+    "ci95": [
+     0.088,
+     0.804
+    ]
+   },
+   "holdout": {
+    "n": 708,
+    "success_rate": 0.588,
+    "mean_edge_pct": 0.533,
+    "ci95": [
+     -0.061,
+     0.887
+    ]
+   },
+   "verdict": "UNCLEAR"
+  },
+  "SOL|WAIT_DIP": {
+   "dev": {
+    "n": 477,
+    "success_rate": 0.568,
+    "mean_edge_pct": 0.621,
+    "ci95": [
+     0.104,
+     1.128
+    ]
+   },
+   "holdout": {
+    "n": 136,
+    "success_rate": 0.581,
+    "mean_edge_pct": -0.142,
+    "ci95": [
+     -1.598,
+     0.812
+    ]
+   },
+   "verdict": "UNCLEAR"
+  },
+  "XAU|BUY_NOW": {
+   "dev": {
+    "n": 430,
+    "success_rate": 0.602,
+    "mean_edge_pct": -0.034,
+    "ci95": [
+     -0.106,
+     0.03
+    ]
+   },
+   "holdout": {
+    "n": 102,
+    "success_rate": 0.441,
+    "mean_edge_pct": -0.24,
+    "ci95": [
+     -0.408,
+     0.169
+    ]
+   },
+   "verdict": "UNCLEAR"
+  },
+  "XAU|HOLD_SELL_ABOVE": {
+   "dev": {
+    "n": 1088,
+    "success_rate": 0.679,
+    "mean_edge_pct": 0.077,
+    "ci95": [
+     -0.04,
+     0.184
+    ]
+   },
+   "holdout": {
+    "n": 353,
+    "success_rate": 0.569,
+    "mean_edge_pct": -0.155,
+    "ci95": [
+     -0.349,
+     0.094
+    ]
+   },
+   "verdict": "UNCLEAR"
+  },
+  "XAU|SELL_REBUY": {
+   "dev": {
+    "n": 584,
+    "success_rate": 0.425,
+    "mean_edge_pct": -0.185,
+    "ci95": [
+     -0.352,
+     -0.053
+    ]
+   },
+   "holdout": {
+    "n": 164,
+    "success_rate": 0.671,
+    "mean_edge_pct": 0.193,
+    "ci95": [
+     -0.083,
+     0.386
+    ]
+   },
+   "verdict": "UNCLEAR"
+  },
+  "XAU|WAIT": {
+   "dev": {
+    "n": 920,
+    "success_rate": 0.493,
+    "mean_edge_pct": -0.009,
+    "ci95": [
+     -0.173,
+     0.157
+    ]
+   },
+   "holdout": {
+    "n": 371,
+    "success_rate": 0.617,
+    "mean_edge_pct": 0.327,
+    "ci95": [
+     -0.054,
+     0.573
+    ]
+   },
+   "verdict": "UNCLEAR"
+  },
+  "XAU|WAIT_DIP": {
+   "dev": {
+    "n": 322,
+    "success_rate": 0.497,
+    "mean_edge_pct": -0.035,
+    "ci95": [
+     -0.203,
+     0.113
+    ]
+   },
+   "holdout": {
+    "n": 44,
+    "success_rate": 0.682,
+    "mean_edge_pct": 0.367,
+    "ci95": [
+     -0.071,
+     0.697
+    ]
+   },
+   "verdict": "UNCLEAR"
+  }
+ },
+ "btc_filter": {
+  "dev": {
+   "n": 54,
+   "shown_mean_edge_pct": -0.914,
+   "shadow_mean_edge_pct": -0.05,
+   "filter_better_share": 0.389,
+   "diff_ci95": [
+    -1.329,
+    0.823
+   ]
+  },
+  "holdout": {
+   "n": 14,
+   "shown_mean_edge_pct": 2.839,
+   "shadow_mean_edge_pct": -2.56,
+   "filter_better_share": 1.0,
+   "diff_ci95": [
+    1.095,
+    1.7
+   ]
+  },
+  "verdict": "UNCLEAR"
+ }
+}
