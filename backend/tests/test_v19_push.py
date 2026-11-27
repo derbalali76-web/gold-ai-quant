@@ -86,3 +86,12 @@ def test_api_endpoints(tmp_path, monkeypatch):
     assert c.get("/push/tick").json()["configured"] is False  # public, harmless
     st = c.get("/push/status", headers=h).json()
     assert st["devices"] == 1 and "private_key" not in json.dumps(st)
+
+
+def test_spike_between_checks_fires_a_journal_target(tmp_path):
+    sent = []
+    s = PushService(tmp_path, creds_json=CREDS, sender=lambda t, p: (sent.append(p["message"]["data"]), True)[1],
+                    extremes=lambda a, since, now: (71.2, 70.1))
+    s.register(TOK, [], [{"asset": "SOL", "dir": "ABOVE", "price": 71.0, "label": "jt", "key": "jt|5"}], "ar")
+    assert s.tick(lambda a: dec(70.5), force=True)["sent"] == 1     # price now 70.5, but 71.2 was touched
+    assert sent[-1]["key"] == "jt|5" and sent[-1]["type"] == "price"

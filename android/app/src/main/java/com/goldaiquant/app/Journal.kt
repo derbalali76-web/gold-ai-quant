@@ -99,4 +99,13 @@ object Journal {
         save(p, ts.map { t -> closed.firstOrNull { it.id == t.id } ?: t })
         return closed.filter { it.id in ids }
     }
+
+    /** The server saw the target reached (it fills at the target, like a sell order there). */
+    fun closeById(p: SharedPreferences, id: Long, price: Double, now: Long = System.currentTimeMillis()): Trade? {
+        val ts = load(p)
+        val t = ts.firstOrNull { it.id == id && it.open } ?: return null
+        val c = t.copy(sellPrice = price, sellAt = now)
+        save(p, ts.map { if (it.id == id) c else it })
+        return c
+    }
 }

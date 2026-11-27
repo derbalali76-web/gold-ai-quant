@@ -30,6 +30,12 @@ class FcmService : FirebaseMessagingService() {
         // «scenario triggered» text, which could contradict the screen)
         if (d["type"] == "check" || d["type"] == "event") { SignalWorker.runNow(applicationContext); return }
         val asset = d["asset"] ?: return
+        if (d["type"] == "price" && d["key"].orEmpty().startsWith("jt|")) {
+            val id = d["key"]!!.removePrefix("jt|").toLongOrNull() ?: return
+            val prefs = applicationContext.getSharedPreferences("gold_ai_quant", MODE_PRIVATE)
+            Journal.closeById(prefs, id, d["level"]?.toDoubleOrNull() ?: return)?.let { AutoSell.notify(applicationContext, it) }
+            return
+        }
         val label = if (asset == "XAU") "XAU/USD" else "$asset/USD"
         val ctx = LanguageStore.wrap(applicationContext, LanguageStore.resolve(applicationContext))
         val p2 = { s: String? -> s?.toDoubleOrNull()?.let { String.format(java.util.Locale.US, "%.2f", it) } ?: "—" }
