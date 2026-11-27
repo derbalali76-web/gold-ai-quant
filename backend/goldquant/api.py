@@ -559,6 +559,7 @@ def create_app(db_path: Optional[str] = None, settings: Optional[Settings] = Non
                 "app_crashes_7d": crashes_recent(),
                 # beginner-ideas-0.3: the hourly range the app scales its gaps and cancel levels with
                 "atr_h1": (d.levels.atr_h1 if d.levels is not None else None),
+                "buy_pressure_4h": getattr(d, "buy_pressure_4h", None),
                 # beginner advice (advice-0.1.0): what the app's «ماذا أفعل؟» is built from, per horizon
                 "outlooks": [{"horizon": o.horizon, "action": o.action.value,
                               "plan_side": (o.plan.side if o.plan is not None and o.plan.recommendation

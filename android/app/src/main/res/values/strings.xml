@@ -973,6 +973,7 @@
     <string name="j_auto_off_note">Automatic test buys are off (%1$s). Tap to turn them on.</string>
     <string name="j_auto_sold_title">%1$s: target reached, time to sell</string>
     <string name="j_auto_sold">The price is %1$s (bought at %2$s). Test trade closed: %3$s $ after costs.</string>
+    <string name="sa_note_sellers">Sellers dominated the last 4 hours (buyers %1$d%% of volume): wait for a dip instead of buying now.</string>
     <string name="r_w_up" formatted="false">up</string>
     <string name="r_w_down" formatted="false">down</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

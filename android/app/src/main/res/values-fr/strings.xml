@@ -972,6 +972,7 @@
     <string name="j_auto_off_note">Achats test automatiques désactivés (%1$s). Touchez pour activer.</string>
     <string name="j_auto_sold_title">%1$s : objectif atteint, moment de vendre</string>
     <string name="j_auto_sold">Le prix est %1$s (acheté à %2$s). Trade test clôturé : %3$s $ après frais.</string>
+    <string name="sa_note_sellers">Les vendeurs ont dominé les 4 dernières heures (acheteurs %1$d %% du volume) : attendez un repli au lieu d\'acheter maintenant.</string>
     <string name="r_w_up" formatted="false">haussière</string>
     <string name="r_w_down" formatted="false">baissière</string>
     <string name="r_w_neutral" formatted="false">neutre</string>

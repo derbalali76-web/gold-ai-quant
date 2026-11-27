@@ -2721,6 +2721,8 @@ private fun WhatDialog(d: Decision, c: HorizonCard, s: UiState, onPosition: (Str
             val warn = Color(0xFFF0B45A)
             if (idea.note == SimpleAdvice.Note.BTC_DOWN) Text("⚠ " + stringResource(R.string.sa_note_btc), color = warn,
                 fontSize = 13.sp, lineHeight = 19.sp)
+            if (idea.note == SimpleAdvice.Note.SELLERS) Text("⚠ " + stringResource(R.string.sa_note_sellers,
+                Math.round((d.buyPressure4h ?: 0.0) * 100).toInt()), color = warn, fontSize = 13.sp, lineHeight = 19.sp)
             built.event?.let { ev ->
                 val t = java.time.format.DateTimeFormatter.ofPattern("HH:mm").format(ev.time.atZone(java.time.ZoneId.systemDefault()))
                 Text("⚠ " + stringResource(R.string.sa_note_event, ev.name, ltr(t)), color = warn, fontSize = 13.sp, lineHeight = 19.sp)

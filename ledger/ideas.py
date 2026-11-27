@@ -41,6 +41,14 @@ version (the top-level verdicts are the current version's). The 0.3 rule (same a
             filter is stored as `shadow` and scored the same way, so the filter is measured: «btc_filter» in the
             stats compares the shown ideas with their shadows (n, mean edge of each, share where the filter did better).
   Not scored (display only, as the conflict filter): the major-event hold and the crypto crowding / weekend notes.
+
+ADDENDUM 2026-11-27 (owner, after research entry-0.1; before any 0.4 idea was recorded): beginner-ideas-0.4.
+  BUYERS    BTC / ETH / SOL: a cash BUY_NOW becomes WAIT_DIP (buy near the support, same target) with note SELLERS
+            when the snapshot's buy_pressure_4h (taker-buy share of the last 4 closed H1 bars' volume) is < 0.5.
+            Missing value = no filter. The idea without this filter is stored as `shadow` and scored the same way,
+            as for the bitcoin filter; «buyers_filter» in the stats compares them. In entry-0.1 (history 2024-12 →
+            2026-11) skipping those buys improved the mean net per trade in both periods (dev −0.06 % vs −0.15 %,
+            holdout −0.33 % vs −0.70 %) without making the method profitable.
 """
 from __future__ import annotations
 
@@ -50,10 +58,12 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Optional
 
-VERSION = "beginner-ideas-0.3"  # 0.2 (2026-11-24): sell-and-rebuy gap 15 USD / 0.65 %; 0.3 (2026-11-26): ATR, BTC filter
+VERSION = "beginner-ideas-0.4"  # 0.2 (2026-11-24): sell-and-rebuy gap 15 USD / 0.65 %; 0.3 (2026-11-26): ATR, BTC filter
 GOLD_MIN_GAP_USD, CRYPTO_MIN_GAP_PCT = 15.0, 0.0065
 ATR_GAP_K, ATR_INV_K = 1.0, 1.5
 FOLLOWS_BTC = ("ETH", "SOL")
+CRYPTO = ("BTC", "ETH", "SOL")
+BUYERS_MIN = 0.5
 ASSETS = ("XAU", "BTC", "ETH", "SOL")
 HORIZONS = {"HOURS": 24, "WEEK": 168, "MONTH": 720}
 FEE = {"XAU": 0.0005, "BTC": 0.0016, "ETH": 0.0016, "SOL": 0.0022}
@@ -70,7 +80,8 @@ def trend_code(d: Optional[str]) -> Optional[str]:
 
 
 def decide(trend: Optional[str], price: Optional[float], supports: list, resistances: list, hold: bool,
-           asset: str = "XAU", atr: Optional[float] = None, btc_trend: Optional[str] = None) -> dict:
+           asset: str = "XAU", atr: Optional[float] = None, btc_trend: Optional[str] = None,
+           buy_pressure: Optional[float] = None) -> dict:
     none = {"kind": "NONE", "buy_at": None, "sell_at": None, "invalid": None, "position": None}
     if price is None:
         return none
@@ -86,17 +97,22 @@ def decide(trend: Optional[str], price: Optional[float], supports: list, resista
     lower = [x for x in supports if x < s]
     inv = max(lower) if lower else (s - ATR_INV_K * atr if atr and atr > 0 else s * 0.985)
     btc_down = asset in FOLLOWS_BTC and trend_code(btc_trend) == "DOWN"
+    sellers = asset in CRYPTO and buy_pressure is not None and buy_pressure < BUYERS_MIN
     d = trend_code(trend)
     I = lambda k, b, se, i: {"kind": k, "buy_at": b, "sell_at": se, "invalid": i, "position": round(pos, 4)}  # noqa: E731
     if not hold:
         if d == "UP" and not high and btc_down:
             return dict(I("WAIT_DIP", s, r, inv), note="BTC_DOWN")
+        if d == "UP" and not high and sellers:
+            return dict(I("WAIT_DIP", s, r, inv), note="SELLERS")
         if d == "UP" and not high:
             return I("BUY_NOW", p, r, inv)
         if d == "UP":
             return I("WAIT_DIP", s, r, inv)
         if d == "SIDEWAYS" and low and btc_down:
             return dict(I("WAIT_DIP", s, r, inv), note="BTC_DOWN")
+        if d == "SIDEWAYS" and low and sellers:
+            return dict(I("WAIT_DIP", s, r, inv), note="SELLERS")
         if d == "SIDEWAYS" and low:
             return I("BUY_NOW", p, r, inv)
         return I("WAIT", s, None, inv)
@@ -245,12 +261,14 @@ def record(snaps: dict, repo: Path, now: datetime, lines: list) -> int:
                 atr = s.get("atr_h1")
                 atr = float(atr) if isinstance(atr, (int, float)) and atr > 0 else None
                 btc_trend = btc_trends.get(h) if a in FOLLOWS_BTC else None
-                i = decide(o.get("trend"), s["price"], sup, res, mode == "holder", a, atr, btc_trend)
+                bp = s.get("buy_pressure_4h") if h == "HOURS" else None
+                bp = float(bp) if isinstance(bp, (int, float)) else None
+                i = decide(o.get("trend"), s["price"], sup, res, mode == "holder", a, atr, btc_trend, bp)
                 if i["kind"] == "NONE":
                     continue
-                extra = {"atr_h1": atr, "btc_trend": btc_trend}
-                if i.get("note") == "BTC_DOWN":
-                    sh = decide(o.get("trend"), s["price"], sup, res, mode == "holder", a, atr, None)
+                extra = {"atr_h1": atr, "btc_trend": btc_trend, "buy_pressure_4h": bp}
+                if i.get("note") in ("BTC_DOWN", "SELLERS"):
+                    sh = decide(o.get("trend"), s["price"], sup, res, mode == "holder", a, atr, None, None)
                     extra["shadow"] = {k: sh[k] for k in ("kind", "buy_at", "sell_at", "invalid")}
                 data = {"version": VERSION, "asset": a, "horizon": h, "mode": mode, "price": float(s["price"]),
                         "trend": o.get("trend"), "supports": sup, "resistances": res, **i, **extra,
@@ -307,14 +325,16 @@ def stats(lines: list) -> dict:
     sr = [r for r in cur if r["kind"] == "SELL_REBUY"]
     if sr:
         out["sell_rebuy_rose_no_return"] = round(sum(1 for r in sr if r.get("rose_no_return")) / len(sr), 3)
-    pairs = [(x["result"], x["shadow_result"]) for x in res if x.get("shadow_result")]
-    if pairs:
-        n = len(pairs)
-        out["btc_filter"] = {"n": n, "shown_mean_edge_pct": round(sum(a["edge_pct"] for a, _ in pairs) / n, 3),
-                             "shadow_mean_edge_pct": round(sum(b["edge_pct"] for _, b in pairs) / n, 3),
-                             "filter_better_share": round(sum(1 for a, b in pairs if a["idea_pct"] > b["idea_pct"]) / n, 3),
-                             "verdict": "INSUFFICIENT" if n < MIN_N else ("HELPS" if sum(a["idea_pct"] - b["idea_pct"]
-                                                                          for a, b in pairs) > 0 else "DOES_NOT_HELP")}
+    note = {e["seq"]: e["data"].get("note") for e in lines if e["kind"] == "IDEA"}
+    for name, nt in (("btc_filter", "BTC_DOWN"), ("buyers_filter", "SELLERS")):
+        pairs = [(x["result"], x["shadow_result"]) for x in res if x.get("shadow_result") and note.get(x["ref"]) == nt]
+        if pairs:
+            n = len(pairs)
+            out[name] = {"n": n, "shown_mean_edge_pct": round(sum(a["edge_pct"] for a, _ in pairs) / n, 3),
+                         "shadow_mean_edge_pct": round(sum(b["edge_pct"] for _, b in pairs) / n, 3),
+                         "filter_better_share": round(sum(1 for a, b in pairs if a["idea_pct"] > b["idea_pct"]) / n, 3),
+                         "verdict": "INSUFFICIENT" if n < MIN_N else ("HELPS" if sum(a["idea_pct"] - b["idea_pct"]
+                                                                      for a, b in pairs) > 0 else "DOES_NOT_HELP")}
     return out
 
 

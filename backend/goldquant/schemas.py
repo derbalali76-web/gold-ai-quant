@@ -459,6 +459,8 @@ class Decision(BaseModel):
     market_trend: Optional[MarketTrend] = None
     levels: Optional[LevelsBlock] = None
     quote_change: Optional[float] = None
+    # digital assets (entry-0.1, owner 2026-11-27): taker-buy share of the volume over the last 4 closed H1 bars
+    buy_pressure_4h: Optional[float] = None
     quote_change_pct: Optional[float] = None
     reevaluate_ar: list[str] = Field(default_factory=list)
     reevaluate_refs: list[ReasonRef] = Field(default_factory=list)

@@ -78,7 +78,8 @@ object IdeaCtx {
         val res = lvl?.resistances.orEmpty().map { it.price }
         val btcTrend = if (asset in SimpleAdvice.FOLLOWS_BTC && p != null) btcTrend(p, c.horizon) else null
         val ev = p?.let { SimpleAdvice.eventSoon(calendar(it), now) }
-        val raw = SimpleAdvice.decide(c.trend?.direction, price, sup, res, hold, asset, d.levels?.atrH1, btcTrend)
+        val bp = if (c.horizon == "HOURS") d.buyPressure4h else null
+        val raw = SimpleAdvice.decide(c.trend?.direction, price, sup, res, hold, asset, d.levels?.atrH1, btcTrend, bp)
         val idea = SimpleAdvice.withEvent(SimpleAdvice.resolve(raw, testedUp), ev)
         return Built(idea, testedUp, price?.let { px -> res.filter { it > px }.minOrNull() }, SimpleAdvice.trendCodeOf(c.trend?.direction), ev)
     }
