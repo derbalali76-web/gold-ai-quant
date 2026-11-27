@@ -270,6 +270,7 @@ fun GoldScreen(vm: MainViewModel, lang: Lang, onLanguage: (Lang) -> Unit) {
 private sealed interface Sheet {
     data class LevelSheet(val level: Level, val isSupport: Boolean) : Sheet
     data object LevelsAll : Sheet
+    data object JournalSheet : Sheet
     data class NoteSheet(val text: String) : Sheet
     data object Probabilities : Sheet
     data object TradeSheet : Sheet
@@ -354,7 +355,10 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
                     st.qualified.isNotEmpty() -> stringResource(R.string.rd_tile_q, st.qualified.size)
                     else -> stringResource(R.string.h2_radar_none)
                 }
-                H2Bottom(s, radar, onRadar = { sheet = Sheet.RadarSheet }, onRecord = { sheet = Sheet.TrustSheet })
+                val jp = androidx.compose.ui.platform.LocalContext.current.getSharedPreferences("gold_ai_quant", android.content.Context.MODE_PRIVATE)
+                val jOpen = remember(sheet) { com.goldaiquant.app.Journal.load(jp).count { it.open } }
+                H2Bottom(s, radar, stringResource(R.string.j_tile_sub, jOpen), onRadar = { sheet = Sheet.RadarSheet },
+                    onRecord = { sheet = Sheet.TrustSheet }, onJournal = { sheet = Sheet.JournalSheet })
             } else {
                 // no analysis yet: the same big button loads it
                 AskButton(s.loading, compact) { onAsk() }
@@ -408,6 +412,7 @@ fun GoldContent(s: UiState, lang: Lang, onAsk: () -> Unit, onNextDemo: () -> Uni
         is Sheet.NoteSheet -> DialogFrame("⚠", { sheet = null }) {
             Text(sh.text, color = TextMain, fontSize = 15.sp, lineHeight = 22.sp)
         }
+        Sheet.JournalSheet -> JournalDialog(s) { sheet = null }
         Sheet.LevelsAll -> if (d != null && card != null) LevelsSheet(h2View(card, s, d), s, s.live[s.asset]?.price ?: d.quote,
             onBell, onLevel = { l, sup -> sheet = Sheet.LevelSheet(l, sup) }) { sheet = null }
         null -> Unit

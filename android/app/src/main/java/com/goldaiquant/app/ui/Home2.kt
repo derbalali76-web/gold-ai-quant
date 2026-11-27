@@ -450,33 +450,32 @@ internal fun H2LevelsCard(x: H2View, s: UiState, modifier: Modifier, onOpen: () 
 }
 
 @Composable
-internal fun H2Bottom(s: UiState, radarText: String, onRadar: () -> Unit, onRecord: () -> Unit) {
+private fun BottomTile(icon: Int, title: String, sub: String, subColor: Color, modifier: Modifier, onClick: () -> Unit) {
+    Row(modifier.clip(RoundedCornerShape(12.dp)).clickable(role = Role.Button, onClick = onClick),
+        verticalAlignment = Alignment.CenterVertically) {
+        Image(painterResource(icon), null, Modifier.size(28.dp))
+        Spacer(Modifier.width(5.dp))
+        Column {
+            Text(title, color = Color.White, fontFamily = Cairo, fontWeight = FontWeight.ExtraBold, fontSize = 13.sp,
+                lineHeight = 16.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Text(sub, color = subColor, fontFamily = Cairo, fontWeight = FontWeight.Bold, fontSize = 11.sp, lineHeight = 13.sp,
+                maxLines = 1, overflow = TextOverflow.Ellipsis)
+        }
+    }
+}
+
+@Composable
+internal fun H2Bottom(s: UiState, radarText: String, journalText: String, onRadar: () -> Unit, onRecord: () -> Unit,
+                      onJournal: () -> Unit) {
     GlowCard(Modifier.fillMaxWidth()) {
-        Row(Modifier.height(IntrinsicSize.Min).padding(horizontal = 10.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-            Row(Modifier.weight(1f).clip(RoundedCornerShape(12.dp)).clickable(role = Role.Button, onClick = onRadar),
-                verticalAlignment = Alignment.CenterVertically) {
-                Image(painterResource(R.drawable.hi_target), null, Modifier.size(34.dp))
-                Spacer(Modifier.width(8.dp))
-                Column {
-                    Text(stringResource(R.string.rd_tile), color = Color.White, fontFamily = Cairo, fontWeight = FontWeight.ExtraBold,
-                        fontSize = 15.sp, lineHeight = 18.sp, maxLines = 1)
-                    Text(radarText, color = Color.White, fontFamily = Cairo, fontSize = 11.sp, lineHeight = 13.sp, maxLines = 1,
-                        overflow = TextOverflow.Ellipsis)
-                }
-            }
+        Row(Modifier.height(IntrinsicSize.Min).padding(horizontal = 8.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+            BottomTile(R.drawable.hi_target, stringResource(R.string.rd_tile), radarText, Color.White, Modifier.weight(1f), onRadar)
             Box(Modifier.width(1.dp).fillMaxHeight().padding(vertical = 4.dp).background(Color(0xFF5A4A20)))
-            Spacer(Modifier.width(8.dp))
-            Row(Modifier.weight(1f).clip(RoundedCornerShape(12.dp)).clickable(role = Role.Button, onClick = onRecord),
-                verticalAlignment = Alignment.CenterVertically) {
-                Image(painterResource(R.drawable.hi_record), null, Modifier.size(32.dp))
-                Spacer(Modifier.width(8.dp))
-                Column {
-                    Text(stringResource(R.string.rec_title), color = Color.White, fontFamily = Cairo, fontWeight = FontWeight.ExtraBold,
-                        fontSize = 16.sp, lineHeight = 19.sp, maxLines = 1)
-                    Text(recordTile(s.briefs), color = H2Gold, fontFamily = Cairo, fontWeight = FontWeight.ExtraBold, fontSize = 13.sp,
-                        lineHeight = 15.sp, maxLines = 1)
-                }
-            }
+            Spacer(Modifier.width(6.dp))
+            BottomTile(R.drawable.hi_record, stringResource(R.string.rec_title), recordTile(s.briefs), H2Gold, Modifier.weight(1f), onRecord)
+            Box(Modifier.width(1.dp).fillMaxHeight().padding(vertical = 4.dp).background(Color(0xFF5A4A20)))
+            Spacer(Modifier.width(6.dp))
+            BottomTile(R.drawable.hi_levels, stringResource(R.string.j_tile), journalText, H2Gold, Modifier.weight(1f), onJournal)
         }
     }
 }

@@ -941,6 +941,31 @@
     <string name="ia_withdrawn_sell">لم تعد فرصة بيع جديدة. إن بعت: انتظر إعادة الشراء قرب %1$s، وتُلغى الفكرة فوق %2$s.</string>
     <string name="sa_hint_bought">إن اشتريت عند «اشترِ الآن» السابقة فأنت تملك الأصل الآن: اختر «أملك أصلاً» لترى متى تبيع وأين تُلغى الفكرة.</string>
     <string name="sa_hint_sold">إن بعت عند «بِع الآن» السابقة فأنت تملك سيولة الآن: اختر «أملك سيولة» لترى أين تعيد الشراء.</string>
+    <string name="j_title">دفتر صفقاتي</string>
+    <string name="j_tile">دفتري</string>
+    <string name="j_tile_sub">%1$d مفتوحة</string>
+    <string name="j_realized">المغلقة: %1$d (رابحة %2$d)</string>
+    <string name="j_open">المفتوحة: %1$d · المال المحبوس</string>
+    <string name="j_unrealized">المفتوحة لو بعت الآن</string>
+    <string name="j_stuck">%1$d صفقات مفتوحة منذ أكثر من %2$d يوماً.</string>
+    <string name="j_costs">العمولة: الرقمية %1$s للشراء والبيع معاً، الذهب %2$s لكل صفقة (اضغط للتعديل)</string>
+    <string name="j_costs_title">عمولتك</string>
+    <string name="j_cost_crypto">الأصول الرقمية: النسبة % للشراء والبيع معاً</string>
+    <string name="j_cost_gold">الذهب: دولار لكل صفقة للشراء والبيع معاً</string>
+    <string name="j_add">أضف صفقة شراء</string>
+    <string name="j_amount">المبلغ بالدولار</string>
+    <string name="j_buy_price">سعر الشراء</string>
+    <string name="j_sell_price">سعر البيع</string>
+    <string name="j_sell">بِع</string>
+    <string name="j_save">حفظ</string>
+    <string name="j_delete">حذف</string>
+    <string name="j_result">النتيجة الصافية: %1$s</string>
+    <string name="j_target">هدفك %1$s · مفتوحة منذ %2$d يوم</string>
+    <string name="j_now">الآن %1$s</string>
+    <string name="j_open_list">المفتوحة</string>
+    <string name="j_closed_list">المغلقة</string>
+    <string name="j_empty">لا صفقات بعد. أضف كل صفقة شراء حقيقية هنا لترى نتيجتك الحقيقية بعد العمولة.</string>
+    <string name="j_private">محفوظ على هذا الهاتف فقط، ولا يُرسل شيء.</string>
     <string name="r_w_up" formatted="false">صاعد</string>
     <string name="r_w_down" formatted="false">هابط</string>
     <string name="r_w_neutral" formatted="false">محايد</string>

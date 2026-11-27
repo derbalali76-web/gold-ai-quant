@@ -941,6 +941,31 @@
     <string name="ia_withdrawn_sell">Ya no es una nueva oportunidad de venta. Si vendiste: espera recomprar cerca de %1$s; la idea se anula sobre %2$s.</string>
     <string name="sa_hint_bought">Si compraste con el «comprar ahora» anterior, ya lo tienes: elige «Lo tengo» para ver cuándo vender y dónde se anula la idea.</string>
     <string name="sa_hint_sold">Si vendiste con el «vender ahora» anterior, tienes liquidez: elige «Tengo liquidez» para ver dónde recomprar.</string>
+    <string name="j_title">Mis operaciones</string>
+    <string name="j_tile">Mis trades</string>
+    <string name="j_tile_sub">%1$d abiertas</string>
+    <string name="j_realized">Cerradas: %1$d (ganadoras %2$d)</string>
+    <string name="j_open">Abiertas: %1$d · dinero inmovilizado</string>
+    <string name="j_unrealized">Abiertas si vendes ahora</string>
+    <string name="j_stuck">%1$d compras abiertas hace más de %2$d días.</string>
+    <string name="j_costs">Costes: cripto %1$s compra + venta, oro %2$s por operación (toca para cambiar)</string>
+    <string name="j_costs_title">Tus costes</string>
+    <string name="j_cost_crypto">Cripto: % compra + venta</string>
+    <string name="j_cost_gold">Oro: dólares por operación compra + venta</string>
+    <string name="j_add">Añadir una compra</string>
+    <string name="j_amount">Importe en dólares</string>
+    <string name="j_buy_price">Precio de compra</string>
+    <string name="j_sell_price">Precio de venta</string>
+    <string name="j_sell">Vender</string>
+    <string name="j_save">Guardar</string>
+    <string name="j_delete">Eliminar</string>
+    <string name="j_result">Resultado neto: %1$s</string>
+    <string name="j_target">Tu objetivo %1$s · abierta hace %2$d días</string>
+    <string name="j_now">ahora %1$s</string>
+    <string name="j_open_list">Abiertas</string>
+    <string name="j_closed_list">Cerradas</string>
+    <string name="j_empty">Aún no hay operaciones. Añade cada compra real para ver tu resultado real tras costes.</string>
+    <string name="j_private">Solo en este teléfono; no se envía nada.</string>
     <string name="r_w_up" formatted="false">alcista</string>
     <string name="r_w_down" formatted="false">bajista</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

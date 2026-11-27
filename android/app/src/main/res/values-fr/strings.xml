@@ -941,6 +941,31 @@
     <string name="ia_withdrawn_sell">Ce n\'est plus une nouvelle occasion de vente. Si vous avez vendu : attendez de racheter près de %1$s ; idée annulée au-dessus de %2$s.</string>
     <string name="sa_hint_bought">Si vous avez acheté sur le « acheter maintenant » précédent, vous le détenez : choisissez « Je le détiens » pour voir quand vendre et où l\'idée s\'annule.</string>
     <string name="sa_hint_sold">Si vous avez vendu sur le « vendre maintenant » précédent, vous avez des liquidités : choisissez « J\'ai des liquidités » pour voir où racheter.</string>
+    <string name="j_title">Mes transactions</string>
+    <string name="j_tile">Mes trades</string>
+    <string name="j_tile_sub">%1$d ouvertes</string>
+    <string name="j_realized">Clôturées : %1$d (gagnantes %2$d)</string>
+    <string name="j_open">Ouvertes : %1$d · argent bloqué</string>
+    <string name="j_unrealized">Ouvertes si vendues maintenant</string>
+    <string name="j_stuck">%1$d achats ouverts depuis plus de %2$d jours.</string>
+    <string name="j_costs">Frais : crypto %1$s achat + vente, or %2$s par trade (touchez pour modifier)</string>
+    <string name="j_costs_title">Vos frais</string>
+    <string name="j_cost_crypto">Crypto : % achat + vente</string>
+    <string name="j_cost_gold">Or : dollars par trade achat + vente</string>
+    <string name="j_add">Ajouter un achat</string>
+    <string name="j_amount">Montant en dollars</string>
+    <string name="j_buy_price">Prix d\'achat</string>
+    <string name="j_sell_price">Prix de vente</string>
+    <string name="j_sell">Vendre</string>
+    <string name="j_save">Enregistrer</string>
+    <string name="j_delete">Supprimer</string>
+    <string name="j_result">Résultat net : %1$s</string>
+    <string name="j_target">Votre objectif %1$s · ouvert depuis %2$d j</string>
+    <string name="j_now">maintenant %1$s</string>
+    <string name="j_open_list">Ouvertes</string>
+    <string name="j_closed_list">Clôturées</string>
+    <string name="j_empty">Aucun trade. Ajoutez chaque achat réel pour voir votre vrai résultat après frais.</string>
+    <string name="j_private">Gardé sur ce téléphone uniquement ; rien n\'est envoyé.</string>
     <string name="r_w_up" formatted="false">haussière</string>
     <string name="r_w_down" formatted="false">baissière</string>
     <string name="r_w_neutral" formatted="false">neutre</string>
