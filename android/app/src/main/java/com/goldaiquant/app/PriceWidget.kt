@@ -70,7 +70,8 @@ class PriceWidget : BaseWidget() {
             v.setTextViewText(R.id.w_chg, chg); v.setTextColor(R.id.w_chg, col)
             if (!strip) {
                 Widgets.setSpark(v, R.id.w_spark, Widgets.closes(p, a))
-                v.setTextViewText(R.id.w_time, Widgets.time(ctx, d))
+                v.setTextViewText(R.id.w_time, if (Widgets.busy) "⟳  …" else Widgets.stamp(ctx, d))
+                v.setOnClickPendingIntent(R.id.w_time, Widgets.action(ctx0, PriceWidget::class.java, id, Widgets.ACT_REFRESH))
             }
             val show = if (wDp >= WIDE_DP) View.VISIBLE else View.GONE
             v.setViewVisibility(R.id.w_idea_col, show)
@@ -94,6 +95,7 @@ class PriceWidget : BaseWidget() {
                 v.setTextViewText(R.id.w_l1, ctx.getString(R.string.widget_empty))
                 if (!strip) { v.setViewVisibility(R.id.w_l2, View.GONE); v.setTextViewText(R.id.w_note, "") }
             }
+            if (strip) v.setOnClickPendingIntent(R.id.w_price, Widgets.action(ctx0, PriceWidget::class.java, id, Widgets.ACT_REFRESH))
             v.setOnClickPendingIntent(R.id.w_root, Widgets.openApp(ctx0))
             v.setOnClickPendingIntent(R.id.w_pair, Widgets.action(ctx0, PriceWidget::class.java, id, Widgets.ACT_NEXT))
             v.setOnClickPendingIntent(R.id.w_who, Widgets.action(ctx0, PriceWidget::class.java, id, Widgets.ACT_POS))
@@ -115,7 +117,8 @@ class PriceWidgetSmall : BaseWidget() {
             v.setTextViewText(R.id.ws_chg, chg); v.setTextColor(R.id.ws_chg, col)
             Widgets.setSpark(v, R.id.ws_spark, Widgets.closes(p, a))
             v.setImageViewResource(R.id.ws_art, Widgets.art(a))
-            v.setTextViewText(R.id.ws_time, Widgets.time(ctx, d))
+            v.setTextViewText(R.id.ws_time, if (Widgets.busy) "⟳  …" else Widgets.stamp(ctx, d))
+            v.setOnClickPendingIntent(R.id.ws_time, Widgets.action(ctx0, PriceWidgetSmall::class.java, id, Widgets.ACT_REFRESH))
             v.setOnClickPendingIntent(R.id.ws_root, Widgets.openApp(ctx0))
             v.setOnClickPendingIntent(R.id.ws_pair, Widgets.action(ctx0, PriceWidgetSmall::class.java, id, Widgets.ACT_NEXT))
             return v
@@ -149,7 +152,10 @@ class PriceWidgetList : BaseWidget() {
                 val (w, col) = Widgets.word(Widgets.idea(d, a, Widgets.hold(p, a), p)?.kind)
                 v.setTextViewText(r[4], ctx.getString(w)); v.setTextColor(r[4], col)
             }
-            v.setTextViewText(R.id.wl_time, Widgets.time(ctx, latest))
+            v.setTextViewText(R.id.wl_time, if (Widgets.busy) "⟳  …" else "⟳  " + Widgets.time(ctx, latest))
+            Widgets.ids(ctx0, PriceWidgetList::class.java).firstOrNull()?.let {
+                v.setOnClickPendingIntent(R.id.wl_time, Widgets.action(ctx0, PriceWidgetList::class.java, it, Widgets.ACT_REFRESH))
+            }
             v.setOnClickPendingIntent(R.id.wl_root, Widgets.openApp(ctx0))
             return v
         }
