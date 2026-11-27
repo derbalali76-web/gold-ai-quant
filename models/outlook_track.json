@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-26T21:39:45.177375+00:00",
+ "generated_at": "2026-11-27T04:14:10.555806+00:00",
  "horizons": {
   "WEEK": {
    "resolved": 0,
@@ -18,7 +18,7 @@
    "resolved": 0,
    "hits": 0,
    "hit_rate": null,
-   "pending": 10,
+   "pending": 11,
    "avg_win_pct": null,
    "avg_loss_pct": null,
    "expectancy_pct": null,
