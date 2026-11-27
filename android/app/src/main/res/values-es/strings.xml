@@ -966,6 +966,12 @@
     <string name="j_closed_list">Cerradas</string>
     <string name="j_empty">Aún no hay operaciones. Añade cada compra real para ver tu resultado real tras costes.</string>
     <string name="j_private">Solo en este teléfono; no se envía nada.</string>
+    <string name="j_auto_on">Registrar oportunidades automáticamente</string>
+    <string name="j_auto_amount">Importe de prueba por compra (dólares, cripto)</string>
+    <string name="j_auto_note">🤖 Automático: cada «comprar ahora» de un activo seguido se registra como compra de prueba de %1$s (oro: 1 onza) y se vende a +0,65 %% / +15 $, con aviso. No es dinero real.</string>
+    <string name="j_auto_off_note">Compras de prueba automáticas desactivadas (%1$s). Toca para activar.</string>
+    <string name="j_auto_sold_title">%1$s: objetivo alcanzado, hora de vender</string>
+    <string name="j_auto_sold">El precio es %1$s (compra a %2$s). Prueba cerrada: %3$s $ tras costes.</string>
     <string name="r_w_up" formatted="false">alcista</string>
     <string name="r_w_down" formatted="false">bajista</string>
     <string name="r_w_neutral" formatted="false">neutral</string>

@@ -12,7 +12,7 @@ import org.json.JSONObject
  */
 object Journal {
     data class Trade(val id: Long, val asset: String, val amountUsd: Double, val buyPrice: Double, val buyAt: Long,
-                     val sellPrice: Double? = null, val sellAt: Long? = null) {
+                     val sellPrice: Double? = null, val sellAt: Long? = null, val auto: Boolean = false) {
         val qty: Double get() = amountUsd / buyPrice
         val open: Boolean get() = sellPrice == null
     }
@@ -50,7 +50,8 @@ object Journal {
         (0 until a.length()).map { i ->
             val o = a.getJSONObject(i)
             Trade(o.getLong("id"), o.getString("asset"), o.getDouble("amount"), o.getDouble("buy"), o.getLong("buy_at"),
-                if (o.has("sell")) o.getDouble("sell") else null, if (o.has("sell_at")) o.getLong("sell_at") else null)
+                if (o.has("sell")) o.getDouble("sell") else null, if (o.has("sell_at")) o.getLong("sell_at") else null,
+                o.optBoolean("auto", false))
         }
     } catch (e: Exception) { emptyList() }
 
@@ -58,7 +59,7 @@ object Journal {
         val a = JSONArray()
         ts.forEach { t ->
             a.put(JSONObject().put("id", t.id).put("asset", t.asset).put("amount", t.amountUsd).put("buy", t.buyPrice)
-                .put("buy_at", t.buyAt).apply {
+                .put("buy_at", t.buyAt).put("auto", t.auto).apply {
                     t.sellPrice?.let { put("sell", it) }
                     t.sellAt?.let { put("sell_at", it) }
                 })
@@ -69,4 +70,33 @@ object Journal {
     fun costs(p: SharedPreferences) = Costs(p.getFloat("j_cost_crypto", 0.15f).toDouble(), p.getFloat("j_cost_gold", 2f).toDouble())
     fun saveCosts(p: SharedPreferences, c: Costs) =
         p.edit().putFloat("j_cost_crypto", c.cryptoRoundTripPct.toFloat()).putFloat("j_cost_gold", c.goldPerTradeUsd.toFloat()).apply()
+
+    /** Automatic mode (owner 2026-11-27: «أريد أن يكون التطبيق تلقائياً»): every new «اشترِ الآن» opportunity of a
+     *  followed asset is recorded as a test buy of a fixed size, and sold when the owner's target is reached. The
+     *  «let a strong rise run» exit was tested on two years of history (trail-0.1) and did not do better, so the
+     *  sale is at the target. Test buys are not real money; they show what following the app would have given. */
+    fun autoOn(p: SharedPreferences) = p.getBoolean("j_auto", true)
+    fun autoAmount(p: SharedPreferences) = p.getFloat("j_auto_amount", 1000f).toDouble()
+
+    /** Size of an automatic test buy: the set amount for digital assets, one ounce for gold. */
+    fun autoSize(asset: String, price: Double, p: SharedPreferences) = if (asset == "XAU") price else autoAmount(p)
+
+    fun addAuto(p: SharedPreferences, asset: String, price: Double, now: Long = System.currentTimeMillis()): Trade? {
+        if (!autoOn(p)) return null
+        val ts = load(p)
+        val t = Trade(now, asset, autoSize(asset, price, p), price, now, auto = true)
+        save(p, ts + t)
+        return t
+    }
+
+    /** Closes the automatic buys of [asset] whose target is reached at [price]; returns the closed ones. */
+    fun closeReached(p: SharedPreferences, asset: String, price: Double, now: Long = System.currentTimeMillis()): List<Trade> {
+        val ts = load(p)
+        val hit = ts.filter { it.auto && it.open && it.asset == asset && price >= target(it) }
+        if (hit.isEmpty()) return emptyList()
+        val ids = hit.map { it.id }.toSet()
+        val closed = hit.map { it.copy(sellPrice = price, sellAt = now) }
+        save(p, ts.map { t -> closed.firstOrNull { it.id == t.id } ?: t })
+        return closed.filter { it.id in ids }
+    }
 }

@@ -96,6 +96,10 @@ class SignalWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx
         val st = IdeaAlerts.step(IdeaAlerts.decode(prefs.getString(key, null)), prefs.getLong(ck, 0L), n, price,
             System.currentTimeMillis())
         prefs.edit().putString(key, IdeaAlerts.encode(st.state)).putLong(ck, st.coolUntil).apply()
+        // automatic test trades (owner 2026-11-27): sell those that reached the target, record a new buy-now
+        val ctx0 = LanguageStore.wrap(applicationContext, LanguageStore.resolve(applicationContext))
+        Journal.closeReached(prefs, asset, price).forEach { t -> notifyAutoSell(ctx0, t, prefs) }
+        if (st.msg == IdeaAlerts.Msg.NEW && st.idea?.kind == SimpleAdvice.Kind.BUY_NOW && !hold) Journal.addAuto(prefs, asset, price)
         val m = st.msg ?: return
         val a = st.idea ?: return
         val ctx = LanguageStore.wrap(applicationContext, LanguageStore.resolve(applicationContext))
@@ -150,6 +154,24 @@ class SignalWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx
             .setContentIntent(open).setAutoCancel(true).private(applicationContext).build()
         NotificationManagerCompat.from(applicationContext).notify("idea$asset${a.at}$m".hashCode(), n2)
     } }
+
+    private fun notifyAutoSell(ctx: android.content.Context, t: Journal.Trade, prefs: android.content.SharedPreferences) {
+        if (!ready(ctx)) return
+        val net = Journal.net(t, t.sellPrice ?: return, Journal.costs(prefs))
+        val p = { v: Double -> String.format(java.util.Locale.US, "%.2f", v) }
+        val name = ctx.getString(when (t.asset) { "BTC" -> R.string.ia_name_btc; "ETH" -> R.string.ia_name_eth
+            "SOL" -> R.string.ia_name_sol; else -> R.string.ia_name_xau })
+        val title = ctx.getString(R.string.j_auto_sold_title, name)
+        val body = ctx.getString(R.string.j_auto_sold, p(t.sellPrice!!), p(t.buyPrice),
+            (if (net >= 0) "+" else "−") + p(kotlin.math.abs(net)))
+        val open = PendingIntent.getActivity(applicationContext, 10,
+            Intent(applicationContext, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),
+            PendingIntent.FLAG_IMMUTABLE)
+        NotificationManagerCompat.from(applicationContext).notify(("jsell" + t.id).hashCode(),
+            NotificationCompat.Builder(applicationContext, CHANNEL).setSmallIcon(android.R.drawable.stat_notify_more)
+                .setContentTitle(title).setContentText(body).setStyle(NotificationCompat.BigTextStyle().bigText(body))
+                .setContentIntent(open).setAutoCancel(true).private(applicationContext).build())
+    }
 
     /** One-shot "Alert me" alerts: fire once when the price is at/through the level, then removed. */
     private fun checkPriceAlerts(prefs: android.content.SharedPreferences, asset: String, f: Fetched) {

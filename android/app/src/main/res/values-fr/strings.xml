@@ -966,6 +966,12 @@
     <string name="j_closed_list">Clôturées</string>
     <string name="j_empty">Aucun trade. Ajoutez chaque achat réel pour voir votre vrai résultat après frais.</string>
     <string name="j_private">Gardé sur ce téléphone uniquement ; rien n\'est envoyé.</string>
+    <string name="j_auto_on">Enregistrer automatiquement les opportunités</string>
+    <string name="j_auto_amount">Montant test par achat (dollars, crypto)</string>
+    <string name="j_auto_note">🤖 Automatique : chaque « acheter maintenant » d\'un actif suivi devient un achat test de %1$s (or : 1 once), vendu à +0,65 %% / +15 $ avec notification. Pas d\'argent réel.</string>
+    <string name="j_auto_off_note">Achats test automatiques désactivés (%1$s). Touchez pour activer.</string>
+    <string name="j_auto_sold_title">%1$s : objectif atteint, moment de vendre</string>
+    <string name="j_auto_sold">Le prix est %1$s (acheté à %2$s). Trade test clôturé : %3$s $ après frais.</string>
     <string name="r_w_up" formatted="false">haussière</string>
     <string name="r_w_down" formatted="false">baissière</string>
     <string name="r_w_neutral" formatted="false">neutre</string>

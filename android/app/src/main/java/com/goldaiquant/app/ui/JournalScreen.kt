@@ -63,6 +63,9 @@ internal fun JournalDialog(s: UiState, onClose: () -> Unit) {
                 ltr(String.format(Locale.US, "%.2f $", costs.goldPerTradeUsd))), color = TextDim, fontSize = 11.sp,
                 modifier = Modifier.clickable { editCosts = true })
         }
+        Text(stringResource(if (Journal.autoOn(prefs)) R.string.j_auto_note else R.string.j_auto_off_note,
+            ltr(String.format(Locale.US, "%,.0f $", Journal.autoAmount(prefs)))), color = TextDim, fontSize = 12.sp,
+            modifier = Modifier.clickable { editCosts = true })
         TextButton(onClick = { adding = true }) { Text("＋ " + stringResource(R.string.j_add), color = Gold, fontWeight = FontWeight.Bold) }
 
         val open = trades.filter { it.open }.sortedByDescending { it.buyAt }
@@ -72,7 +75,7 @@ internal fun JournalDialog(s: UiState, onClose: () -> Unit) {
             val days = ((System.currentTimeMillis() - t.buyAt) / 86_400_000L).toInt()
             Column(Modifier.fillMaxWidth().background(Color(0xFF121214), RoundedCornerShape(12.dp)).padding(10.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(t.asset + " · " + ltr(String.format(Locale.US, "%,.0f $", t.amountUsd)) + " @ " + ltr(t.buyPrice.p2()),
+                    Text((if (t.auto) "🤖 " else "") + t.asset + " · " + ltr(String.format(Locale.US, "%,.0f $", t.amountUsd)) + " @ " + ltr(t.buyPrice.p2()),
                         color = TextMain, fontWeight = FontWeight.Bold, fontSize = 14.sp, modifier = Modifier.weight(1f))
                     Text(stringResource(R.string.j_sell), color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 13.sp,
                         modifier = Modifier.background(Gold, RoundedCornerShape(10.dp)).clickable(role = Role.Button) { selling = t }
@@ -88,7 +91,7 @@ internal fun JournalDialog(s: UiState, onClose: () -> Unit) {
         closed.forEach { t ->
             val n = Journal.net(t, t.sellPrice!!, costs)
             Row(Modifier.fillMaxWidth().padding(vertical = 2.dp)) {
-                Text(t.asset + "  " + ltr(t.buyPrice.p2()) + " → " + ltr(t.sellPrice.p2()), color = TextMain, fontSize = 13.sp,
+                Text((if (t.auto) "🤖 " else "") + t.asset + "  " + ltr(t.buyPrice.p2()) + " → " + ltr(t.sellPrice.p2()), color = TextMain, fontSize = 13.sp,
                     modifier = Modifier.weight(1f))
                 Text(ltr(usd(n)), color = if (n >= 0) BuyGreen else SellRed, fontSize = 13.sp, fontWeight = FontWeight.Bold)
             }
@@ -143,12 +146,22 @@ internal fun JournalDialog(s: UiState, onClose: () -> Unit) {
     if (editCosts) {
         var cp by remember { mutableStateOf(costs.cryptoRoundTripPct.toString()) }
         var gd by remember { mutableStateOf(costs.goldPerTradeUsd.toString()) }
+        var auto by remember { mutableStateOf(Journal.autoOn(prefs)) }
+        var amt by remember { mutableStateOf(Journal.autoAmount(prefs).toString()) }
         DialogFrame(stringResource(R.string.j_costs_title), { editCosts = false }) {
             OutlinedTextField(cp, { cp = it.take(6) }, singleLine = true, label = { Text(stringResource(R.string.j_cost_crypto)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal), modifier = Modifier.fillMaxWidth())
             OutlinedTextField(gd, { gd = it.take(6) }, singleLine = true, label = { Text(stringResource(R.string.j_cost_gold)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal), modifier = Modifier.fillMaxWidth())
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(stringResource(R.string.j_auto_on), color = TextMain, fontSize = 14.sp, modifier = Modifier.weight(1f))
+                androidx.compose.material3.Switch(checked = auto, onCheckedChange = { auto = it })
+            }
+            OutlinedTextField(amt, { amt = it.take(8) }, singleLine = true, label = { Text(stringResource(R.string.j_auto_amount)) },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal), modifier = Modifier.fillMaxWidth())
             TextButton(onClick = {
+                prefs.edit().putBoolean("j_auto", auto).putFloat("j_auto_amount",
+                    (amt.replace(',', '.').toDoubleOrNull()?.takeIf { it > 0 } ?: Journal.autoAmount(prefs)).toFloat()).apply()
                 val c = Journal.Costs(cp.replace(',', '.').toDoubleOrNull() ?: costs.cryptoRoundTripPct,
                     gd.replace(',', '.').toDoubleOrNull() ?: costs.goldPerTradeUsd)
                 costs = c; Journal.saveCosts(prefs, c); editCosts = false
