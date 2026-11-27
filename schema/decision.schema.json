@@ -1893,6 +1893,18 @@
       "default": null,
       "title": "Audit Hash"
     },
+    "buy_pressure_4h": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Buy Pressure 4H"
+    },
     "calibration_period": {
       "anyOf": [
         {
