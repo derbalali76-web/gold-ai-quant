@@ -20,3 +20,5 @@
 {"bar": "2026-11-25T00:00:00+00:00", "recorded_at": "2026-11-26T00:17:28.712051+00:00", "horizon": "MONTH", "version": "outlook-1.0", "action": "WAIT", "tilt": -1, "validated": false, "close": 3547.53}
 {"bar": "2026-11-26T00:00:00+00:00", "recorded_at": "2026-11-27T04:14:10.540746+00:00", "horizon": "WEEK", "version": "outlook-1.0", "action": "WAIT", "tilt": 0, "validated": false, "close": 3567.47}
 {"bar": "2026-11-26T00:00:00+00:00", "recorded_at": "2026-11-27T04:14:10.540810+00:00", "horizon": "MONTH", "version": "outlook-1.0", "action": "WAIT", "tilt": -1, "validated": false, "close": 3567.47}
+{"bar": "2026-11-27T00:00:00+00:00", "recorded_at": "2026-11-28T01:34:41.637284+00:00", "horizon": "WEEK", "version": "outlook-1.0", "action": "WAIT", "tilt": 0, "validated": false, "close": 3654.4}
+{"bar": "2026-11-27T00:00:00+00:00", "recorded_at": "2026-11-28T01:34:41.637332+00:00", "horizon": "MONTH", "version": "outlook-1.0", "action": "WAIT", "tilt": -1, "validated": false, "close": 3654.4}
