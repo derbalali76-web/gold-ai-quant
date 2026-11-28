@@ -1,7 +1,7 @@
 {
- "updated_at": "2026-11-28T01:25:22.497329Z",
+ "updated_at": "2026-11-28T19:56:47.306953Z",
  "sources": {
-  "bls": "ok",
+  "bls": "error: HTTP 403 from https://www.bls.gov/schedule/news_release/bls.ics — kept previous events",
   "fomc": "ok"
  },
  "events": [
