@@ -33,6 +33,8 @@ for attempt in 1 2 3 4; do
   [ -f ideas.py ] && { python3 ideas.py "$IN" . || true; }
   # lean-targets-0.1 (pre-registered 2026-11-26): does «صعود / هبوط نحو X» come true, and how fast?
   [ -f lean.py ] && { python3 lean.py "$IN" . || true; }
+  # forecast-0.1 (pre-registered 2026-11-28): multi-horizon direction forecasts that learn from their own results
+  [ -f forecast.py ] && { python3 forecast.py . || true; }
   python3 monitor.py --issuer "$IN/issuer.txt" "$IN"/snap_XAU.json "$IN"/snap_BTC.json "$IN"/snap_ETH.json \
     "$IN"/snap_SOL.json | tee monitor.txt
   # daily external anchor (OpenTimestamps -> Bitcoin; best effort, never blocks the record)
