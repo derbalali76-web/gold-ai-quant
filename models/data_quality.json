@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-27T14:05:18.852782+00:00",
+ "generated_at": "2026-11-28T13:22:56.280757+00:00",
  "series": {
   "Dukascopy:XAUUSD:M15": {
    "history": {
@@ -8,7 +8,7 @@
      {
       "code": "freshness",
       "status": "FAIL",
-      "value": "56"
+      "value": "9"
      },
      {
       "code": "coverage",
@@ -46,9 +46,9 @@
       "value": "0.019%/0.47%"
      }
     ],
-    "bars": 255930,
+    "bars": 256009,
     "first": "2016-01-03 23:00:00+00:00",
-    "last": "2026-11-26 23:45:00+00:00"
+    "last": "2026-11-27 19:30:00+00:00"
    },
    "last_7_days": {
     "status": "FAIL",
@@ -56,12 +56,12 @@
      {
       "code": "freshness",
       "status": "FAIL",
-      "value": "56"
+      "value": "9"
      },
      {
       "code": "coverage",
       "status": "OK",
-      "value": "97.3%"
+      "value": "97.8%"
      },
      {
       "code": "gaps",
@@ -94,9 +94,9 @@
       "value": "0.028%/0.27%"
      }
     ],
-    "bars": 393,
+    "bars": 441,
     "first": "2016-01-03 23:00:00+00:00",
-    "last": "2026-11-26 23:45:00+00:00"
+    "last": "2026-11-27 19:30:00+00:00"
    }
   },
   "Dukascopy:XAUUSD:H1": {
@@ -105,8 +105,8 @@
     "checks": [
      {
       "code": "freshness",
-      "status": "FAIL",
-      "value": "14"
+      "status": "OK",
+      "value": "2"
      },
      {
       "code": "coverage",
@@ -144,22 +144,22 @@
       "value": "0.018%/0.46%"
      }
     ],
-    "bars": 64045,
+    "bars": 64065,
     "first": "2016-01-03 23:00:00+00:00",
-    "last": "2026-11-26 23:00:00+00:00"
+    "last": "2026-11-27 19:00:00+00:00"
    },
    "last_7_days": {
-    "status": "FAIL",
+    "status": "OK",
     "checks": [
      {
       "code": "freshness",
-      "status": "FAIL",
-      "value": "14"
+      "status": "OK",
+      "value": "2"
      },
      {
       "code": "coverage",
       "status": "OK",
-      "value": "97.0%"
+      "value": "98.2%"
      },
      {
       "code": "gaps",
@@ -189,12 +189,12 @@
      {
       "code": "cross_source",
       "status": "OK",
-      "value": "0.033%/0.27%"
+      "value": "0.027%/0.27%"
      }
     ],
-    "bars": 98,
+    "bars": 111,
     "first": "2016-01-03 23:00:00+00:00",
-    "last": "2026-11-26 23:00:00+00:00"
+    "last": "2026-11-27 19:00:00+00:00"
    }
   },
   "Dukascopy:XAGUSD:M15": {
@@ -204,7 +204,7 @@
      {
       "code": "freshness",
       "status": "FAIL",
-      "value": "56"
+      "value": "9"
      },
      {
       "code": "coverage",
@@ -237,9 +237,9 @@
       "value": "2"
      }
     ],
-    "bars": 70175,
+    "bars": 70254,
     "first": "2023-11-21 00:00:00+00:00",
-    "last": "2026-11-26 23:45:00+00:00"
+    "last": "2026-11-27 19:30:00+00:00"
    },
    "last_7_days": {
     "status": "FAIL",
@@ -247,12 +247,12 @@
      {
       "code": "freshness",
       "status": "FAIL",
-      "value": "56"
+      "value": "9"
      },
      {
       "code": "coverage",
       "status": "OK",
-      "value": "97.3%"
+      "value": "97.8%"
      },
      {
       "code": "gaps",
@@ -280,9 +280,9 @@
       "value": "0"
      }
     ],
-    "bars": 393,
+    "bars": 441,
     "first": "2023-11-21 00:00:00+00:00",
-    "last": "2026-11-26 23:45:00+00:00"
+    "last": "2026-11-27 19:30:00+00:00"
    }
   },
   "Dukascopy:XAGUSD:H1": {
@@ -291,8 +291,8 @@
     "checks": [
      {
       "code": "freshness",
-      "status": "FAIL",
-      "value": "14"
+      "status": "OK",
+      "value": "2"
      },
      {
       "code": "coverage",
@@ -325,22 +325,22 @@
       "value": "0"
      }
     ],
-    "bars": 17556,
+    "bars": 17576,
     "first": "2023-11-21 00:00:00+00:00",
-    "last": "2026-11-26 23:00:00+00:00"
+    "last": "2026-11-27 19:00:00+00:00"
    },
    "last_7_days": {
-    "status": "FAIL",
+    "status": "OK",
     "checks": [
      {
       "code": "freshness",
-      "status": "FAIL",
-      "value": "14"
+      "status": "OK",
+      "value": "2"
      },
      {
       "code": "coverage",
       "status": "OK",
-      "value": "97.0%"
+      "value": "98.2%"
      },
      {
       "code": "gaps",
@@ -368,9 +368,9 @@
       "value": "0"
      }
     ],
-    "bars": 98,
+    "bars": 111,
     "first": "2023-11-21 00:00:00+00:00",
-    "last": "2026-11-26 23:00:00+00:00"
+    "last": "2026-11-27 19:00:00+00:00"
    }
   },
   "Dukascopy:EURUSD:M15": {
@@ -379,13 +379,13 @@
     "checks": [
      {
       "code": "freshness",
-      "status": "FAIL",
-      "value": "56"
+      "status": "OK",
+      "value": "0"
      },
      {
       "code": "coverage",
       "status": "OK",
-      "value": "97.7%"
+      "value": "98.1%"
      },
      {
       "code": "gaps",
@@ -400,12 +400,12 @@
      {
       "code": "weekend",
       "status": "WARN",
-      "value": "264"
+      "value": "312"
      },
      {
       "code": "outliers",
       "status": "WARN",
-      "value": "9"
+      "value": "13"
      },
      {
       "code": "flat",
@@ -413,27 +413,27 @@
       "value": "1"
      }
     ],
-    "bars": 31240,
-    "first": "2025-08-19 00:00:00+00:00",
-    "last": "2026-11-26 23:45:00+00:00"
+    "bars": 37652,
+    "first": "2025-05-19 00:00:00+00:00",
+    "last": "2026-11-27 21:45:00+00:00"
    },
    "last_7_days": {
-    "status": "FAIL",
+    "status": "WARN",
     "checks": [
      {
       "code": "freshness",
-      "status": "FAIL",
-      "value": "56"
+      "status": "OK",
+      "value": "0"
      },
      {
       "code": "coverage",
       "status": "OK",
-      "value": "99.8%"
+      "value": "100.0%"
      },
      {
       "code": "gaps",
       "status": "OK",
-      "value": "0.2h"
+      "value": "0.0h"
      },
      {
       "code": "ohlc",
@@ -456,9 +456,9 @@
       "value": "0"
      }
     ],
-    "bars": 423,
-    "first": "2025-08-19 00:00:00+00:00",
-    "last": "2026-11-26 23:45:00+00:00"
+    "bars": 480,
+    "first": "2025-05-19 00:00:00+00:00",
+    "last": "2026-11-27 21:45:00+00:00"
    }
   },
   "Dukascopy:EURUSD:H1": {
@@ -467,13 +467,13 @@
     "checks": [
      {
       "code": "freshness",
-      "status": "FAIL",
-      "value": "14"
+      "status": "OK",
+      "value": "0"
      },
      {
       "code": "coverage",
       "status": "OK",
-      "value": "97.7%"
+      "value": "98.1%"
      },
      {
       "code": "gaps",
@@ -488,12 +488,12 @@
      {
       "code": "weekend",
       "status": "WARN",
-      "value": "66"
+      "value": "78"
      },
      {
       "code": "outliers",
       "status": "WARN",
-      "value": "2"
+      "value": "3"
      },
      {
       "code": "flat",
@@ -501,27 +501,27 @@
       "value": "0"
      }
     ],
-    "bars": 7811,
-    "first": "2025-08-19 00:00:00+00:00",
-    "last": "2026-11-26 23:00:00+00:00"
+    "bars": 9414,
+    "first": "2025-05-19 00:00:00+00:00",
+    "last": "2026-11-27 21:00:00+00:00"
    },
    "last_7_days": {
-    "status": "FAIL",
+    "status": "WARN",
     "checks": [
      {
       "code": "freshness",
-      "status": "FAIL",
-      "value": "14"
+      "status": "OK",
+      "value": "0"
      },
      {
       "code": "coverage",
       "status": "OK",
-      "value": "99.0%"
+      "value": "100.0%"
      },
      {
       "code": "gaps",
       "status": "OK",
-      "value": "1.0h"
+      "value": "0.0h"
      },
      {
       "code": "ohlc",
@@ -544,19 +544,19 @@
       "value": "0"
      }
     ],
-    "bars": 105,
-    "first": "2025-08-19 00:00:00+00:00",
-    "last": "2026-11-26 23:00:00+00:00"
+    "bars": 120,
+    "first": "2025-05-19 00:00:00+00:00",
+    "last": "2026-11-27 21:00:00+00:00"
    }
   },
   "Dukascopy:USDJPY:M15": {
    "history": {
-    "status": "FAIL",
+    "status": "WARN",
     "checks": [
      {
       "code": "freshness",
-      "status": "FAIL",
-      "value": "56"
+      "status": "OK",
+      "value": "0"
      },
      {
       "code": "coverage",
@@ -589,27 +589,27 @@
       "value": "0"
      }
     ],
-    "bars": 960,
+    "bars": 1048,
     "first": "2026-11-13 00:00:00+00:00",
-    "last": "2026-11-26 23:45:00+00:00"
+    "last": "2026-11-27 21:45:00+00:00"
    },
    "last_7_days": {
-    "status": "FAIL",
+    "status": "WARN",
     "checks": [
      {
       "code": "freshness",
-      "status": "FAIL",
-      "value": "56"
+      "status": "OK",
+      "value": "0"
      },
      {
       "code": "coverage",
       "status": "OK",
-      "value": "99.8%"
+      "value": "100.0%"
      },
      {
       "code": "gaps",
       "status": "OK",
-      "value": "0.2h"
+      "value": "0.0h"
      },
      {
       "code": "ohlc",
@@ -623,8 +623,8 @@
      },
      {
       "code": "outliers",
-      "status": "OK",
-      "value": "0"
+      "status": "WARN",
+      "value": "1"
      },
      {
       "code": "flat",
@@ -632,19 +632,19 @@
       "value": "0"
      }
     ],
-    "bars": 423,
+    "bars": 480,
     "first": "2026-11-13 00:00:00+00:00",
-    "last": "2026-11-26 23:45:00+00:00"
+    "last": "2026-11-27 21:45:00+00:00"
    }
   },
   "Dukascopy:USDJPY:H1": {
    "history": {
-    "status": "FAIL",
+    "status": "WARN",
     "checks": [
      {
       "code": "freshness",
-      "status": "FAIL",
-      "value": "14"
+      "status": "OK",
+      "value": "0"
      },
      {
       "code": "coverage",
@@ -677,27 +677,27 @@
       "value": "0"
      }
     ],
-    "bars": 240,
+    "bars": 262,
     "first": "2026-11-13 00:00:00+00:00",
-    "last": "2026-11-26 23:00:00+00:00"
+    "last": "2026-11-27 21:00:00+00:00"
    },
    "last_7_days": {
-    "status": "FAIL",
+    "status": "WARN",
     "checks": [
      {
       "code": "freshness",
-      "status": "FAIL",
-      "value": "14"
+      "status": "OK",
+      "value": "0"
      },
      {
       "code": "coverage",
       "status": "OK",
-      "value": "99.0%"
+      "value": "100.0%"
      },
      {
       "code": "gaps",
       "status": "OK",
-      "value": "1.0h"
+      "value": "0.0h"
      },
      {
       "code": "ohlc",
@@ -720,9 +720,9 @@
       "value": "0"
      }
     ],
-    "bars": 105,
+    "bars": 120,
     "first": "2026-11-13 00:00:00+00:00",
-    "last": "2026-11-26 23:00:00+00:00"
+    "last": "2026-11-27 21:00:00+00:00"
    }
   },
   "Dukascopy:DOLLARIDXUSD:M15": {
@@ -732,7 +732,7 @@
      {
       "code": "freshness",
       "status": "FAIL",
-      "value": "79"
+      "value": "15"
      },
      {
       "code": "coverage",
@@ -765,9 +765,9 @@
       "value": "1"
      }
     ],
-    "bars": 168963,
+    "bars": 169032,
     "first": "2019-01-02 01:00:00+00:00",
-    "last": "2026-11-26 18:00:00+00:00"
+    "last": "2026-11-27 18:00:00+00:00"
    },
    "last_7_days": {
     "status": "FAIL",
@@ -775,17 +775,17 @@
      {
       "code": "freshness",
       "status": "FAIL",
-      "value": "79"
+      "value": "15"
      },
      {
       "code": "coverage",
       "status": "WARN",
-      "value": "91.2%"
+      "value": "87.4%"
      },
      {
       "code": "gaps",
-      "status": "OK",
-      "value": "2.0h"
+      "status": "WARN",
+      "value": "5.8h"
      },
      {
       "code": "ohlc",
@@ -808,9 +808,9 @@
       "value": "0"
      }
     ],
-    "bars": 351,
+    "bars": 389,
     "first": "2019-01-02 01:00:00+00:00",
-    "last": "2026-11-26 18:00:00+00:00"
+    "last": "2026-11-27 18:00:00+00:00"
    }
   },
   "Dukascopy:DOLLARIDXUSD:H1": {
@@ -819,13 +819,13 @@
     "checks": [
      {
       "code": "freshness",
-      "status": "FAIL",
-      "value": "19"
+      "status": "WARN",
+      "value": "3"
      },
      {
       "code": "coverage",
       "status": "WARN",
-      "value": "89.2%"
+      "value": "89.1%"
      },
      {
       "code": "gaps",
@@ -853,27 +853,27 @@
       "value": "0"
      }
     ],
-    "bars": 42276,
+    "bars": 42294,
     "first": "2019-01-02 01:00:00+00:00",
-    "last": "2026-11-26 18:00:00+00:00"
+    "last": "2026-11-27 18:00:00+00:00"
    },
    "last_7_days": {
-    "status": "FAIL",
+    "status": "WARN",
     "checks": [
      {
       "code": "freshness",
-      "status": "FAIL",
-      "value": "19"
+      "status": "WARN",
+      "value": "3"
      },
      {
       "code": "coverage",
       "status": "WARN",
-      "value": "90.7%"
+      "value": "88.4%"
      },
      {
       "code": "gaps",
-      "status": "OK",
-      "value": "2.0h"
+      "status": "WARN",
+      "value": "5.0h"
      },
      {
       "code": "ohlc",
@@ -896,9 +896,9 @@
       "value": "0"
      }
     ],
-    "bars": 88,
+    "bars": 99,
     "first": "2019-01-02 01:00:00+00:00",
-    "last": "2026-11-26 18:00:00+00:00"
+    "last": "2026-11-27 18:00:00+00:00"
    }
   },
   "Dukascopy:USA500IDXUSD:M15": {
@@ -908,7 +908,7 @@
      {
       "code": "freshness",
       "status": "FAIL",
-      "value": "56"
+      "value": "15"
      },
      {
       "code": "coverage",
@@ -941,9 +941,9 @@
       "value": "1"
      }
     ],
-    "bars": 179472,
+    "bars": 179545,
     "first": "2019-01-01 23:00:00+00:00",
-    "last": "2026-11-26 23:45:00+00:00"
+    "last": "2026-11-27 18:00:00+00:00"
    },
    "last_7_days": {
     "status": "FAIL",
@@ -951,12 +951,12 @@
      {
       "code": "freshness",
       "status": "FAIL",
-      "value": "56"
+      "value": "15"
      },
      {
       "code": "coverage",
       "status": "WARN",
-      "value": "92.8%"
+      "value": "94.4%"
      },
      {
       "code": "gaps",
@@ -976,7 +976,7 @@
      {
       "code": "outliers",
       "status": "WARN",
-      "value": "1"
+      "value": "2"
      },
      {
       "code": "flat",
@@ -984,9 +984,9 @@
       "value": "0"
      }
     ],
-    "bars": 375,
+    "bars": 420,
     "first": "2019-01-01 23:00:00+00:00",
-    "last": "2026-11-26 23:45:00+00:00"
+    "last": "2026-11-27 18:00:00+00:00"
    }
   },
   "Dukascopy:USA500IDXUSD:H1": {
@@ -995,8 +995,8 @@
     "checks": [
      {
       "code": "freshness",
-      "status": "FAIL",
-      "value": "14"
+      "status": "WARN",
+      "value": "3"
      },
      {
       "code": "coverage",
@@ -1029,22 +1029,22 @@
       "value": "1"
      }
     ],
-    "bars": 46375,
+    "bars": 46394,
     "first": "2019-01-01 23:00:00+00:00",
-    "last": "2026-11-26 23:00:00+00:00"
+    "last": "2026-11-27 18:00:00+00:00"
    },
    "last_7_days": {
-    "status": "FAIL",
+    "status": "WARN",
     "checks": [
      {
       "code": "freshness",
-      "status": "FAIL",
-      "value": "14"
+      "status": "WARN",
+      "value": "3"
      },
      {
       "code": "coverage",
       "status": "WARN",
-      "value": "95.0%"
+      "value": "96.4%"
      },
      {
       "code": "gaps",
@@ -1072,9 +1072,9 @@
       "value": "0"
      }
     ],
-    "bars": 96,
+    "bars": 108,
     "first": "2019-01-01 23:00:00+00:00",
-    "last": "2026-11-26 23:00:00+00:00"
+    "last": "2026-11-27 18:00:00+00:00"
    }
   },
   "Dukascopy:USTBONDTRUSD:M15": {
@@ -1084,7 +1084,7 @@
      {
       "code": "freshness",
       "status": "FAIL",
-      "value": "56"
+      "value": "15"
      },
      {
       "code": "coverage",
@@ -1117,9 +1117,9 @@
       "value": "2"
      }
     ],
-    "bars": 179581,
+    "bars": 179653,
     "first": "2019-01-21 00:00:00+00:00",
-    "last": "2026-11-26 23:45:00+00:00"
+    "last": "2026-11-27 18:00:00+00:00"
    },
    "last_7_days": {
     "status": "FAIL",
@@ -1127,12 +1127,12 @@
      {
       "code": "freshness",
       "status": "FAIL",
-      "value": "56"
+      "value": "15"
      },
      {
       "code": "coverage",
       "status": "WARN",
-      "value": "95.5%"
+      "value": "96.0%"
      },
      {
       "code": "gaps",
@@ -1160,9 +1160,9 @@
       "value": "0"
      }
     ],
-    "bars": 386,
+    "bars": 427,
     "first": "2019-01-21 00:00:00+00:00",
-    "last": "2026-11-26 23:45:00+00:00"
+    "last": "2026-11-27 18:00:00+00:00"
    }
   },
   "Dukascopy:USTBONDTRUSD:H1": {
@@ -1171,8 +1171,8 @@
     "checks": [
      {
       "code": "freshness",
-      "status": "FAIL",
-      "value": "14"
+      "status": "WARN",
+      "value": "3"
      },
      {
       "code": "coverage",
@@ -1205,22 +1205,22 @@
       "value": "0"
      }
     ],
-    "bars": 45462,
+    "bars": 45481,
     "first": "2019-01-21 00:00:00+00:00",
-    "last": "2026-11-26 23:00:00+00:00"
+    "last": "2026-11-27 18:00:00+00:00"
    },
    "last_7_days": {
-    "status": "FAIL",
+    "status": "WARN",
     "checks": [
      {
       "code": "freshness",
-      "status": "FAIL",
-      "value": "14"
+      "status": "WARN",
+      "value": "3"
      },
      {
       "code": "coverage",
       "status": "WARN",
-      "value": "95.0%"
+      "value": "96.4%"
      },
      {
       "code": "gaps",
@@ -1248,29 +1248,29 @@
       "value": "0"
      }
     ],
-    "bars": 96,
+    "bars": 108,
     "first": "2019-01-21 00:00:00+00:00",
-    "last": "2026-11-26 23:00:00+00:00"
+    "last": "2026-11-27 18:00:00+00:00"
    }
   },
   "TwelveData:XAU/USD:M15": {
    "last_7_days": {
-    "status": "FAIL",
+    "status": "OK",
     "checks": [
      {
       "code": "freshness",
-      "status": "FAIL",
-      "value": "40"
+      "status": "OK",
+      "value": "0"
      },
      {
       "code": "coverage",
       "status": "OK",
-      "value": "99.8%"
+      "value": "100.0%"
      },
      {
       "code": "gaps",
       "status": "OK",
-      "value": "0.2h"
+      "value": "0.0h"
      },
      {
       "code": "ohlc",
@@ -1293,29 +1293,29 @@
       "value": "0"
      }
     ],
-    "bars": 435,
+    "bars": 476,
     "first": "2026-09-22 14:45:00+00:00",
-    "last": "2026-11-27 03:45:00+00:00"
+    "last": "2026-11-27 21:45:00+00:00"
    }
   },
   "TwelveData:XAU/USD:H1": {
    "last_7_days": {
-    "status": "FAIL",
+    "status": "OK",
     "checks": [
      {
       "code": "freshness",
-      "status": "FAIL",
-      "value": "10"
+      "status": "OK",
+      "value": "0"
      },
      {
       "code": "coverage",
       "status": "OK",
-      "value": "99.0%"
+      "value": "100.0%"
      },
      {
       "code": "gaps",
       "status": "OK",
-      "value": "1.0h"
+      "value": "0.0h"
      },
      {
       "code": "ohlc",
@@ -1338,9 +1338,9 @@
       "value": "0"
      }
     ],
-    "bars": 108,
+    "bars": 119,
     "first": "2026-04-19 22:00:00+00:00",
-    "last": "2026-11-27 03:00:00+00:00"
+    "last": "2026-11-27 21:00:00+00:00"
    }
   }
  }
